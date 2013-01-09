@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://www.netbeans.org/ns/project/1">
+    <type>org.netbeans.modules.java.j2seproject</type>
+    <configuration>
+        <buildExtensions xmlns="http://www.netbeans.org/ns/ant-build-extender/1">
+            <extension file="assets-impl.xml" id="assets">
+                <dependency dependsOn="-init-assets" target="-do-init"/>
+            </extension>
+            <extension file="launch4j-impl.xml" id="launch4j">
+                <dependency dependsOn="-launch4j-exe" target="jar"/>
+            </extension>
+        </buildExtensions>
+        <data xmlns="http://www.netbeans.org/ns/j2se-project/3">
+            <name>Lemur</name>
+            <source-roots>
+                <root id="src.dir"/>
+            </source-roots>
+            <test-roots/>
+        </data>
+    </configuration>
+</project>
