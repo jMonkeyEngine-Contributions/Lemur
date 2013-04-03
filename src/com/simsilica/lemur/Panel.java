@@ -144,9 +144,24 @@ public class Panel extends Node
         return style;
     }
 
+    public void setSize( Vector3f size )
+    {
+        getControl(GuiControl.class).setSize(size);    
+    }
+
     public Vector3f getSize()
     {
         return getControl(GuiControl.class).getSize(); 
+    }
+
+    public void setPreferredSize( Vector3f size )
+    {
+        getControl(GuiControl.class).setPreferredSize(size);    
+    }
+
+    public Vector3f getPreferredSize()
+    {
+        return getControl(GuiControl.class).getPreferredSize();
     }
 
     public void addMouseListener( MouseListener l )
