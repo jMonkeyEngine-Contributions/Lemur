@@ -126,9 +126,7 @@ public class MouseAppState extends BaseAppState
         // We do this as early as possible because we want to
         // make sure to be able to capture everything if we
         // are enabled.
-        app.getInputManager().addRawInputListener(mouseObserver);
-        
-        app.getInputManager().setCursorVisible(true);
+        app.getInputManager().addRawInputListener(mouseObserver);        
     }
     
     protected void cleanup( Application app )
@@ -138,10 +136,12 @@ public class MouseAppState extends BaseAppState
     
     protected void enable()
     {
+        getApplication().getInputManager().setCursorVisible(true);
     }
     
     protected void disable()
     {
+        getApplication().getInputManager().setCursorVisible(false);
     }    
 
     protected void releaseCapture()
