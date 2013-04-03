@@ -206,6 +206,16 @@ public class Slider extends Panel
         return model;
     }
 
+    public void setDelta( double delta )
+    {
+        this.delta = delta;
+    }
+    
+    public double getDelta()
+    {
+        return delta;
+    }
+
     public void updateLogicalState(float tpf){
         super.updateLogicalState(tpf);
         
