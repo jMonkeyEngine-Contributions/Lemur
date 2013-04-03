@@ -50,7 +50,7 @@ public abstract class BaseAppState implements AppState
 {
     private Application app;
     private boolean initialized;
-    private boolean enabled;
+    private boolean enabled = true;
 
     protected abstract void initialize( Application app );
     protected abstract void cleanup( Application app );
