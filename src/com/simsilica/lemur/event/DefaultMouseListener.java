@@ -34,9 +34,7 @@
 
 package com.simsilica.lemur.event;
 
-import com.simsilica.lemur.event.MouseListener;
 import com.jme3.input.event.*;
-import com.jme3.math.*;
 import com.jme3.scene.*;
 
 
