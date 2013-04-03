@@ -56,6 +56,7 @@ import com.jme3.renderer.queue.RenderQueue;
 import com.jme3.renderer.queue.RenderQueue.Bucket;
 import com.jme3.scene.Spatial;
 import com.jme3.texture.Texture;
+import com.simsilica.lemur.input.InputMapper;
 
 
 /**
@@ -67,6 +68,7 @@ public class GuiGlobals
     private static GuiGlobals instance;
  
     private AssetManager assets;
+    private InputMapper  inputMapper;
     private KeyInterceptState keyInterceptor;
     private MouseAppState mouseState;
     private FocusManagerState focusState;
@@ -92,6 +94,7 @@ public class GuiGlobals
     protected GuiGlobals( Application app )
     {
         this.assets = app.getAssetManager();
+        this.inputMapper = new InputMapper(app.getInputManager());
         this.keyInterceptor = new KeyInterceptState();
         this.mouseState = new MouseAppState();
         this.focusState = new FocusManagerState();
@@ -105,12 +108,22 @@ public class GuiGlobals
         iconBase = getClass().getPackage().getName().replace( '.', '/' ) + "/icons";
  
         ViewPort main = app.getViewPort();
-        RenderQueue rq = main.getQueue();
+        setupGuiComparators(main);
+        /*RenderQueue rq = main.getQueue();
+               
+        rq.setGeometryComparator( Bucket.Opaque, new LayerComparator( rq.getGeometryComparator(Bucket.Opaque) ) );
+        rq.setGeometryComparator( Bucket.Transparent, new LayerComparator( rq.getGeometryComparator(Bucket.Transparent), -1 ) );
+        rq.setGeometryComparator( Bucket.Gui, new LayerComparator( rq.getGeometryComparator(Bucket.Gui) ) );*/
+                                      
+    }
+
+    public void setupGuiComparators( ViewPort view )
+    {
+        RenderQueue rq = view.getQueue();
                
         rq.setGeometryComparator( Bucket.Opaque, new LayerComparator( rq.getGeometryComparator(Bucket.Opaque) ) );
         rq.setGeometryComparator( Bucket.Transparent, new LayerComparator( rq.getGeometryComparator(Bucket.Transparent), -1 ) );
         rq.setGeometryComparator( Bucket.Gui, new LayerComparator( rq.getGeometryComparator(Bucket.Gui) ) );
-                                      
     }
 
     protected void setDefaultStyles()
@@ -125,6 +138,11 @@ public class GuiGlobals
     public Styles getStyles()
     {
         return styles;
+    }
+
+    public InputMapper getInputMapper()
+    {
+        return inputMapper;
     }
 
     public void fixFont( BitmapFont font )
