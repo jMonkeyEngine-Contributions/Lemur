@@ -299,7 +299,7 @@ public class GuiControl extends AbstractNodeControl<GuiControl>
         // Calculate preferred size
         // we go backwards and let each previous layer
         // potentially add its own sizing.
-        Vector3f size = getPreferredSize();
+        Vector3f size = getPreferredSize().clone();
         
         // Set it to the children... now go 
         // forward and let each one apply their own limits
