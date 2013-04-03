@@ -144,6 +144,23 @@ public class IconComponent extends AbstractGuiComponent
         return color;
     }
  
+    public void setIconScale( float scale )
+    {
+        if( this.iconScale == scale )
+            return;
+        this.iconScale = scale;
+        
+        // Not very efficient
+        createIcon();
+        
+        invalidate();
+    }
+    
+    public float getIconScale()
+    {
+        return iconScale;
+    }
+ 
     public void setHAlignment( HAlignment a )
     {
         if( hAlign == a )
