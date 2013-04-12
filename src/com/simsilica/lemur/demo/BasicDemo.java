@@ -153,6 +153,14 @@ public class BasicDemo extends SimpleApplication {
         hudPanel.addChild(panel);       
         guiNode.attachChild(hudPanel);
                 
+        // Increase the default size of the hud to be a little wider
+        // if it would otherwise be smaller.  Height is unaffected.
+        Vector3f hudSize = new Vector3f(200,0,0);
+        hudSize.maxLocal(hudPanel.getPreferredSize());
+        hudPanel.setPreferredSize( hudSize );  
+        
+        // Note: after next nightly, this will also work:
+        // hudPanel.setPreferredSize( new Vector3f(200,0,0).maxLocal(hudPanel.getPreferredSize()) );         
         
         // Something in scene
         Box box = new Box( Vector3f.ZERO, 1, 1, 1 );
