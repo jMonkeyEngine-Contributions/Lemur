@@ -240,8 +240,18 @@ public class SpringGridLayout extends AbstractGuiComponent
                 break;
             }
     }
-   
-    public void calculatePreferredSize( Vector3f size )
+    
+    /**
+     *  Recalculates the internal arrays that keep track of the
+     *  preferred sizes for each row and collumn.  The preferred
+     *  sizes are based on the maximum preferred size of every
+     *  component in the row or column.
+     *  This returns the "alternate axis" max size for all contained
+     *  components.  In a standard row, column setup where rows
+     *  are vertical and columns are horizontal, the alternate axis
+     *  is depth.
+     */
+    protected float refreshRowColPrefs()
     {
         // Find the preferred size for each column
         // and the preferred size for each row.
@@ -254,7 +264,7 @@ public class SpringGridLayout extends AbstractGuiComponent
             colPrefs = new float[columnCount];
         else
             Arrays.fill(colPrefs, 0);
- 
+
         float maxAlternate = 0;
         for( Map.Entry<Integer, Map<Integer,Entry>> rowEntry : children.entrySet() )
             {
@@ -263,14 +273,18 @@ public class SpringGridLayout extends AbstractGuiComponent
                 {
                 int col = colEntry.getKey();
                 Entry e = colEntry.getValue();
-                
-                Vector3f v = e.child.getControl(GuiControl.class).getPreferredSize();
- 
+                Vector3f v = e.child.getControl(GuiControl.class).getPreferredSize();                
                 rowPrefs[row] = Math.max( rowPrefs[row], getMajor(v) );
                 colPrefs[col] = Math.max( colPrefs[col], getMinor(v) );
-                maxAlternate = Math.max( getAlternate(v), maxAlternate);                                
+                maxAlternate = Math.max( getAlternate(v), maxAlternate);
                 }
             }
+        return maxAlternate;
+    }
+      
+    public void calculatePreferredSize( Vector3f size )
+    {
+        float maxAlternate = refreshRowColPrefs();            
             
         lastPreferredSize.set(0,0,0);                   
         for( float f : rowPrefs )
@@ -323,6 +337,9 @@ public class SpringGridLayout extends AbstractGuiComponent
         // process them in order.  Ah... can just precalculate
         // the sizes and positions, I guess.
         
+        // Make sure the preferred size book-keeping is up to date.
+        calculatePreferredSize( new Vector3f() );
+
         // We could keep these arrays around but I think the GC churn
         // pales in comparison to the distribute calls if reshape is called a lot.
         float[] rowSizes = new float[rowCount];        
