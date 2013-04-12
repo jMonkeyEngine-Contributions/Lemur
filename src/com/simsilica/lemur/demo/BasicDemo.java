@@ -173,7 +173,7 @@ public class BasicDemo extends SimpleApplication {
             }
         if( showFpsRef.update() )
             {
-            setDisplayStatView( showFpsRef.get() );
+            setDisplayFps( showFpsRef.get() );
             }
             
         boolean updateColor = false;
