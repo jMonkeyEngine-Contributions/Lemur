@@ -51,7 +51,10 @@ import com.simsilica.lemur.LayerComparator;
 import com.simsilica.lemur.Panel;
 import com.simsilica.lemur.Slider;
 import com.simsilica.lemur.component.QuadBackgroundComponent;
+import com.simsilica.lemur.component.TbtQuadBackgroundComponent;
 import com.simsilica.lemur.core.VersionedReference;
+import com.simsilica.lemur.event.DragHandler;
+import com.simsilica.lemur.event.MouseEventControl;
 import com.simsilica.lemur.style.ElementId;
 import com.simsilica.lemur.style.Styles;
 
@@ -170,6 +173,17 @@ public class BasicDemo extends SimpleApplication {
         mat.getAdditionalRenderState().setBlendMode( BlendMode.Alpha );
         geom.setMaterial(mat);
         rootNode.attachChild( geom );
+        
+        // Just testing something...
+        Container testPanel = new Container();
+        testPanel.setPreferredSize( new Vector3f(200, 200,0) );
+        testPanel.setBackground( TbtQuadBackgroundComponent.create( "/com/simsilica/lemur/icons/border.png",
+                                                                    1, 2, 2, 3, 3, 0, false ) );
+        testPanel.addChild( new Label( "Border Test" ) );
+        testPanel.setLocalTranslation( 400, 400, 0 );
+        
+        testPanel.addControl( new MouseEventControl(new DragHandler()) );                                                                    
+        guiNode.attachChild( testPanel );        
     }
     
     @Override
