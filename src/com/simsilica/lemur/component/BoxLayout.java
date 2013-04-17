@@ -128,6 +128,10 @@ public class BoxLayout extends AbstractGuiComponent
         // prefer and we have to distribute the difference nicely.
         //Vector3f diff = size.subtract(lastPreferredSize);
         
+        // Make sure there is a last preferred size to base
+        // the reshaping on.
+        calculatePreferredSize(new Vector3f());
+        
         // Along the axis we will have to change each component
         // a little bit.  We give each one an even amount but we
         // also have the information to distribute it based on
