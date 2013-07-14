@@ -39,12 +39,47 @@ import com.jme3.scene.Mesh;
 import com.jme3.scene.VertexBuffer.Type; 
 
 /**
- *  A three-by-three quad that can stretch textures
- *  in useful ways.  The vertexes are arranged with
- *  the 10 outer vertexes first and then the 4 inner
- *  vertexes.
+ *  A three-by-three quad that can stretch textures in useful 
+ *  ways.  The vertexes are arranged with the 10 outer vertexes 
+ *  first and then the 4 inner vertexes.
  *
- *  @author    Paul Speed
+ * <p>The texture is split up into a three-by-three grid in this fashion:
+ * 
+ * <pre>
+ *    +---+--------------+-------+
+ *    |   |    <----->   |       |
+ * y2 +---+--------------+-------+
+ *    |   |              |       |
+ *    | ^ |       ^      |   ^   |
+ *    | | |       |      |   |   |
+ *    | | |    <----->   |   |   |
+ *    | | |       |      |   |   |
+ *    | v |       v      |   v   |
+ *    |   |              |       |
+ * y1 +---+--------------+-------+
+ *    |   |    <----->   |       |
+ *    +---+--------------+-------+
+ *       x1             x2
+ * </pre>
+ * 
+ * Arrows indicate the direction in which each grid cell will stretch to fill
+ * the area given by the component.<br>
+ * All coordinates are relative to the lower-left border.
+ * <p>
+ * <b>Common pitfalls</b>
+ * <ul>
+ * <li>Placing controls on a fractional coordinate. This usually happens when
+ * centering controls.
+ * <li>Having a contrast at the border between stretched and unstretched texture
+ * zone (e.g. a black border and a white center). Stretching involves
+ * interpolating colors with the neighbouring pixels (i.e. you'll get a
+ * black-to-white color gradient).<br>
+ * The easiest workaround is to make the border one pixel wider so that the
+ * contrast will be safely inside the unstretched area.
+ * <li>Using a texture that is larger than the quad.
+ * </ul>
+ * 
+ * @author Paul Speed, Joachim "Toolforger" Durchholz (Javadoc) 
  */
 public class TbtQuad extends Mesh
                      implements Cloneable
