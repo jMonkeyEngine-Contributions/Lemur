@@ -128,6 +128,9 @@ public class TextComponent extends AbstractGuiComponent
  
     public void setFont( BitmapFont font )
     {
+        if( isAttached() )
+            bitmapText.removeFromParent();
+            
         // Can't change the font once created so we'll
         // have to create it fresh
         BitmapText newText = new BitmapText(font);
@@ -140,6 +143,9 @@ public class TextComponent extends AbstractGuiComponent
         // Need to invalidate because we probably changed size
         // And that will realign us, etc. anyway.
         invalidate();
+        
+        if( isAttached() )
+            getNode().attachChild(bitmapText);
     }
     
     public BitmapFont getFont()
