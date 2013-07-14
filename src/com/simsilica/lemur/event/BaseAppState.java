@@ -38,6 +38,8 @@ import com.jme3.app.Application;
 import com.jme3.app.state.AppState;
 import com.jme3.app.state.AppStateManager;
 import com.jme3.renderer.RenderManager;
+import org.apache.log4j.Logger;
+
 
  
 /**
@@ -48,6 +50,8 @@ import com.jme3.renderer.RenderManager;
  */ 
 public abstract class BaseAppState implements AppState
 {
+    static Logger log = Logger.getLogger(BaseAppState.class);
+    
     private Application app;
     private boolean initialized;
     private boolean enabled = true;
@@ -59,6 +63,9 @@ public abstract class BaseAppState implements AppState
     
     public final void initialize( AppStateManager stateManager, Application app ) 
     {
+        if( log.isTraceEnabled() )
+            log.trace( "initialize():" + this );
+            
         this.app = app;
         initialized = true;
         initialize(app);        
@@ -88,13 +95,21 @@ public abstract class BaseAppState implements AppState
 
     public final void setEnabled(boolean enabled) 
     {
+        if( this.enabled == enabled )
+            return;
         this.enabled = enabled;
         if( !isInitialized() )
             return;
         if( enabled )
+            {
+            log.trace( "enable():" + this );
             enable();
+            }
         else
+            {
+            log.trace( "disable():" + this );
             disable();
+            }
     }
     
     public final boolean isEnabled() 
@@ -124,6 +139,9 @@ public abstract class BaseAppState implements AppState
 
     public final void cleanup() 
     {
+        if( log.isTraceEnabled() )
+            log.trace( "cleanup():" + this );
+            
         if( isEnabled() )
             disable();
         cleanup(app);
