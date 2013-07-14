@@ -92,6 +92,7 @@ public class IconComponent extends AbstractGuiComponent
     {   
         IconComponent result = (IconComponent)super.clone();
         result.icon = null;
+        result.material = material.clone();
         result.createIcon();
         return result;
     } 
@@ -234,6 +235,11 @@ public class IconComponent extends AbstractGuiComponent
         return overlay;
     }
 
+    public GuiMaterial getMaterial()
+    {
+        return material;
+    }
+
     public void calculatePreferredSize( Vector3f size )
     {
         if( overlay )
@@ -349,14 +355,17 @@ public class IconComponent extends AbstractGuiComponent
         float width = iconScale * image.getImage().getWidth();
         float height = iconScale * image.getImage().getHeight();       
         Quad q = new Quad(width, height);
-        icon = new Geometry("icon", q);
-        material = GuiGlobals.getInstance().createMaterial( lit );
-        material.setColor(color);
-        material.setTexture(image);
+        icon = new Geometry("icon:" + imagePath, q);
+        if( material == null )
+            {
+            material = GuiGlobals.getInstance().createMaterial( lit );
+            material.setColor(color);
+            material.setTexture(image);
             
-        material.getMaterial().getAdditionalRenderState().setBlendMode( BlendMode.Alpha );
-        material.getMaterial().getAdditionalRenderState().setAlphaTest( true );
-        material.getMaterial().getAdditionalRenderState().setAlphaFallOff( 0.1f );
+            material.getMaterial().getAdditionalRenderState().setBlendMode( BlendMode.Alpha );
+            material.getMaterial().getAdditionalRenderState().setAlphaTest( true );
+            material.getMaterial().getAdditionalRenderState().setAlphaFallOff( 0.01f );
+            }
             
         icon.setMaterial(material.getMaterial());
 
