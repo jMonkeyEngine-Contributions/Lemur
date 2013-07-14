@@ -146,6 +146,11 @@ public class GuiControl extends AbstractNodeControl<GuiControl>
         return lastSize;
     }
 
+    public List<GuiComponent> getComponents()
+    {
+        return components;
+    }
+
     public <T extends GuiComponent> T addComponent( T c )
     {
         components.add(c);
