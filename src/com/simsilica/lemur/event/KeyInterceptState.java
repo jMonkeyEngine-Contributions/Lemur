@@ -53,9 +53,14 @@ public class KeyInterceptState extends BaseAppState
  
     private SafeArrayList<KeyListener> keyListeners = new SafeArrayList<KeyListener>(KeyListener.class);
 
-    public KeyInterceptState()
+    public KeyInterceptState( Application app )
     {
         setEnabled(true);
+        
+        // We do this as early as possible because we want to
+        // make sure to be able to capture everything if we
+        // are enabled.
+        app.getInputManager().addRawInputListener(keyObserver);
     }
     
     public void addKeyListener( KeyListener l )
@@ -70,10 +75,6 @@ public class KeyInterceptState extends BaseAppState
 
     protected void initialize( Application app )
     {
-        // We do this as early as possible because we want to
-        // make sure to be able to capture everything if we
-        // are enabled.
-        app.getInputManager().addRawInputListener(keyObserver);
     }
     
     protected void cleanup( Application app )
