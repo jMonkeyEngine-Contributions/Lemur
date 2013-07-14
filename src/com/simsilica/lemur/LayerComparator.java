@@ -73,7 +73,7 @@ public class LayerComparator implements GeometryComparator
 
     public static void resetLayer( Spatial s, int layer )
     {
-        setLayer( layer );
+        setLayer( s, layer );
  
         // Need to clear the effective layer for the geometry children
         clearEffectiveLayer(s);
