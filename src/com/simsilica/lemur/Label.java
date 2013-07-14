@@ -41,6 +41,7 @@ import com.simsilica.lemur.style.StyleAttribute;
 import com.simsilica.lemur.style.Styles;
 import com.jme3.font.BitmapFont;
 import com.jme3.math.ColorRGBA;
+import com.jme3.math.Vector3f;
 
 
 import com.simsilica.lemur.core.GuiControl;
@@ -59,6 +60,7 @@ public class Label extends Panel
 
     private TextComponent text;
     private TextComponent shadow;
+    private Vector3f shadowOffset = new Vector3f(1,-1,1);
 
     public Label( String s )
     {
@@ -131,6 +133,13 @@ public class Label extends Panel
         return text.getHAlignment();
     }
      
+    public void setFont( BitmapFont font )
+    {
+        text.setFont(font);
+        if( shadow != null )
+            shadow.setFont(font);
+    }
+     
     public BitmapFont getFont()
     {
         return text.getFont();
@@ -160,6 +169,19 @@ public class Label extends Panel
         return text == null ? 0 : text.getFontSize();
     }
     
+    @StyleAttribute("shadowOffset")
+    public void setShadowOffset( Vector3f offset )
+    {
+        shadowOffset.set(offset);        
+        if( shadow != null )
+            shadow.setOffset( offset.x, offset.y, offset.z );               
+    }
+ 
+    public Vector3f getShadowOffset()
+    {
+        return shadowOffset;
+    }
+    
     @StyleAttribute(value="shadowColor", lookupDefault=false)   
     public void setShadowColor( ColorRGBA color )
     {
@@ -170,7 +192,7 @@ public class Label extends Panel
  
             // Else we need to create the shadow
             this.shadow = new TextComponent( getText(), getFont() );
-            shadow.setOffset( 1, -1, 1f );
+            shadow.setOffset( shadowOffset.x, shadowOffset.y, shadowOffset.z );               
             shadow.setFontSize( getFontSize() );
             getControl(GuiControl.class).insertComponent( shadow, text );
             }
