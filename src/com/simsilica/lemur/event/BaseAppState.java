@@ -38,7 +38,8 @@ import com.jme3.app.Application;
 import com.jme3.app.state.AppState;
 import com.jme3.app.state.AppStateManager;
 import com.jme3.renderer.RenderManager;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
  
@@ -50,7 +51,7 @@ import org.apache.log4j.Logger;
  */ 
 public abstract class BaseAppState implements AppState
 {
-    static Logger log = Logger.getLogger(BaseAppState.class);
+    static Logger log = LoggerFactory.getLogger(BaseAppState.class);
     
     private Application app;
     private boolean initialized;

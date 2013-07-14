@@ -9,8 +9,8 @@ package com.simsilica.lemur.input;
 
 import java.util.*;
 
-import org.apache.log4j.Logger;
-
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import com.google.common.base.Objects;
 
 import com.jme3.input.*;
@@ -25,7 +25,7 @@ import com.jme3.util.SafeArrayList;
  */
 public class InputMapper
 {
-    static Logger log = Logger.getLogger(InputMapper.class);
+    static Logger log = LoggerFactory.getLogger(InputMapper.class);
     
     private InputManager inputManager;
     private InputObserver listener;
