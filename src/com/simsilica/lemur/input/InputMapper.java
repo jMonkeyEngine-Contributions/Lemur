@@ -9,6 +9,8 @@ package com.simsilica.lemur.input;
 
 import java.util.*;
 
+import org.apache.log4j.Logger;
+
 import com.google.common.base.Objects;
 
 import com.jme3.input.*;
@@ -23,6 +25,8 @@ import com.jme3.util.SafeArrayList;
  */
 public class InputMapper
 {
+    static Logger log = Logger.getLogger(InputMapper.class);
+    
     private InputManager inputManager;
     private InputObserver listener;
  
@@ -63,13 +67,15 @@ public class InputMapper
  
     public void activateGroup( String group )
     {
-System.out.println( "++++ ----------activate:" + group );    
+        if( log.isTraceEnabled() )
+            log.trace( "activate:" + group );    
         activeGroups.add(group);
     }
     
     public void deactivateGroup( String group )
     {
-System.out.println( "---- ----------deactivate:" + group );    
+        if( log.isTraceEnabled() )
+            log.trace( "deactivate:" + group );    
         activeGroups.remove(group);
     }
     
@@ -279,7 +285,9 @@ System.out.println( "---- ----------deactivate:" + group );
     {
         if( !activeStates.add(g) )
             return;
-//        System.out.println( "++ activate(" + g.function + ":" + g.bias + ")" );
+            
+        if( log.isTraceEnabled() )
+            log.trace( "activate(" + g.function + ":" + g.bias + ")" );
         
         // So the activation state changed and now we
         // should notify those listeners... actually... that should
@@ -293,7 +301,9 @@ System.out.println( "---- ----------deactivate:" + group );
     {
         if( !activeStates.remove(g) )
             return;            
-//        System.out.println( "-- deactivate(" + g.function + ":" + g.bias + ")" );
+            
+        if( log.isTraceEnabled() )
+            log.trace( "deactivate(" + g.function + ":" + g.bias + ")" );
         
         // Need to make sure that the group is set back to
         // ground-state so it will show up right when activated again
@@ -307,15 +317,12 @@ System.out.println( "---- ----------deactivate:" + group );
             {
             double value = getIndex(g.getPrimary(), false).getValue();            
             g.updateValue(value);
- 
-//System.out.println( "analog:" + g.getFunction() + " = " + g.getValue() );            
             notifyValueActive( g.getFunction(), g.getValue() );
             }
     }
 
     protected void notifyStateChanged( FunctionId function, InputState value )
     {
-//        System.out.println( "notifyStateChanged(" + function + ", " + value + ")" );
         FunctionListeners listeners = getFunctionListeners(function, false);
         if( listeners == null )
             return;
@@ -408,7 +415,8 @@ System.out.println( "---- ----------deactivate:" + group );
                 return;
             lastValue = adjusted;
  
-            //System.out.println( "Value changed for:" + function + " bias:" + bias ); 
+            if( log.isTraceEnabled() )
+                log.trace( "Value changed for:" + function + " bias:" + bias ); 
             
             InputState state = valueToState(value);
             updateState(state);                            
@@ -419,7 +427,7 @@ System.out.println( "---- ----------deactivate:" + group );
             if( lastState == state )
                 return;
             lastState = state;
-            //System.out.println( "State changed for:" + function + " bias:" + bias );
+            
             // Except maybe function state should be kept centrally by function
             // We could have muliple state groups firing against the same
             // function ID.  Like the user pressing forward and back at the same
@@ -431,7 +439,6 @@ System.out.println( "---- ----------deactivate:" + group );
 
         public void resetValue()
         {
-//System.out.println( "resetValue() lastValue=" + lastValue );        
             if( valueToState(lastValue) == InputState.OFF )
                 return;
             
@@ -439,7 +446,6 @@ System.out.println( "---- ----------deactivate:" + group );
             lastState = InputState.OFF;
             
             // And we need to notify state listeners
-            //System.out.println( "State cleared for:" + function + " bias:" + bias );
             notifyStateChanged( function, lastState );            
         }
 
@@ -534,10 +540,8 @@ System.out.println( "---- ----------deactivate:" + group );
             
             for( StateGroup g : groups )
                 {
-//System.out.println( "Checking:" + g );                
                 if( !g.isTrue() )
                     {
-//System.out.println( "   deactivate, g.isTrue() false" );                    
                     // Deactivate it
                     deactivate(g);
                     
@@ -554,14 +558,12 @@ System.out.println( "---- ----------deactivate:" + group );
                     {
                     if( activatePrimary )
                         {
-//System.out.println( "   activate, is primary" );                    
                         // Group needs to be activated if it wasn't
                         activate(g);
                         activatePrimary = false;
                         }
                     else
                         {
-//System.out.println( "   deactivate, is NOT primary" );                    
                         // Group needs to be deactivated if it was active
                         // since now there is a better one.
                         deactivate(g);
@@ -584,18 +586,15 @@ System.out.println( "---- ----------deactivate:" + group );
             if( lastValue == val )
                 return;
             lastValue = val;
-//System.out.println( "updateValue(" + val + ")" );            
             refresh();
         }
         
         public void instantUpdate( double val )
         {
-//System.out.println( "instantUpdate(" + val + ")" );        
             // Find the first primary true group and
             // send the value to its listeners
             for( StateGroup g : groups )
                 {
-//System.out.println( "Checking:" + g );                
                 if( !g.areModifiersTrue() )
                     continue;
                     
@@ -629,7 +628,6 @@ System.out.println( "---- ----------deactivate:" + group );
             if( Math.abs(val) < 0.01 )
                 val = 0;
 
-//System.out.println( "Axis:" + a + "  value:" + val );
             Axis axis = joystickAxisMap.get(a);
             if( axis == null )
                 {
@@ -656,8 +654,6 @@ System.out.println( "---- ----------deactivate:" + group );
             if( index == null )
                 return;
             double value = evt.isPressed() ? 1.0 : 0.0;
-            
-//System.out.println( "Button:" + evt.getButton() + "  value:" + value );
             
             index.updateValue(value);
         }
@@ -697,16 +693,20 @@ System.out.println( "---- ----------deactivate:" + group );
             // can multiply by tpf, we will divide it out again.
             if( evt.getDeltaWheel() != 0 )
                 {
-                instantUpdate( Axis.MOUSE_WHEEL, evt.getDeltaWheel() / (1024.0 * tpf) );  
+                //instantUpdate( Axis.MOUSE_WHEEL, evt.getDeltaWheel() / (1024.0 * tpf) );
+                // The mouse wheel is kind of a special case because the
+                // spinning tends to have hard-stops that make the progressions
+                // in even increments.  So it doesn't act analog.  We'll just
+                // hardcode a divisor to get it typically in the 1.0 range (based
+                // on experimentation)
+                instantUpdate( Axis.MOUSE_WHEEL, evt.getDeltaWheel() / 120.0 );    
                 }
             if( evt.getDX() != 0 )
                 {
-//System.out.println( "mouse X:" + evt.getDX() + "  tpf:" + tpf );                 
                 instantUpdate( Axis.MOUSE_X, evt.getDX() / (1024.0 * tpf) ); 
                 } 
             if( evt.getDY() != 0 )
                 {
-//System.out.println( "mouse Y:" + evt.getDY() + "  tpf:" + tpf  );                 
                 instantUpdate( Axis.MOUSE_Y, evt.getDY() / (1024.0 * tpf) ); 
                 } 
         }
@@ -735,8 +735,6 @@ System.out.println( "---- ----------deactivate:" + group );
             if( index == null )
                 return;
             double value = evt.isPressed() ? 1.0 : 0.0;
-            
-//System.out.println( "Button:" + evt.getButton() + "  value:" + value );
             
             index.updateValue(value);
         }
