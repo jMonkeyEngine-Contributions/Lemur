@@ -47,9 +47,9 @@ public class Deformations
         return new Ramp(majorAxis, minorAxis, scale);
     }
  
-    public static Cylindrical cylindrical( int majorAxis, int minorAxis, Vector3f origin, float radius, float limit )
+    public static Cylindrical cylindrical( int majorAxis, int minorAxis, Vector3f origin, float radius, float start, float limit )
     {
-        return new Cylindrical( majorAxis, minorAxis, origin, radius, limit );
+        return new Cylindrical( majorAxis, minorAxis, origin, radius, start, limit );
     }  
     
     public static class Ramp implements Deformation
@@ -87,15 +87,57 @@ public class Deformations
         private float radius;
         private int majorAxis;
         private int minorAxis;
+        private float start;
         private float limit;
         
-        public Cylindrical( int majorAxis, int minorAxis, Vector3f origin, float radius, float limit )
+        public Cylindrical( int majorAxis, int minorAxis, Vector3f origin, float radius, float start, float limit )
         {
             this.majorAxis = majorAxis;
             this.minorAxis = minorAxis;
             this.origin = origin;
             this.radius = radius;
+            this.start = start;
             this.limit = limit;
+        }
+        
+        public void setOrigin( Vector3f origin )
+        {
+            this.origin = origin;
+        }
+        
+        public Vector3f getOrigin()
+        {
+            return origin;
+        }
+        
+        public void setRadius( float radius )
+        {
+            this.radius = radius;
+        }
+        
+        public float getRadius()
+        {
+            return radius;
+        }
+ 
+        public void setStart( float start )
+        {
+            this.start = start;
+        }
+        
+        public float getStart()
+        {
+            return start;
+        }
+        
+        public void setLimit( float limit )
+        {
+            this.limit = limit;
+        }
+        
+        public float getLimit()
+        {
+            return limit;
         }
         
         public void deform( Vector3f vert, Vector3f normal )
@@ -103,7 +145,10 @@ public class Deformations
             // Y will correspond to the perimeter of the circle
             // so that cos() and sin() make sense. 
             float x = vert.get(minorAxis) - origin.get(minorAxis);
-            float y = vert.get(majorAxis) - origin.get(majorAxis);
+            float base = Math.min(origin.get(majorAxis), start); 
+            float y = vert.get(majorAxis) - base;
+            if( y < 0 )
+                return;
  
             float projection = 0;
             if( y > limit )
@@ -125,7 +170,7 @@ public class Deformations
             float r = Math.abs(x);            
             
             vert.set( minorAxis, origin.get(minorAxis) + xd * r );
-            vert.set( majorAxis, origin.get(majorAxis) + yd * r );
+            vert.set( majorAxis, base + yd * r );
             
             // Now we need to fix the normal, too.
             // xd, yd sort of form a new x-axis...
