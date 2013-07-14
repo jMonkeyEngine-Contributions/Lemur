@@ -174,7 +174,7 @@ public class BasicDemo extends SimpleApplication {
         geom.setMaterial(mat);
         rootNode.attachChild( geom );
         
-        // Just testing something...
+        // A draggable bordered panel
         Container testPanel = new Container();
         testPanel.setPreferredSize( new Vector3f(200, 200,0) );
         testPanel.setBackground( TbtQuadBackgroundComponent.create( "/com/simsilica/lemur/icons/border.png",
