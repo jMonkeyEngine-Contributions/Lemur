@@ -37,6 +37,7 @@ package com.simsilica.lemur;
 import com.jme3.renderer.Camera;
 import com.jme3.renderer.queue.GeometryComparator;
 import com.jme3.scene.Geometry;
+import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
 
 /**
@@ -49,6 +50,7 @@ import com.jme3.scene.Spatial;
 public class LayerComparator implements GeometryComparator 
 {
     public static final String LAYER = "layer";
+    public static final String EFFECTIVE_LAYER = "effectiveLayer";
 
     private GeometryComparator delegate;
     private int bias;
@@ -62,6 +64,34 @@ public class LayerComparator implements GeometryComparator
     {
         this.delegate = delegate;
         this.bias = -bias;
+    }
+
+    public static void setLayer( Spatial s, int layer )
+    {
+        s.setUserData( LAYER, layer );
+    }
+
+    public static void resetLayer( Spatial s, int layer )
+    {
+        setLayer( layer );
+ 
+        // Need to clear the effective layer for the geometry children
+        clearEffectiveLayer(s);
+    }
+
+    public static Integer getLayer( Spatial s )
+    {
+        return s.getUserData(LAYER);
+    } 
+
+    public static void clearEffectiveLayer( Spatial s )
+    {
+        s.setUserData( EFFECTIVE_LAYER, null );
+        if( s instanceof Node )
+            {
+            for( Spatial child : ((Node)s).getChildren() )
+                clearEffectiveLayer(child);
+            }
     }
 
     public void setCamera(Camera cam) 
@@ -95,7 +125,6 @@ public class LayerComparator implements GeometryComparator
             return d;
         d = calculateEffectiveLayer(g);
         g.setUserData("effectiveLayer", d);
-        //System.out.println(g + "  effective layer:" + d);
         return d;
     }
 
