@@ -54,6 +54,20 @@ public class LightingMaterialAdapter implements GuiMaterial
         this.material = mat;
     }
     
+    public LightingMaterialAdapter clone()
+    {    
+        try
+            {
+            LightingMaterialAdapter result = (LightingMaterialAdapter)super.clone();
+            result.material = material.clone();
+            return result;
+            }
+        catch( CloneNotSupportedException e )
+            {
+            throw new RuntimeException( "Error cloning", e );
+            }
+    }
+    
     public boolean isLit()
     {
         return true;

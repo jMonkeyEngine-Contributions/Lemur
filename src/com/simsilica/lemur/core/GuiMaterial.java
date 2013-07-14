@@ -46,8 +46,9 @@ import com.jme3.texture.Texture;
  *  
  *  @author    Paul Speed
  */
-public interface GuiMaterial
+public interface GuiMaterial extends Cloneable
 {
+    public GuiMaterial clone();
     public boolean isLit();
     public void setColor( ColorRGBA color );
     public ColorRGBA getColor();

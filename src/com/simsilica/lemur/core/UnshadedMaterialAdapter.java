@@ -54,6 +54,20 @@ public class UnshadedMaterialAdapter implements GuiMaterial
         this.material = mat;
     }
     
+    public UnshadedMaterialAdapter clone()
+    {    
+        try
+            {
+            UnshadedMaterialAdapter result = (UnshadedMaterialAdapter)super.clone();
+            result.material = material.clone();
+            return result;
+            }
+        catch( CloneNotSupportedException e )
+            {
+            throw new RuntimeException( "Error cloning", e );
+            }
+    }
+        
     public boolean isLit()
     {
         return false;
