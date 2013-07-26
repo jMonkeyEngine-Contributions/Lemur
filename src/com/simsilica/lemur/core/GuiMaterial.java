@@ -40,14 +40,13 @@ import com.jme3.texture.Texture;
 
 
 /**
- *  Wraps a regular JME Material to provide general 
+ *  Wraps a regular JME Material to provide general
  *  access to paramaters that a UI would find useful
  *  like color, etc.
- *  
+ *
  *  @author    Paul Speed
  */
-public interface GuiMaterial extends Cloneable
-{
+public interface GuiMaterial extends Cloneable {
     public GuiMaterial clone();
     public boolean isLit();
     public void setColor( ColorRGBA color );

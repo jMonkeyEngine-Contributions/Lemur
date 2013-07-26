@@ -36,11 +36,11 @@ package com.simsilica.lemur.core;
 
 
 /**
+ *  Implemented by classes that can receive GUI focus.
  *
  *  @author    Paul Speed
  */
-public interface FocusTarget
-{
+public interface FocusTarget {
     public void focusGained();
     public void focusLost();
 }

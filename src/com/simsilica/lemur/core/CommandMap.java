@@ -36,43 +36,42 @@ package com.simsilica.lemur.core;
 
 import java.util.*;
 import java.util.concurrent.*;
+
 import com.simsilica.lemur.Command;
 
 /**
+ *  A general mapping of source to some list of Command objects.  This
+ *  can be useful for things like action maps and so forth, where some
+ *  action type gets mapped to caller configured commands.
  *
  *  @author    Paul Speed
  */
-public class CommandMap<S,K> extends HashMap<K, List<Command<? super S>>>
-{
+public class CommandMap<S,K> extends HashMap<K, List<Command<? super S>>> {
     private S source;
-    
-    public CommandMap( S source )
-    {
+
+    public CommandMap( S source ) {
         this.source = source;
     }
- 
-    public void runCommands( K key )
-    {
-        List<Command<? super S>> list = get( key, false );
+
+    public void runCommands( K key ) {
+        List<Command<? super S>> list = get(key, false);
         if( list == null )
             return;
-        for( Command<? super S> c : list )
+        for( Command<? super S> c : list ) {
             c.execute(source);
+        }
     }
-    
-    public void addCommands( K key, Command<? super S>... commands )
-    {
-        get(key, true).addAll( Arrays.asList(commands) );
-    } 
-       
-    public List<Command<? super S>> get( K key, boolean create )
-    {
+
+    public void addCommands( K key, Command<? super S>... commands ) {
+        get(key, true).addAll(Arrays.asList(commands));
+    }
+
+    public List<Command<? super S>> get( K key, boolean create ) {
         List<Command<? super S>> result = super.get(key);
-        if( result == null && create )
-            {
+        if( result == null && create ) {
             result = new CopyOnWriteArrayList<Command<? super S>>();
-            super.put(key, result); 
-            }
+            super.put(key, result);
+        }
         return result;
     }
 }

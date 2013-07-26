@@ -36,35 +36,46 @@ package com.simsilica.lemur.core;
 
 
 /**
+ *  Tracks an update version of a VersionedObject and can
+ *  provide basic change tracking for a caller.  Calling code
+ *  can hold a VersionedReference to some value and call
+ *  update() to update the local version field and detect
+ *  if the version has changed since the last check.
+ *
+ *  <p>This is an upside-down way of doing change notification
+ *  that does not have the event overhead or listener-leak
+ *  potential of a typical event/listener framework.  It is
+ *  not appropriate for all cases but can be used in cases
+ *  where values are often changed frequently and/or it's ok
+ *  to ignore stacks of events in favor of the latest value.
+ *  Common applications are things like sliders, document models,
+ *  etc. for which some view will update itself only when the
+ *  watched object changes, but otherwise doesn't care about
+ *  the specific granularity of events.</p>
  *
  *  @author    Paul Speed
  */
-public class VersionedReference<T>
-{
+public class VersionedReference<T> {
     private VersionedObject<T> object;
     private long lastVersion = -1;
-    
-    public VersionedReference( VersionedObject<T> object )
-    {
+
+    public VersionedReference( VersionedObject<T> object ) {
         this.object = object;
         this.lastVersion = object.getVersion();
     }
- 
-    public boolean needsUpdate()
-    {
+
+    public boolean needsUpdate() {
         return lastVersion != object.getVersion();
     }
- 
-    public boolean update()
-    {
+
+    public boolean update() {
         if( lastVersion == object.getVersion() )
             return false;
         lastVersion = object.getVersion();
         return true;
     }
-    
-    public T get()
-    {
+
+    public T get() {
         return object.getObject();
     }
 

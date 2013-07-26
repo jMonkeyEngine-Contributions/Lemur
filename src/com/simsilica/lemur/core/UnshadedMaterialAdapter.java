@@ -40,74 +40,66 @@ import com.jme3.texture.Texture;
 
 
 /**
+ *  GuiMaterial wrapper for JME's default Unshaded material.
  *
  *  @author    Paul Speed
  */
-public class UnshadedMaterialAdapter implements GuiMaterial
-{
+public class UnshadedMaterialAdapter implements GuiMaterial {
     private Material material;
     private ColorRGBA color;
     private Texture texture;
-    
-    public UnshadedMaterialAdapter( Material mat )
-    {
+
+    public UnshadedMaterialAdapter( Material mat ) {
         this.material = mat;
     }
-    
-    public UnshadedMaterialAdapter clone()
-    {    
-        try
-            {
+
+    @Override
+    public UnshadedMaterialAdapter clone() {
+        try {
             UnshadedMaterialAdapter result = (UnshadedMaterialAdapter)super.clone();
             result.material = material.clone();
             return result;
-            }
-        catch( CloneNotSupportedException e )
-            {
-            throw new RuntimeException( "Error cloning", e );
-            }
+        } catch( CloneNotSupportedException e ) {
+            throw new RuntimeException("Error cloning", e);
+        }
     }
-        
-    public boolean isLit()
-    {
+
+    public boolean isLit() {
         return false;
     }
-    
-    public void setColor( ColorRGBA color )
-    {
+
+    public void setColor( ColorRGBA color ) {
         this.color = color;
-        if( color == null )
+        if( color == null ) {
             material.clearParam("Color");
-        else
-            material.setColor( "Color", color );
+        } else {
+            material.setColor("Color", color);
+        }
     }
-    
-    public ColorRGBA getColor()
-    {
+
+    public ColorRGBA getColor() {
         return color;
     }
 
-    public void setTexture( Texture t )
-    {
+    public void setTexture( Texture t ) {
         this.texture = t;
-        if( texture == null )   
+        if( texture == null ) {
             material.clearParam("ColorMap");
-        else
+        } else {
             material.setTexture("ColorMap", texture);
+        }
     }
-    
-    public Texture getTexture()
-    {
+
+    public Texture getTexture() {
         return texture;
     }
-    
-    public Material getMaterial()
-    {
+
+    public Material getMaterial() {
         return material;
     }
-    
-    public String toString()
-    {
+
+    @Override
+    public String toString() {
         return getClass().getName() + "[" + material + "]";
     }
 }

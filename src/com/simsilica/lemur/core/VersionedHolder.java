@@ -36,36 +36,35 @@ package com.simsilica.lemur.core;
 
 
 /**
+ *  A utility implementation of a simple VersionedObject wrapper
+ *  object.  This provides easy support for a VersionedObject especially
+ *  in cases where a referring class will have several  separately
+ *  versioned values.
  *
  *  @author    Paul Speed
  */
-public class VersionedHolder<T> implements VersionedObject<T>
-{
+public class VersionedHolder<T> implements VersionedObject<T> {
+
     private T value;
     private long version;
-    
-    public VersionedHolder()
-    {
+
+    public VersionedHolder() {
     }
-    
-    public VersionedHolder(T initialValue)
-    {
+
+    public VersionedHolder(T initialValue) {
         this.value = initialValue;
     }
-    
-    public long getVersion()
-    {
+
+    public long getVersion() {
         return version;
     }
- 
-    public void setObject( T value )
-    {
+
+    public void setObject( T value ) {
         this.value = value;
         incrementVersion();
     }
-    
-    public boolean updateObject( T value )
-    {
+
+    public boolean updateObject( T value ) {
         if( this.value == value )
             return false;
         if( this.value != null && this.value.equals(value) )
@@ -73,19 +72,16 @@ public class VersionedHolder<T> implements VersionedObject<T>
         setObject(value);
         return true;
     }
- 
-    public void incrementVersion()
-    {
+
+    public void incrementVersion() {
         version++;
     }
- 
-    public T getObject()
-    {
+
+    public T getObject() {
         return value;
     }
- 
-    public VersionedReference<T> createReference()
-    {
+
+    public VersionedReference<T> createReference() {
         return new VersionedReference<T>(this);
-    }    
+    }
 }

@@ -42,12 +42,13 @@ import com.jme3.util.SafeArrayList;
 
 
 /**
+ *  Manages a component stack, the parent/child relationship, and other
+ *  standard GuiControl functionality.
  *
  *  @author    Paul Speed
  */
 public class GuiControl extends AbstractNodeControl<GuiControl>
-                        implements FocusTarget
-{
+                        implements FocusTarget {
     private SafeArrayList<GuiComponent> components = new SafeArrayList<GuiComponent>(GuiComponent.class);
     private GuiComponent layout;
     private volatile boolean invalid = false;
@@ -55,243 +56,229 @@ public class GuiControl extends AbstractNodeControl<GuiControl>
     private Vector3f preferredSizeOverride = null;
     private Vector3f lastSize = new Vector3f();
 
-    public GuiControl( GuiComponent... components )
-    {
-        this.components.addAll( Arrays.asList(components) );
+    public GuiControl( GuiComponent... components ) {
+        this.components.addAll(Arrays.asList(components));
     }
 
     @Override
-    public Node getNode()
-    {
+    public Node getNode() {
         return super.getNode();
     }
-    
-    public void focusGained()
-    {
-        for( GuiComponent c : components )
-            {
-            if( c instanceof FocusTarget )
+
+    public void focusGained() {
+        for( GuiComponent c : components ) {
+            if( c instanceof FocusTarget ) {
                 ((FocusTarget)c).focusGained();
-            }                                   
-        if( layout instanceof FocusTarget )
+            }
+        }
+        if( layout instanceof FocusTarget ) {
             ((FocusTarget)layout).focusGained();
-    }
-    
-    public void focusLost()
-    {
-        for( GuiComponent c : components )
-            {
-            if( c instanceof FocusTarget )
-                ((FocusTarget)c).focusLost();
-            }                                   
-        if( layout instanceof FocusTarget )
-            ((FocusTarget)layout).focusLost();
+        }
     }
 
-    public void setLayout( GuiLayout l )
-    {
+    public void focusLost() {
+        for( GuiComponent c : components ) {
+            if( c instanceof FocusTarget ) {
+                ((FocusTarget)c).focusLost();
+            }
+        }
+        if( layout instanceof FocusTarget ) {
+            ((FocusTarget)layout).focusLost();
+        }
+    }
+
+    public void setLayout( GuiLayout l ) {
         if( this.layout == l )
             return;
-            
-        if( this.layout != null )
-            {
-            if( getNode() != null )
+
+        if( this.layout != null ) {
+            if( getNode() != null ) {
                 layout.detach(this);
             }
+        }
         this.layout = l;
-        if( getNode() != null )
-            {
+        if( getNode() != null ) {
             // We are attached so attach the layout too
             layout.attach(this);
-            }
+        }
         invalidate();
     }
 
-    public <T extends GuiLayout> T getLayout()
-    {
+    public <T extends GuiLayout> T getLayout() {
         return (T)layout;
     }
 
-    public void setPreferredSize( Vector3f pref )
-    {
+    public void setPreferredSize( Vector3f pref ) {
         this.preferredSizeOverride = pref;
         invalidate();
     }
 
-    public Vector3f getPreferredSize()
-    {
+    public Vector3f getPreferredSize() {
         if( preferredSizeOverride != null )
             return preferredSizeOverride;
-            
-        Vector3f size = new Vector3f();        
-        if( layout != null )
+
+        Vector3f size = new Vector3f();
+        if( layout != null ) {
             layout.calculatePreferredSize(size);
-        for( int i = components.size() - 1; i >= 0; i-- )
+        }
+        for( int i = components.size() - 1; i >= 0; i-- ) {
             components.get(i).calculatePreferredSize(size);
+        }
         return size;
     }
 
-    public void setSize( Vector3f size )
-    {
+    public void setSize( Vector3f size ) {
         lastSize.set(size);
         Vector3f offset = new Vector3f();
-        for( GuiComponent c : components )
-            c.reshape(offset, size);                                   
-        if( layout != null )
+        for( GuiComponent c : components ) {
+            c.reshape(offset, size);
+        }
+        if( layout != null ) {
             layout.reshape(offset, size);
+        }
     }
 
-    public Vector3f getSize()
-    {
+    public Vector3f getSize() {
         return lastSize;
     }
 
-    public List<GuiComponent> getComponents()
-    {
+    public List<GuiComponent> getComponents() {
         return components;
     }
 
-    public <T extends GuiComponent> T addComponent( T c )
-    {
+    public <T extends GuiComponent> T addComponent( T c ) {
         components.add(c);
-        
-        if( getNode() != null )
+
+        if( getNode() != null ) {
             c.attach(this);
-        
+        }
+
         invalidate();
         return c;
     }
 
-    public <T extends GuiComponent> T addComponent( int i, T c )
-    {
+    public <T extends GuiComponent> T addComponent( int i, T c ) {
         components.add(i, c);
-        
-        if( getNode() != null )
+
+        if( getNode() != null ) {
             c.attach(this);
-        
+        }
+
         invalidate();
         return c;
     }
 
-    public <T extends GuiComponent> T addComponent( String key, T c )
-    {
+    public <T extends GuiComponent> T addComponent( String key, T c ) {
         addComponent(c);
-        index.put( key, c );
+        index.put(key, c);
         return c;
     }
 
-    public <T extends GuiComponent> T addComponent( int i, String key, T c )
-    {
+    public <T extends GuiComponent> T addComponent( int i, String key, T c ) {
         addComponent(i, c);
-        index.put( key, c );
+        index.put(key, c);
         return c;
     }
- 
-    public int getComponentIndex( GuiComponent c )
-    {
+
+    public int getComponentIndex( GuiComponent c ) {
         return components.indexOf(c);
     }
- 
-    public int getComponentIndex( String... keys )
-    {
-        for( String key : keys )
-            {
+
+    public int getComponentIndex( String... keys ) {
+        for( String key : keys ) {
             GuiComponent c = getComponent(key);
-            if( c != null )
+            if( c != null ) {
                 return components.indexOf(c);
             }
+        }
         return -1;
     }
- 
-    public GuiComponent getFirstComponent( String... keys )
-    {
-        for( String s : keys )
-            {
+
+    public GuiComponent getFirstComponent( String... keys ) {
+        for( String s : keys ) {
             GuiComponent result = index.get(s);
             if( result != null )
                 return result;
-            }
+        }
         return null;
     }
- 
-    public <T extends GuiComponent> T insertComponent( T c, GuiComponent before )
-    {
+
+    public <T extends GuiComponent> T insertComponent( T c, GuiComponent before ) {
         int i = components.indexOf(before);
-        if( i < 0 )
+        if( i < 0 ) {
             components.add(c);
-        else
+        } else {
             components.add(i, c);
-        
-        if( getNode() != null )
+        }
+
+        if( getNode() != null ) {
             c.attach(this);
-        
+        }
+
         invalidate();
         return c;
     }
 
-    public <T extends GuiComponent> T insertComponent( String key, T c, GuiComponent before )
-    {
+    public <T extends GuiComponent> T insertComponent( String key, T c, GuiComponent before ) {
         insertComponent(c, before);
         index.put(key, c);
         return c;
     }
 
-    public <T extends GuiComponent> T getComponent( String key )
-    {
+    public <T extends GuiComponent> T getComponent( String key ) {
         return (T)index.get(key);
     }
 
-    public <T extends GuiComponent> T removeComponent( String key )
-    {
+    public <T extends GuiComponent> T removeComponent( String key ) {
         T result = getComponent(key);
-        if( removeComponent(result) )
+        if( removeComponent(result) ) {
             return result;
+        }
         return null;
     }
-    
-    public boolean removeComponent( GuiComponent c )
-    {
+
+    public boolean removeComponent( GuiComponent c ) {
         if( !components.remove(c) )
             return false;
         index.values().remove(c);
-        if( getNode() != null )
+        if( getNode() != null ) {
             c.detach(this);
-        
+        }
+
         invalidate();
         return true;
-    } 
+    }
 
-    protected void attach()
-    {
-        for( GuiComponent c : components )
+    protected void attach() {
+        for( GuiComponent c : components ) {
             c.attach(this);
-        if( layout != null )
+        }
+        if( layout != null ) {
             layout.attach(this);
- 
+        }
+
         revalidate();
     }
- 
+
     @Override
-    protected void controlUpdate( float tpf ) 
-    {
-        if( invalid )
+    protected void controlUpdate( float tpf ) {
+        if( invalid ) {
             revalidate();
+        }
     }
 
-    protected boolean hasParent()
-    {
+    protected boolean hasParent() {
         if( getNode() == null )
             return false;
         return getNode().getParent() != null;
     }
- 
-    protected boolean isChild()
-    {
-        return getNode().getParent() != null && getNode().getParent().getControl( GuiControl.class ) != null;
+
+    protected boolean isChild() {
+        return getNode().getParent() != null
+                && getNode().getParent().getControl(GuiControl.class) != null;
     }
- 
-    protected void revalidate()
-    {
+
+    protected void revalidate() {
         invalid = false;
 
         // It's possible that we queued up an invalidation
@@ -300,38 +287,34 @@ public class GuiControl extends AbstractNodeControl<GuiControl>
         // let the invalidation stand and detect the mistake here.
         if( isChild() )
             return;
- 
+
         // Calculate preferred size
         // we go backwards and let each previous layer
         // potentially add its own sizing.
         Vector3f size = getPreferredSize().clone();
-        
-        // Set it to the children... now go 
+
+        // Set it to the children... now go
         // forward and let each one apply their own limits
         // for the next component.
         setSize(size);
     }
- 
-    public void invalidate()
-    {
+
+    public void invalidate() {
         if( getNode() == null )
             return; // not attached yet... no reason to be marked invalid anyway
-    
-        if( isChild() )
-            {
+
+        if( isChild() ) {
             // Our parent controls our layout
-            getNode().getParent().getControl( GuiControl.class ).invalidate();
+            getNode().getParent().getControl(GuiControl.class).invalidate();
             invalid = false;
-            }
-        else 
-            {
+        } else {
             invalid = true;
-            }        
+        }
     }
-    
-    protected void detach()
-    {
-        for( GuiComponent c : components )
+
+    protected void detach() {
+        for( GuiComponent c : components ) {
             c.detach(this);
+        }
     }
 }

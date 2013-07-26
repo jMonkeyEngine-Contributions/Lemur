@@ -38,13 +38,24 @@ import com.jme3.math.Vector3f;
 
 
 /**
+ *  A member of a component stack that provides sizing or
+ *  rendering as part of that stack.  A GuiControl manages a stack
+ *  of GuiComponents.  Each component can contribute
+ *  to the overall preferred size of the stack/control and each component
+ *  can adjust the position of the next layer in the stack.
+ *
+ *  <p>Most GuiComponent implementations will manage actual scene
+ *  graph elements.  Some may simply provide extra sizing adjustments
+ *  like the InsetsComponent.</p>
+ *
+ *  <p>See package com.simsilica.lemur.component for base GuiComponent
+ *  implementations.</p>
  *
  *  @author    Paul Speed
  */
-public interface GuiComponent
-{
+public interface GuiComponent {
     public void calculatePreferredSize( Vector3f size );
-    public void reshape(Vector3f pos, Vector3f size); 
+    public void reshape( Vector3f pos, Vector3f size );
     public void attach( GuiControl parent );
     public void detach( GuiControl parent );
     public boolean isAttached();

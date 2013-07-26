@@ -38,12 +38,13 @@ import com.jme3.scene.Node;
 
 
 /**
+ *  A specific kind of GuiComponent that can manage the layout
+ *  of a set of child GuiControl-holding nodes.
  *
  *  @author    Paul Speed
  */
-public interface GuiLayout extends GuiComponent
-{
-    public <T extends Node> T addChild( T n, Object... constraints ); 
+public interface GuiLayout extends GuiComponent {
+    public <T extends Node> T addChild( T n, Object... constraints );
     public void removeChild( Node n );
     public GuiLayout clone();
 }

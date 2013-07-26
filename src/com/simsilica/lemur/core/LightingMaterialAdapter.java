@@ -40,75 +40,67 @@ import com.jme3.texture.Texture;
 
 
 /**
+ *  GuiMaterial wrapper for JME's default Lighting material.
  *
  *  @author    Paul Speed
  */
-public class LightingMaterialAdapter implements GuiMaterial
-{
+public class LightingMaterialAdapter implements GuiMaterial {
     private Material material;
     private ColorRGBA color;
     private Texture texture;
-    
-    public LightingMaterialAdapter( Material mat )
-    {
+
+    public LightingMaterialAdapter( Material mat ) {
         this.material = mat;
     }
-    
-    public LightingMaterialAdapter clone()
-    {    
-        try
-            {
+
+    @Override
+    public LightingMaterialAdapter clone() {
+        try {
             LightingMaterialAdapter result = (LightingMaterialAdapter)super.clone();
             result.material = material.clone();
             return result;
-            }
-        catch( CloneNotSupportedException e )
-            {
-            throw new RuntimeException( "Error cloning", e );
-            }
+        } catch( CloneNotSupportedException e ) {
+            throw new RuntimeException("Error cloning", e);
+        }
     }
-    
-    public boolean isLit()
-    {
+
+    public boolean isLit() {
         return true;
     }
-    
-    public void setColor( ColorRGBA color )
-    {
+
+    public void setColor( ColorRGBA color ) {
         this.color = color;
-        if( color == null )
+        if( color == null ) {
             material.clearParam("Diffuse");
-        else
-            material.setColor( "Diffuse", color );
-        material.setBoolean( "UseMaterialColors", color != null );
+        } else {
+            material.setColor("Diffuse", color);
+        }
+        material.setBoolean("UseMaterialColors", color != null);
     }
-    
-    public ColorRGBA getColor()
-    {
+
+    public ColorRGBA getColor() {
         return color;
     }
-    
-    public void setTexture( Texture t )
-    {
+
+    public void setTexture( Texture t ) {
         this.texture = t;
-        if( texture == null )   
+        if( texture == null ) {
             material.clearParam("DiffuseMap");
-        else
+        } else {
             material.setTexture("DiffuseMap", texture);
+        }
     }
-    
-    public Texture getTexture()
-    {
+
+    public Texture getTexture() {
         return texture;
     }
-    
-    public Material getMaterial()
-    {
+
+    public Material getMaterial() {
         return material;
     }
-    
-    public String toString()
-    {
+
+    @Override
+    public String toString() {
         return getClass().getName() + "[" + material + "]";
     }
 }
