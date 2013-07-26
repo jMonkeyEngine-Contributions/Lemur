@@ -42,62 +42,54 @@ import com.simsilica.lemur.Insets3f;
  *
  *  @author    Paul Speed
  */
-public class InsetsComponent extends AbstractGuiComponent 
-                             implements Cloneable
-{
+public class InsetsComponent extends AbstractGuiComponent
+                             implements Cloneable {
     private Insets3f insets;
-    
-    public InsetsComponent( float top, float left, float bottom, float right )
-    {
+
+    public InsetsComponent( float top, float left, float bottom, float right ) {
         this( new Insets3f(top, left, bottom, right) );
     }
-    
-    public InsetsComponent( float top, float left, float bottom, float right, float front, float back )
-    {
+
+    public InsetsComponent( float top, float left, float bottom, float right,
+                            float front, float back ) {
         this( new Insets3f(top, left, bottom, right, front, back) );
     }
-    
-    public InsetsComponent( Insets3f insets )
-    {
+
+    public InsetsComponent( Insets3f insets ) {
         this.insets = insets;
     }
- 
-    public void setInsets( Insets3f insets )
-    {
+
+    public void setInsets( Insets3f insets ) {
         this.insets = insets;
         invalidate();
     }
-    
-    public Insets3f getInsets()
-    {
+
+    public Insets3f getInsets() {
         return insets;
     }
-    
+
     @Override
-    public InsetsComponent clone()
-    {
+    public InsetsComponent clone() {
         InsetsComponent result = (InsetsComponent)super.clone();
         result.insets = insets.clone();
-        return result;             
+        return result;
     }
 
-    public void calculatePreferredSize( Vector3f size )
-    {
+    public void calculatePreferredSize( Vector3f size ) {
         size.x += insets.min.x + insets.max.x;
         size.y += insets.min.y + insets.max.y;
         size.z += insets.min.z + insets.max.z;
     }
 
-    public void reshape( Vector3f pos, Vector3f size )
-    {
+    public void reshape( Vector3f pos, Vector3f size ) {
         pos.x += insets.min.x;
         pos.y -= insets.min.y;
-        pos.z += insets.min.z;    
-        
+        pos.z += insets.min.z;
+
         size.x -= insets.min.x + insets.max.x;
         size.y -= insets.min.y + insets.max.y;
         size.z -= insets.min.z + insets.max.z;
     }
-    
+
 }
 

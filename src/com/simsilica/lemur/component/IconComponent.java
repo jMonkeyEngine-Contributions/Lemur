@@ -48,12 +48,16 @@ import com.simsilica.lemur.VAlignment;
 
 
 /**
+ *  Presents an image as a stackable component that can
+ *  either by anchored to the sides and take up component
+ *  space or treated as an overlay.  If it is used as an overlay
+ *  then it will not affect the preferred size of the overall
+ *  component stack.
  *
  *  @author    Paul Speed
  */
 public class IconComponent extends AbstractGuiComponent
-                           implements Cloneable, ColoredComponent
-{
+                           implements Cloneable, ColoredComponent {
     private Geometry icon;
     private GuiMaterial material;
     private String imagePath; // really just for debugging
@@ -66,182 +70,154 @@ public class IconComponent extends AbstractGuiComponent
     private VAlignment vAlign = VAlignment.CENTER;
     private Vector3f offset = null;
     private float iconScale = 1f;
-    private boolean overlay = false;    
+    private boolean overlay = false;
     private boolean lit = false;
 
-    public IconComponent( String imagePath )
-    {
-        this( imagePath, 1f, 0, 0, 0.01f, false );
+    public IconComponent( String imagePath ) {
+        this(imagePath, 1f, 0, 0, 0.01f, false);
     }
- 
-    public IconComponent( String imagePath, float iconScale, 
-                          float xMargin, float yMargin, float zOffset, boolean lit )
-    {
+
+    public IconComponent( String imagePath, float iconScale,
+                          float xMargin, float yMargin, float zOffset,
+                          boolean lit ) {
         this.imagePath = imagePath;
         this.image = GuiGlobals.getInstance().loadTexture(imagePath, false, false);
-        this.iconScale = iconScale; 
+        this.iconScale = iconScale;
         this.xMargin = xMargin;
         this.yMargin = yMargin;
         this.zOffset = zOffset;
         this.lit = lit;
         createIcon();
-    }               
+    }
 
     @Override
-    public IconComponent clone()
-    {   
+    public IconComponent clone() {
         IconComponent result = (IconComponent)super.clone();
         result.icon = null;
         result.material = material.clone();
         result.createIcon();
         return result;
-    } 
+    }
 
     @Override
-    public void attach( GuiControl parent )
-    {
+    public void attach( GuiControl parent ) {
         super.attach(parent);
-        if( icon != null )
-            {
+        if( icon != null ) {
             getNode().attachChild(icon);
-            }
+        }
     }
-    
+
     @Override
-    public void detach( GuiControl parent )
-    {
-        if( icon != null )
-            {
+    public void detach( GuiControl parent ) {
+        if( icon != null ) {
             getNode().detachChild(icon);
-            }
+        }
         super.detach(parent);
     }
- 
-    public void setImageTexture( Texture t )
-    {
+
+    public void setImageTexture( Texture t ) {
         this.image = t;
-        if( material != null )
-            {
-            material.setTexture( image );
-            }
+        if( material != null ) {
+            material.setTexture(image);
+        }
     }
 
-    public Texture getImageTexture()
-    {
+    public Texture getImageTexture() {
         return image;
     }
-    
-    public void setColor( ColorRGBA c )
-    {
+
+    public void setColor( ColorRGBA c ) {
         this.color = c;
-        if( material != null )
-            {
-            material.setColor( c );
-            }
+        if( material != null ) {
+            material.setColor(c);
+        }
     }
 
-    public ColorRGBA getColor()
-    {
+    public ColorRGBA getColor() {
         return color;
     }
- 
-    public void setIconScale( float scale )
-    {
+
+    public void setIconScale( float scale ) {
         if( this.iconScale == scale )
             return;
         this.iconScale = scale;
-        
+
         // Not very efficient
         createIcon();
-        
+
         invalidate();
     }
-    
-    public float getIconScale()
-    {
+
+    public float getIconScale() {
         return iconScale;
     }
- 
-    public void setHAlignment( HAlignment a )
-    {
+
+    public void setHAlignment( HAlignment a ) {
         if( hAlign == a )
             return;
         hAlign = a;
         resetAlignment();
     }
-    
-    public HAlignment getHAlignment()
-    {
+
+    public HAlignment getHAlignment() {
         return hAlign;
     }
-    
-    public void setVAlignment( VAlignment a )
-    {
+
+    public void setVAlignment( VAlignment a ) {
         if( vAlign == a )
             return;
         vAlign = a;
         resetAlignment();
     }
-    
-    public VAlignment getVAlignment()
-    {
+
+    public VAlignment getVAlignment() {
         return vAlign;
     }
-     
-    public void setMargin( float x, float y )
-    {
+
+    public void setMargin( float x, float y ) {
         this.xMargin = x;
         this.yMargin = y;
-        
+
         invalidate();
     }
 
-    public Vector2f getMargin()
-    {
+    public Vector2f getMargin() {
         return new Vector2f(xMargin, yMargin);
     }
 
-    public void setZOffset( float z )
-    {
+    public void setZOffset( float z ) {
         this.zOffset = z;
         invalidate();
     }
-    
-    public float getZOffset()
-    {
+
+    public float getZOffset() {
         return zOffset;
     }
 
-    public void setOffset( Vector3f v )
-    {
+    public void setOffset( Vector3f v ) {
         this.offset = v;
     }
-    
-    public Vector3f getOffset()
-    {
+
+    public Vector3f getOffset() {
         return offset;
     }
 
-    public void setOverlay( boolean f )
-    {
+    public void setOverlay( boolean f ) {
         if( this.overlay == f )
             return;
         this.overlay = f;
         invalidate();
     }
-    
-    public boolean isOverlay()
-    {
+
+    public boolean isOverlay() {
         return overlay;
     }
 
-    public GuiMaterial getMaterial()
-    {
+    public GuiMaterial getMaterial() {
         return material;
     }
 
-    public void calculatePreferredSize( Vector3f size )
-    {
+    public void calculatePreferredSize( Vector3f size ) {
         if( overlay )
             return;
 
@@ -249,9 +225,8 @@ public class IconComponent extends AbstractGuiComponent
         // the size of the image.
         float width = iconScale * image.getImage().getWidth() + xMargin * 2;
         float height = iconScale * image.getImage().getHeight() + yMargin * 2;
-        
-        switch( vAlign )
-            {
+
+        switch( vAlign ) {
             case TOP:
             case BOTTOM:
                 // Both of these will add to the existing size
@@ -262,10 +237,9 @@ public class IconComponent extends AbstractGuiComponent
                 // big enough
                 size.y = Math.max(height, size.y);
                 break;
-            }
+        }
 
-        switch( hAlign )
-            {
+        switch( hAlign ) {
             case LEFT:
             case RIGHT:
                 // Both of these will add to the existing size
@@ -276,108 +250,97 @@ public class IconComponent extends AbstractGuiComponent
                 // big enough
                 size.x = Math.max(width, size.x);
                 break;
-            }
+        }
 
         size.z += Math.abs(zOffset);
     }
 
-    public void reshape( Vector3f pos, Vector3f size )
-    {
+    public void reshape( Vector3f pos, Vector3f size ) {
         float width = iconScale * image.getImage().getWidth();
         float height = iconScale * image.getImage().getHeight();
         float boxWidth = width + xMargin * 2;
         float boxHeight = height + yMargin * 2;
-    
+
         float cx = 0;
         float cy = 0;
-        
-        switch( hAlign )
-            {
+
+        switch( hAlign ) {
             case LEFT:
                 cx = pos.x + boxWidth * 0.5f;
-                if( !overlay )
-                    {
+                if( !overlay ) {
                     pos.x += boxWidth;
                     size.x -= boxWidth;
-                    }
+                }
                 break;
             case RIGHT:
                 cx = (pos.x + size.x) - boxWidth * 0.5f;
-                if( !overlay )
-                    {
+                if( !overlay ) {
                     size.x -= boxWidth;
-                    }
+                }
                 break;
             case CENTER:
                 cx = pos.x + size.x * 0.5f;
-                break;                
-            }
+                break;
+        }
 
-        switch( vAlign )
-            {
+        switch( vAlign ) {
             case TOP:
                 cy = pos.y - boxHeight * 0.5f;
-                if( !overlay )
-                    {
+                if( !overlay ) {
                     pos.y -= boxHeight;
                     size.y -= boxHeight;
-                    }
+                }
                 break;
             case BOTTOM:
                 cy = (pos.y - size.y) + boxWidth * 0.5f;
-                if( !overlay )
-                    {
+                if( !overlay ) {
                     size.y -= boxHeight;
-                    }
+                }
                 break;
             case CENTER:
                 cy = pos.y - size.y * 0.5f;
-                break;                
-            }
-         
-        icon.setLocalTranslation( cx - width * 0.5f, cy - height * 0.5f, pos.z );
+                break;
+        }
+
+        icon.setLocalTranslation(cx - width * 0.5f, cy - height * 0.5f, pos.z);
         if( offset != null )
             icon.move(offset);
-            
-        pos.z += zOffset;    
+
+        pos.z += zOffset;
         size.z -= Math.abs(zOffset);
-        
-        icon.setCullHint( CullHint.Inherit );
+
+        icon.setCullHint(CullHint.Inherit);
     }
 
-    protected void resetAlignment()
-    {
+    protected void resetAlignment() {
         invalidate();
     }
 
-    protected void createIcon()
-    {
+    protected void createIcon() {
         float width = iconScale * image.getImage().getWidth();
-        float height = iconScale * image.getImage().getHeight();       
+        float height = iconScale * image.getImage().getHeight();
         Quad q = new Quad(width, height);
         icon = new Geometry("icon:" + imagePath, q);
-        if( material == null )
-            {
-            material = GuiGlobals.getInstance().createMaterial( lit );
+        if( material == null ) {
+            material = GuiGlobals.getInstance().createMaterial(lit);
             material.setColor(color);
             material.setTexture(image);
-            
-            material.getMaterial().getAdditionalRenderState().setBlendMode( BlendMode.Alpha );
-            material.getMaterial().getAdditionalRenderState().setAlphaTest( true );
-            material.getMaterial().getAdditionalRenderState().setAlphaFallOff( 0.01f );
-            }
-            
+
+            material.getMaterial().getAdditionalRenderState().setBlendMode(BlendMode.Alpha);
+            material.getMaterial().getAdditionalRenderState().setAlphaTest(true);
+            material.getMaterial().getAdditionalRenderState().setAlphaFallOff(0.01f);
+        }
+
         icon.setMaterial(material.getMaterial());
 
         // Leave it invisible until the first time we are reshaped.
         // Without this, there is a noticeable one-frame jump from
         // 0,0,0 to it's proper position.
-        icon.setCullHint( CullHint.Always );
-        
+        icon.setCullHint(CullHint.Always);
+
         // Just in case but it should never happen
-        if( isAttached() )
-            {
+        if( isAttached() ) {
             getNode().attachChild(icon);
-            }        
+        }
     }
 }

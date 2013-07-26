@@ -41,8 +41,7 @@ import com.jme3.math.ColorRGBA;
  *
  *  @author    Paul Speed
  */
-public interface ColoredComponent
-{
+public interface ColoredComponent {
     public void setColor( ColorRGBA color );
     public ColorRGBA getColor();
 }

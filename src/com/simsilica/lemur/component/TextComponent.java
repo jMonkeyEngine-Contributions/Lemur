@@ -45,27 +45,26 @@ import com.simsilica.lemur.VAlignment;
 
 
 /**
+ *  A component that renders a text string with a particular
+ *  alignment and offset.
  *
  *  @author    Paul Speed
  */
 public class TextComponent extends AbstractGuiComponent
-                           implements ColoredComponent
-{
+                           implements ColoredComponent {
     private BitmapText bitmapText;
     private Rectangle textBox;
     private HAlignment hAlign = HAlignment.LEFT;
     private VAlignment vAlign = VAlignment.TOP;
     private Vector3f offset = null;
 
-    public TextComponent( String text, BitmapFont font )
-    {
+    public TextComponent( String text, BitmapFont font ) {
         this.bitmapText = new BitmapText(font);
         setText(text);
     }
 
     @Override
-    public TextComponent clone()
-    {   
+    public TextComponent clone() {   
         TextComponent result = (TextComponent)super.clone();
         result.bitmapText = bitmapText.clone();
         result.textBox = null;
@@ -73,21 +72,18 @@ public class TextComponent extends AbstractGuiComponent
     } 
 
     @Override
-    public void attach( GuiControl parent )
-    {
+    public void attach( GuiControl parent ) {
         super.attach(parent);
         getNode().attachChild(bitmapText);
     }
     
     @Override
-    public void detach( GuiControl parent )
-    {
+    public void detach( GuiControl parent ) {
         getNode().detachChild(bitmapText);
         super.detach(parent);
     }
     
-    public void setText( String text )
-    {
+    public void setText( String text ) {
         if( text != null && text.equals(bitmapText.getText()) )
             return;
             
@@ -95,39 +91,33 @@ public class TextComponent extends AbstractGuiComponent
         invalidate();
     }
     
-    public String getText()
-    {
+    public String getText() {
         return bitmapText.getText();
     }
  
-    public void setHAlignment( HAlignment a )
-    {
+    public void setHAlignment( HAlignment a ) {
         if( hAlign == a )
             return;
         hAlign = a;
         resetAlignment();
     }
     
-    public HAlignment getHAlignment()
-    {
+    public HAlignment getHAlignment() {
         return hAlign;
     }
     
-    public void setVAlignment( VAlignment a )
-    {
+    public void setVAlignment( VAlignment a ) {
         if( vAlign == a )
             return;
         vAlign = a;
         resetAlignment();
     }
     
-    public VAlignment getVAlignment()
-    {
+    public VAlignment getVAlignment() {
         return vAlign;
     }
  
-    public void setFont( BitmapFont font )
-    {
+    public void setFont( BitmapFont font ) {
         if( isAttached() )
             bitmapText.removeFromParent();
             
@@ -148,48 +138,40 @@ public class TextComponent extends AbstractGuiComponent
             getNode().attachChild(bitmapText);
     }
     
-    public BitmapFont getFont()
-    {
+    public BitmapFont getFont() {
         return bitmapText.getFont();
     }
  
-    public void setFontSize( float size )
-    {
+    public void setFontSize( float size ) {
         if( bitmapText.getSize() == size )
             return;
         bitmapText.setSize(size);
         invalidate();      
     }
     
-    public float getFontSize()
-    {
+    public float getFontSize() {
         return bitmapText.getSize();
     }
     
-    public void setColor( ColorRGBA color )
-    {
+    public void setColor( ColorRGBA color ) {
         bitmapText.setColor(color);
     }
     
-    public ColorRGBA getColor()
-    {
+    public ColorRGBA getColor() {
         return bitmapText.getColor();
     }
     
-    public TextComponent color( ColorRGBA color )
-    {
+    public TextComponent color( ColorRGBA color ) {
         setColor(color);
         return this;
     }
 
-    public TextComponent offset( float x, float y, float z )
-    {
+    public TextComponent offset( float x, float y, float z ) {
         setOffset(x,y,z);
         return this;
     }
 
-    public void setOffset( float x, float y, float z )
-    {
+    public void setOffset( float x, float y, float z ) {
         if( offset == null )
             offset = new Vector3f(x,y,z);
         else
@@ -197,19 +179,16 @@ public class TextComponent extends AbstractGuiComponent
         invalidate();
     }
     
-    public void setOffset( Vector3f offset )
-    {
+    public void setOffset( Vector3f offset ) {
         this.offset = offset.clone();
         invalidate();
     }
     
-    public Vector3f getOffset()
-    {
+    public Vector3f getOffset() {
         return offset;
     }
 
-    public void setTextSize( float f )
-    {
+    public void setTextSize( float f ) {
         this.bitmapText.setSize(f);
     }
     
@@ -218,10 +197,9 @@ public class TextComponent extends AbstractGuiComponent
         return bitmapText.getSize();
     }
  
-    public void reshape(Vector3f pos, Vector3f size)
-    {
-        if( offset != null )
-            {
+    public void reshape( Vector3f pos, Vector3f size ) {
+    
+        if( offset != null ) {        
             // My gut is that we need to treat positive and negative
             // differently...  I will need to think about that some more
             // or have some examples where this is failing.
@@ -235,18 +213,15 @@ public class TextComponent extends AbstractGuiComponent
             size.x -= Math.abs(offset.x);
             size.y -= Math.abs(offset.y);            
             size.z -= Math.abs(offset.z);            
-            }
-        else    
-            {
+        } else {
             bitmapText.setLocalTranslation(pos.x, pos.y, pos.z);
-            }
+        }
         textBox = new Rectangle(0, 0, size.x, size.y);         
         bitmapText.setBox( textBox );
         resetAlignment();        
     } 
 
-    public void calculatePreferredSize( Vector3f size )
-    {
+    public void calculatePreferredSize( Vector3f size ) {
         // Make sure that the bitmapText reports a reliable
         // preferred size 
         bitmapText.setBox(null);
@@ -254,45 +229,41 @@ public class TextComponent extends AbstractGuiComponent
         size.x = bitmapText.getLineWidth();
         size.y = bitmapText.getHeight();
  
-        if( offset != null )
-            {
+        if( offset != null ) {
             size.x += Math.abs(offset.x);
             size.y += Math.abs(offset.y);
             size.z += Math.abs(offset.z);
-            }
+        }
             
         // Reset any text box we already had
         bitmapText.setBox(textBox);
     }
 
-    protected void resetAlignment()
-    {
+    protected void resetAlignment() {
         if( textBox == null )
             return;
             
-        switch( hAlign )
-            {
+        switch( hAlign ) {
             case LEFT:
-                bitmapText.setAlignment( Align.Left );
+                bitmapText.setAlignment(Align.Left);
                 break;
             case RIGHT:
-                bitmapText.setAlignment( Align.Right );
+                bitmapText.setAlignment(Align.Right);
                 break;
             case CENTER:
-                bitmapText.setAlignment( Align.Center );
+                bitmapText.setAlignment(Align.Center);
                 break;
-            }
-        switch( vAlign )
-            {
+        }
+        switch( vAlign ) {
             case TOP:
-                bitmapText.setVerticalAlignment( VAlign.Top );
+                bitmapText.setVerticalAlignment(VAlign.Top);
                 break; 
             case BOTTOM:
-                bitmapText.setVerticalAlignment( VAlign.Bottom );
+                bitmapText.setVerticalAlignment(VAlign.Bottom);
                 break; 
             case CENTER:
-                bitmapText.setVerticalAlignment( VAlign.Center );
+                bitmapText.setVerticalAlignment(VAlign.Center);
                 break; 
-            }   
+        }   
     }
 }

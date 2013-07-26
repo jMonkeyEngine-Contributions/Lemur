@@ -44,12 +44,16 @@ import com.simsilica.lemur.core.GuiControl;
 import com.simsilica.lemur.core.GuiLayout;
 
 /**
+ *  A layout that manages children similar to Swing's BoxLayout.
+ *  Components are arranged along an Axis and the children are
+ *  stretched to fit the maximum component width.  This is similar
+ *  to a single column or single row SpringGridLayout and in the
+ *  future may be deprecated in lieu of that class.
  *
  *  @author    Paul Speed
  */
-public class BoxLayout extends AbstractGuiComponent 
-                       implements GuiLayout, Cloneable
-{
+public class BoxLayout extends AbstractGuiComponent
+                       implements GuiLayout, Cloneable {
     private GuiControl parent;
     private Axis axis;
     private FillMode fill;
@@ -57,19 +61,17 @@ public class BoxLayout extends AbstractGuiComponent
     private List<Vector3f> preferredSizes = new ArrayList<Vector3f>();
     private Vector3f lastPreferredSize;
 
-    public BoxLayout()
-    {
-        this( Axis.Y, FillMode.EVEN );
+    public BoxLayout() {
+        this(Axis.Y, FillMode.EVEN);
     }
-    
-    public BoxLayout( Axis axis, FillMode fill )
-    {
+
+    public BoxLayout( Axis axis, FillMode fill ) {
         this.axis = axis;
         this.fill = fill;
-    }    
- 
-    public BoxLayout clone()
-    {   
+    }
+
+    @Override
+    public BoxLayout clone() {
         BoxLayout result = (BoxLayout)super.clone();
         result.parent = null;
         result.children = new ArrayList<Node>();
@@ -77,30 +79,27 @@ public class BoxLayout extends AbstractGuiComponent
         result.lastPreferredSize = null;
         return result;
     }
- 
-    protected void invalidate()
-    {
+
+    @Override
+    protected void invalidate() {
         if( parent != null )
-            parent.invalidate();   
+            parent.invalidate();
     }
-   
-    public void calculatePreferredSize( Vector3f size )
-    {
+
+    public void calculatePreferredSize( Vector3f size ) {
         // Calculate the size we'd like to be to let
         // all of the children have space
         Vector3f pref = new Vector3f();
         preferredSizes.clear();
-        for( Node n : children )
-            {
+        for( Node n : children ) {
             Vector3f v = n.getControl(GuiControl.class).getPreferredSize();
- 
+
             preferredSizes.add(v.clone());
-            
+
             // We do a little trickery here by adding the
             // axis direction to the returned preferred size.
-            // That way we can just "max" the whole thing.           
-            switch( axis )
-                {
+            // That way we can just "max" the whole thing.
+            switch( axis ) {
                 case X:
                     v.x += pref.x;
                     break;
@@ -110,28 +109,27 @@ public class BoxLayout extends AbstractGuiComponent
                 case Z:
                     v.z += pref.z;
                     break;
-                }
-                
-            pref.maxLocal(v);
             }
-        lastPreferredSize = pref.clone();        
-        
+
+            pref.maxLocal(v);
+        }
+        lastPreferredSize = pref.clone();
+
         // The preferred size is the size... because layouts will always
         // be the decider in a component stack.  They are always first
         // in the component chain for preferred size and last for reshaping.
         size.set(pref);
     }
-    
-    public void reshape(Vector3f pos, Vector3f size)
-    {
+
+    public void reshape(Vector3f pos, Vector3f size) {
         // We are potentially asked to be a different size than we
         // prefer and we have to distribute the difference nicely.
         //Vector3f diff = size.subtract(lastPreferredSize);
-        
+
         // Make sure there is a last preferred size to base
         // the reshaping on.
         calculatePreferredSize(new Vector3f());
-        
+
         // Along the axis we will have to change each component
         // a little bit.  We give each one an even amount but we
         // also have the information to distribute it based on
@@ -139,11 +137,10 @@ public class BoxLayout extends AbstractGuiComponent
         // to not increase their size at all.  Possible modes
         // for stretching:
         // NONE, EVEN, PROPORTIONAL
- 
+
         float axisPrefTotal = 0;
         float axisSizeTotal = 0;
-        switch( axis )
-            {
+        switch( axis ) {
             case X:
                 axisPrefTotal = lastPreferredSize.x;
                 axisSizeTotal = size.x;
@@ -156,51 +153,48 @@ public class BoxLayout extends AbstractGuiComponent
                 axisPrefTotal = lastPreferredSize.z;
                 axisSizeTotal = size.z;
                 break;
-            }
-        
- 
-        Vector3f p = pos.clone();              
-        for( int i = 0; i < children.size(); i++ )
-            {
+        }
+
+
+        Vector3f p = pos.clone();
+        for( int i = 0; i < children.size(); i++ ) {
             Node n = children.get(i);
             Vector3f pref = preferredSizes.get(i).clone();
-            
+
             // So the child size will depend on axis and fill
             float axisPref = 0;
             float axisSize = 0;
-            switch( axis )
-                {
+            switch( axis ) {
                 case X:
                     axisPref = pref.x;
                     axisSize = size.x;
-                    
+
                     pref.y = size.y;
                     pref.z = size.z;
                     break;
                 case Y:
                     axisPref = pref.y;
                     axisSize = size.y;
-                    
+
                     pref.x = size.x;
                     pref.z = size.z;
                     break;
                 case Z:
                     axisPref = pref.z;
                     axisSize = size.z;
-                    
+
                     pref.x = size.x;
                     pref.y = size.y;
                     break;
-                }
-     
-            switch( fill )
-                {
+            }
+
+            switch( fill ) {
                 case NONE:
                     axisSize = axisPref;
                     break;
                 case EVEN:
                     // Even means that they all grow evenly... not
-                    // that they are forced to be the same size.  So 
+                    // that they are forced to be the same size.  So
                     // we take the total difference and divide it evenly
                     // among the children.
                     axisSize = axisPref + (axisSizeTotal - axisPrefTotal)/children.size();
@@ -210,17 +204,16 @@ public class BoxLayout extends AbstractGuiComponent
                     // to the overall preferred size.  Bigger components get more
                     // share.
                     float relation = axisPref / axisPrefTotal;
-                    axisSize = relation * axisSizeTotal; 
-                    break; 
-                }
-                
+                    axisSize = relation * axisSizeTotal;
+                    break;
+            }
+
             // Set the location while "pos" is correct.
             n.setLocalTranslation(p.clone());
-                
+
             // Now set back the axis-specific size and adjust
             // position for the next component
-            switch( axis )
-                {
+            switch( axis ) {
                 case X:
                     pref.x = axisSize;
                     p.x += axisSize;
@@ -233,60 +226,54 @@ public class BoxLayout extends AbstractGuiComponent
                     pref.z = axisSize;
                     p.z += axisSize;
                     break;
-                }
-                
-            // Now set the size of the child
-            n.getControl(GuiControl.class).setSize(pref);             
             }
+
+            // Now set the size of the child
+            n.getControl(GuiControl.class).setSize(pref);
+        }
     }
 
-    public <T extends Node> T addChild( T n, Object... constraints )
-    { 
+    public <T extends Node> T addChild( T n, Object... constraints ) {
         if( n.getControl( GuiControl.class ) == null )
-            throw new IllegalArgumentException( "Child is not GUI element." );        
+            throw new IllegalArgumentException( "Child is not GUI element." );
         if( constraints != null && constraints.length > 0 )
             throw new IllegalArgumentException( "Box layout does not take constraints." );
-        
+
         children.add(n);
-       
-        if( parent != null )
-            {
-            // We are attached            
-            parent.getNode().attachChild( n );
-            }
-        
+
+        if( parent != null ) {
+            // We are attached
+            parent.getNode().attachChild(n);
+        }
+
         invalidate();
-        return n; 
+        return n;
     }
- 
-    public void removeChild( Node n )
-    {
+
+    public void removeChild( Node n ) {
         if( !children.remove(n) )
             return; // we didn't have it as a child anyway
-        if( parent != null )
-            {
+        if( parent != null ) {
             parent.getNode().detachChild(n);
-            }
-        invalidate(); 
+        }
+        invalidate();
     }
-     
-    public void attach( GuiControl parent )
-    {
+
+    @Override
+    public void attach( GuiControl parent ) {
         this.parent = parent;
         Node self = parent.getNode();
-        for( Node n : children )
-            {
+        for( Node n : children ) {
             self.attachChild(n);
-            }   
+        }
     }
-    
-    public void detach( GuiControl parent )
-    {
+
+    @Override
+    public void detach( GuiControl parent ) {
         this.parent = null;
-        for( Node n : children )
-            {
+        for( Node n : children ) {
             n.removeFromParent();
-            }   
+        }
     }
 
 }

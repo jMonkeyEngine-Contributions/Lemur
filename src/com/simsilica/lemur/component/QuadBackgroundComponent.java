@@ -49,8 +49,7 @@ import com.simsilica.lemur.core.GuiMaterial;
  *  @author    Paul Speed
  */
 public class QuadBackgroundComponent extends AbstractGuiComponent
-                                     implements Cloneable, ColoredComponent
-{
+                                     implements Cloneable, ColoredComponent {
     private Geometry background;
     private ColorRGBA color;
     private float xMargin = 0;
@@ -58,144 +57,125 @@ public class QuadBackgroundComponent extends AbstractGuiComponent
     private float zOffset = 0.01f;
     private boolean lit = false;
 
-    public QuadBackgroundComponent()
-    {
-        this( ColorRGBA.Gray, 0, 0, 0.01f, false );
-    }
- 
-    public QuadBackgroundComponent( ColorRGBA color )
-    {
-        this( color, 0, 0, 0.01f, false );
+    public QuadBackgroundComponent() {
+        this(ColorRGBA.Gray, 0, 0, 0.01f, false);
     }
 
-    public QuadBackgroundComponent( ColorRGBA color, float xMargin, float yMargin ) 
-    {
-        this( color, xMargin, yMargin, 0.01f, false );
+    public QuadBackgroundComponent( ColorRGBA color ) {
+        this(color, 0, 0, 0.01f, false);
     }
-                   
-    public QuadBackgroundComponent( ColorRGBA color, float xMargin, float yMargin, float zOffset, boolean lit )
-    {
+
+    public QuadBackgroundComponent( ColorRGBA color, float xMargin, float yMargin ) {
+        this(color, xMargin, yMargin, 0.01f, false);
+    }
+
+    public QuadBackgroundComponent( ColorRGBA color,
+                                    float xMargin, float yMargin, float zOffset,
+                                    boolean lit ) {
         this.xMargin = xMargin;
         this.yMargin = yMargin;
         this.zOffset = zOffset;
         this.lit = lit;
-        setColor( color );
-    }               
+        setColor(color);
+    }
 
     @Override
-    public QuadBackgroundComponent clone()
-    {   
+    public QuadBackgroundComponent clone() {
         QuadBackgroundComponent result = (QuadBackgroundComponent)super.clone();
         result.background = null;
         return result;
-    } 
+    }
 
     @Override
-    public void attach( GuiControl parent )
-    {
-        super.attach( parent );
+    public void attach( GuiControl parent ) {
+        super.attach(parent);
     }
-    
+
     @Override
-    public void detach( GuiControl parent )
-    {
-        if( background != null )
-            {
+    public void detach( GuiControl parent ) {
+        if( background != null ) {
             getNode().detachChild(background);
-            }
+        }
         super.detach(parent);
     }
-    
-    public void setColor( ColorRGBA c )
-    {
+
+    public void setColor( ColorRGBA c ) {
         this.color = c;
-        if( background != null )
-            {
+        if( background != null ) {
             if( lit )
                 background.getMaterial().setColor("Diffuse", color);
             else
                 background.getMaterial().setColor("Color", color);
-            }
+        }
     }
 
-    public ColorRGBA getColor()
-    {
+    public ColorRGBA getColor() {
         return color;
     }
-    
-    public void setMargin( float x, float y )
-    {
+
+    public void setMargin( float x, float y ) {
         this.xMargin = x;
         this.yMargin = y;
-        
+
         invalidate();
     }
 
-    public Vector2f getMargin()
-    {
+    public Vector2f getMargin() {
         return new Vector2f(xMargin, yMargin);
     }
 
-    public void setZOffset( float z )
-    {
+    public void setZOffset( float z ) {
         this.zOffset = z;
         invalidate();
     }
-    
-    public float getZOffset()
-    {
+
+    public float getZOffset() {
         return zOffset;
     }
 
-    public void calculatePreferredSize( Vector3f size )
-    {
+    public void calculatePreferredSize( Vector3f size ) {
         size.x += xMargin * 2;
         size.y += yMargin * 2;
         size.z += Math.abs(zOffset);
     }
 
-    public void reshape( Vector3f pos, Vector3f size )
-    {
+    public void reshape( Vector3f pos, Vector3f size ) {
         refreshBackground(size);
- 
-        background.setLocalTranslation( pos.x, pos.y - size.y, pos.z );
+
+        background.setLocalTranslation(pos.x, pos.y - size.y, pos.z);
         pos.x += xMargin;
         pos.y -= yMargin;
-        pos.z += zOffset;    
-        
+        pos.z += zOffset;
+
         size.x -= xMargin * 2;
         size.y -= yMargin * 2;
         size.z -= Math.abs(zOffset);
     }
 
-    protected void refreshBackground( Vector3f size )
-    {
-        if( background == null )
-            {
+    protected void refreshBackground( Vector3f size ) {
+        if( background == null ) {
             Quad q = new Quad(size.x, size.y);
-            if( lit )
-                {
+            if( lit ) {
                 // Give the quad some normals
-                q.setBuffer( Type.Normal, 3, new float[]{0, 0, 1,
-                                                         0, 0, 1,
-                                                         0, 0, 1,
-                                                         0, 0, 1
-                                                });
-                
-                }
+                q.setBuffer(Type.Normal, 3,
+                            new float[] {
+                                        0, 0, 1,
+                                        0, 0, 1,
+                                        0, 0, 1,
+                                        0, 0, 1
+                            });
+            }
             background = new Geometry("background", q);
-            GuiMaterial mat = GuiGlobals.getInstance().createMaterial( color, lit );
-            mat.getMaterial().getAdditionalRenderState().setBlendMode( BlendMode.Alpha );
+            GuiMaterial mat = GuiGlobals.getInstance().createMaterial(color, lit);
+            mat.getMaterial().getAdditionalRenderState().setBlendMode(BlendMode.Alpha);
             mat.getMaterial().getAdditionalRenderState().setAlphaTest(true);
             mat.getMaterial().getAdditionalRenderState().setAlphaFallOff(0.1f);
             background.setMaterial(mat.getMaterial());
             getNode().attachChild(background);
-            }
-        else
-            {
+        } else {
             // Else reset the size of the quad
             Quad q = (Quad)background.getMesh();
-            q.updateGeometry(size.x, size.y);        
-            }
-    }       
+            q.updateGeometry(size.x, size.y);
+        }
+    }
 }

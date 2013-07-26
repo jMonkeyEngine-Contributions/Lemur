@@ -60,12 +60,16 @@ import com.simsilica.lemur.VAlignment;
 
 
 /**
+ *  A basic text entry component that allows displaying and editing of
+ *  text based on a DocumentModel.  Default key bindings are setup for
+ *  common navigation functions and the key input is taken over while the
+ *  component has focus.
  *
  *  @author    Paul Speed
  */
 public class TextEntryComponent extends AbstractGuiComponent
-                                implements FocusTarget
-{
+                                implements FocusTarget {
+                                
     public static final KeyActionListener DOC_HOME = new DocumentHome();
     public static final KeyActionListener DOC_END = new DocumentEnd();
     public static final KeyActionListener LINE_HOME = new LineHome();
@@ -80,22 +84,21 @@ public class TextEntryComponent extends AbstractGuiComponent
     public static final KeyActionListener DELETE = new Delete();
     
     private static final Map<KeyAction,KeyActionListener> standardActions = new HashMap<KeyAction,KeyActionListener>();
-    static
-    {
-        standardActions.put( new KeyAction( KeyInput.KEY_HOME ), LINE_HOME );  
-        standardActions.put( new KeyAction( KeyInput.KEY_END ), LINE_END );  
-        standardActions.put( new KeyAction( KeyInput.KEY_HOME, KeyAction.CONTROL_DOWN ), DOC_HOME );  
-        standardActions.put( new KeyAction( KeyInput.KEY_END, KeyAction.CONTROL_DOWN ), DOC_END );  
+    static {
+        standardActions.put(new KeyAction(KeyInput.KEY_HOME), LINE_HOME);  
+        standardActions.put(new KeyAction(KeyInput.KEY_END), LINE_END);  
+        standardActions.put(new KeyAction(KeyInput.KEY_HOME, KeyAction.CONTROL_DOWN), DOC_HOME);  
+        standardActions.put(new KeyAction(KeyInput.KEY_END, KeyAction.CONTROL_DOWN), DOC_END);  
  
-        standardActions.put( new KeyAction( KeyInput.KEY_UP ), PREV_LINE );
-        standardActions.put( new KeyAction( KeyInput.KEY_DOWN ), NEXT_LINE );
-        standardActions.put( new KeyAction( KeyInput.KEY_LEFT ), LEFT );
-        standardActions.put( new KeyAction( KeyInput.KEY_RIGHT ), RIGHT );
-        
-        standardActions.put( new KeyAction( KeyInput.KEY_BACK ), BACKSPACE );
-        standardActions.put( new KeyAction( KeyInput.KEY_RETURN ), NEW_LINE );
-        standardActions.put( new KeyAction( KeyInput.KEY_NUMPADENTER ), NEW_LINE );
-        standardActions.put( new KeyAction( KeyInput.KEY_DELETE ), DELETE );
+        standardActions.put(new KeyAction(KeyInput.KEY_UP), PREV_LINE);
+        standardActions.put(new KeyAction(KeyInput.KEY_DOWN), NEXT_LINE);
+        standardActions.put(new KeyAction(KeyInput.KEY_LEFT), LEFT);
+        standardActions.put(new KeyAction(KeyInput.KEY_RIGHT), RIGHT);
+                            
+        standardActions.put(new KeyAction(KeyInput.KEY_BACK), BACKSPACE);
+        standardActions.put(new KeyAction(KeyInput.KEY_RETURN), NEW_LINE);
+        standardActions.put(new KeyAction(KeyInput.KEY_NUMPADENTER), NEW_LINE);
+        standardActions.put(new KeyAction(KeyInput.KEY_DELETE), DELETE);
     }  
     
     private BitmapFont font;
@@ -118,16 +121,14 @@ public class TextEntryComponent extends AbstractGuiComponent
     
     private Map<KeyAction,KeyActionListener> actionMap = new HashMap<KeyAction,KeyActionListener>(standardActions);
 
-    public TextEntryComponent( BitmapFont font )
-    {
+    public TextEntryComponent( BitmapFont font ) {
         this( new DocumentModel(), font );
     }
     
-    public TextEntryComponent( DocumentModel model, BitmapFont font )
-    {
+    public TextEntryComponent( DocumentModel model, BitmapFont font ) {
         this.font = font;
         this.bitmapText = new BitmapText(font);
-        bitmapText.setLineWrapMode( LineWrapMode.Clip );
+        bitmapText.setLineWrapMode(LineWrapMode.Clip);
         // Can't really do this since we don't know what
         // bucket it will actually end up in Gui or regular.
         //bitmapText.setQueueBucket( Bucket.Transparent );         
@@ -137,7 +138,7 @@ public class TextEntryComponent extends AbstractGuiComponent
         cursor = new Geometry( "cursor", cursorQuad );
         GuiMaterial mat = GuiGlobals.getInstance().createMaterial(new ColorRGBA(1,1,1,0.75f), false);        
         cursor.setMaterial(mat.getMaterial());
-        cursor.getMaterial().getAdditionalRenderState().setBlendMode( BlendMode.Alpha );
+        cursor.getMaterial().getAdditionalRenderState().setBlendMode(BlendMode.Alpha);
         bitmapText.attachChild(cursor);
         
         if( model.getText() != null )
@@ -145,20 +146,19 @@ public class TextEntryComponent extends AbstractGuiComponent
     }
 
     @Override
-    public TextEntryComponent clone()
-    {   
+    public TextEntryComponent clone() { 
         TextEntryComponent result = (TextEntryComponent)super.clone();
         result.bitmapText = new BitmapText(font);
-        bitmapText.setLineWrapMode( LineWrapMode.Clip );
+        bitmapText.setLineWrapMode(LineWrapMode.Clip);
         result.model = new DocumentModel(model.getText());
         result.preferredSize = null;
         result.textBox = null;
         result.keyHandler = result.new KeyHandler();
         result.cursorQuad = new Quad(bitmapText.getLineHeight()/16f, bitmapText.getLineHeight());
-        result.cursor = new Geometry( "cursor", cursorQuad );
+        result.cursor = new Geometry("cursor", cursorQuad);
         GuiMaterial mat = GuiGlobals.getInstance().createMaterial(new ColorRGBA(1,1,1,0.75f), false);
         result.cursor.setMaterial(mat.getMaterial());
-        result.cursor.getMaterial().getAdditionalRenderState().setBlendMode( BlendMode.Alpha );
+        result.cursor.getMaterial().getAdditionalRenderState().setBlendMode(BlendMode.Alpha);
         result.bitmapText.attachChild(cursor);
         result.resetText();
         
@@ -166,9 +166,8 @@ public class TextEntryComponent extends AbstractGuiComponent
     } 
 
     @Override
-    public void attach( GuiControl parent )
-    {
-        super.attach( parent );
+    public void attach( GuiControl parent ) {
+        super.attach(parent);
         getNode().attachChild(bitmapText);
         resetCursorPosition();
         resetCursorState();
@@ -178,16 +177,14 @@ public class TextEntryComponent extends AbstractGuiComponent
     }
     
     @Override
-    public void detach( GuiControl parent )
-    {
+    public void detach( GuiControl parent ) {
         GuiGlobals.getInstance().removeKeyListener(keyHandler);
                 
         getNode().detachChild(bitmapText);
         super.detach(parent);
     }
 
-    public void focusGained()
-    {
+    public void focusGained() {
         if( this.focused )
             return;
         this.focused = true;
@@ -195,8 +192,7 @@ public class TextEntryComponent extends AbstractGuiComponent
         resetCursorState();        
     }
     
-    public void focusLost()
-    {
+    public void focusLost() {
         if( !this.focused )
             return;
         this.focused = false;        
@@ -204,38 +200,30 @@ public class TextEntryComponent extends AbstractGuiComponent
         resetCursorState();
     }
     
-    public Map<KeyAction,KeyActionListener> getActionMap()
-    {
+    public Map<KeyAction,KeyActionListener> getActionMap() {
         return actionMap;
     }
 
-    public DocumentModel getDocumentModel()
-    {
+    public DocumentModel getDocumentModel() {
         return model;
     }
 
-    public void setSingleLine( boolean f )
-    {
+    public void setSingleLine( boolean f ) {
         this.singleLine = f;
-        if( singleLine )
-            {
-            actionMap.remove( new KeyAction( KeyInput.KEY_RETURN ) );
-            actionMap.remove( new KeyAction( KeyInput.KEY_NUMPADENTER ) );
-            }
-        else
-            {
-            actionMap.put( new KeyAction( KeyInput.KEY_RETURN ), NEW_LINE );
-            actionMap.put( new KeyAction( KeyInput.KEY_NUMPADENTER ), NEW_LINE );
-            }
+        if( singleLine ) {
+            actionMap.remove(new KeyAction(KeyInput.KEY_RETURN));
+            actionMap.remove(new KeyAction(KeyInput.KEY_NUMPADENTER));
+        } else {
+            actionMap.put(new KeyAction(KeyInput.KEY_RETURN), NEW_LINE);
+            actionMap.put(new KeyAction(KeyInput.KEY_NUMPADENTER), NEW_LINE);
+        }
     }
 
-    public boolean isSingleLine()
-    {
+    public boolean isSingleLine() {
         return singleLine;
     }
 
-    public void setFont( BitmapFont font )
-    {
+    public void setFont( BitmapFont font ) {
         // Can't change the font once created so we'll
         // have to create it fresh
         BitmapText newText = new BitmapText(font);
@@ -250,39 +238,31 @@ public class TextEntryComponent extends AbstractGuiComponent
         resetText();
     }
     
-    public BitmapFont getFont()
-    {
+    public BitmapFont getFont() {
         return bitmapText.getFont();
     }
 
-    public void setFontSize( float f )
-    {
+    public void setFontSize( float f ) {
         this.bitmapText.setSize(f);
         resizeCursor();
         resetCursorPosition();
         resetText();
     }
     
-    public float getFontSize()
-    {
+    public float getFontSize() {
         return bitmapText.getSize();
     }
  
-    protected void resetText()
-    {
+    protected void resetText() {
         String text = model.getText();
-        if( textOffset != 0 )        
-            {
+        if( textOffset != 0 ) {
             text = text.substring(textOffset);
             
-            if( textBox != null )
-                {
+            if( textBox != null ) {
                 // See if this offset even makes sense now
                 float x = getVisibleWidth(text);
-                if( x < textBox.width )
-                    {
-                    while( textOffset > 0 )
-                        {
+                if( x < textBox.width ) {
+                    while( textOffset > 0 ) {
                         textOffset--;
                         text = model.getText().substring(textOffset);
                         x = getVisibleWidth(text);                        
@@ -292,11 +272,11 @@ public class TextEntryComponent extends AbstractGuiComponent
                             text = model.getText().substring(textOffset);
                             break;
                             }                         
-                        }
-                    
                     }
-                }             
-            }
+                    
+                }
+            }             
+        }
             
         if( text != null && text.equals(bitmapText.getText()) )
             return;
@@ -306,8 +286,7 @@ public class TextEntryComponent extends AbstractGuiComponent
         invalidate();
     }
  
-    protected float getVisibleWidth( String text )
-    {
+    protected float getVisibleWidth( String text ) {
         float x = font.getLineWidth(text + " ");
         x -= font.getLineWidth(" ");
         //x += 1;
@@ -316,34 +295,27 @@ public class TextEntryComponent extends AbstractGuiComponent
         return x;
     }
  
-    protected void resizeCursor()
-    {
+    protected void resizeCursor() {
         cursorQuad.updateGeometry(bitmapText.getLineHeight()/16f, bitmapText.getLineHeight());        
     }
 
-    protected void resetCursorState()
-    {
-        if( isAttached() && focused && cursorVisible )
-            {
-            cursor.setCullHint( CullHint.Inherit );
-            }
-        else
-            {
-            cursor.setCullHint( CullHint.Always );
-            }       
+    protected void resetCursorState() {
+        if( isAttached() && focused && cursorVisible ) {
+            cursor.setCullHint(CullHint.Inherit);
+        } else {
+            cursor.setCullHint(CullHint.Always);
+        }       
     }
  
-    protected void resetCursorPosition()
-    {
+    protected void resetCursorPosition() {
         // Find the current cursor position.
         int line = model.getCaratLine();
         int column = model.getCaratColumn();
  
-        if( column < textOffset )
-            {
+        if( column < textOffset ) {
             textOffset = column;
             resetText();
-            }
+        }
  
         String row = model.getLine(line);
         row = row.substring(textOffset,column);
@@ -363,34 +335,27 @@ public class TextEntryComponent extends AbstractGuiComponent
         float y = -line * bitmapText.getLineHeight();       
         y -= bitmapText.getLineHeight();
         
-        if( textBox != null && x > textBox.width )
-            {
-            if( singleLine )
-                {
+        if( textBox != null && x > textBox.width ) {
+            if( singleLine ) {
                 // Then we can move the text offset and try again
                 textOffset++;
                 resetText();
                 resetCursorPosition();
                 return;
-                }
-            else
-                {
+            } else {
                 // Make it invisible
                 cursorVisible = false;
                 resetCursorState();
-                }
             }
-        else
-            {
+        } else {
             cursorVisible = true;
             resetCursorState();
-            } 
+        } 
  
-        cursor.setLocalTranslation( x, y, 0.01f );
+        cursor.setLocalTranslation(x, y, 0.01f);
     }
     
-    public void setText( String text )
-    {
+    public void setText( String text ) {
         if( text != null && text.equals(model.getText()) )
             return;
             
@@ -398,85 +363,71 @@ public class TextEntryComponent extends AbstractGuiComponent
         resetText();
     }
     
-    public String getText()
-    {
+    public String getText() {
         return model.getText();
     }
  
-    public void setHAlignment( HAlignment a )
-    {
+    public void setHAlignment( HAlignment a ) {
         if( hAlign == a )
             return;
         hAlign = a;
         resetAlignment();
     }
     
-    public HAlignment getHAlignment()
-    {
+    public HAlignment getHAlignment() {
         return hAlign;
     }
     
-    public void setVAlignment( VAlignment a )
-    {
+    public void setVAlignment( VAlignment a ) {
         if( vAlign == a )
             return;
         vAlign = a;
         resetAlignment();
     }
     
-    public VAlignment getVAlignment()
-    {
+    public VAlignment getVAlignment() {
         return vAlign;
     }
     
-    public void setColor( ColorRGBA color )
-    {
+    public void setColor( ColorRGBA color ) {
         bitmapText.setColor(color);
-        cursor.getMaterial().setColor( "Color", color );
+        cursor.getMaterial().setColor("Color", color);
     }
     
-    public ColorRGBA getColor()
-    {
+    public ColorRGBA getColor() {
         return bitmapText.getColor();
     }
     
-    public void setPreferredSize( Vector3f v )
-    {
+    public void setPreferredSize( Vector3f v ) {
         this.preferredSize = v;
         invalidate();
     }
     
-    public Vector3f getPreferredSize()
-    {
+    public Vector3f getPreferredSize() {
         return preferredSize;
     }
     
-    public void setPreferredWidth( float f )
-    {
+    public void setPreferredWidth( float f ) {
         this.preferredWidth = f;
         invalidate();
     }
     
-    public float getPreferredWidth()
-    {
+    public float getPreferredWidth() {
         return preferredWidth;
     }
     
-    public void reshape(Vector3f pos, Vector3f size)
-    {
+    public void reshape(Vector3f pos, Vector3f size) {
         bitmapText.setLocalTranslation(pos.x, pos.y, pos.z);
         textBox = new Rectangle(0, 0, size.x, size.y);         
-        bitmapText.setBox( textBox );
+        bitmapText.setBox(textBox);
         resetAlignment();        
     } 
 
-    public void calculatePreferredSize( Vector3f size )
-    {
-        if( preferredSize != null )
-            {
+    public void calculatePreferredSize( Vector3f size ) {
+        if( preferredSize != null ) {
             size.set(preferredSize);
             return;
-            }
+        }
             
         // Make sure that the bitmapText reports a reliable
         // preferred size 
@@ -492,184 +443,150 @@ public class TextEntryComponent extends AbstractGuiComponent
         bitmapText.setBox(textBox);
     }
 
-    protected void resetAlignment()
-    {
+    protected void resetAlignment() {
         if( textBox == null )
             return;
             
-        switch( hAlign )
-            {
+        switch( hAlign ) {
             case LEFT:
-                bitmapText.setAlignment( Align.Left );
+                bitmapText.setAlignment(Align.Left);
                 break;
             case RIGHT:
-                bitmapText.setAlignment( Align.Right );
+                bitmapText.setAlignment(Align.Right);
                 break;
             case CENTER:
-                bitmapText.setAlignment( Align.Center );
+                bitmapText.setAlignment(Align.Center);
                 break;
-            }
-        switch( vAlign )
-            {
+        }
+        switch( vAlign ) {
             case TOP:
-                bitmapText.setVerticalAlignment( VAlign.Top );
+                bitmapText.setVerticalAlignment(VAlign.Top);
                 break; 
             case BOTTOM:
-                bitmapText.setVerticalAlignment( VAlign.Bottom );
+                bitmapText.setVerticalAlignment(VAlign.Bottom);
                 break; 
             case CENTER:
-                bitmapText.setVerticalAlignment( VAlign.Center );
+                bitmapText.setVerticalAlignment(VAlign.Center);
                 break; 
-            }   
+        }   
     }
  
-    private static class DocumentHome implements KeyActionListener 
-    {
-        public void keyAction( TextEntryComponent source, KeyAction key )
-        {
+    private static class DocumentHome implements KeyActionListener {
+        public void keyAction( TextEntryComponent source, KeyAction key ) {
             source.model.home(false);
             source.resetCursorPosition();
         } 
     }
 
-    private static class LineHome implements KeyActionListener 
-    {
-        public void keyAction( TextEntryComponent source, KeyAction key )
-        {
+    private static class LineHome implements KeyActionListener {
+        public void keyAction( TextEntryComponent source, KeyAction key ) {
             source.model.home(true);
             source.resetCursorPosition();
         } 
     }
 
-    private static class DocumentEnd implements KeyActionListener 
-    {
-        public void keyAction( TextEntryComponent source, KeyAction key )
-        {
+    private static class DocumentEnd implements KeyActionListener {
+        public void keyAction( TextEntryComponent source, KeyAction key ) {
             source.model.end(false);
             source.resetCursorPosition();
         } 
     }
 
-    private static class LineEnd implements KeyActionListener 
-    {
-        public void keyAction( TextEntryComponent source, KeyAction key )
-        {
+    private static class LineEnd implements KeyActionListener {
+        public void keyAction( TextEntryComponent source, KeyAction key ) {
             source.model.end(true);
             source.resetCursorPosition();
         } 
     }
 
-    private static class PreviousLine implements KeyActionListener
-    {
-        public void keyAction( TextEntryComponent source, KeyAction key )
-        {
+    private static class PreviousLine implements KeyActionListener {
+        public void keyAction( TextEntryComponent source, KeyAction key ) {
             source.model.up();
             source.resetCursorPosition();
         }
     }
     
-    private static class NextLine implements KeyActionListener
-    {
-        public void keyAction( TextEntryComponent source, KeyAction key )
-        {
+    private static class NextLine implements KeyActionListener {
+        public void keyAction( TextEntryComponent source, KeyAction key ) {
             source.model.down();
             source.resetCursorPosition();
         }
     }
     
-    private static class CaratLeft implements KeyActionListener
-    {
-        public void keyAction( TextEntryComponent source, KeyAction key )
-        {
+    private static class CaratLeft implements KeyActionListener {
+        public void keyAction( TextEntryComponent source, KeyAction key ) {
             source.model.left();
             source.resetCursorPosition();
         }
     }
     
-    private static class CaratRight implements KeyActionListener
-    {
-        public void keyAction( TextEntryComponent source, KeyAction key )
-        {
+    private static class CaratRight implements KeyActionListener {
+        public void keyAction( TextEntryComponent source, KeyAction key ) {
             source.model.right();
             source.resetCursorPosition();
         }
     }
 
-    private static class NullAction implements KeyActionListener
-    {
-        public void keyAction( TextEntryComponent source, KeyAction key )
-        {
+    private static class NullAction implements KeyActionListener {
+        public void keyAction( TextEntryComponent source, KeyAction key ) {
         }
     }
 
-    private static class Backspace implements KeyActionListener
-    {
-        public void keyAction( TextEntryComponent source, KeyAction key )
-        {
+    private static class Backspace implements KeyActionListener {
+        public void keyAction( TextEntryComponent source, KeyAction key ) {
             source.model.backspace();
             source.resetText(); // shouldn't have to do this
         }
     }
 
-    private static class NewLine implements KeyActionListener
-    {
-        public void keyAction( TextEntryComponent source, KeyAction key )
-        {
+    private static class NewLine implements KeyActionListener {
+        public void keyAction( TextEntryComponent source, KeyAction key ) {
             source.model.insertNewLine();
             source.resetText(); // shouldn't have to do this
         }
     }
     
-    private static class Delete implements KeyActionListener
-    {
-        public void keyAction( TextEntryComponent source, KeyAction key )
-        {
+    private static class Delete implements KeyActionListener {
+        public void keyAction( TextEntryComponent source, KeyAction key ) {
             source.model.delete();
             source.resetText(); // shouldn't have to do this
         }
     }
     
     
-    private class KeyHandler implements KeyListener
-    {
+    private class KeyHandler implements KeyListener {
         private boolean shift = false;
         private boolean control = false;
     
-        public void onKeyEvent( KeyInputEvent evt )
-        {
+        public void onKeyEvent( KeyInputEvent evt ) {
             int code = evt.getKeyCode();
-            if( code == KeyInput.KEY_LSHIFT || code == KeyInput.KEY_RSHIFT )
-                {
+            if( code == KeyInput.KEY_LSHIFT || code == KeyInput.KEY_RSHIFT ) {
                 shift = evt.isPressed();
                 return;
-                } 
-            if( code == KeyInput.KEY_LCONTROL || code == KeyInput.KEY_RCONTROL )
-                {
+            } 
+            if( code == KeyInput.KEY_LCONTROL || code == KeyInput.KEY_RCONTROL ) {
                 control = evt.isPressed();
                 return;
-                } 
+            } 
         
-            if( evt.isPressed() )
-                {
+            if( evt.isPressed() ) {
                 KeyAction key = new KeyAction( code, (control?KeyAction.CONTROL_DOWN:0) );
                 KeyActionListener handler = actionMap.get(key);
-                if( handler != null )
-                    {
-                    handler.keyAction( TextEntryComponent.this, key );
+                if( handler != null ) {
+                    handler.keyAction(TextEntryComponent.this, key);
                     evt.setConsumed();
                     return;
-                    }
+                }
                     
                 // Making sure that no matter what, certain
                 // characters never make it directly to the
                 // document
-                if( evt.getKeyChar() >= 32 )
-                    {
+                if( evt.getKeyChar() >= 32 ) {
                     model.insert(evt.getKeyChar());
                     evt.setConsumed();
                     resetText();                
-                    }
                 }
+            }
         }
     }
 }
