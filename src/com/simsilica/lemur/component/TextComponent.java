@@ -64,63 +64,64 @@ public class TextComponent extends AbstractGuiComponent
     }
 
     @Override
-    public TextComponent clone() {   
+    public TextComponent clone() {
         TextComponent result = (TextComponent)super.clone();
         result.bitmapText = bitmapText.clone();
         result.textBox = null;
         return result;
-    } 
+    }
 
     @Override
     public void attach( GuiControl parent ) {
         super.attach(parent);
         getNode().attachChild(bitmapText);
     }
-    
+
     @Override
     public void detach( GuiControl parent ) {
         getNode().detachChild(bitmapText);
         super.detach(parent);
     }
-    
+
     public void setText( String text ) {
         if( text != null && text.equals(bitmapText.getText()) )
             return;
-            
+
         bitmapText.setText(text);
         invalidate();
     }
-    
+
     public String getText() {
         return bitmapText.getText();
     }
- 
+
     public void setHAlignment( HAlignment a ) {
         if( hAlign == a )
             return;
         hAlign = a;
         resetAlignment();
     }
-    
+
     public HAlignment getHAlignment() {
         return hAlign;
     }
-    
+
     public void setVAlignment( VAlignment a ) {
         if( vAlign == a )
             return;
         vAlign = a;
         resetAlignment();
     }
-    
+
     public VAlignment getVAlignment() {
         return vAlign;
     }
- 
+
     public void setFont( BitmapFont font ) {
-        if( isAttached() )
+        if( isAttached() ) {
             bitmapText.removeFromParent();
-            
+        }
+
         // Can't change the font once created so we'll
         // have to create it fresh
         BitmapText newText = new BitmapText(font);
@@ -129,38 +130,39 @@ public class TextComponent extends AbstractGuiComponent
         newText.setLocalTranslation(bitmapText.getLocalTranslation());
         newText.setSize(getFontSize());
         this.bitmapText = newText;
-        
+
         // Need to invalidate because we probably changed size
         // And that will realign us, etc. anyway.
         invalidate();
-        
-        if( isAttached() )
+
+        if( isAttached() ) {
             getNode().attachChild(bitmapText);
+        }
     }
-    
+
     public BitmapFont getFont() {
         return bitmapText.getFont();
     }
- 
+
     public void setFontSize( float size ) {
         if( bitmapText.getSize() == size )
             return;
         bitmapText.setSize(size);
-        invalidate();      
+        invalidate();
     }
-    
+
     public float getFontSize() {
         return bitmapText.getSize();
     }
-    
+
     public void setColor( ColorRGBA color ) {
         bitmapText.setColor(color);
     }
-    
+
     public ColorRGBA getColor() {
         return bitmapText.getColor();
     }
-    
+
     public TextComponent color( ColorRGBA color ) {
         setColor(color);
         return this;
@@ -172,18 +174,19 @@ public class TextComponent extends AbstractGuiComponent
     }
 
     public void setOffset( float x, float y, float z ) {
-        if( offset == null )
+        if( offset == null ) {
             offset = new Vector3f(x,y,z);
-        else
+        } else {
             offset.set(x,y,z);
+        }
         invalidate();
     }
-    
+
     public void setOffset( Vector3f offset ) {
         this.offset = offset.clone();
         invalidate();
     }
-    
+
     public Vector3f getOffset() {
         return offset;
     }
@@ -191,15 +194,15 @@ public class TextComponent extends AbstractGuiComponent
     public void setTextSize( float f ) {
         this.bitmapText.setSize(f);
     }
-    
+
     public float getTextSize()
     {
         return bitmapText.getSize();
     }
- 
+
     public void reshape( Vector3f pos, Vector3f size ) {
-    
-        if( offset != null ) {        
+
+        if( offset != null ) {
             // My gut is that we need to treat positive and negative
             // differently...  I will need to think about that some more
             // or have some examples where this is failing.
@@ -208,33 +211,33 @@ public class TextComponent extends AbstractGuiComponent
             // If we have a negative offset, then we should be drawing
             // ourselves where we are and then adjusting pos+size for the
             // next guy.
-            // I'll fix it later FIXME           
+            // I'll fix it later FIXME
             bitmapText.setLocalTranslation(pos.x + offset.x, pos.y + offset.y, pos.z - offset.z);
             size.x -= Math.abs(offset.x);
-            size.y -= Math.abs(offset.y);            
-            size.z -= Math.abs(offset.z);            
+            size.y -= Math.abs(offset.y);
+            size.z -= Math.abs(offset.z);
         } else {
             bitmapText.setLocalTranslation(pos.x, pos.y, pos.z);
         }
-        textBox = new Rectangle(0, 0, size.x, size.y);         
+        textBox = new Rectangle(0, 0, size.x, size.y);
         bitmapText.setBox( textBox );
-        resetAlignment();        
-    } 
+        resetAlignment();
+    }
 
     public void calculatePreferredSize( Vector3f size ) {
         // Make sure that the bitmapText reports a reliable
-        // preferred size 
+        // preferred size
         bitmapText.setBox(null);
-        
+
         size.x = bitmapText.getLineWidth();
         size.y = bitmapText.getHeight();
- 
+
         if( offset != null ) {
             size.x += Math.abs(offset.x);
             size.y += Math.abs(offset.y);
             size.z += Math.abs(offset.z);
         }
-            
+
         // Reset any text box we already had
         bitmapText.setBox(textBox);
     }
@@ -242,7 +245,7 @@ public class TextComponent extends AbstractGuiComponent
     protected void resetAlignment() {
         if( textBox == null )
             return;
-            
+
         switch( hAlign ) {
             case LEFT:
                 bitmapText.setAlignment(Align.Left);
@@ -257,13 +260,13 @@ public class TextComponent extends AbstractGuiComponent
         switch( vAlign ) {
             case TOP:
                 bitmapText.setVerticalAlignment(VAlign.Top);
-                break; 
+                break;
             case BOTTOM:
                 bitmapText.setVerticalAlignment(VAlign.Bottom);
-                break; 
+                break;
             case CENTER:
                 bitmapText.setVerticalAlignment(VAlign.Center);
-                break; 
-        }   
+                break;
+        }
     }
 }

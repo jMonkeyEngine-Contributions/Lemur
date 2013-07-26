@@ -73,8 +73,9 @@ public class BorderLayout extends AbstractGuiComponent
 
     @Override
     protected void invalidate() {
-        if( parent != null )
+        if( parent != null ) {
             parent.invalidate();
+        }
     }
 
     protected Vector3f getPreferredSize( Position pos ) {
@@ -199,10 +200,11 @@ public class BorderLayout extends AbstractGuiComponent
     public <T extends Node> T addChild( T n, Object... constraints ) {
         Position p = Position.Center;
         for( Object o : constraints ) {
-            if( o instanceof Position )
+            if( o instanceof Position ) {
                 p = (Position)o;
-            else
+            } else {
                 throw new IllegalArgumentException( "Unknown border layout constraint:" + o );
+            }
         }
         // Determine the next natural location
         addChild(p, n);

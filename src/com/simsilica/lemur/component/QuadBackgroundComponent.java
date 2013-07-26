@@ -102,10 +102,11 @@ public class QuadBackgroundComponent extends AbstractGuiComponent
     public void setColor( ColorRGBA c ) {
         this.color = c;
         if( background != null ) {
-            if( lit )
+            if( lit ) {
                 background.getMaterial().setColor("Diffuse", color);
-            else
+            } else {
                 background.getMaterial().setColor("Color", color);
+            }
         }
     }
 

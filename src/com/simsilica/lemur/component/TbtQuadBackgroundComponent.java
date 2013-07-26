@@ -187,10 +187,11 @@ public class TbtQuadBackgroundComponent extends AbstractGuiComponent
             return;
         this.texture = t;
         if( background != null ) {
-            if( lit )
+            if( lit ) {
                 background.getMaterial().setTexture("DiffuseMap", texture);
-            else
+            } else {
                 background.getMaterial().setTexture("ColorMap", texture);
+            }
         }
     }
 

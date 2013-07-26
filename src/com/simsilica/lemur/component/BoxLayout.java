@@ -82,8 +82,9 @@ public class BoxLayout extends AbstractGuiComponent
 
     @Override
     protected void invalidate() {
-        if( parent != null )
+        if( parent != null ) {
             parent.invalidate();
+        }
     }
 
     public void calculatePreferredSize( Vector3f size ) {

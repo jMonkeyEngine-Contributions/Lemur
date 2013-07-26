@@ -99,8 +99,9 @@ public class SpringGridLayout extends AbstractGuiComponent
 
     @Override
     protected void invalidate() {
-        if( parent != null )
+        if( parent != null ) {
             parent.invalidate();
+        }
     }
 
     protected float getMajor( Vector3f v ) {
@@ -237,14 +238,16 @@ public class SpringGridLayout extends AbstractGuiComponent
         // Find the preferred size for each column
         // and the preferred size for each row.
         // Then add 'em up.
-        if( rowPrefs == null || rowPrefs.length != rowCount )
+        if( rowPrefs == null || rowPrefs.length != rowCount ) {
             rowPrefs = new float[rowCount];
-        else
+        } else {
             Arrays.fill(rowPrefs, 0);
-        if( colPrefs == null || colPrefs.length != columnCount )
+        }
+        if( colPrefs == null || colPrefs.length != columnCount ) {
             colPrefs = new float[columnCount];
-        else
+        } else {
             Arrays.fill(colPrefs, 0);
+        }
 
         float maxAlternate = 0;
         for( Map.Entry<Integer, Map<Integer,Entry>> rowEntry : children.entrySet() ) {
@@ -371,8 +374,9 @@ public class SpringGridLayout extends AbstractGuiComponent
         }
 
         Entry previous = lookup.get(n);
-        if( previous != null )
+        if( previous != null ) {
             remove(previous);
+        }
         Entry entry = new Entry(row, column, n);
         rowMap.put(column, entry);
         lookup.put(n, entry);
@@ -396,17 +400,20 @@ public class SpringGridLayout extends AbstractGuiComponent
             if( !(o instanceof Number) )
                 throw new IllegalArgumentException( "Unknown border layout constraint:" + o );
             Number num = (Number)o;
-            if( row == -1 )
+            if( row == -1 ) {
                 row = num.intValue();
-            else if( col == -1 )
+            } else if( col == -1 ) {
                 col = num.intValue();
-            else
+            } else {
                 throw new IllegalArgumentException( "Extra constraint not recognized:" + o );
+            }
         }
-        if( row == -1 )
+        if( row == -1 ) {
             row = rowCount;
-        if( col == -1 )
+        }
+        if( col == -1 ) {
             col = getRow(row, true).size();
+        }
 
         // Determine the next natural location
         addChild(row, col, n);
@@ -416,8 +423,9 @@ public class SpringGridLayout extends AbstractGuiComponent
     public void removeChild( Node n ) {
         // No fast way to do this right now
         Entry entry = lookup.remove(n);
-        if( entry != null )
+        if( entry != null ) {
             remove(entry);
+        }
     }
 
     protected void remove( Entry e ) {

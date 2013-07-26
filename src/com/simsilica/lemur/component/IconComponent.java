@@ -303,8 +303,9 @@ public class IconComponent extends AbstractGuiComponent
         }
 
         icon.setLocalTranslation(cx - width * 0.5f, cy - height * 0.5f, pos.z);
-        if( offset != null )
+        if( offset != null ) {
             icon.move(offset);
+        }
 
         pos.z += zOffset;
         size.z -= Math.abs(zOffset);

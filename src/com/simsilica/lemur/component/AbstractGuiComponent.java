@@ -36,7 +36,7 @@ package com.simsilica.lemur.component;
 
 import com.jme3.scene.Node;
 
-import com.simsilica.lemur.core.GuiComponent; 
+import com.simsilica.lemur.core.GuiComponent;
 import com.simsilica.lemur.core.GuiControl;
 
 
@@ -49,41 +49,42 @@ public abstract class AbstractGuiComponent implements GuiComponent {
     private GuiControl guiControl;
 
     protected void invalidate() {
-        if( guiControl != null )
-            guiControl.invalidate();   
+        if( guiControl != null ) {
+            guiControl.invalidate();
+        }
     }
 
     @Override
     public void attach( GuiControl parent ) {
         this.guiControl = parent;
     }
-    
+
     @Override
     public void detach( GuiControl parent ) {
         this.guiControl = null;
     }
- 
+
     @Override
     public boolean isAttached() {
         return guiControl != null;
     }
-    
+
     @Override
     public GuiControl getGuiControl() {
         return guiControl;
     }
- 
+
     @Override
     public GuiComponent clone() {
         try {
-            AbstractGuiComponent result = (AbstractGuiComponent)super.clone(); 
-            result.guiControl = null;                
+            AbstractGuiComponent result = (AbstractGuiComponent)super.clone();
+            result.guiControl = null;
             return result;
         } catch( CloneNotSupportedException e ) {
             throw new RuntimeException("Error cloning " + getClass().getName(), e);
         }
     }
-    
+
     protected Node getNode() {
         if( guiControl == null )
             throw new IllegalStateException( "Component is not attached." );
