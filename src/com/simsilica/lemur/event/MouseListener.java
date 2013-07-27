@@ -38,16 +38,18 @@ import com.jme3.input.event.*;
 import com.jme3.scene.Spatial;
 
 /**
+ *  Implementations of this interface can be registered with the
+ *  MouseEventControl to receive mouse events for a Spatial.
  *
  *  @author    Paul Speed
  */
-public interface MouseListener 
-{
+public interface MouseListener {
+    
     public void mouseButtonEvent( MouseButtonEvent event, Spatial target, Spatial capture );
-       
+
     public void mouseEntered( MouseMotionEvent event, Spatial target, Spatial capture );
 
     public void mouseExited( MouseMotionEvent event, Spatial target, Spatial capture );
-       
-    public void mouseMoved( MouseMotionEvent event, Spatial target, Spatial capture );   
+
+    public void mouseMoved( MouseMotionEvent event, Spatial target, Spatial capture );
 }

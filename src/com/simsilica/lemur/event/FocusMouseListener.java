@@ -35,27 +35,28 @@
 package com.simsilica.lemur.event;
 
 import com.jme3.input.event.*;
-import com.jme3.math.*;
 import com.jme3.scene.*;
 import com.simsilica.lemur.GuiGlobals;
 
 
 /**
+ *  MouseListener implementation that will automatically tranfer
+ *  focus to a GUI element if it is clicked.
  *
  *  @author    Paul Speed
  */
-public class FocusMouseListener extends DefaultMouseListener 
-{        
+public class FocusMouseListener extends DefaultMouseListener {
+
     public static final FocusMouseListener INSTANCE = new FocusMouseListener();
 
-    public FocusMouseListener()
-    {
+    protected FocusMouseListener() {
     }
 
-    protected void click( MouseButtonEvent event, Spatial target, Spatial capture )
-    {
-        if( capture == null || capture == target )
-            GuiGlobals.getInstance().requestFocus(target);       
-    }        
+    @Override
+    protected void click( MouseButtonEvent event, Spatial target, Spatial capture ) {
+        if( capture == null || capture == target ) {
+            GuiGlobals.getInstance().requestFocus(target);
+        }
+    }
 }
 

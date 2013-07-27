@@ -38,30 +38,29 @@ import com.jme3.input.KeyNames;
 
 
 /**
+ *  Defines a key action including potential modifiers.
  *
  *  @author    Paul Speed
  */
-public class KeyAction
-{
+public class KeyAction {
+
     public static final int CONTROL_DOWN = 0x1;
     private static final KeyNames names = new KeyNames();
-        
+
     private int keyCode;
     private int modifiers;
-    
-    public KeyAction( int keyCode, int... modifiers )
-    {
+
+    public KeyAction( int keyCode, int... modifiers ) {
         this.keyCode = keyCode;
         int m = 0;
-        for( int i : modifiers )
-            {
+        for( int i : modifiers ) {
             m = m | i;
-            }
+        }
         this.modifiers = m;
     }
- 
-    public boolean equals( Object o )
-    {
+
+    @Override
+    public boolean equals( Object o ) {
         if( o == this )
             return true;
         if( o == null || o.getClass() != getClass() )
@@ -73,34 +72,32 @@ public class KeyAction
             return false;
         return true;
     }
-    
-    public int hashCode()
-    {
+
+    @Override
+    public int hashCode() {
         return keyCode << 8 | modifiers;
     }
-    
-    public int getModifiers()
-    {
+
+    public int getModifiers() {
         return modifiers;
     }
- 
-    public int getKeyCode()
-    {
+
+    public int getKeyCode() {
         return keyCode;
     }
-    
-    public boolean hasModifier( int mod )
-    {
+
+    public boolean hasModifier( int mod ) {
         return (modifiers & mod) == mod;
     }
- 
-    public String toString()
-    {
+
+    @Override
+    public String toString() {
         String name = names.getName(keyCode);
         StringBuilder sb = new StringBuilder("KeyAction[");
-        if( hasModifier(CONTROL_DOWN) )
-            sb.append( "Control " );  
+        if( hasModifier(CONTROL_DOWN) ) {
+            sb.append( "Control " );
+        }
         sb.append(name);
         return sb.toString();
-    } 
+    }
 }

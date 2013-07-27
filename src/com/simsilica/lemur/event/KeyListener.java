@@ -34,13 +34,15 @@
 
 package com.simsilica.lemur.event;
 
-import com.jme3.input.event.KeyInputEvent;  
+import com.jme3.input.event.KeyInputEvent;
 
 /**
+ *  Implementations of this interface can be registered
+ *  with the KeyInterceptState to receive key events.
  *
  *  @author    Paul Speed
  */
-public interface KeyListener
-{
+public interface KeyListener {
+
     public void onKeyEvent( KeyInputEvent evt );
 }

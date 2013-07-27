@@ -44,40 +44,34 @@ import com.jme3.input.event.TouchEvent;
 
 
 /**
+ *  Convenient base class providing default implementations for
+ *  all RawInputListener methods.
  *
  *  @author    Paul Speed
  */
-public class DefaultRawInputListener implements RawInputListener
-{
-    public void beginInput()
-    {
+public class DefaultRawInputListener implements RawInputListener {
+
+    public void beginInput() {
     }
-    
-    public void endInput()
-    {
+
+    public void endInput() {
     }
-    
-    public void onJoyAxisEvent(JoyAxisEvent evt)
-    {
+
+    public void onJoyAxisEvent( JoyAxisEvent evt ) {
     }
-    
-    public void onJoyButtonEvent(JoyButtonEvent evt)
-    {
+
+    public void onJoyButtonEvent( JoyButtonEvent evt ) {
     }
-    
-    public void onMouseMotionEvent(MouseMotionEvent evt)
-    {
+
+    public void onMouseMotionEvent( MouseMotionEvent evt ) {
     }
-    
-    public void onMouseButtonEvent(MouseButtonEvent evt)
-    {
+
+    public void onMouseButtonEvent( MouseButtonEvent evt ) {
     }
-    
-    public void onKeyEvent(KeyInputEvent evt)
-    {
+
+    public void onKeyEvent( KeyInputEvent evt ) {
     }
-    
-    public void onTouchEvent(TouchEvent evt)
-    {
-    }    
+
+    public void onTouchEvent( TouchEvent evt ) {
+    }
 }

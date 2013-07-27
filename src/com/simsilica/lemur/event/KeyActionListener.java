@@ -37,10 +37,11 @@ package com.simsilica.lemur.event;
 import com.simsilica.lemur.component.TextEntryComponent;
 
 /**
+ *  A (currently) TextEntryComponent-specific listener for
+ *  KeyActions.
  *
  *  @author    Paul Speed
  */
-public interface KeyActionListener 
-{
-    public void keyAction( TextEntryComponent source, KeyAction key );    
+public interface KeyActionListener {
+    public void keyAction( TextEntryComponent source, KeyAction key );
 }

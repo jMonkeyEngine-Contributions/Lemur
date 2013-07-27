@@ -47,63 +47,60 @@ import com.jme3.util.SafeArrayList;
  *
  *  @author    Paul Speed
  */
-public class KeyInterceptState extends BaseAppState
-{
-    private KeyObserver keyObserver = new KeyObserver();
- 
-    private SafeArrayList<KeyListener> keyListeners = new SafeArrayList<KeyListener>(KeyListener.class);
+public class KeyInterceptState extends BaseAppState {
 
-    public KeyInterceptState( Application app )
-    {
+    private KeyObserver keyObserver = new KeyObserver();
+
+    private SafeArrayList<KeyListener> keyListeners
+                            = new SafeArrayList<KeyListener>(KeyListener.class);
+
+    public KeyInterceptState( Application app ) {
         setEnabled(true);
-        
+
         // We do this as early as possible because we want to
         // make sure to be able to capture everything if we
         // are enabled.
         app.getInputManager().addRawInputListener(keyObserver);
     }
-    
-    public void addKeyListener( KeyListener l )
-    {
+
+    public void addKeyListener( KeyListener l ) {
         keyListeners.add(l);
     }
-    
-    public void removeKeyListener( KeyListener l ) 
-    {
+
+    public void removeKeyListener( KeyListener l ) {
         keyListeners.remove(l);
     }
 
-    protected void initialize( Application app )
-    {
+    @Override
+    protected void initialize( Application app ) {
     }
-    
-    protected void cleanup( Application app )
-    {
+
+    @Override
+    protected void cleanup( Application app ) {
         app.getInputManager().removeRawInputListener(keyObserver);
     }
-    
-    protected void enable()
-    {
-    }
-    
-    protected void disable()
-    {
-    }    
 
-    protected void dispatch(KeyInputEvent evt)
-    {
+    @Override
+    protected void enable() {
+    }
+
+    @Override
+    protected void disable() {
+    }
+
+    protected void dispatch(KeyInputEvent evt) {
         if( !isEnabled() )
             return;
-        for( KeyListener l : keyListeners.getArray() )
-            l.onKeyEvent(evt); 
-    } 
+        for( KeyListener l : keyListeners.getArray() ) {
+            l.onKeyEvent(evt);
+        }
+    }
 
-    protected class KeyObserver extends DefaultRawInputListener
-    {
+    protected class KeyObserver extends DefaultRawInputListener {
+
         @Override
-        public void onKeyEvent(KeyInputEvent evt)
-        {
+        public void onKeyEvent( KeyInputEvent evt ) {
             dispatch(evt);
-        }    
-    } 
+        }
+    }
 }

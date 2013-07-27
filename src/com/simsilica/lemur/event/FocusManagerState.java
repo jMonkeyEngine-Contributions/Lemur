@@ -42,83 +42,76 @@ import com.simsilica.lemur.core.FocusTarget;
 
 
 /**
+ *  AppState that manages the focus transition between
+ *  one FocusTarget and another.
  *
  *  @author    Paul Speed
  */
-public class FocusManagerState extends BaseAppState
-{
+public class FocusManagerState extends BaseAppState {
+
     private Spatial focus;
     private FocusTarget focusTarget;
-    
-    public FocusManagerState()
-    {
+
+    public FocusManagerState() {
         setEnabled(true);
     }
 
-    protected FocusTarget getFocusTarget( Spatial s )
-    {
+    protected FocusTarget getFocusTarget( Spatial s ) {
         if( s == null )
             return null;
-        
-        for( int i = 0; i < s.getNumControls(); i++ )
-            {
+
+        for( int i = 0; i < s.getNumControls(); i++ ) {
             Control c = s.getControl(i);
-            if( c instanceof FocusTarget )  
+            if( c instanceof FocusTarget )
                 return (FocusTarget)c;
-            } 
+        }
         return null;
     }
 
-    public void setFocus( Spatial focus )
-    {
+    public void setFocus( Spatial focus ) {
         if( this.focus == focus )
             return;
- 
-        if( focusTarget != null && isEnabled() )
-            {
+
+        if( focusTarget != null && isEnabled() ) {
             // Lose focus from the old one.
             focusTarget.focusLost();
-            }
+        }
         this.focus = focus;
         focusTarget = getFocusTarget(focus);
-        
-        if( focusTarget != null && isEnabled() )
-            {
-            // Gain focus            
-            focusTarget.focusGained();
-            }
-    }
 
-    public Spatial getFocus()
-    {
-        return focus;
-    }
-     
-    protected void initialize( Application app )
-    {
-    }
-    
-    protected void cleanup( Application app )
-    {
-    }
-    
-    protected void enable()
-    {
-        if( focusTarget != null )
-            {
+        if( focusTarget != null && isEnabled() ) {
             // Gain focus
             focusTarget.focusGained();
-            }
+        }
     }
-    
-    protected void disable()
-    {
-        if( focusTarget != null )
-            {
+
+    public Spatial getFocus() {
+        return focus;
+    }
+
+    @Override
+    protected void initialize( Application app ) {
+    }
+
+    @Override
+    protected void cleanup( Application app ) {
+    }
+
+    @Override
+    protected void enable() {
+        if( focusTarget != null ) {
+            // Gain focus
+            focusTarget.focusGained();
+        }
+    }
+
+    @Override
+    protected void disable() {
+        if( focusTarget != null ) {
             // Lose focus
             focusTarget.focusLost();
-            }
-    }    
+        }
+    }
 }
 
 

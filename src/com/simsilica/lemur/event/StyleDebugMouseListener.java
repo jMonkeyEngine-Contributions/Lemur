@@ -41,29 +41,30 @@ import com.simsilica.lemur.Panel;
 
 
 /**
+ *  A MouseListener implementation that can be used to debug
+ *  style hierarchies.  If this listener is added to a spatial
+ *  then clicking the spatial will dump its element ID and
+ *  style name to the console.
  *
  *  @author    Paul Speed
  */
-public class StyleDebugMouseListener extends DefaultMouseListener 
-{        
+public class StyleDebugMouseListener extends DefaultMouseListener {
+
     public static final StyleDebugMouseListener INSTANCE = new StyleDebugMouseListener();
 
-    public StyleDebugMouseListener()
-    {
+    public StyleDebugMouseListener() {
     }
 
-    protected void click( MouseButtonEvent event, Spatial target, Spatial capture )
-    {
-        if( event.getButtonIndex() == MouseInput.BUTTON_MIDDLE )
-            {
-            if( target instanceof Panel )
-                {
+    @Override
+    protected void click( MouseButtonEvent event, Spatial target, Spatial capture ) {
+        if( event.getButtonIndex() == MouseInput.BUTTON_MIDDLE ) {
+            if( target instanceof Panel ) {
                 Panel p = (Panel)target;
-                System.out.println( "gui element:" + p 
-                                    + "  elementId:" + p.getElementId() 
-                                    + "  style:" + p.getStyle() );                 
-                }
+                System.out.println( "gui element:" + p
+                                    + "  elementId:" + p.getElementId()
+                                    + "  style:" + p.getStyle() );
             }
-    }        
+        }
+    }
 }
 

@@ -38,84 +38,83 @@ import java.util.*;
 import java.util.concurrent.*;
 
 import com.jme3.input.event.*;
-import com.jme3.math.*;
 import com.jme3.renderer.*;
 import com.jme3.scene.control.*;
 import com.jme3.scene.Spatial;
 
 
 /**
+ *  A control that can be added to any Spatial to provide
+ *  standard MouseListener/MouseEvent support.  The only requirement
+ *  is that the Spatial must be somewhere in a hierarchy that has
+ *  been provided to the MouseAppState or GuiGlobals class and that
+ *  MouseAppState is active (either manually attached to the StateManager
+ *  or done automatically by GuiGlobals.initialize())
  *
  *  @author    Paul Speed
  */
-public class MouseEventControl extends AbstractControl
-{
+public class MouseEventControl extends AbstractControl {
+
     private List<MouseListener> listeners = new CopyOnWriteArrayList<MouseListener>();
 
-    public MouseEventControl()
-    {
+    public MouseEventControl() {
     }
 
-    public MouseEventControl( MouseListener... listeners )
-    {
-        this.listeners.addAll( Arrays.asList(listeners) );
+    public MouseEventControl( MouseListener... listeners ) {
+        this.listeners.addAll(Arrays.asList(listeners));
     }
 
-    public <T extends MouseListener> T getMouseListener( Class<T> type )
-    {
-        for( MouseListener l : listeners )
-            {
-            if( l.getClass() == type )
+    public <T extends MouseListener> T getMouseListener( Class<T> type ) {
+        for( MouseListener l : listeners ) {
+            if( l.getClass() == type ) {
                 return (T)l;
             }
+        }
         return null;
     }
 
-    public boolean isEmpty()
-    {
+    public boolean isEmpty() {
         return listeners.isEmpty();
     }
 
-    public void addMouseListener( MouseListener l )
-    {
+    public void addMouseListener( MouseListener l ) {
         listeners.add(l);
     }
-    
-    public void removeMouseListener( MouseListener l )
-    {
+
+    public void removeMouseListener( MouseListener l ) {
         listeners.remove(l);
     }
 
-    public void mouseButtonEvent( MouseButtonEvent event, Spatial target, Spatial capture )
-    {
-        for( MouseListener l : listeners )
+    public void mouseButtonEvent( MouseButtonEvent event, Spatial target, Spatial capture ) {
+        for( MouseListener l : listeners ) {
             l.mouseButtonEvent(event, target, capture);
-    }
- 
-    public void mouseEntered( MouseMotionEvent event, Spatial target, Spatial capture )
-    {
-        for( MouseListener l : listeners )
-            l.mouseEntered(event, target, capture);
+        }
     }
 
-    public void mouseExited( MouseMotionEvent event, Spatial target, Spatial capture )
-    {
-        for( MouseListener l : listeners )
+    public void mouseEntered( MouseMotionEvent event, Spatial target, Spatial capture ) {
+        for( MouseListener l : listeners ) {
+            l.mouseEntered(event, target, capture);
+        }
+    }
+
+    public void mouseExited( MouseMotionEvent event, Spatial target, Spatial capture ) {
+        for( MouseListener l : listeners ) {
             l.mouseExited(event, target, capture);
+        }
     }
- 
-    public void mouseMoved( MouseMotionEvent event, Spatial target, Spatial capture )
-    {
-        for( MouseListener l : listeners )
+
+    public void mouseMoved( MouseMotionEvent event, Spatial target, Spatial capture ) {
+        for( MouseListener l : listeners ) {
             l.mouseMoved(event, target, capture);
+        }
     }
-    
-    protected void controlRender( RenderManager rm, ViewPort vp )
-    {
+
+    @Override
+    protected void controlRender( RenderManager rm, ViewPort vp ) {
     }
-        
-    protected void controlUpdate( float tpf )
-    {
+
+    @Override
+    protected void controlUpdate( float tpf ) {
     }
 }
 

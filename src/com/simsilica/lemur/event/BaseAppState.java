@@ -42,17 +42,20 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 
- 
+
 /**
  *  Base class app state that includes built-in
- *  convenience management for enable/disable/etc.
+ *  convenience for enable/disable/initialize state management.
+ *  The abstract enable() and disable() methods are called
+ *  appropriately during initialize(), terminate(), or setEnabled()
+ *  depending on the mutual state of "initialized" and "enabled".
  *
  *  @author    Paul Speed
- */ 
-public abstract class BaseAppState implements AppState
-{
+ */
+public abstract class BaseAppState implements AppState {
+
     static Logger log = LoggerFactory.getLogger(BaseAppState.class);
-    
+
     private Application app;
     private boolean initialized;
     private boolean enabled = true;
@@ -61,90 +64,79 @@ public abstract class BaseAppState implements AppState
     protected abstract void cleanup( Application app );
     protected abstract void enable();
     protected abstract void disable();
-    
-    public final void initialize( AppStateManager stateManager, Application app ) 
-    {
-        if( log.isTraceEnabled() )
-            log.trace( "initialize():" + this );
-            
+
+    public final void initialize( AppStateManager stateManager, Application app ) {
+        if( log.isTraceEnabled() ) {
+            log.trace("initialize():" + this);
+        }
+
         this.app = app;
         initialized = true;
-        initialize(app);        
-        if( isEnabled() )
+        initialize(app);
+        if( isEnabled() ) {
             enable();
+        }
     }
 
-    public final boolean isInitialized() 
-    {
+    public final boolean isInitialized() {
         return initialized;
     }
 
-    public final Application getApplication()
-    {
+    public final Application getApplication() {
         return app;
     }
 
-    public final AppStateManager getStateManager()
-    {
+    public final AppStateManager getStateManager() {
         return app.getStateManager();
     }
-    
-    public final <T extends AppState> T getState( Class<T> type )
-    {
+
+    public final <T extends AppState> T getState( Class<T> type ) {
         return getStateManager().getState(type);
     }
 
-    public final void setEnabled(boolean enabled) 
+    public final void setEnabled( boolean enabled )
     {
         if( this.enabled == enabled )
             return;
         this.enabled = enabled;
         if( !isInitialized() )
             return;
-        if( enabled )
-            {
-            log.trace( "enable():" + this );
+        if( enabled ) {
+            log.trace("enable():" + this);
             enable();
-            }
-        else
-            {
-            log.trace( "disable():" + this );
+        } else {
+            log.trace("disable():" + this);
             disable();
-            }
+        }
     }
-    
-    public final boolean isEnabled() 
-    {
+
+    public final boolean isEnabled() {
         return enabled;
     }
 
-    public void stateAttached(AppStateManager stateManager) 
-    {
+    public void stateAttached( AppStateManager stateManager ) {
     }
 
-    public void stateDetached(AppStateManager stateManager) 
-    {
+    public void stateDetached( AppStateManager stateManager ) {
     }
 
-    public void update(float tpf) 
-    {
+    public void update( float tpf ) {
     }
 
-    public void render(RenderManager rm) 
-    {
+    public void render( RenderManager rm ) {
     }
 
-    public void postRender()
-    {
+    public void postRender() {
     }
 
-    public final void cleanup() 
-    {
-        if( log.isTraceEnabled() )
-            log.trace( "cleanup():" + this );
-            
-        if( isEnabled() )
+    public final void cleanup() {
+        if( log.isTraceEnabled() ) {
+            log.trace("cleanup():" + this);
+        }
+
+        if( isEnabled() ) {
             disable();
+        }
         cleanup(app);
         initialized = false;
     }

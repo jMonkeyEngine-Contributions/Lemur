@@ -40,7 +40,6 @@ import com.jme3.app.Application;
 import com.jme3.collision.Collidable;
 import com.jme3.collision.CollisionResult;
 import com.jme3.collision.CollisionResults;
-import com.jme3.font.BitmapText;
 import com.jme3.input.event.MouseButtonEvent;
 import com.jme3.input.event.MouseMotionEvent;
 import com.jme3.math.Ray;
@@ -56,105 +55,99 @@ import com.jme3.scene.Spatial;
  *
  *  @author    Paul Speed
  */
-public class MouseAppState extends BaseAppState
-{
+public class MouseAppState extends BaseAppState {
+
     private boolean includeDefaultNodes = true;
     private MouseObserver mouseObserver = new MouseObserver();
     private Map<Collidable, RootEntry> roots = new LinkedHashMap<Collidable, RootEntry>();
     private Map<Camera, Ray> rayCache = new HashMap<Camera, Ray>();
- 
+
     private long sampleFrequency = 1000000000 / 60; // 60 fps
     private long lastSample = 0;
- 
+
     /**
      *  The spatial that currently has the mouse over it.
-     */   
+     */
     private Spatial hitTarget;
-    
+
     /**
      *  The spatial that is the target of an active event sequence, ie:
      *  it captured the mouse when a button was clicked.
      */
     private Spatial capture;
-    
-    public MouseAppState()
-    {
+
+    public MouseAppState() {
         setEnabled(true);
     }
- 
-    public ViewPort findViewPort( Spatial s )
-    {
+
+    public ViewPort findViewPort( Spatial s ) {
         Spatial root = s;
-        while( root.getParent() != null )
+        while( root.getParent() != null ) {
             root = root.getParent();
+        }
         RootEntry e = roots.get(root);
         if( e == null )
             return null;
-        return e.viewport;       
-    }
- 
-    public void addCollisionRoot( ViewPort viewPort )
-    {
-        for( Spatial s : viewPort.getScenes() )
-            addCollisionRoot( s, viewPort );
+        return e.viewport;
     }
 
-    public void addCollisionRoot( Spatial root, ViewPort viewPort )
-    {
-        roots.put( root, new RootEntry(root, viewPort) );
+    public void addCollisionRoot( ViewPort viewPort ) {
+        for( Spatial s : viewPort.getScenes() ) {
+            addCollisionRoot(s, viewPort);
+        }
     }
-    
-    public void removeCollisionRoot( ViewPort viewPort )
-    {
-        for( Spatial s : viewPort.getScenes() )
+
+    public void addCollisionRoot( Spatial root, ViewPort viewPort ) {
+        roots.put(root, new RootEntry(root, viewPort));
+    }
+
+    public void removeCollisionRoot( ViewPort viewPort ) {
+        for( Spatial s : viewPort.getScenes() ) {
             removeCollisionRoot(s);
+        }
     }
-    
-    public void removeCollisionRoot( Spatial root )
-    {
+
+    public void removeCollisionRoot( Spatial root ) {
         RootEntry e = roots.remove(root);
-    }    
-    
-    protected void initialize( Application app )
-    {
-        if( includeDefaultNodes )
-            {
+    }
+
+    @Override
+    protected void initialize( Application app ) {
+        if( includeDefaultNodes ) {
             addCollisionRoot( app.getGuiViewPort() );
             addCollisionRoot( app.getViewPort() );
-            }
-            
+        }
+
         // We do this as early as possible because we want to
         // make sure to be able to capture everything if we
         // are enabled.
-        app.getInputManager().addRawInputListener(mouseObserver);        
+        app.getInputManager().addRawInputListener(mouseObserver);
     }
-    
-    protected void cleanup( Application app )
-    {
+
+    @Override
+    protected void cleanup( Application app ) {
         app.getInputManager().removeRawInputListener(mouseObserver);
     }
-    
-    protected void enable()
-    {
+
+    @Override
+    protected void enable() {
         getApplication().getInputManager().setCursorVisible(true);
     }
-    
-    protected void disable()
-    {
-        getApplication().getInputManager().setCursorVisible(false);
-    }    
 
-    protected void releaseCapture()
-    {        
-        if( capture != null )
-            {
+    @Override
+    protected void disable() {
+        getApplication().getInputManager().setCursorVisible(false);
+    }
+
+    protected void releaseCapture() {
+        if( capture != null ) {
             // Deliver a fake "up" event to remove the
             // capture
-            MouseButtonEvent event = new MouseButtonEvent( 0, false, -1000, -1000 );
+            MouseButtonEvent event = new MouseButtonEvent(0, false, -1000, -1000);
             capture.getControl( MouseEventControl.class ).mouseButtonEvent(event, hitTarget, capture);
             capture = null;
-            }
-            
+        }
+
         setCurrentHitTarget(null, new Vector2f(-1000, -1000));
     }
 
@@ -162,73 +155,66 @@ public class MouseAppState extends BaseAppState
      *  Finds a spatial in the specified spatial's hierarchy that
      *  is capable of recieving mouse events.
      */
-    protected Spatial findHitTarget( Spatial hit )
-    {
-        for( Spatial s = hit; s != null; s = s.getParent() )
-            { 
-            MouseEventControl control = s.getControl( MouseEventControl.class );
-            if( control != null && control.isEnabled() )
+    protected Spatial findHitTarget( Spatial hit ) {
+        for( Spatial s = hit; s != null; s = s.getParent() ) {
+            MouseEventControl control = s.getControl(MouseEventControl.class);
+            if( control != null && control.isEnabled() ) {
                 return s;
             }
+        }
         return null;
     }
 
-    protected void setCurrentHitTarget( Spatial s, Vector2f cursor )
-    {
+    protected void setCurrentHitTarget( Spatial s, Vector2f cursor ) {
+
         if( this.hitTarget == s )
             return;
 
         MouseMotionEvent event = null;
-            
-        if( this.hitTarget != null )
-            {
+
+        if( this.hitTarget != null ) {
             // Exiting
-            event = new MouseMotionEvent( (int)cursor.x, (int)cursor.y, 0, 0, 0, 0 );
+            event = new MouseMotionEvent((int)cursor.x, (int)cursor.y, 0, 0, 0, 0);
             this.hitTarget.getControl(MouseEventControl.class).mouseExited(event, hitTarget, capture);
-            }
+        }
         this.hitTarget = s;
-        if( this.hitTarget != null )
-            {
+        if( this.hitTarget != null ) {
             // Entering
-            if( event == null )            
-                event = new MouseMotionEvent( (int)cursor.x, (int)cursor.y, 0, 0, 0, 0 );
-                
+            if( event == null ) {
+                event = new MouseMotionEvent((int)cursor.x, (int)cursor.y, 0, 0, 0, 0);
+            }
+
             this.hitTarget.getControl(MouseEventControl.class).mouseEntered(event, hitTarget, capture);
-            }            
+        }
     }
 
-    protected Ray getPickRay( Camera cam, Vector2f cursor )
-    {
+    protected Ray getPickRay( Camera cam, Vector2f cursor ) {
         Ray result = rayCache.get(cam);
         if( result != null )
             return result;
-        
-        if( cam.isParallelProjection() )
-            {
+
+        if( cam.isParallelProjection() ) {
             // Treat it like a screen viewport
-            result = new Ray( new Vector3f( cursor.x, cursor.y, 1000 ), new Vector3f( 0, 0, -1 ) );
-            }
-        else
-            {
+            result = new Ray(new Vector3f(cursor.x, cursor.y, 1000), new Vector3f(0, 0, -1));
+        } else {
             // It's perspective...
-            Vector3f clickFar  = cam.getWorldCoordinates( cursor, 1 );
-            Vector3f clickNear = cam.getWorldCoordinates( cursor, 0 );
-            result = new Ray( clickNear, clickFar.subtractLocal(clickNear).normalizeLocal());
-            }
-        
+            Vector3f clickFar  = cam.getWorldCoordinates(cursor, 1);
+            Vector3f clickNear = cam.getWorldCoordinates(cursor, 0);
+            result = new Ray(clickNear, clickFar.subtractLocal(clickNear).normalizeLocal());
+        }
+
         rayCache.put( cam, result );
         return result;
     }
 
-    @Override   
-    public void update( float tpf )
-    {
+    @Override
+    public void update( float tpf ) {
         super.update(tpf);
 
         long time = System.nanoTime();
         if( time - lastSample < sampleFrequency )
             return;
-        lastSample = time; 
+        lastSample = time;
 
         Vector2f cursor = getApplication().getInputManager().getCursorPosition();
 
@@ -236,116 +222,106 @@ public class MouseAppState extends BaseAppState
         // were added... so guiNodes, etc. always come first.
         CollisionResults results = new CollisionResults();
         Spatial firstHit = null;
-        MouseMotionEvent event = null; 
- 
+        MouseMotionEvent event = null;
+
         // Always clear the caches first
         rayCache.clear();
-        
-        // Search each root for hits       
-        for( RootEntry e : roots.values() )
-            {
+
+        // Search each root for hits
+        for( RootEntry e : roots.values() ) {
             Camera cam = e.viewport.getCamera();
 
             Ray mouseRay = getPickRay(cam, cursor);
 
             // Rather than process every root, we will stop when
             // we find one that is ready to consume our event
-            int count = e.root.collideWith( mouseRay, results );            
-            if( count > 0 )
-                {
-                for( CollisionResult cr : results )
-                    {
+            int count = e.root.collideWith(mouseRay, results);
+            if( count > 0 ) {
+                for( CollisionResult cr : results ) {
                     Geometry geom = cr.getGeometry();
                     Spatial hit = findHitTarget(geom);
                     if( hit == null )
                         continue;
 
-                    if( firstHit == null )
-                        {
-                        setCurrentHitTarget( hit, cursor );
+                    if( firstHit == null ) {
+                        setCurrentHitTarget(hit, cursor);
                         firstHit = hit;
-                        }
-                                                
+                    }
+
                     // See if this is one that will take our event
-                    if( event == null )
-                        event = new MouseMotionEvent( (int)cursor.x, (int)cursor.y, 0, 0, 0, 0 );
-                        
-                    hit.getControl(MouseEventControl.class).mouseMoved( event, hit, capture );                   
-                    
+                    if( event == null ) {
+                        event = new MouseMotionEvent((int)cursor.x, (int)cursor.y, 0, 0, 0, 0);
+                    }
+
+                    hit.getControl(MouseEventControl.class).mouseMoved(event, hit, capture);
+
                     // If the event is consumed then we're done
-                    if( event.isConsumed() )
-                        {
+                    if( event.isConsumed() ) {
                         return;
-                        }                            
                     }
                 }
-            results.clear();
             }
- 
+            results.clear();
+        }
+
         // If the first hit is not the capture and we have a capture then
         // we need to deliver a motion even to it too
-        if( capture != null && firstHit != capture )
-            {
-            if( event == null )
-                event = new MouseMotionEvent( (int)cursor.x, (int)cursor.y, 0, 0, 0, 0 );
-            capture.getControl(MouseEventControl.class).mouseMoved( event, firstHit, capture );                   
+        if( capture != null && firstHit != capture ) {
+            if( event == null ) {
+                event = new MouseMotionEvent((int)cursor.x, (int)cursor.y, 0, 0, 0, 0);
             }
-            
-        if( firstHit == null )
-            setCurrentHitTarget(null, cursor);            
+            capture.getControl(MouseEventControl.class).mouseMoved(event, firstHit, capture);
+        }
+
+        if( firstHit == null ) {
+            setCurrentHitTarget(null, cursor);
+        }
     }
-    
-    protected void dispatch(MouseButtonEvent evt)
-    {
-        if( evt.isPressed() )
-            {
+
+    protected void dispatch(MouseButtonEvent evt) {
+        if( evt.isPressed() ) {
             capture = hitTarget;
-            } 
-        else if( capture != null )
-            {
+        } else if( capture != null ) {
             // Try to deliver it there first
-            capture.getControl(MouseEventControl.class).mouseButtonEvent( evt, hitTarget, capture );
+            capture.getControl(MouseEventControl.class).mouseButtonEvent(evt, hitTarget, capture);
             capture = null;
-                
+
             // If the event was consumed then we're done
             if( evt.isConsumed() )
                 return;
-            }                            
-        
-        if( hitTarget == null  )
-            return;            
-                
-        hitTarget.getControl(MouseEventControl.class).mouseButtonEvent( evt, hitTarget, capture );
-    } 
+        }
 
-    protected class RootEntry 
-    {
+        if( hitTarget == null  )
+            return;
+
+        hitTarget.getControl(MouseEventControl.class).mouseButtonEvent(evt, hitTarget, capture);
+    }
+
+    protected class RootEntry {
+
         protected ViewPort viewport;
         protected Collidable root;
-        
-        public RootEntry( Collidable root, ViewPort viewport )
-        {
+
+        public RootEntry( Collidable root, ViewPort viewport ) {
             this.viewport = viewport;
             this.root = root;
         }
     }
 
-    protected class MouseObserver extends DefaultRawInputListener
-    {
+    protected class MouseObserver extends DefaultRawInputListener {
         @Override
-        public void onMouseMotionEvent(MouseMotionEvent evt)
-        {
+        public void onMouseMotionEvent( MouseMotionEvent evt ) {
             //if( isEnabled() )
             //    dispatch(evt);
         }
-    
+
         @Override
-        public void onMouseButtonEvent(MouseButtonEvent evt)
-        {
-            if( isEnabled() )
+        public void onMouseButtonEvent( MouseButtonEvent evt ) {
+            if( isEnabled() ) {
                 dispatch(evt);
-        }   
-    } 
+            }
+        }
+    }
 }
 
 

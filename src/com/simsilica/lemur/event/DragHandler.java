@@ -47,81 +47,75 @@ import com.simsilica.lemur.GuiGlobals;
 
 /**
  *  Work in progress.
- * 
+ *
  *  @author    Paul Speed
  */
-public class DragHandler extends DefaultMouseListener
-{
+public class DragHandler extends DefaultMouseListener {
+
     private Vector2f drag = null;
     private Vector3f basePosition;
-    
+
     @Override
-    public void mouseButtonEvent( MouseButtonEvent event, Spatial target, Spatial capture )
-    {
+    public void mouseButtonEvent( MouseButtonEvent event, Spatial target, Spatial capture ) {
         if( event.getButtonIndex() != MouseInput.BUTTON_LEFT )
             return;
-            
+
         event.setConsumed();
-        if( event.isPressed() )
-            {
-            drag = new Vector2f( event.getX(), event.getY() );
+        if( event.isPressed() ) {
+            drag = new Vector2f(event.getX(), event.getY());
             basePosition = capture.getWorldTranslation().clone();
-            }
-        else
-            {
+        } else {
             // Dragging is done.
             drag = null;
             basePosition = null;
-            }                        
-    }        
-       
+        }
+    }
+
     @Override
-    public void mouseMoved( MouseMotionEvent event, Spatial target, Spatial capture )   
-    {
+    public void mouseMoved( MouseMotionEvent event, Spatial target, Spatial capture ) {
         if( drag == null )
             return;
-                
+
         ViewPort vp = GuiGlobals.getInstance().getCollisionViewPort( capture );
         Camera cam = vp.getCamera();
- 
+
         // If it's an ortho camera then we'll assume 1:1 mapping
         // for now.
-        if( cam.isParallelProjection() )
-            {
-            Vector2f current = new Vector2f( event.getX(), event.getY() );
+        if( cam.isParallelProjection() ) {
+            Vector2f current = new Vector2f(event.getX(), event.getY());
             Vector2f delta = current.subtract(drag);
-            capture.setLocalTranslation( basePosition.add(delta.x, delta.y, 0) );
+            capture.setLocalTranslation(basePosition.add(delta.x, delta.y, 0));
             return;
-            }
-            
+        }
+
         // Figure out how far away the center of the spatial is
         Vector3f pos = basePosition; //capture.getWorldTranslation();
-        Vector3f localPos = pos.subtract( cam.getLocation() ); 
-        float dist = cam.getDirection().dot( localPos );
- 
-        // Figure out what one "unit" up and down would be
-        // at this distance. 
-        Vector3f v1 = cam.getScreenCoordinates(pos, null); 
-        Vector3f right = cam.getScreenCoordinates(pos.add(cam.getLeft().negate()), null); 
-        Vector3f up = cam.getScreenCoordinates(pos.add(cam.getUp()), null); 
+        Vector3f localPos = pos.subtract(cam.getLocation());
+        float dist = cam.getDirection().dot(localPos);
 
-        Vector2f units = new Vector2f( right.x - v1.x, up.y - v1.y );
-            
+        // Figure out what one "unit" up and down would be
+        // at this distance.
+        Vector3f v1 = cam.getScreenCoordinates(pos, null);
+        Vector3f right = cam.getScreenCoordinates(pos.add(cam.getLeft().negate()), null);
+        Vector3f up = cam.getScreenCoordinates(pos.add(cam.getUp()), null);
+
+        Vector2f units = new Vector2f(right.x - v1.x, up.y - v1.y);
+
         // So... convert the actual screen movement to world space
         // movement along the camera plane.
-        Vector2f current = new Vector2f( event.getX(), event.getY() );
+        Vector2f current = new Vector2f(event.getX(), event.getY());
         Vector2f delta = current.subtract(drag);
-            
+
         // Need to maintain the sign of the drag delta
         delta.x /= Math.abs(units.x);
         delta.y /= Math.abs(units.y);
-            
+
         // Adjust the spatial's position accordingly
-        Vector3f newPos = pos.add( cam.getLeft().mult(-delta.x) );
-        newPos.addLocal( cam.getUp().mult(delta.y) );
-            
+        Vector3f newPos = pos.add(cam.getLeft().mult(-delta.x));
+        newPos.addLocal(cam.getUp().mult(delta.y));
+
         Vector3f local = capture.getParent().worldToLocal(newPos, null);
-        capture.setLocalTranslation( local );                         
-    }       
-}           
+        capture.setLocalTranslation(local);
+    }
+}
 

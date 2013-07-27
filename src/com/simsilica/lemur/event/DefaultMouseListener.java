@@ -39,52 +39,46 @@ import com.jme3.scene.*;
 
 
 /**
+ *  A default implementation mouse listener that provides default
+ *  implementations for all MouseListener methods.  In addition,
+ *  the mouseButtonEvent() provides basic default click behavior
+ *  calling an overridable click() method.
  *
  *  @author    Paul Speed
  */
-public class DefaultMouseListener implements MouseListener
-{
+public class DefaultMouseListener implements MouseListener {
+
     private int xDown;
     private int yDown;
-        
-    public DefaultMouseListener()
-    {
+
+    public DefaultMouseListener() {
     }
 
-    protected void click( MouseButtonEvent event, Spatial target, Spatial capture )
-    {
+    protected void click( MouseButtonEvent event, Spatial target, Spatial capture ) {
     }
-        
-    public void mouseButtonEvent( MouseButtonEvent event, Spatial target, Spatial capture )
-    {
+
+    public void mouseButtonEvent( MouseButtonEvent event, Spatial target, Spatial capture ) {
         event.setConsumed();
-            
-        if( event.isPressed() )
-            {
+
+        if( event.isPressed() ) {
             xDown = event.getX();
             yDown = event.getY();
-            }
-        else
-            {
+        } else {
             int x = event.getX();
             int y = event.getY();
-            if( Math.abs(x-xDown) < 3 && Math.abs(y-yDown) < 3 )
-                {
+            if( Math.abs(x-xDown) < 3 && Math.abs(y-yDown) < 3 ) {
                 click(event, target, capture);
-                }
-            }        
-    }
-       
-    public void mouseEntered( MouseMotionEvent event, Spatial target, Spatial capture )
-    {
+            }
+        }
     }
 
-    public void mouseExited( MouseMotionEvent event, Spatial target, Spatial capture )
-    {
+    public void mouseEntered( MouseMotionEvent event, Spatial target, Spatial capture ) {
     }
-       
-    public void mouseMoved( MouseMotionEvent event, Spatial target, Spatial capture )   
-    {
-    }   
+
+    public void mouseExited( MouseMotionEvent event, Spatial target, Spatial capture ) {
+    }
+
+    public void mouseMoved( MouseMotionEvent event, Spatial target, Spatial capture ) {
+    }
 }
 
