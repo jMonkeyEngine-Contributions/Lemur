@@ -107,7 +107,8 @@ public class InputMapper {
     private Map<JoystickAxis,Axis> joystickAxisMap = new HashMap<JoystickAxis,Axis>();
     private Map<JoystickButton,Button> joystickButtonMap = new HashMap<JoystickButton,Button>();
 
-    private Map<FunctionId, FunctionListeners> listenerMap = new HashMap<FunctionId, FunctionListeners>();
+    private Map<FunctionId, FunctionListeners> listenerMap
+                                                = new HashMap<FunctionId, FunctionListeners>();
 
     private double tpf = 0;
     private long lastFrameNanos;
@@ -150,7 +151,9 @@ public class InputMapper {
     protected void mapJoystick( Joystick j ) {
         // We attempt to determine what kind of stick it is so
         // that we can provide more intelligent button and axis mappings
-        if( j.getAxis(JoystickAxis.Z_ROTATION) != null && j.getAxis(JoystickAxis.Z_AXIS) != null ) {
+        if( j.getAxis(JoystickAxis.Z_ROTATION) != null
+            && j.getAxis(JoystickAxis.Z_AXIS) != null ) {
+
             mapGamepad(j);
             return;
         }
@@ -238,7 +241,9 @@ public class InputMapper {
         addMapping(function, bias, mainKeyCode, pressed);
     }
 
-    protected void addMapping( FunctionId function, InputState bias, Object primary, Object... modifiers ) {
+    protected void addMapping( FunctionId function, InputState bias, Object primary,
+                               Object... modifiers ) {
+
         StateGroup g = new StateGroup(function, bias, primary, modifiers);
         getIndex(primary, true).addGroup(g);
         for( Object o : modifiers ) {
@@ -294,7 +299,9 @@ public class InputMapper {
         addDelegate(func, target, methodName, false);
     }
 
-    public void addDelegate( FunctionId func, Object target, String methodName, boolean passArgument ) {
+    public void addDelegate( FunctionId func, Object target, String methodName,
+                             boolean passArgument ) {
+
         addStateListener(new StateMethodDelegate(target, methodName, passArgument), func);
     }
 
@@ -380,8 +387,10 @@ public class InputMapper {
 
     protected class FunctionListeners {
 
-        SafeArrayList<StateFunctionListener> stateListeners = new SafeArrayList<StateFunctionListener>(StateFunctionListener.class);
-        SafeArrayList<AnalogFunctionListener> analogListeners = new SafeArrayList<AnalogFunctionListener>(AnalogFunctionListener.class);
+        SafeArrayList<StateFunctionListener> stateListeners
+                = new SafeArrayList<StateFunctionListener>(StateFunctionListener.class);
+        SafeArrayList<AnalogFunctionListener> analogListeners
+                = new SafeArrayList<AnalogFunctionListener>(AnalogFunctionListener.class);
 
         public void notifyStateChanged( FunctionId function, InputState value ) {
             for( StateFunctionListener l : stateListeners.getArray() ) {
@@ -405,7 +414,9 @@ public class InputMapper {
         double lastValue;
         InputState lastState;
 
-        public StateGroup( FunctionId function, InputState bias, Object primaryState, Object... modifiers ) {
+        public StateGroup( FunctionId function, InputState bias, Object primaryState,
+                           Object... modifiers ) {
+
             this.function = function;
             this.bias = bias;
             this.primaryState = primaryState;

@@ -72,7 +72,8 @@ public class StateMethodDelegate implements StateFunctionListener {
         return method.getName();
     }
 
-    protected static Method resolveMethod( Class targetClass, String name, boolean takesArgument ) {
+    protected static Method resolveMethod( Class targetClass, String name,
+                                           boolean takesArgument ) {
         try {
             if( takesArgument ) {
                 return targetClass.getMethod(name, InputState.class);

@@ -45,20 +45,26 @@ import com.google.common.base.Objects;
  */
 public class Axis {
 
-    public static final Axis MOUSE_X = new Axis( "mouse_x", "Mouse Left/Right" );
-    public static final Axis MOUSE_Y = new Axis( "mouse_y", "Mouse Up/Down" );
-    public static final Axis MOUSE_WHEEL = new Axis( "mouse_wheel", "Mouse Wheel" );
+    public static final Axis MOUSE_X = new Axis("mouse_x", "Mouse Left/Right");
+    public static final Axis MOUSE_Y = new Axis("mouse_y", "Mouse Up/Down");
+    public static final Axis MOUSE_WHEEL = new Axis("mouse_wheel", "Mouse Wheel");
 
     // For a generic single-stick joystick
-    public static final Axis JOYSTICK_X = new Axis( "joystick_x", "Joystick Left/Right" );
-    public static final Axis JOYSTICK_Y = new Axis( "joystick_y", "Joystick Up/Down" );
+    public static final Axis JOYSTICK_X = new Axis("joystick_x", "Joystick Left/Right");
+    public static final Axis JOYSTICK_Y = new Axis("joystick_y", "Joystick Up/Down");
 
-    public static final Axis JOYSTICK_LEFT_X = new Axis( "joystick_left_x", "Joystick (left) Left/Right" );
-    public static final Axis JOYSTICK_LEFT_Y = new Axis( "joystick_left_y", "Joystick (left) Up/Down" );
-    public static final Axis JOYSTICK_RIGHT_X = new Axis( "joystick_right_x", "Joystick (right) Left/Right" );
-    public static final Axis JOYSTICK_RIGHT_Y = new Axis( "joystick_right_y", "Joystick (right) Up/Down" );
-    public static final Axis JOYSTICK_HAT_X = new Axis( "hat_x", "Joystick HAT Left/Right" );
-    public static final Axis JOYSTICK_HAT_Y = new Axis( "hat_y", "Joystick HAT Up/Down" );
+    public static final Axis JOYSTICK_LEFT_X
+                                = new Axis("joystick_left_x", "Joystick (left) Left/Right");
+    public static final Axis JOYSTICK_LEFT_Y
+                                = new Axis("joystick_left_y", "Joystick (left) Up/Down");
+    public static final Axis JOYSTICK_RIGHT_X
+                                = new Axis("joystick_right_x", "Joystick (right) Left/Right");
+    public static final Axis JOYSTICK_RIGHT_Y
+                                = new Axis("joystick_right_y", "Joystick (right) Up/Down");
+    public static final Axis JOYSTICK_HAT_X
+                                = new Axis("hat_x", "Joystick HAT Left/Right");
+    public static final Axis JOYSTICK_HAT_Y
+                                = new Axis("hat_y", "Joystick HAT Up/Down");
 
 
     private String id;
