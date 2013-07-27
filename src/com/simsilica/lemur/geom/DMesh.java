@@ -42,130 +42,119 @@ import java.nio.FloatBuffer;
 
 
 /**
+ *  A mesh that wraps another mesh to provide a deformed
+ *  view using a Deformation function.
  *
  *  @author    Paul Speed
  */
-public class DMesh extends Mesh
-{
+public class DMesh extends Mesh {
+
     private Mesh mesh;
     private Deformation deform;
-    
-    public DMesh( Mesh mesh )
-    {
+
+    public DMesh( Mesh mesh ) {
         this.mesh = mesh;
     }
-    
-    public DMesh( Mesh mesh, Deformation deform )
-    {
+
+    public DMesh( Mesh mesh, Deformation deform ) {
         this.mesh = mesh;
         this.deform = deform;
         updateMesh();
     }
-    
-    protected VertexBuffer matchBuffer( VertexBuffer source )
-    {
+
+    protected VertexBuffer matchBuffer( VertexBuffer source ) {
         if( source == null )
             return null;
-            
-        VertexBuffer target = getBuffer( source.getBufferType() );
-        if( target == null || target.getData().capacity() < source.getData().limit() )
-            {
+
+        VertexBuffer target = getBuffer(source.getBufferType());
+        if( target == null || target.getData().capacity() < source.getData().limit() ) {
             target = source.clone();
             setBuffer(target);
-            }
-        else
-            {
+        } else {
             target.getData().limit(source.getData().limit());
-            }
+        }
         return target;
     }
 
-    public void setDeformation( Deformation deform )
-    {
+    public void setDeformation( Deformation deform ) {
         this.deform = deform;
         updateMesh();
     }
-    
-    public Deformation getDeformation()
-    {
+
+    public Deformation getDeformation() {
         return deform;
     }
-    
-    public void updateMesh()
-    {
+
+    public void updateMesh() {
         VertexBuffer sourcePos = mesh.getBuffer(Type.Position);
         VertexBuffer sourceNorms = mesh.getBuffer(Type.Normal);
- 
+
         VertexBuffer targetPos = matchBuffer(sourcePos);
         VertexBuffer targetNorms = matchBuffer(sourceNorms);
- 
+
         // Make sure we also have an index and texture buffer that matches
         // ...even though we don't transform them we still need copies of
         // them.  We could just reference them but then our other buffers
         // might get out of sync
-        matchBuffer( mesh.getBuffer(Type.Index) );
-        matchBuffer( mesh.getBuffer(Type.TexCoord) );
-            
-        morph( sourcePos, sourceNorms, targetPos, targetNorms );
-        updateBound();                    
+        matchBuffer(mesh.getBuffer(Type.Index));
+        matchBuffer(mesh.getBuffer(Type.TexCoord));
+
+        morph(sourcePos, sourceNorms, targetPos, targetNorms);
+        updateBound();
     }
-    
+
     protected void morph( VertexBuffer sourcePos, VertexBuffer sourceNorms,
-                          VertexBuffer targetPos, VertexBuffer targetNorms )
-    {
+                          VertexBuffer targetPos, VertexBuffer targetNorms ) {
         FloatBuffer sp = (FloatBuffer)sourcePos.getData();
         sp.rewind();
-        
+
         FloatBuffer sn = (FloatBuffer)sourceNorms.getData();
         sn.rewind();
-                
+
         FloatBuffer tp = (FloatBuffer)targetPos.getData();
         tp.rewind();
-        
+
         FloatBuffer tn = (FloatBuffer)targetNorms.getData();
         tn.rewind();
-     
-        morph( sp, sn, tp, tn );
-        
+
+        morph(sp, sn, tp, tn);
+
         sp.rewind();
         sn.rewind();
-        
+
         tp.rewind();
         targetPos.updateData(tp);
         tn.rewind();
         targetNorms.updateData(tn);
     }
-    
+
     protected void morph( FloatBuffer sourcePos, FloatBuffer sourceNorms,
-                          FloatBuffer targetPos, FloatBuffer targetNorms )
-    {
+                          FloatBuffer targetPos, FloatBuffer targetNorms ) {
         if( deform == null )
             return;
-             
+
         int count = sourcePos.limit() / 3;
         Vector3f v = new Vector3f();
         Vector3f normal = new Vector3f();
-         
-        for( int i = 0; i < count; i++ )
-            {
+
+        for( int i = 0; i < count; i++ ) {
             v.x = sourcePos.get();
             v.y = sourcePos.get();
             v.z = sourcePos.get();
             normal.x = sourceNorms.get();
             normal.y = sourceNorms.get();
             normal.z = sourceNorms.get();
-            
-            morphVertex( v, normal );
-            
+
+            morphVertex(v, normal);
+
             targetPos.put(v.x).put(v.y).put(v.z);
             targetNorms.put(normal.x).put(normal.y).put(normal.z);
-            }                
+        }
     }
-    
-    protected void morphVertex( Vector3f vert, Vector3f normal )
-    {
-        deform.deform( vert, normal );
-    } 
+
+    protected void morphVertex( Vector3f vert, Vector3f normal ) {
+        deform.deform(vert, normal);
+    }
 }
 
 

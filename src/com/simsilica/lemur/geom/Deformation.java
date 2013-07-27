@@ -38,10 +38,12 @@ import com.jme3.math.Vector3f;
 
 
 /**
+ *  Implementations of this interface deform a vertex and normal
+ *  based on some implementation-specific function.  This is used
+ *  by the DMesh to deform a mesh.
  *
  *  @author    Paul Speed
  */
-public interface Deformation
-{
+public interface Deformation {
     public void deform( Vector3f vert, Vector3f normal );
 }
