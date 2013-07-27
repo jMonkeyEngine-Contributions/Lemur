@@ -34,71 +34,59 @@
 
 package com.simsilica.lemur.style;
 
-import java.lang.reflect.*;
 import java.util.*;
 
-import com.jme3.font.BitmapFont;
-import com.jme3.math.ColorRGBA;
-import com.simsilica.lemur.core.GuiComponent;
-import com.simsilica.lemur.core.GuiLayout;
 
 
 /**
+ *  The attribute settings for a particular style selector.
  *
  *  @author    Paul Speed
  */
-public class Attributes
-{
+public class Attributes {
+
     private Styles parent;
     private Map<String, Object> values = new HashMap<String, Object>();
 
-    public Attributes( Styles parent )
-    {
+    public Attributes( Styles parent ) {
         this.parent = parent;
     }
- 
-    protected void applyNew( Attributes atts )
-    {
-        for( Map.Entry<String,Object> e : atts.values.entrySet() )
-            {
+
+    protected void applyNew( Attributes atts ) {
+        for( Map.Entry<String,Object> e : atts.values.entrySet() ) {
             if( values.containsKey(e.getKey()) )
                 continue;
             values.put(e.getKey(), e.getValue());
-            }
+        }
     }
 
-    public boolean hasAttribute( String key )
-    {
+    public boolean hasAttribute( String key ) {
         return values.containsKey(key);
     }
-    
-    public void set( String attribute, Object value )
-    {
-        set( attribute, value, true );
-    } 
 
-    public void set( String attribute, Object value, boolean overwrite )
-    {
+    public void set( String attribute, Object value ) {
+        set( attribute, value, true );
+    }
+
+    public void set( String attribute, Object value, boolean overwrite ) {
         if( !overwrite && values.containsKey(attribute) )
             return;
-        values.put( attribute, value ); 
-    } 
+        values.put( attribute, value );
+    }
 
-    public <T> T get( String attribute, Class<T> type )
-    {
+    public <T> T get( String attribute, Class<T> type ) {
         return get(attribute, type, true);
     }
 
-    public <T> T get( String attribute, Class<T> type, boolean lookupDefault )
-    {
+    public <T> T get( String attribute, Class<T> type, boolean lookupDefault ) {
         Object result = values.get(attribute);
-        if( result == null && lookupDefault )
+        if( result == null && lookupDefault ) {
             result = parent.getDefault(type);
+        }
         return (T)result;
     }
 
-    public String toString()
-    {
+    public String toString() {
         return "Attributes[" + values + "]";
     }
 }

@@ -37,16 +37,18 @@ package com.simsilica.lemur.style;
 import java.lang.annotation.*;
 
 /**
- *  Annotation that can mark a field setter as a 
+ *  Annotation that can mark a field setter as a
  *  style attribute setter.  This will be automatically
  *  processed by the Styles class when styles are applied
- *  to the object.
+ *  to the object.  For attributes where "lookupDefault" is
+ *  true, if the style does not otherwise define that attribute
+ *  value then a default for that type will be used by calling
+ *  Styles.getDefault().
  *
  *  @author    Paul Speed
  */
 @Retention(RetentionPolicy.RUNTIME)
-public @interface StyleAttribute
-{
+public @interface StyleAttribute {
     String value();
     boolean lookupDefault() default true;
 }

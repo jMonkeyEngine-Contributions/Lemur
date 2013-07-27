@@ -36,10 +36,10 @@ package com.simsilica.lemur.style;
 
 
 /**
+ *  Used internally to the Styles class to locate
+ *  attributes for a particular ElementId.
  *
- *  @version   $Revision$
  *  @author    Paul Speed
  */
-public interface Selector
-{
+public interface Selector {
 }

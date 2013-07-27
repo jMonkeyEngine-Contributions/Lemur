@@ -38,13 +38,17 @@ import java.lang.annotation.*;
 
 /**
  *  Annotation that marks a method that will initialize
- *  styles for a particular class.
+ *  styles for a particular class.  The first time a GUI element
+ *  class is encountered by the Styles framework, it is searched
+ *  for any/all public static methods that are annoted with the
+ *  StyleDefaults annotation and those methods are invoked.  If
+ *  the method has Styles and/or Attributes parameters then those
+ *  are passed to the method during invocation.
  *
  *  @author    Paul Speed
  */
 @Retention(RetentionPolicy.RUNTIME)
-public @interface StyleDefaults
-{
+public @interface StyleDefaults {
     String value();
 }
 

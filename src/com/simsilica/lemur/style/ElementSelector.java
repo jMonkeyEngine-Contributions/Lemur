@@ -36,21 +36,30 @@ package com.simsilica.lemur.style;
 
 
 /**
+ *  A style selector that matches a specific
+ *  element ID.  Note: the selector may still refer
+ *  to parts of a composite element ID and "children" in
+ *  that case will inherit attributes of their parents.
+ *  In other words, using an ElementSelector("thumb") to
+ *  set attributes for a particular style can affect all
+ *  thumbs in any composite component, slider.thumb, scroll.thumb,
+ *  etc..
  *
- *  @version   $Revision$
+ *  <p>Note: mostly callers do not have to worry about
+ *  the specifics of this class as there are methods
+ *  on Styles that create these selectors internally.</p>
+ *
  *  @author    Paul Speed
  */
-public class ElementSelector implements Selector
-{
+public class ElementSelector implements Selector {
     private String element;
-    
-    public ElementSelector( String element )
-    {
+
+    public ElementSelector( String element ) {
         this.element = element;
     }
-    
-    public boolean equals( Object o )
-    {
+
+    @Override
+    public boolean equals( Object o ) {
         if( o == this )
             return true;
         if( o == null || o.getClass() != getClass() )
@@ -58,14 +67,14 @@ public class ElementSelector implements Selector
         ElementSelector other = (ElementSelector)o;
         return other.element.equals(element);
     }
-    
-    public int hashCode()
-    {
+
+    @Override
+    public int hashCode() {
         return element.hashCode();
     }
-    
-    public String toString()
-    {
+
+    @Override
+    public String toString() {
         return "Selector[" + element + "]";
-    }    
+    }
 }

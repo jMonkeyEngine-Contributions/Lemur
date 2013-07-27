@@ -36,22 +36,38 @@ package com.simsilica.lemur.style;
 
 
 /**
+ *  A style selector that matches any element with the
+ *  specified child ID and parent ID.  For example, if
+ *  an element ID is "slider.thumb.button" then there
+ *  are several "parent"/"child" relationships:
+ *  <ul>
+ *  <li>slider, thumb</li>
+ *  <li>slider, button</li>
+ *  <li>thumb, button</li>
+ *  </ul>
+ *
+ *  A ContainsSelector of ("slider", "button") would match
+ *  any of a slider's buttons, to include the thumb or
+ *  any arrow buttons, etc..
+ *
+ *  <p>Note: mostly callers do not have to worry about
+ *  the specifics of this class as there are methods
+ *  on Styles that create these selectors internally.</p>
  *
  *  @author    Paul Speed
  */
-public class ContainsSelector implements Selector
-{
+public class ContainsSelector implements Selector {
+
     private String parent;
     private String child;
-    
-    public ContainsSelector( String parent, String child )
-    {
+
+    public ContainsSelector( String parent, String child ) {
         this.parent = parent;
         this.child = child;
     }
-    
-    public boolean equals( Object o )
-    {
+
+    @Override
+    public boolean equals( Object o ) {
         if( o == this )
             return true;
         if( o == null || o.getClass() != getClass() )
@@ -61,14 +77,14 @@ public class ContainsSelector implements Selector
             return false;
         return other.child.equals(child);
     }
-    
-    public int hashCode()
-    {
+
+    @Override
+    public int hashCode() {
         return parent.hashCode() ^ child.hashCode();
     }
-    
-    public String toString()
-    {
+
+    @Override
+    public String toString() {
         return "Selector[" + parent + " " + child + "]";
-    }    
+    }
 }

@@ -34,61 +34,60 @@
 
 package com.simsilica.lemur.style;
 
-import java.util.*;
-
 /**
- *  A fully qualified element ID.
+ *  A fully qualified element ID.  These are used to logically
+ *  identity the type of GUI element for styling.  By default,
+ *  all GUI elements will have a default ID.  For example, Label
+ *  is "label", Button is "button", etc..  Composite GUI elements
+ *  such as list boxes, scroll bars, sliders, etc. will give
+ *  their children more specific element IDs that can be used
+ *  in style selectors that apply to entire groups of GUI elements.
  *
- *  @version   $Revision$
  *  @author    Paul Speed
  */
-public class ElementId
-{
+public class ElementId {
+
     private String id;
     private String[] parts;
     private Selector[] selectors;
-    
-    public ElementId( String id )
-    {
+
+    public ElementId( String id ) {
         this.id = id;
         this.parts = id.split("\\.");
-        this.selectors = Styles.getSelectors(id);               
+        this.selectors = Styles.getSelectors(id);
     }
-    
-    public final String getId()
-    {
+
+    public final String getId() {
         return id;
     }
-    
-    public final String[] getParts()
-    {
+
+    public final String[] getParts() {
         return parts;
     }
- 
-    public final Selector[] getSelectors()
-    {
+
+    public final Selector[] getSelectors() {
         return selectors;
     }
- 
-    public boolean equals( Object o )
-    {
+
+    @Override
+    public boolean equals( Object o ) {
         if( o == this )
-            return true; 
-        
+            return true;
+
         if( o == null || o.getClass() != getClass() )
             return false;
-        
+
         ElementId other = (ElementId)o;
         return id.equals(other.id);
     }
-    
-    public int hashCode()
-    {
+
+    @Override
+    public int hashCode() {
         return id.hashCode();
     }
-    
-    public String toString()
-    {
+
+    @Override
+    public String toString() {
         return "ElementId[" + id + "]";
     }
 }
