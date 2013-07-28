@@ -60,211 +60,214 @@ import com.simsilica.lemur.input.InputMapper;
 
 
 /**
+ *  A utility class that sets up some default global behavior for
+ *  the default GUI elements and provides some common access to
+ *  things like the AssetManager.
+ *
+ *  <p>When initialized, GuiGlobals will keep a reference to the
+ *  AssetManager for use in creating materials, loading fonts, and so
+ *  on.  It will also:
+ *  <ul>
+ *  <li>Setup the KeyInterceptState for allowing edit fields to intercept
+ *      key events ahead of the regular input processing.</li>
+ *  <li>Initialize InputMapper to provide advanced controller input processing.</li>
+ *  <li>Setup the MouseAppState to provide default mouse listener and picking
+ *      support for registered pick roots.</li>
+ *  <li>Setup the FocusManagerState that keeps track of the currently
+ *      focused component and makes sure transition methods are properly called.</li>
+ *  <li>Setup the default styles.</li>
+ *  <li>Sets up the layer based geometry comparators for the default app
+ *      viewport.</li>
+ *  </ul>
+ *
+ *  <p>For applications that wish to customize the behavior of GuiGlobals,
+ *  it is possible to set a custom subclass instead of initializing the
+ *  default implemenation.  Examples of reasons do do this might include
+ *  using custom materials instead of the default JME materials or otherwise
+ *  customizing the initialization setup.</p>
  *
  *  @author    Paul Speed
  */
-public class GuiGlobals
-{
+public class GuiGlobals {
+
     private static GuiGlobals instance;
- 
+
     private AssetManager assets;
     private InputMapper  inputMapper;
     private KeyInterceptState keyInterceptor;
     private MouseAppState mouseState;
     private FocusManagerState focusState;
     private String iconBase;
- 
+
     private Styles styles;
- 
-    public static void initialize( Application app )
-    {
-        setInstance( new GuiGlobals(app) );
+
+    public static void initialize( Application app ) {
+        setInstance(new GuiGlobals(app));
     }
- 
-    public static void setInstance( GuiGlobals globals )
-    {
+
+    public static void setInstance( GuiGlobals globals ) {
         instance = globals;
     }
-    
-    public static GuiGlobals getInstance()
-    {
+
+    public static GuiGlobals getInstance() {
         return instance;
     }
 
-    protected GuiGlobals( Application app )
-    {
+    protected GuiGlobals( Application app ) {
         this.assets = app.getAssetManager();
         this.keyInterceptor = new KeyInterceptState(app);
         this.inputMapper = new InputMapper(app.getInputManager());
         this.mouseState = new MouseAppState();
         this.focusState = new FocusManagerState();
-        app.getStateManager().attach( keyInterceptor );  
-        app.getStateManager().attach( mouseState );
-        app.getStateManager().attach( focusState );
- 
+        app.getStateManager().attach(keyInterceptor);
+        app.getStateManager().attach(mouseState);
+        app.getStateManager().attach(focusState);
+
         styles = new Styles();
         setDefaultStyles();
-        
+
         iconBase = getClass().getPackage().getName().replace( '.', '/' ) + "/icons";
- 
+
         ViewPort main = app.getViewPort();
         setupGuiComparators(main);
-        /*RenderQueue rq = main.getQueue();
-               
-        rq.setGeometryComparator( Bucket.Opaque, new LayerComparator( rq.getGeometryComparator(Bucket.Opaque) ) );
-        rq.setGeometryComparator( Bucket.Transparent, new LayerComparator( rq.getGeometryComparator(Bucket.Transparent), -1 ) );
-        rq.setGeometryComparator( Bucket.Gui, new LayerComparator( rq.getGeometryComparator(Bucket.Gui) ) );*/
-                                      
     }
 
-    public void setupGuiComparators( ViewPort view )
-    {
+    public void setupGuiComparators( ViewPort view ) {
         RenderQueue rq = view.getQueue();
-               
-        rq.setGeometryComparator( Bucket.Opaque, new LayerComparator( rq.getGeometryComparator(Bucket.Opaque) ) );
-        rq.setGeometryComparator( Bucket.Transparent, new LayerComparator( rq.getGeometryComparator(Bucket.Transparent), -1 ) );
-        rq.setGeometryComparator( Bucket.Gui, new LayerComparator( rq.getGeometryComparator(Bucket.Gui) ) );
+
+        rq.setGeometryComparator(Bucket.Opaque,
+                                 new LayerComparator(rq.getGeometryComparator(Bucket.Opaque)));
+        rq.setGeometryComparator(Bucket.Transparent,
+                                 new LayerComparator(rq.getGeometryComparator(Bucket.Transparent), -1));
+        rq.setGeometryComparator(Bucket.Gui,
+                                 new LayerComparator(rq.getGeometryComparator(Bucket.Gui)));
     }
 
-    protected void setDefaultStyles()
-    {
-        styles.setDefault( loadFont("Interface/Fonts/Default.fnt") );
-        styles.setDefault( ColorRGBA.LightGray );  
- 
+    protected void setDefaultStyles() {
+        styles.setDefault(loadFont("Interface/Fonts/Default.fnt"));
+        styles.setDefault(ColorRGBA.LightGray);
+
         // Setup some default styles for the "DEFAULT" Style
-        styles.getSelector( null ).set( "color", ColorRGBA.White );        
+        styles.getSelector(null).set("color", ColorRGBA.White);
     }
 
-    public Styles getStyles()
-    {
+    public Styles getStyles() {
         return styles;
     }
 
-    public InputMapper getInputMapper()
-    {
+    public InputMapper getInputMapper() {
         return inputMapper;
     }
 
-    public void fixFont( BitmapFont font )
-    {
-        for( int i = 0; i < font.getPageSize(); i++ )
-            {
+    /**
+     *  Goes through all of the font page materials and sets
+     *  alpha test and alpha fall-off.
+     */
+    public void fixFont( BitmapFont font ) {
+        for( int i = 0; i < font.getPageSize(); i++ ) {
             Material m = font.getPage(i);
             m.getAdditionalRenderState().setAlphaTest(true);
             m.getAdditionalRenderState().setAlphaFallOff(0.1f);
-            }
+        }
     }
 
-    private Texture getTexture( Material mat, String name ) 
-    {
+    private Texture getTexture( Material mat, String name ) {
         MatParam mp = mat.getParam(name);
         if( mp == null ) {
             return null;
         }
-        return (Texture)mp.getValue(); 
+        return (Texture)mp.getValue();
     }
 
-    public void lightFont( BitmapFont font )
-    {
+    public void lightFont( BitmapFont font ) {
         Material[] pages = new Material[font.getPageSize()];
-        for( int i = 0; i < pages.length; i++ )
-            {
+        for( int i = 0; i < pages.length; i++ ) {
             Material original = font.getPage(i);
             Material m = new Material(assets, "Common/MatDefs/Light/Lighting.j3md");
-            m.setTexture( "DiffuseMap", getTexture(original, "ColorMap") );
-            pages[i] = m;            
-            }
+            m.setTexture("DiffuseMap", getTexture(original, "ColorMap"));
+            pages[i] = m;
+        }
         font.setPages(pages);
-    }    
+    }
 
-    public BitmapFont loadFont( String path )
-    {
+    public BitmapFont loadFont( String path ) {
         BitmapFont result = assets.loadFont(path);
         fixFont(result);
         return result;
-    } 
-
-    public GuiMaterial createMaterial( boolean lit )
-    {
-        if( lit )
-            return new LightingMaterialAdapter(new Material(assets, "Common/MatDefs/Light/Lighting.j3md"));
-        else
-            return new UnshadedMaterialAdapter(new Material(assets, "Common/MatDefs/Misc/Unshaded.j3md"));
     }
 
-    public GuiMaterial createMaterial( ColorRGBA color, boolean lit )
-    {
+    public GuiMaterial createMaterial( boolean lit ) {
+        if( lit ) {
+            return new LightingMaterialAdapter(new Material(assets, "Common/MatDefs/Light/Lighting.j3md"));
+        } else {
+            return new UnshadedMaterialAdapter(new Material(assets, "Common/MatDefs/Misc/Unshaded.j3md"));
+        }
+    }
+
+    public GuiMaterial createMaterial( ColorRGBA color, boolean lit ) {
         GuiMaterial mat = createMaterial(lit);
         mat.setColor(color);
         return mat;
     }
 
-    public GuiMaterial createMaterial( Texture texture, boolean lit )
-    {
+    public GuiMaterial createMaterial( Texture texture, boolean lit ) {
         GuiMaterial mat = createMaterial(lit);
         mat.setTexture(texture);
         return mat;
     }
 
-    public Texture loadDefaultIcon( String name )
-    {
-        return loadTexture( iconBase + "/" + name, false, false );
+    public Texture loadDefaultIcon( String name ) {
+        return loadTexture(iconBase + "/" + name, false, false);
     }
 
-    public Texture loadTexture( String path, boolean repeat, boolean generateMips )
-    {
+    public Texture loadTexture( String path, boolean repeat, boolean generateMips ) {
         TextureKey key = new TextureKey(path);
         key.setGenerateMips(generateMips);
-        
+
         Texture t = assets.loadTexture(key);
-        if( t == null )
-            throw new RuntimeException( "Error loading texture:" + path );
- 
-        if( repeat )
-            {
-            t.setWrap( Texture.WrapMode.Repeat );
-            }
-        else
-            {
-            t.setWrap(Texture.WrapMode.Clamp); 
-            }                
-                     
+        if( t == null ) {
+            throw new RuntimeException("Error loading texture:" + path);
+        }
+
+        if( repeat ) {
+            t.setWrap(Texture.WrapMode.Repeat);
+        } else {
+            t.setWrap(Texture.WrapMode.Clamp);
+        }
+
         return t;
     }
-    
-    public void requestFocus( Spatial s )
-    {
+
+    public void requestFocus( Spatial s ) {
         focusState.setFocus(s);
     }
-    
-    public void addKeyListener( KeyListener l )
-    {
+
+    public void addKeyListener( KeyListener l ) {
         keyInterceptor.addKeyListener(l);
     }
-    
-    public void removeKeyListener( KeyListener l )
-    {
+
+    public void removeKeyListener( KeyListener l ) {
         keyInterceptor.removeKeyListener(l);
     }
-    
-    public ViewPort getCollisionViewPort( Spatial s )
-    {
+
+    public ViewPort getCollisionViewPort( Spatial s ) {
         return mouseState.findViewPort(s);
     }
-    
-    public Vector3f getScreenCoordinates( Spatial relativeTo, Vector3f pos )
-    {
-        ViewPort vp = getCollisionViewPort( relativeTo );
-        if( vp == null )
-            throw new RuntimeException( "Could not find viewport for:" + relativeTo );
- 
+
+    public Vector3f getScreenCoordinates( Spatial relativeTo, Vector3f pos ) {
+        ViewPort vp = getCollisionViewPort(relativeTo);
+        if( vp == null ) {
+            throw new RuntimeException("Could not find viewport for:" + relativeTo);
+        }
+
         // Calculate the world position relative to the spatial
         pos = relativeTo.localToWorld(pos, null);
-        
+
         Camera cam = vp.getCamera();
-        if( cam.isParallelProjection() )
+        if( cam.isParallelProjection() ) {
             return pos.clone();
-        
-        return cam.getScreenCoordinates(pos);        
+        }
+
+        return cam.getScreenCoordinates(pos);
     }
 }

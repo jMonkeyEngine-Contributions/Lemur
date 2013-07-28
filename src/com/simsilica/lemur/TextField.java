@@ -49,160 +49,137 @@ import java.util.Map;
 
 import com.jme3.font.BitmapFont;
 import com.jme3.math.ColorRGBA;
-import com.jme3.math.Vector3f;
 
 import com.simsilica.lemur.core.GuiControl;
 
 
 /**
+ *  A GUI element allowing text entry.
  *
- *  @version   $Revision$
  *  @author    Paul Speed
  */
-public class TextField extends Panel
-{
+public class TextField extends Panel {
+
     public static final String ELEMENT_ID = "textField";
 
     public static final String KEY_TEXT = "text";
-    
+
     private TextEntryComponent text;
-    
-    public TextField( String text )
-    {
-        this( new DocumentModel(text), true, new ElementId(ELEMENT_ID), null );
+
+    public TextField( String text ) {
+        this(new DocumentModel(text), true, new ElementId(ELEMENT_ID), null);
     }
-    
-    public TextField( String text, String style )
-    {
-        this( new DocumentModel(text), true, new ElementId(ELEMENT_ID), style );
+
+    public TextField( String text, String style ) {
+        this(new DocumentModel(text), true, new ElementId(ELEMENT_ID), style);
     }
-    
-    public TextField( String text, ElementId elementId, String style )
-    {
-        this( new DocumentModel(text), true, elementId, style );
+
+    public TextField( String text, ElementId elementId, String style ) {
+        this(new DocumentModel(text), true, elementId, style);
     }
-    
-    public TextField( DocumentModel model, String style )
-    {
-        this( model, true, new ElementId(ELEMENT_ID), style );
+
+    public TextField( DocumentModel model, String style ) {
+        this(model, true, new ElementId(ELEMENT_ID), style);
     }
-    
-    protected TextField( DocumentModel model, boolean applyStyles, ElementId elementId, String style )
-    {
+
+    protected TextField( DocumentModel model, boolean applyStyles, ElementId elementId, String style ) {
         super(false, elementId, style);
-            
+
         Styles styles = GuiGlobals.getInstance().getStyles();
-        this.text = new TextEntryComponent( model, styles.getAttributes(elementId.getId(), style).get( "font", BitmapFont.class ) );
+        this.text = new TextEntryComponent(model, styles.getAttributes(elementId.getId(), style).get("font", BitmapFont.class));
         getControl(GuiControl.class).addComponent(KEY_TEXT, text);
- 
-        addControl( new MouseEventControl( FocusMouseListener.INSTANCE ) );                
-       
-        if( applyStyles )        
-            styles.applyStyles( this, elementId.getId(), style );        
+
+        addControl(new MouseEventControl(FocusMouseListener.INSTANCE));
+
+        if( applyStyles ) {
+            styles.applyStyles(this, elementId.getId(), style);
+        }
     }
 
     @StyleDefaults(ELEMENT_ID)
-    public static void initializeDefaultStyles( Attributes attrs )
-    {
-        attrs.set( "background", new QuadBackgroundComponent( new ColorRGBA(0,0,0,1) ), false ); 
-        attrs.set( "singleLine", true );         
-    }    
+    public static void initializeDefaultStyles( Attributes attrs ) {
+        attrs.set("background", new QuadBackgroundComponent(new ColorRGBA(0,0,0,1)), false);
+        attrs.set("singleLine", true);
+    }
 
-    public Map<KeyAction,KeyActionListener> getActionMap()
-    {
+    public Map<KeyAction,KeyActionListener> getActionMap() {
         return text.getActionMap();
     }
 
-    public DocumentModel getDocumentModel()
-    {
-        return text.getDocumentModel();   
+    public DocumentModel getDocumentModel() {
+        return text.getDocumentModel();
     }
 
-    @StyleAttribute(value="text", lookupDefault=false)   
-    public void setText( String s )
-    {
+    @StyleAttribute(value="text", lookupDefault=false)
+    public void setText( String s ) {
         text.setText(s);
     }
-    
-    public String getText()
-    {
+
+    public String getText() {
         return text == null ? null : text.getText();
     }
 
-    @StyleAttribute(value="textVAlignment", lookupDefault=false)   
-    public void setTextVAlignment( VAlignment a )
-    {
+    @StyleAttribute(value="textVAlignment", lookupDefault=false)
+    public void setTextVAlignment( VAlignment a ) {
         text.setVAlignment(a);
     }
- 
-    public VAlignment getTextVAlignment()
-    {
+
+    public VAlignment getTextVAlignment() {
         return text.getVAlignment();
     }
-    
-    @StyleAttribute(value="textHAlignment", lookupDefault=false)   
-    public void setTextHAlignment( HAlignment a )
-    {
-        text.setHAlignment(a);
-    } 
 
-    public HAlignment getTextHAlignment()
-    {
+    @StyleAttribute(value="textHAlignment", lookupDefault=false)
+    public void setTextHAlignment( HAlignment a ) {
+        text.setHAlignment(a);
+    }
+
+    public HAlignment getTextHAlignment() {
         return text.getHAlignment();
     }
-     
-    public BitmapFont getFont()
-    {
+
+    public BitmapFont getFont() {
         return text.getFont();
     }
- 
-    @StyleAttribute("color")   
-    public void setColor( ColorRGBA color )
-    {
+
+    @StyleAttribute("color")
+    public void setColor( ColorRGBA color ) {
         text.setColor(color);
     }
-    
-    public ColorRGBA getColor()
-    {
+
+    public ColorRGBA getColor() {
         return text == null ? null : text.getColor();
     }
 
-    @StyleAttribute("fontSize")   
-    public void setFontSize( float f )
-    {
+    @StyleAttribute("fontSize")
+    public void setFontSize( float f ) {
         text.setFontSize(f);
     }
-    
-    public float getFontSize()
-    {
+
+    public float getFontSize() {
         return text == null ? 0 : text.getFontSize();
     }
 
-    @StyleAttribute("singleLine")   
-    public void setSingleLine( boolean f )
-    {
+    @StyleAttribute("singleLine")
+    public void setSingleLine( boolean f ) {
         text.setSingleLine(f);
     }
-    
-    public boolean isSingleLine()
-    {
+
+    public boolean isSingleLine() {
         return text.isSingleLine();
     }
 
-    @StyleAttribute("preferredWidth")   
-    public void setPreferredWidth( float f )
-    {
+    @StyleAttribute("preferredWidth")
+    public void setPreferredWidth( float f ) {
         text.setPreferredWidth(f);
     }
-    
-    public float getPreferredWidth()
-    {
+
+    public float getPreferredWidth() {
         return text.getPreferredWidth();
     }
-    
-    public String toString()
-    {
+
+    @Override
+    public String toString() {
         return getClass().getName() + "[text=" + getText() + ", color=" + getColor() + "]";
-    }               
+    }
 }
 

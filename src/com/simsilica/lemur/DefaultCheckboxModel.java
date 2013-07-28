@@ -38,54 +38,50 @@ import com.simsilica.lemur.core.VersionedReference;
 
 
 /**
+ *  A default implementation of the CheckboxModel interface
+ *  that simply stores a boolean state and increments the version
+ *  when the state is changed.
  *
  *  @author    Paul Speed
  */
-public class DefaultCheckboxModel implements CheckboxModel
-{
+public class DefaultCheckboxModel implements CheckboxModel {
+
     private long version;
     private boolean state;
 
-    public DefaultCheckboxModel()
-    {
+    public DefaultCheckboxModel() {
         this(false);
     }
-    
-    public DefaultCheckboxModel( boolean initialState )
-    {
+
+    public DefaultCheckboxModel( boolean initialState ) {
         this.state = initialState;
     }
 
-    public void setChecked( boolean state )
-    {
+    public void setChecked( boolean state ) {
         if( this.state == state )
             return;
         this.state = state;
         version++;
     }
-    
-    public boolean isChecked()
-    {
+
+    public boolean isChecked() {
         return state;
     }
 
-    public long getVersion()
-    {
+    public long getVersion() {
         return version;
     }
- 
-    public Boolean getObject()
-    {
+
+    public Boolean getObject() {
         return state;
     }
- 
-    public VersionedReference<Boolean> createReference()
-    {   
+
+    public VersionedReference<Boolean> createReference() {
         return new VersionedReference<Boolean>(this);
-    }    
- 
-    public String toString()
-    {
+    }
+
+    @Override
+    public String toString() {
         return getClass().getName() + "[checked=" + isChecked() + "]";
-    }   
+    }
 }

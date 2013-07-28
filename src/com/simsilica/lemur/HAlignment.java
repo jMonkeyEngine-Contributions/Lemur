@@ -36,11 +36,12 @@ package com.simsilica.lemur;
 
 
 /**
+ *  Horizontal alignment of a visual element, either
+ *  LEFT, RIGHT, or CENTER.
  *
  *  @author    Paul Speed
  */
-public enum HAlignment
-{
+public enum HAlignment {
     LEFT, RIGHT, CENTER
 }
 

@@ -38,11 +38,11 @@ import com.simsilica.lemur.core.VersionedObject;
 
 
 /**
+ *  The model for a Checkbox element.
  *
  *  @author    Paul Speed
  */
-public interface CheckboxModel extends VersionedObject<Boolean>
-{
+public interface CheckboxModel extends VersionedObject<Boolean> {
     public void setChecked( boolean state );
     public boolean isChecked();
 }

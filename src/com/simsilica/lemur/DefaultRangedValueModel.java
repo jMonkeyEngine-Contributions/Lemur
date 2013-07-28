@@ -36,104 +36,95 @@ package com.simsilica.lemur;
 
 import com.simsilica.lemur.core.VersionedReference;
 
+
 /**
+ *  A default implementation of the RangedValueModel interface
+ *  that keeps a value and a version, incrementing the version
+ *  whenever the value changes.  Values are kept between the
+ *  configured min and max.
  *
  *  @author    Paul Speed
  */
-public class DefaultRangedValueModel implements RangedValueModel
-{
+public class DefaultRangedValueModel implements RangedValueModel {
+
     private long version;
     private double min;
     private double max;
     private double value;
 
-    public DefaultRangedValueModel()
-    {
-        this( 0, 100, 0 );
+    public DefaultRangedValueModel() {
+        this(0, 100, 0);
     }
-    
-    public DefaultRangedValueModel( double min, double max, double value )
-    {
+
+    public DefaultRangedValueModel( double min, double max, double value ) {
         this.min = min;
         this.max = max;
         this.value = value;
         checkRange();
-    } 
+    }
 
-    public long getVersion()
-    {
+    public long getVersion() {
         return version;
     }
- 
-    public Double getObject()
-    {
+
+    public Double getObject() {
         return value;
     }
- 
-    public VersionedReference<Double> createReference()
-    {   
-        return new VersionedReference<Double>(this);
-    }    
 
-    protected void checkRange()
-    {
+    public VersionedReference<Double> createReference() {
+        return new VersionedReference<Double>(this);
+    }
+
+    protected void checkRange() {
         value = Math.max(min, value);
         value = Math.min(max, value);
     }
 
-    public void setValue( double value )
-    {
+    public void setValue( double value ) {
         if( this.value == value )
             return;
         this.value = value;
         version++;
         checkRange();
     }
-    
-    public double getValue()
-    {
+
+    public double getValue() {
         return value;
     }
- 
-    public void setPercent( double v )
-    {
+
+    public void setPercent( double v ) {
         double range = max - min;
         double projected = min + range * v;
-        setValue(projected);        
+        setValue(projected);
     }
- 
-    public double getPercent()
-    {
+
+    public double getPercent() {
         double range = max - min;
         if( range == 0 )
             return 0;
         double part = value - min;
-        return part / range; 
+        return part / range;
     }
-   
-    public void setMaximum( double max )
-    {
+
+    public void setMaximum( double max ) {
         this.max = max;
     }
-    
-    public double getMaximum()
-    {
+
+    public double getMaximum() {
         return max;
     }
-    
-    public void setMinimum( double min )
-    {
+
+    public void setMinimum( double min ) {
         this.min = min;
     }
-    
-    public double getMinimum()
-    {
+
+    public double getMinimum() {
         return min;
     }
-    
-    public String toString()
-    {
-        return getClass().getName() + "[value=" + value + ", min=" + min + ", max=" + max + "]"; 
+
+    @Override
+    public String toString() {
+        return getClass().getName() + "[value=" + value + ", min=" + min + ", max=" + max + "]";
     }
 }
 

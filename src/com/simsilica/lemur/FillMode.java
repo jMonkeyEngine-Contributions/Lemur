@@ -36,10 +36,24 @@ package com.simsilica.lemur;
 
 
 /**
+ *  Specifies the overall type of fill for a distribution
+ *  or layout.
+ *
+ *  NONE - indicates that none of the children will be stretched and
+ *         there default size will always be used.
+ *  EVEN - all children will get an even amount of stretching.  This does
+ *         not mean that they are all the same size.  It means that
+ *         any extra sizing is evenly distributed amongst all children.
+ *  PROPORTIONAL - children will get stretching based on their portion
+ *         of the overal preferred size.  Instead of evenly distributing
+ *         extra sizing, each child will get a proportional amount of
+ *         the sizing based on their relative size.  If three children
+ *         start out at 100, 50, and 50 and there are 10 extra units to
+ *         go around then the first will get 5 and the other two will get
+ *         2.5.
  *
  *  @author    Paul Speed
  */
-public enum FillMode
-{
+public enum FillMode {
     NONE, EVEN, PROPORTIONAL
 }

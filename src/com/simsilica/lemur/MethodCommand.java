@@ -39,47 +39,38 @@ import java.lang.reflect.Method;
 
 
 /**
+ *  A Command implementation that calls a configured
+ *  no-argument method through reflection.
  *
  *  @author    Paul Speed
  */
-public class MethodCommand<S> implements Command<S>
-{
-    private Object delegate;  
+public class MethodCommand<S> implements Command<S> {
+
+    private Object delegate;
     private Method method;
- 
-    public MethodCommand( Object delegate, String methodName )
-    {
+
+    public MethodCommand( Object delegate, String methodName ) {
         this.delegate = delegate;
-        
-        try
-            {               
+
+        try {
             this.method = delegate.getClass().getMethod(methodName);
-            }
-        catch( NoSuchMethodException e )
-            {
-            throw new RuntimeException( "Cannot find method:" + methodName + " on " + delegate.getClass(), e );
-            }
+        } catch( NoSuchMethodException e ) {
+            throw new RuntimeException("Cannot find method:" + methodName + " on " + delegate.getClass(), e);
+        }
     }
-    
-    public MethodCommand( Object delegate, Method method )
-    {
+
+    public MethodCommand( Object delegate, Method method ) {
         this.delegate = delegate;
         this.method = method;
-    }        
-    
-    public void execute( S source )
-    {
-        try
-            {
-            method.invoke( delegate );
-            }
-        catch( InvocationTargetException e )
-            {
-            throw new RuntimeException( "Error delegating to:" + method, e );
-            }
-        catch( IllegalAccessException e )
-            {
-            throw new RuntimeException( "Error delegating to:" + method, e );
-            }
+    }
+
+    public void execute( S source ) {
+        try {
+            method.invoke(delegate);
+        } catch( InvocationTargetException e ) {
+            throw new RuntimeException("Error delegating to:" + method, e);
+        } catch( IllegalAccessException e ) {
+            throw new RuntimeException("Error delegating to:" + method, e);
+        }
     }
 }

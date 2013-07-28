@@ -40,87 +40,78 @@ import com.jme3.math.Vector3f;
 
 
 /**
+ *  A 3D insets object representing a three dimensional padding
+ *  around some axis aligned box.
  *
  *  @author    Paul Speed
  */
-public class Insets3f implements Cloneable
-{
+public class Insets3f implements Cloneable {
+
     public Vector3f min;
     public Vector3f max;
-    
-    public Insets3f( float top, float left, float bottom, float right )
-    {
+
+    public Insets3f( float top, float left, float bottom, float right ) {
         this(top, left, bottom, right, 0, 0);
     }
-    
-    public Insets3f( float top, float left, float bottom, float right, float front, float back )
-    {
-        this( new Vector3f( left, top, back ), new Vector3f( right, bottom, front ) );
+
+    public Insets3f( float top, float left, float bottom, float right, float front, float back ) {
+        this(new Vector3f(left, top, back), new Vector3f(right, bottom, front));
     }
-    
-    public Insets3f( Vector3f min, Vector3f max )
-    {
+
+    public Insets3f( Vector3f min, Vector3f max ) {
         this.min = min;
         this.max = max;
     }
- 
-    public void setMinInsets( Vector3f min )
-    {
+
+    public void setMinInsets( Vector3f min ) {
         this.min = min;
     }
-    
-    public Vector3f getMinInsets()
-    {
+
+    public Vector3f getMinInsets() {
         return min;
     }
-    
-    public void setMaxInsets( Vector3f max )
-    {
+
+    public void setMaxInsets( Vector3f max ) {
         this.max = max;
     }
-    
-    public Vector3f getMaxInsets()
-    {
+
+    public Vector3f getMaxInsets() {
         return max;
     }
- 
-    public boolean equals( Object o )
-    {
+
+    @Override
+    public boolean equals( Object o ) {
         if( o == this )
             return true;
         if( o == null || o.getClass() != getClass() )
             return false;
         Insets3f other = (Insets3f)o;
         if( !Objects.equal(min, other.min) )
-            return false;                
+            return false;
         if( !Objects.equal(max, other.max) )
             return false;
         return true;
     }
-    
-    public int hashCode()
-    {
+
+    @Override
+    public int hashCode() {
         return Objects.hashCode(min, max);
     }
-    
+
     @Override
-    public Insets3f clone()
-    {
-        try 
-            {
+    public Insets3f clone() {
+        try {
             Insets3f result = (Insets3f)super.clone();
             result.min = min.clone();
             result.max = max.clone();
-            return result;             
-            } 
-        catch( CloneNotSupportedException e ) 
-            {
-            throw new RuntimeException( "Error cloning", e );
-            }
+            return result;
+        } catch( CloneNotSupportedException e ) {
+            throw new RuntimeException("Error cloning", e);
+        }
     }
-    
-    public String toString()
-    {
+
+    @Override
+    public String toString() {
         return "Insets3f[min=" + min + ", max=" + max + "]";
     }
 }

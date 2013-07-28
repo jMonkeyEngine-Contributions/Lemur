@@ -41,102 +41,95 @@ import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
 
 /**
- *  Sorts geometry based on an included "layer" user data, 
+ *  Sorts geometry based on an included "layer" user data,
  *  accumulating an effective layer by walking up the
- *  scene graph back to root.
+ *  scene graph back to root.  Layers are parent-local layers
+ *  and not global layers.  In other words, they only control
+ *  the sorting of children.  This approach is more useful in
+ *  a GUI environment where UI elements are grouped in
+ *  scene graph hierarchies already.
  *
  *  @author PSpeed
  */
-public class LayerComparator implements GeometryComparator 
-{
+public class LayerComparator implements GeometryComparator {
+
     public static final String LAYER = "layer";
     public static final String EFFECTIVE_LAYER = "effectiveLayer";
 
     private GeometryComparator delegate;
     private int bias;
 
-    public LayerComparator(GeometryComparator delegate) 
-    {
+    public LayerComparator(GeometryComparator delegate) {
         this(delegate, 1);
     }
 
-    public LayerComparator(GeometryComparator delegate, int bias) 
-    {
+    public LayerComparator(GeometryComparator delegate, int bias) {
         this.delegate = delegate;
         this.bias = -bias;
     }
 
-    public static void setLayer( Spatial s, int layer )
-    {
-        s.setUserData( LAYER, layer );
+    public static void setLayer( Spatial s, int layer ) {
+        s.setUserData(LAYER, layer);
     }
 
-    public static void resetLayer( Spatial s, int layer )
-    {
-        setLayer( s, layer );
- 
+    public static void resetLayer( Spatial s, int layer ) {
+        setLayer(s, layer);
+
         // Need to clear the effective layer for the geometry children
         clearEffectiveLayer(s);
     }
 
-    public static Integer getLayer( Spatial s )
-    {
+    public static Integer getLayer( Spatial s ) {
         return s.getUserData(LAYER);
-    } 
-
-    public static void clearEffectiveLayer( Spatial s )
-    {
-        s.setUserData( EFFECTIVE_LAYER, null );
-        if( s instanceof Node )
-            {
-            for( Spatial child : ((Node)s).getChildren() )
-                clearEffectiveLayer(child);
-            }
     }
 
-    public void setCamera(Camera cam) 
-    {
+    public static void clearEffectiveLayer( Spatial s ) {
+        s.setUserData(EFFECTIVE_LAYER, null);
+        if( s instanceof Node ) {
+            for( Spatial child : ((Node)s).getChildren() ) {
+                clearEffectiveLayer(child);
+            }
+        }
+    }
+
+    public void setCamera(Camera cam) {
         delegate.setCamera(cam);
     }
 
-    protected float calculateEffectiveLayer(Geometry g) 
-    {
+    protected float calculateEffectiveLayer(Geometry g) {
         Integer childLayer = g.getUserData(LAYER);
         float layer = childLayer != null ? (childLayer + 1) : 1;
-        for (Spatial s = g.getParent(); s != null; s = s.getParent()) 
-            {
+
+        for( Spatial s = g.getParent(); s != null; s = s.getParent() ) {
             Integer i = s.getUserData(LAYER);
-            if (i == null) 
+            if (i == null)
                 continue;
             // Should really base the divisor on the number
             // of children... since right now if we exceed more
             // than 10 layers under a parent then we overflow
             layer = layer * 0.1F;
             layer += i != null ? (i + 1) : 1;
-            }
-        
+        }
+
         return layer;
     }
 
-    public float getLayer(Geometry g) 
-    {
+    public float getLayer(Geometry g) {
         Float d = g.getUserData("effectiveLayer");
-        if (d != null) 
+        if (d != null)
             return d;
         d = calculateEffectiveLayer(g);
         g.setUserData("effectiveLayer", d);
         return d;
     }
 
-    public int compare(Geometry g1, Geometry g2) 
-    {
+    public int compare( Geometry g1, Geometry g2 ) {
         float l1 = getLayer(g1);
         float l2 = getLayer(g2);
-        if (l1 < l2) 
-            return -1 * bias;            
-        if (l2 < l1) 
+        if (l1 < l2)
+            return -1 * bias;
+        if (l2 < l1)
             return 1 * bias;
         return delegate.compare(g1, g2);
     }
-    
 }

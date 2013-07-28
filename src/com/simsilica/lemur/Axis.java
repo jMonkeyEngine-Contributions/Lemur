@@ -36,10 +36,10 @@ package com.simsilica.lemur;
 
 
 /**
+ *  Represents one of the X, Y, or Z axes.
  *
  *  @author    Paul Speed
  */
-public enum Axis
-{
-    X, Y, Z 
+public enum Axis {
+    X, Y, Z
 }

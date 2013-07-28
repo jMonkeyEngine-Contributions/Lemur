@@ -47,83 +47,74 @@ import com.simsilica.lemur.component.SpringGridLayout;
 
 
 /**
+ *  A special type of Panel that is preconfigured to hold
+ *  children using a layout.
  *
  *  @author    Paul Speed
  */
-public class Container extends Panel
-{
-    public static final String ELEMENT_ID = "container";  
+public class Container extends Panel {
 
-    public Container()
-    {
+    public static final String ELEMENT_ID = "container";
+
+    public Container() {
         this(null, true, new ElementId(ELEMENT_ID), null);
     }
- 
-    public Container( GuiLayout layout )
-    {
-        this( layout, true, new ElementId(ELEMENT_ID), null );
+
+    public Container( GuiLayout layout ) {
+        this(layout, true, new ElementId(ELEMENT_ID), null);
     }
-    
-    public Container( String style )
-    {
-        this( null, true, new ElementId(ELEMENT_ID), style );
+
+    public Container( String style ) {
+        this(null, true, new ElementId(ELEMENT_ID), style);
     }
-                     
-    public Container( ElementId elementId, String style )
-    {
-        this( null, true, elementId, style );
+
+    public Container( ElementId elementId, String style ) {
+        this(null, true, elementId, style);
     }
-                     
-    public Container( GuiLayout layout, String style )
-    {
-        this( layout, true, new ElementId(ELEMENT_ID), style ); 
+
+    public Container( GuiLayout layout, String style ) {
+        this(layout, true, new ElementId(ELEMENT_ID), style);
     }
-    
-    protected Container( GuiLayout layout, boolean applyStyles, ElementId elementId, String style )
-    {
+
+    protected Container( GuiLayout layout, boolean applyStyles,
+                         ElementId elementId, String style ) {
         super(false, elementId, style);
 
-        if( applyStyles )
-            {
+        if( applyStyles ) {
             Styles styles = GuiGlobals.getInstance().getStyles();
-            styles.applyStyles( this, elementId.getId(), style );
-            }
- 
-        if( layout != null )                               
-            setLayout(layout);        
-    }                 
+            styles.applyStyles(this, elementId.getId(), style);
+        }
+
+        if( layout != null ) {
+            setLayout(layout);
+        }
+    }
 
     @StyleDefaults(ELEMENT_ID)
-    public static void initializeDefaultStyles( Attributes attrs )
-    {
-        attrs.set( "layout", new SpringGridLayout(), false );
-    }    
+    public static void initializeDefaultStyles( Attributes attrs ) {
+        attrs.set("layout", new SpringGridLayout(), false);
+    }
 
-    public <T extends Node> T addChild( T child, Object... constraints )
-    {
+    public <T extends Node> T addChild( T child, Object... constraints ) {
         getLayout().addChild(child, constraints);
         return child;
-    } 
+    }
 
-    public void removeChild( Node child )
-    {
+    public void removeChild( Node child ) {
         getLayout().removeChild(child);
-    }    
+    }
 
-    @StyleAttribute(value="layout", lookupDefault=false)   
-    public void setLayout( GuiLayout layout )
-    {
+    @StyleAttribute(value="layout", lookupDefault=false)
+    public void setLayout( GuiLayout layout ) {
         getControl(GuiControl.class).setLayout(layout);
     }
-    
-    public GuiLayout getLayout()
-    {
+
+    public GuiLayout getLayout() {
         return getControl(GuiControl.class).getLayout();
     }
- 
+
     @Override
-    public String toString()
-    {
+    public String toString() {
         return getClass().getName() + "[layout=" + getLayout() + "]";
     }
 }

@@ -43,18 +43,20 @@ import com.jme3.font.BitmapFont;
 import com.jme3.math.ColorRGBA;
 import com.jme3.math.Vector3f;
 
-
 import com.simsilica.lemur.core.GuiControl;
 import com.simsilica.lemur.component.TextComponent;
 
+
 /**
+ *  A standard GUI element for displaying text with an optional
+ *  shadow.
  *
  *  @author    Paul Speed
  */
-public class Label extends Panel
-{
+public class Label extends Panel {
+
     public static final String ELEMENT_ID = "label";
-    
+
     public static final String KEY_TEXT = "text";
     public static final String KEY_SHADOW_TEXT = "shadowText";
 
@@ -62,160 +64,150 @@ public class Label extends Panel
     private TextComponent shadow;
     private Vector3f shadowOffset = new Vector3f(1,-1,1);
 
-    public Label( String s )
-    {
+    public Label( String s ) {
         this( s, true, new ElementId(ELEMENT_ID), null );
     }
-    
-    public Label( String s, String style )
-    {
+
+    public Label( String s, String style ) {
         this( s, true, new ElementId(ELEMENT_ID), style );
-    }                 
+    }
 
-    public Label( String s, ElementId elementId, String style )
-    {
+    public Label( String s, ElementId elementId, String style ) {
         this( s, true, elementId, style );
-    }                 
+    }
 
-    protected Label( String s, boolean applyStyles, ElementId elementId, String style )
-    {
+    protected Label( String s, boolean applyStyles, ElementId elementId, String style ) {
         super(false, elementId, style);
-            
+
+        // Retrieve the font before creation so that if the font is
+        // customized by the style then we don't end up creating a
+        // BitmapText object just to throw it away when a new font
+        // is set right after.  It's a limitation of BitmapText that
+        // can't have it's font changed post-creation.
         Styles styles = GuiGlobals.getInstance().getStyles();
-        this.text = new TextComponent( s, styles.getAttributes(elementId.getId(), style).get( "font", BitmapFont.class ) );
+        BitmapFont font = styles.getAttributes(elementId.getId(), style).get("font", BitmapFont.class);
+        this.text = new TextComponent(s, font);
+
         getControl(GuiControl.class).addComponent(KEY_TEXT, text);
-        
-        if( applyStyles )        
-            styles.applyStyles( this, elementId.getId(), style );        
+
+        if( applyStyles ) {
+            styles.applyStyles(this, elementId.getId(), style);
+        }
     }
 
     @StyleDefaults(ELEMENT_ID)
-    public static void initializeDefaultStyles( Attributes attrs )
-    {
-    }    
-
-    @StyleAttribute(value="text", lookupDefault=false)   
-    public void setText( String s )
-    {
-        text.setText(s);
-        if( shadow != null )
-            shadow.setText(s);   
+    public static void initializeDefaultStyles( Attributes attrs ) {
     }
-    
-    public String getText()
-    {
+
+    @StyleAttribute(value="text", lookupDefault=false)
+    public void setText( String s ) {
+        text.setText(s);
+        if( shadow != null ) {
+            shadow.setText(s);
+        }
+    }
+
+    public String getText() {
         return text == null ? null : text.getText();
     }
- 
-    @StyleAttribute(value="textVAlignment", lookupDefault=false)   
-    public void setTextVAlignment( VAlignment a )
-    {
+
+    @StyleAttribute(value="textVAlignment", lookupDefault=false)
+    public void setTextVAlignment( VAlignment a ) {
         text.setVAlignment(a);
-        if( shadow != null )
+        if( shadow != null ) {
             shadow.setVAlignment(a);
+        }
     }
- 
-    public VAlignment getTextVAlignment()
-    {
+
+    public VAlignment getTextVAlignment() {
         return text.getVAlignment();
     }
-    
-    @StyleAttribute(value="textHAlignment", lookupDefault=false)   
-    public void setTextHAlignment( HAlignment a )
-    {
-        text.setHAlignment(a);
-        if( shadow != null )
-            shadow.setHAlignment(a);
-    } 
 
-    public HAlignment getTextHAlignment()
-    {
+    @StyleAttribute(value="textHAlignment", lookupDefault=false)
+    public void setTextHAlignment( HAlignment a ) {
+        text.setHAlignment(a);
+        if( shadow != null ) {
+            shadow.setHAlignment(a);
+        }
+    }
+
+    public HAlignment getTextHAlignment() {
         return text.getHAlignment();
     }
-     
-    public void setFont( BitmapFont font )
-    {
+
+    public void setFont( BitmapFont font ) {
         text.setFont(font);
-        if( shadow != null )
+        if( shadow != null ) {
             shadow.setFont(font);
+        }
     }
-     
-    public BitmapFont getFont()
-    {
+
+    public BitmapFont getFont() {
         return text.getFont();
     }
- 
-    @StyleAttribute("color")   
-    public void setColor( ColorRGBA color )
-    {
+
+    @StyleAttribute("color")
+    public void setColor( ColorRGBA color ) {
         text.setColor(color);
     }
-    
-    public ColorRGBA getColor()
-    {
+
+    public ColorRGBA getColor() {
         return text == null ? null : text.getColor();
     }
 
-    @StyleAttribute("fontSize")   
-    public void setFontSize( float f )
-    {
+    @StyleAttribute("fontSize")
+    public void setFontSize( float f ) {
         text.setFontSize(f);
-        if( shadow != null )
+        if( shadow != null ) {
             shadow.setFontSize(f);
+        }
     }
-    
-    public float getFontSize()
-    {
+
+    public float getFontSize() {
         return text == null ? 0 : text.getFontSize();
     }
-    
+
     @StyleAttribute("shadowOffset")
-    public void setShadowOffset( Vector3f offset )
-    {
-        shadowOffset.set(offset);        
-        if( shadow != null )
-            shadow.setOffset( offset.x, offset.y, offset.z );               
+    public void setShadowOffset( Vector3f offset ) {
+        shadowOffset.set(offset);
+        if( shadow != null ) {
+            shadow.setOffset(offset.x, offset.y, offset.z);
+        }
     }
- 
-    public Vector3f getShadowOffset()
-    {
+
+    public Vector3f getShadowOffset() {
         return shadowOffset;
     }
-    
-    @StyleAttribute(value="shadowColor", lookupDefault=false)   
-    public void setShadowColor( ColorRGBA color )
-    {
-        if( shadow == null )
-            {
+
+    @StyleAttribute(value="shadowColor", lookupDefault=false)
+    public void setShadowColor( ColorRGBA color ) {
+        if( shadow == null ) {
             if( color == null )
                 return;
- 
+
             // Else we need to create the shadow
-            this.shadow = new TextComponent( getText(), getFont() );
-            shadow.setOffset( shadowOffset.x, shadowOffset.y, shadowOffset.z );               
-            shadow.setFontSize( getFontSize() );
-            getControl(GuiControl.class).insertComponent( shadow, text );
-            }
-        else if( color == null )
-            {
+            this.shadow = new TextComponent(getText(), getFont());
+            shadow.setOffset(shadowOffset.x, shadowOffset.y, shadowOffset.z);
+            shadow.setFontSize(getFontSize());
+            getControl(GuiControl.class).insertComponent(shadow, text);
+        } else if( color == null ) {
             // Need to remove it
             getControl(GuiControl.class).removeComponent(shadow);
             shadow = null;
             return;
-            }
-                    
+        }
+
         shadow.setColor(color);
     }
-    
-    public ColorRGBA getShadowColor()
-    {
+
+    public ColorRGBA getShadowColor() {
         if( shadow == null )
             return null;
         return shadow.getColor();
     }
-    
-    public String toString()
-    {
+
+    @Override
+    public String toString() {
         return getClass().getName() + "[text=" + getText() + ", color=" + getColor() + "]";
     }
 }

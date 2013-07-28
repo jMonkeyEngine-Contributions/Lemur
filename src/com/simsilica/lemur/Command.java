@@ -36,10 +36,11 @@ package com.simsilica.lemur;
 
 
 /**
+ *  General command object that can be triggered by GUI elements
+ *  such as buttons.
  *
  *  @author    Paul Speed
  */
-public interface Command<S>
-{
+public interface Command<S> {
     public void execute( S source );
 }
