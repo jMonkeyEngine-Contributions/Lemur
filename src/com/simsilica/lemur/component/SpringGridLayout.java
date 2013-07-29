@@ -104,124 +104,40 @@ public class SpringGridLayout extends AbstractGuiComponent
         }
     }
 
-    protected float getMajor( Vector3f v ) {
-        switch( mainAxis ) {
-            case X:
-                return v.x;
-            case Y:
-                return v.y;
-            case Z:
-                return v.z;
-        }
-        return 0;
+    protected final float getMajor( Vector3f v ) {
+        return v.get(mainAxis.index());
     }
 
-    protected float getMinor( Vector3f v ) {
-        switch( minorAxis ) {
-            case X:
-                return v.x;
-            case Y:
-                return v.y;
-            case Z:
-                return v.z;
-        }
-        return 0;
+    protected final float getMinor( Vector3f v ) {
+        return v.get(minorAxis.index());
     }
 
-    protected float getAlternate( Vector3f v ) {
-        switch( altAxis ) {
-            case X:
-                return v.x;
-            case Y:
-                return v.y;
-            case Z:
-                return v.z;
-        }
-        return 0;
+    protected final float getAlternate( Vector3f v ) {
+        return v.get(altAxis.index());
     }
 
-    protected void setMajor( Vector3f v, float f ) {
-        switch( mainAxis ) {
-            case X:
-                v.x = f;
-                break;
-            case Y:
-                v.y = f;
-                break;
-            case Z:
-                v.z = f;
-                break;
-        }
+    protected final void setMajor( Vector3f v, float f ) {
+        v.set(mainAxis.index(), f);
     }
 
-    protected void setMinor( Vector3f v, float f ) {
-        switch( minorAxis ) {
-            case X:
-                v.x = f;
-                break;
-            case Y:
-                v.y = f;
-                break;
-            case Z:
-                v.z = f;
-                break;
-        }
+    protected final void setMinor( Vector3f v, float f ) {
+        v.set(minorAxis.index(), f);
     }
 
-    protected void setAlternate( Vector3f v, float f ) {
-        switch( altAxis ) {
-            case X:
-                v.x = f;
-                break;
-            case Y:
-                v.y = f;
-                break;
-            case Z:
-                v.z = f;
-                break;
-        }
+    protected final void setAlternate( Vector3f v, float f ) {
+        v.set(altAxis.index(), f);
     }
 
-    protected void addMajor( Vector3f v, float f ) {
-        switch( mainAxis ) {
-            case X:
-                v.x += f;
-                break;
-            case Y:
-                v.y += f;
-                break;
-            case Z:
-                v.z += f;
-                break;
-        }
+    protected final void addMajor( Vector3f v, float f ) {
+        setMajor(v, getMajor(v) + f);
     }
 
-    protected void addMinor( Vector3f v, float f ) {
-        switch( minorAxis ) {
-            case X:
-                v.x += f;
-                break;
-            case Y:
-                v.y += f;
-                break;
-            case Z:
-                v.z += f;
-                break;
-        }
+    protected final void addMinor( Vector3f v, float f ) {
+        setMinor(v, getMinor(v) + f);
     }
 
-    protected void addAlternate( Vector3f v, float f ) {
-        switch( altAxis ) {
-            case X:
-                v.x += f;
-                break;
-            case Y:
-                v.y += f;
-                break;
-            case Z:
-                v.z += f;
-                break;
-        }
+    protected final void addAlternate( Vector3f v, float f ) {
+        setAlternate(v, getAlternate(v) + f);
     }
 
     /**
@@ -408,11 +324,21 @@ public class SpringGridLayout extends AbstractGuiComponent
                 throw new IllegalArgumentException( "Extra constraint not recognized:" + o );
             }
         }
-        if( row == -1 ) {
-            row = rowCount;
-        }
-        if( col == -1 ) {
-            col = getRow(row, true).size();
+
+        // If only one number is specified then we will assume
+        // that it is the "column" because the row grows by itself
+        // as needed.  We will then append this element to the
+        // previous row instead of adding a new row.
+        if( col == -1 && row != -1 ) {
+            col = row;
+            row = rowCount == 0 ? 0 : rowCount - 1;
+        } else {
+            if( row == -1 ) {
+                row = rowCount;
+            }
+            if( col == -1 ) {
+                col = getRow(row, true).size();
+            }
         }
 
         // Determine the next natural location
