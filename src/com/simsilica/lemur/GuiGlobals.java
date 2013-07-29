@@ -34,6 +34,8 @@
 
 package com.simsilica.lemur;
 
+import com.google.common.base.Charsets;
+import com.google.common.io.Resources;
 import com.simsilica.lemur.core.GuiMaterial;
 import com.simsilica.lemur.core.UnshadedMaterialAdapter;
 import com.simsilica.lemur.core.LightingMaterialAdapter;
@@ -57,6 +59,8 @@ import com.jme3.renderer.queue.RenderQueue.Bucket;
 import com.jme3.scene.Spatial;
 import com.jme3.texture.Texture;
 import com.simsilica.lemur.input.InputMapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 /**
@@ -90,6 +94,8 @@ import com.simsilica.lemur.input.InputMapper;
  */
 public class GuiGlobals {
 
+    static Logger log = LoggerFactory.getLogger(GuiGlobals.class);
+
     private static GuiGlobals instance;
 
     private AssetManager assets;
@@ -107,6 +113,8 @@ public class GuiGlobals {
 
     public static void setInstance( GuiGlobals globals ) {
         instance = globals;
+        log.info( "Initializing GuiGlobals with:" + globals );
+        instance.logBuildInfo();
     }
 
     public static GuiGlobals getInstance() {
@@ -130,6 +138,16 @@ public class GuiGlobals {
 
         ViewPort main = app.getViewPort();
         setupGuiComparators(main);
+    }
+
+    protected void logBuildInfo() {
+        try {
+            java.net.URL u = Resources.getResource("lemur.build.date");
+            String build = Resources.toString(u, Charsets.UTF_8);
+            log.info("Lemur build date:" + build);
+        } catch( java.io.IOException e ) {
+            log.error( "Error reading build info", e );
+        }
     }
 
     public void setupGuiComparators( ViewPort view ) {
