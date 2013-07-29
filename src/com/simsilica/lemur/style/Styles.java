@@ -76,8 +76,8 @@ import com.simsilica.lemur.core.GuiComponent;
  *  <li>The global settings for the particular style.</li>
  *  </ul>
  *
- *  For example, an ElementId of "A.B.C" would refer to an Attribute hierarchy
- *  from most specific to least specific, as:
+ *  <p>For example, an ElementId of "A.B.C" would refer to an Attribute hierarchy
+ *  from most specific to least specific, as:</p>
  *  <ul>
  *  <li>A.B.C</li>
  *  <li>B contains C</li>
@@ -88,9 +88,9 @@ import com.simsilica.lemur.core.GuiComponent;
  *  <li>style-defaults</li>
  *  </ul>
  *
- *  This is "font" is accessed for "A.B.C" the configured Attribute sets
+ *  <p>This is "font" is accessed for "A.B.C" the configured Attribute sets
  *  are checked for a "font" attribute in the order listed above.  The first
- *  one found wins.
+ *  one found wins.</p>
  *
  *  <p>The values of the attributes are set based on a selector similar to
  *  the specific steps listed above.  For example, a style's attributes can
