@@ -41,5 +41,15 @@ package com.simsilica.lemur;
  *  @author    Paul Speed
  */
 public enum Axis {
-    X, Y, Z
+    X(0), Y(1), Z(2);
+
+    private int index;
+
+    private Axis( int index ) {
+        this.index = index;
+    }
+
+    public int index() {
+        return index;
+    }
 }
