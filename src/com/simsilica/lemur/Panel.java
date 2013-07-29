@@ -218,8 +218,17 @@ public class Panel extends Node {
 
     @StyleAttribute(value="insets", lookupDefault=false)
     public void setInsets( Insets3f i ) {
-        InsetsComponent ic = getControl(GuiControl.class).getComponent(KEY_INSETS);
-        if( ic == null ) {
+        InsetsComponent ic = getInsetsComponent();
+        if( i != null ) {
+            if( ic == null ) {
+                ic = new InsetsComponent(i);
+            }
+        } else {
+            ic = null;
+        }
+        setInsetsComponent(ic);
+
+        /*if( ic == null ) {
             if( i == null )
                 return;
 
@@ -230,12 +239,28 @@ public class Panel extends Node {
             getControl(GuiControl.class).removeComponent(ic);
         } else {
             ic.setInsets(i);
-        }
+        }*/
     }
 
     public Insets3f getInsets() {
         InsetsComponent ic = getControl(GuiControl.class).getComponent(KEY_INSETS);
         return ic == null ? null : ic.getInsets();
+    }
+
+    @StyleAttribute(value="insetsComponent", lookupDefault=false)
+    public void setInsetsComponent( InsetsComponent ic ) {
+        InsetsComponent original = getControl(GuiControl.class).getComponent(KEY_INSETS);
+        if( original != null ) {
+            getControl(GuiControl.class).removeComponent(original);
+        }
+        if( ic != null ) {
+            getControl(GuiControl.class).addComponent(0, KEY_INSETS, ic);
+        }
+    }
+
+    public InsetsComponent getInsetsComponent() {
+        InsetsComponent ic = getControl(GuiControl.class).getComponent(KEY_INSETS);
+        return ic;
     }
 
     @Override
