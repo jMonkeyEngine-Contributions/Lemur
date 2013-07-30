@@ -386,6 +386,7 @@ public class DocumentModel implements VersionedObject<DocumentModel> {
             lines.add(new StringBuilder());
         }
 
+        end(false);
         version++;
     }
 
