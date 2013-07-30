@@ -227,19 +227,6 @@ public class Panel extends Node {
             ic = null;
         }
         setInsetsComponent(ic);
-
-        /*if( ic == null ) {
-            if( i == null )
-                return;
-
-            ic = new InsetsComponent(i);
-            getControl(GuiControl.class).addComponent(0, KEY_INSETS, ic);
-        } else if( i == null ) {
-            // ic is already known to be not null here.
-            getControl(GuiControl.class).removeComponent(ic);
-        } else {
-            ic.setInsets(i);
-        }*/
     }
 
     public Insets3f getInsets() {
