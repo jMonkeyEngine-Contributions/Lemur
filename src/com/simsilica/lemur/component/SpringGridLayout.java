@@ -205,6 +205,10 @@ public class SpringGridLayout extends AbstractGuiComponent
                 // we take the total difference and divide it evenly
                 // among the children.
                 return pref + (totalSize - totalPref)/count;
+            case FORCED_EVEN:
+                // ForcedEven means that they are all forced to the
+                // same size
+                return totalSize/count;
             case PROPORTIONAL:
                 // All children expand proportional to their relation
                 // to the overall preferred size.  Bigger components get more

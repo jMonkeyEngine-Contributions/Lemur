@@ -51,9 +51,11 @@ package com.simsilica.lemur;
  *         start out at 100, 50, and 50 and there are 10 extra units to
  *         go around then the first will get 5 and the other two will get
  *         2.5.
+ *  FORCED_EVEN - all children will be the same size, evenly distributed
+ *         over the total container size.
  *
  *  @author    Paul Speed
  */
 public enum FillMode {
-    NONE, EVEN, PROPORTIONAL
+    NONE, EVEN, PROPORTIONAL, FORCED_EVEN
 }
