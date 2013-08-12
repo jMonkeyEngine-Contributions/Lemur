@@ -128,6 +128,11 @@ public class BorderLayout extends AbstractGuiComponent
         // Note: we use the pos and size for scratch because we
         // are a layout and we should therefore always be last.
 
+        // Make sure the preferred size book-keeping is up to date.
+        // Some children don't like being asked to resize without
+        // having been asked to calculate their preferred size first.
+        calculatePreferredSize(new Vector3f());
+
         Vector3f pref;
         Node child;
 
