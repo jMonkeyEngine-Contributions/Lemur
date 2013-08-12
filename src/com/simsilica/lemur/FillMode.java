@@ -52,7 +52,9 @@ package com.simsilica.lemur;
  *         go around then the first will get 5 and the other two will get
  *         2.5.
  *  FORCED_EVEN - all children will be the same size, evenly distributed
- *         over the total container size.
+ *         over the total container size.  Note: this may make children
+ *         lay out smaller than their preferred size where they otherwise
+ *         wouldn't be.
  *
  *  @author    Paul Speed
  */
