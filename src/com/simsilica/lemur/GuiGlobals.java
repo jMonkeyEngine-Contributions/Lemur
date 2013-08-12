@@ -272,6 +272,14 @@ public class GuiGlobals {
         return mouseState.findViewPort(s);
     }
 
+    public void setMouseEventsEnabled( boolean f ) {
+        mouseState.setEnabled(f);
+    }
+
+    public boolean isMouseEventsEnabled() {
+        return mouseState.isEnabled();
+    }
+
     public Vector3f getScreenCoordinates( Spatial relativeTo, Vector3f pos ) {
         ViewPort vp = getCollisionViewPort(relativeTo);
         if( vp == null ) {
