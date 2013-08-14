@@ -238,6 +238,8 @@ public class TextComponent extends AbstractGuiComponent
             size.z += Math.abs(offset.z);
         }
 
+        size.x += 0.01f;
+
         // Reset any text box we already had
         bitmapText.setBox(textBox);
     }
