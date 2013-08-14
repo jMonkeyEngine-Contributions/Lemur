@@ -76,6 +76,10 @@ public class Container extends Panel {
         this(layout, true, new ElementId(ELEMENT_ID), style);
     }
 
+    public Container( GuiLayout layout, ElementId elementId, String style ) {
+        this(layout, true, elementId, style);
+    }
+
     protected Container( GuiLayout layout, boolean applyStyles,
                          ElementId elementId, String style ) {
         super(false, elementId, style);
