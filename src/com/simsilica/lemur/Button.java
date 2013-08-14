@@ -62,7 +62,7 @@ public class Button extends Label {
 
     public static final String ELEMENT_ID = "button";
 
-    public enum ButtonAction { Down, Up, Click };
+    public enum ButtonAction { Down, Up, Click, HighlightOn, HighlightOff };
 
     private boolean enabled = true;
     private ColorRGBA color;
@@ -208,6 +208,7 @@ public class Button extends Label {
                 return;
             if( capture == Button.this || (target == Button.this && capture == null) ) {
                 showHighlight(true);
+                commandMap.runCommands(ButtonAction.HighlightOn);
             }
         }
 
@@ -216,6 +217,7 @@ public class Button extends Label {
             if( !isEnabled() )
                 return;
             showHighlight(false);
+            commandMap.runCommands(ButtonAction.HighlightOff);
         }
     }
 }
