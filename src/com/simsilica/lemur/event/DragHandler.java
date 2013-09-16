@@ -141,7 +141,6 @@ public class DragHandler extends DefaultMouseListener {
         newPos.addLocal(cam.getUp().mult(delta.y));
 
         Vector3f local = capture.getParent().worldToLocal(newPos, null);
-System.out.println( "setting drag position:" + local );
         capture.setLocalTranslation(local);
     }
 }
