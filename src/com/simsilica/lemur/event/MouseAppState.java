@@ -48,6 +48,7 @@ import com.jme3.math.Vector3f;
 import com.jme3.renderer.Camera;
 import com.jme3.renderer.ViewPort;
 import com.jme3.scene.Geometry;
+import com.jme3.scene.Mesh;
 import com.jme3.scene.Spatial;
 
 
@@ -76,8 +77,19 @@ public class MouseAppState extends BaseAppState {
      */
     private Spatial capture;
 
-    public MouseAppState() {
+    /**
+     *  The set of spatials that recieve an event.  Used during frame
+     *  processing and kept at this level to avoid recreating every
+     *  event frame.
+     */
+    private Set<Spatial> delivered = new HashSet<Spatial>();
+
+    public MouseAppState( Application app ) {
         setEnabled(true);
+
+        // We do this as early as possible because we want
+        // first crack at the mouse events.
+        app.getInputManager().addRawInputListener(mouseObserver);
     }
 
     public ViewPort findViewPort( Spatial s ) {
@@ -117,11 +129,6 @@ public class MouseAppState extends BaseAppState {
             addCollisionRoot( app.getGuiViewPort() );
             addCollisionRoot( app.getViewPort() );
         }
-
-        // We do this as early as possible because we want to
-        // make sure to be able to capture everything if we
-        // are enabled.
-        app.getInputManager().addRawInputListener(mouseObserver);
     }
 
     @Override
@@ -223,9 +230,24 @@ public class MouseAppState extends BaseAppState {
         CollisionResults results = new CollisionResults();
         Spatial firstHit = null;
         MouseMotionEvent event = null;
+        Spatial target = null;
 
         // Always clear the caches first
         rayCache.clear();
+        delivered.clear();
+
+        // If there is a captured spatial then always deliver an
+        // event to it... and do it first.  a) it's more consistent
+        // and b) if it consumes the event then we can stop already.
+        if( capture != null ) {
+            event = new MouseMotionEvent((int)cursor.x, (int)cursor.y, 0, 0, 0, 0);
+            delivered.add(capture);
+            capture.getControl(MouseEventControl.class).mouseMoved(event, capture, capture);
+            if( event.isConsumed() ) {
+                // We're done already
+                return;
+            }
+        }
 
         // Search each root for hits
         for( RootEntry e : roots.values() ) {
@@ -253,24 +275,18 @@ public class MouseAppState extends BaseAppState {
                         event = new MouseMotionEvent((int)cursor.x, (int)cursor.y, 0, 0, 0, 0);
                     }
 
-                    hit.getControl(MouseEventControl.class).mouseMoved(event, hit, capture);
+                    // Only deliver events to each hit once.
+                    if( delivered.add(hit) ) {
+                        hit.getControl(MouseEventControl.class).mouseMoved(event, hit, capture);
 
-                    // If the event is consumed then we're done
-                    if( event.isConsumed() ) {
-                        return;
+                        // If the event is consumed then we're done
+                        if( event.isConsumed() ) {
+                            return;
+                        }
                     }
                 }
             }
             results.clear();
-        }
-
-        // If the first hit is not the capture and we have a capture then
-        // we need to deliver a motion even to it too
-        if( capture != null && firstHit != capture ) {
-            if( event == null ) {
-                event = new MouseMotionEvent((int)cursor.x, (int)cursor.y, 0, 0, 0, 0);
-            }
-            capture.getControl(MouseEventControl.class).mouseMoved(event, firstHit, capture);
         }
 
         if( firstHit == null ) {
@@ -292,7 +308,13 @@ public class MouseAppState extends BaseAppState {
         }
 
         if( hitTarget == null  )
+            {
+            // Here we should actually do a hit query with the event's location
+            // so that we handle the case where we receive an event for something
+            // that wasn't entered or captured yet, like when frames are slow or
+            // for simulated mouse events from touch.
             return;
+            }
 
         hitTarget.getControl(MouseEventControl.class).mouseButtonEvent(evt, hitTarget, capture);
     }

@@ -124,8 +124,8 @@ public class GuiGlobals {
     protected GuiGlobals( Application app ) {
         this.assets = app.getAssetManager();
         this.keyInterceptor = new KeyInterceptState(app);
+        this.mouseState = new MouseAppState(app);
         this.inputMapper = new InputMapper(app.getInputManager());
-        this.mouseState = new MouseAppState();
         this.focusState = new FocusManagerState();
         app.getStateManager().attach(keyInterceptor);
         app.getStateManager().attach(mouseState);
