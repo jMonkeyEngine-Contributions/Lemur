@@ -54,30 +54,56 @@ public class DragHandler extends DefaultMouseListener {
 
     private Vector2f drag = null;
     private Vector3f basePosition;
+    private boolean consumeDrags = false;
+    private boolean consumeDrops = false;
+
+    public DragHandler() {
+    }
+
+    public boolean isDragging() {
+        return drag != null;
+    }
+
+    protected void startDrag( MouseButtonEvent event, Spatial target, Spatial capture ) {
+        drag = new Vector2f(event.getX(), event.getY());
+        basePosition = capture.getWorldTranslation().clone();
+        event.setConsumed();
+    }
+
+    protected void endDrag( MouseButtonEvent event, Spatial target, Spatial capture ) {
+        if( consumeDrops )
+            event.setConsumed();
+        drag = null;
+        basePosition = null;
+    }
 
     @Override
     public void mouseButtonEvent( MouseButtonEvent event, Spatial target, Spatial capture ) {
         if( event.getButtonIndex() != MouseInput.BUTTON_LEFT )
             return;
 
-        event.setConsumed();
         if( event.isPressed() ) {
-            drag = new Vector2f(event.getX(), event.getY());
-            basePosition = capture.getWorldTranslation().clone();
+            startDrag(event, target, capture);
         } else {
             // Dragging is done.
-            drag = null;
-            basePosition = null;
+            // Only delegate the up events if we were dragging in the first place.
+            if( drag != null ) {
+                endDrag(event, target, capture);
+            }
         }
     }
 
     @Override
     public void mouseMoved( MouseMotionEvent event, Spatial target, Spatial capture ) {
-        if( drag == null )
+        if( drag == null || capture == null )
             return;
 
         ViewPort vp = GuiGlobals.getInstance().getCollisionViewPort( capture );
         Camera cam = vp.getCamera();
+
+        if( consumeDrags ) {
+            event.setConsumed();
+        }
 
         // If it's an ortho camera then we'll assume 1:1 mapping
         // for now.
@@ -115,6 +141,7 @@ public class DragHandler extends DefaultMouseListener {
         newPos.addLocal(cam.getUp().mult(delta.y));
 
         Vector3f local = capture.getParent().worldToLocal(newPos, null);
+System.out.println( "setting drag position:" + local );
         capture.setLocalTranslation(local);
     }
 }
