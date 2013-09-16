@@ -217,38 +217,52 @@ public class InputMapper {
         return result;
     }
 
-    public void map( FunctionId function, Axis axis, Object... pressed ) {
-        addMapping(function, InputState.POSITIVE, axis, pressed);
+    public Mapping map( FunctionId function, Axis axis, Object... pressed ) {
+        return addMapping(function, 1.0, axis, pressed);
     }
 
-    public void map( FunctionId function, InputState bias, Axis axis, Object... pressed ) {
-        addMapping(function, bias, axis, pressed);
+    public Mapping map( FunctionId function, InputState bias, Axis axis, Object... pressed ) {
+        return addMapping(function, bias.asNumber(), axis, pressed);
     }
 
-    public void map( FunctionId function, Button button, Object... pressed ) {
-        addMapping(function, InputState.POSITIVE, button, pressed);
+    public Mapping map( FunctionId function, Button button, Object... pressed ) {
+        return addMapping(function, 1.0, button, pressed);
     }
 
-    public void map( FunctionId function, InputState bias, Button button, Object... pressed ) {
-        addMapping(function, bias, button, pressed);
+    public Mapping map( FunctionId function, InputState bias, Button button, Object... pressed ) {
+        return addMapping(function, bias.asNumber(), button, pressed);
     }
 
-    public void map( FunctionId function, int mainKeyCode, Object... pressed ) {
-        map(function, InputState.POSITIVE, mainKeyCode, pressed);
+    public Mapping map( FunctionId function, int mainKeyCode, Object... pressed ) {
+        return map(function, InputState.POSITIVE, mainKeyCode, pressed);
     }
 
-    public void map( FunctionId function, InputState bias, int mainKeyCode, Object... pressed ) {
-        addMapping(function, bias, mainKeyCode, pressed);
+    public Mapping map( FunctionId function, InputState bias, int mainKeyCode, Object... pressed ) {
+        return addMapping(function, bias.asNumber(), mainKeyCode, pressed);
     }
 
-    protected void addMapping( FunctionId function, InputState bias, Object primary,
-                               Object... modifiers ) {
+    protected Mapping addMapping( FunctionId function, double scale, Object primary,
+                                  Object... modifiers ) {
 
-        StateGroup g = new StateGroup(function, bias, primary, modifiers);
+        StateGroup g = new StateGroup(function, scale, primary, modifiers);
         getIndex(primary, true).addGroup(g);
         for( Object o : modifiers ) {
             getIndex(o, true).addGroup(g);
         }
+        return g;
+    }
+
+    protected StateGroup findMapping( FunctionId function, Object primary,
+                                      Object... modifiers ) {
+        StateGroupIndex index = getIndex(primary, false);
+        if( index == null )
+            return null;
+        return index.findGroup(function, modifiers);
+    }
+
+    public Mapping getMapping( FunctionId function, Object primary,
+                               Object... modifiers ) {
+        return findMapping(function, primary, modifiers);
     }
 
     public void addStateListener( StateFunctionListener l, FunctionId... functions ) {
@@ -330,7 +344,7 @@ public class InputMapper {
             return;
 
         if( log.isTraceEnabled() )
-            log.trace("activate(" + g.function + ":" + g.bias + ")");
+            log.trace("activate(" + g.function + ":" + g.scale + ")");
 
         // So the activation state changed and now we
         // should notify those listeners... actually... that should
@@ -344,7 +358,7 @@ public class InputMapper {
             return;
 
         if( log.isTraceEnabled() )
-            log.trace("deactivate(" + g.function + ":" + g.bias + ")");
+            log.trace("deactivate(" + g.function + ":" + g.scale + ")");
 
         // Need to make sure that the group is set back to
         // ground-state so it will show up right when activated again
@@ -405,23 +419,61 @@ public class InputMapper {
         }
     }
 
-    protected class StateGroup implements Comparable<StateGroup> {
+    /**
+     *  Represents a specific control mapping such that it can be reconfigured.
+     */
+    public interface Mapping {
+        public FunctionId getFunction();
+        public void setScale( double scale );
+        public double getScale();
+
+        // Note to self, this probably needs to be a wrapper class so
+        // that a) we don't potentially expose StateGroup methods directly
+        // and b) we could support runtime remapping like for a UI configuration
+        // screen.
+    }
+
+    protected class StateGroup implements Comparable<StateGroup>, Mapping {
 
         Object primaryState;
         Object[] modifiers;
         FunctionId function;
-        InputState bias;
+        double scale;
         double lastValue;
         InputState lastState;
 
-        public StateGroup( FunctionId function, InputState bias, Object primaryState,
+        public StateGroup( FunctionId function, double scale, Object primaryState,
                            Object... modifiers ) {
 
             this.function = function;
-            this.bias = bias;
+            this.scale = scale;
             this.primaryState = primaryState;
             this.modifiers = modifiers;
             resetValue();
+        }
+
+        public void setScale( double scale ) {
+            if( scale == 0 ) {
+                throw new IllegalArgumentException("Scale cannot be 0.");
+            }
+            this.scale = scale;
+        }
+
+        public double getScale() {
+            return scale;
+        }
+
+        public boolean hasSameModifiers( Object[] mods ) {
+            if( mods.length != modifiers.length ) {
+                return false;
+            }
+
+            for( int i = 0; i < modifiers.length; i++ ) {
+                if( !Objects.equal(mods[i], modifiers[i]) )
+                    return false;
+            }
+
+            return true;
         }
 
         public int compareTo( StateGroup other ) {
@@ -445,13 +497,13 @@ public class InputMapper {
         }
 
         public void updateValue( double value ) {
-            double adjusted = value * bias.asNumber();
+            double adjusted = value * scale;
             if( lastValue == adjusted )
                 return;
             lastValue = adjusted;
 
             if( log.isTraceEnabled() )
-                log.trace( "Value changed for:" + function + " bias:" + bias );
+                log.trace( "Value changed for:" + function + " scale:" + scale );
 
             InputState state = valueToState(value);
             updateState(state);
@@ -518,7 +570,7 @@ public class InputMapper {
 
         @Override
         public String toString() {
-            return "StateGroup[" + function + ":" + bias + ", " + primaryState + "]";
+            return "StateGroup[" + function + ":" + scale + ", " + primaryState + "]";
         }
     }
 
@@ -538,6 +590,18 @@ public class InputMapper {
 
         public double getValue() {
             return lastValue;
+        }
+
+        public StateGroup findGroup( FunctionId function, Object[] modifiers ) {
+            for( StateGroup g : groups ) {
+                if( !g.getFunction().equals(function) ) {
+                    continue;
+                }
+                if( modifiers.length == 0 || g.hasSameModifiers(modifiers) ) {
+                    return g;
+                }
+            }
+            return null;
         }
 
         public StateGroup addGroup( StateGroup g ) {
@@ -613,6 +677,7 @@ public class InputMapper {
                 // Technically we should send analog and a state
                 // on, state off... I let the state off go because
                 // I can't think of a use-case for it at the moment.
+                val = val * g.getScale();
                 InputState state = valueToState(val);
 
                 notifyStateChanged(g.getFunction(), state);
