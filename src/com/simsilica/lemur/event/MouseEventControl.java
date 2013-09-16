@@ -64,6 +64,19 @@ public class MouseEventControl extends AbstractControl {
         this.listeners.addAll(Arrays.asList(listeners));
     }
 
+    /**
+     *  Convenience method that will add a MouseEventControl if it
+     *  doesn't exist, while adding the specified listeners.
+     */
+    public static void addListenersToSpatial( Spatial s, MouseListener... listeners ) {
+        MouseEventControl mec = s.getControl(MouseEventControl.class);
+        if( mec == null ) {
+            s.addControl(new MouseEventControl(listeners));
+        } else {
+            mec.listeners.addAll(Arrays.asList(listeners));
+        }
+    }
+
     public <T extends MouseListener> T getMouseListener( Class<T> type ) {
         for( MouseListener l : listeners ) {
             if( l.getClass() == type ) {
