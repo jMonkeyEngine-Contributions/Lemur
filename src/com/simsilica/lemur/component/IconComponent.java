@@ -69,7 +69,7 @@ public class IconComponent extends AbstractGuiComponent
     private HAlignment hAlign = HAlignment.LEFT;
     private VAlignment vAlign = VAlignment.CENTER;
     private Vector3f offset = null;
-    private float iconScale = 1f;
+    private Vector2f iconScale;
     private boolean overlay = false;
     private boolean lit = false;
 
@@ -78,6 +78,13 @@ public class IconComponent extends AbstractGuiComponent
     }
 
     public IconComponent( String imagePath, float iconScale,
+                          float xMargin, float yMargin, float zOffset,
+                          boolean lit ) {
+        this(imagePath, new Vector2f(iconScale, iconScale), xMargin, yMargin,
+             zOffset, lit);                          
+    }
+                              
+    public IconComponent( String imagePath, Vector2f iconScale,
                           float xMargin, float yMargin, float zOffset,
                           boolean lit ) {
         this.imagePath = imagePath;
@@ -138,9 +145,16 @@ public class IconComponent extends AbstractGuiComponent
     }
 
     public void setIconScale( float scale ) {
-        if( this.iconScale == scale )
+        if( scale == this.iconScale.x && scale == this.iconScale.y ) {
             return;
-        this.iconScale = scale;
+        }
+        setIconScale(new Vector2f(scale, scale));
+    }
+    
+    public void setIconScale( Vector2f scale ) {
+        if( this.iconScale.equals(scale) )
+            return;
+        this.iconScale.set(scale);
 
         // Not very efficient
         createIcon();
@@ -148,7 +162,7 @@ public class IconComponent extends AbstractGuiComponent
         invalidate();
     }
 
-    public float getIconScale() {
+    public Vector2f getIconScale() {
         return iconScale;
     }
 
@@ -223,8 +237,8 @@ public class IconComponent extends AbstractGuiComponent
 
         // The preferred size depends on the alignment and
         // the size of the image.
-        float width = iconScale * image.getImage().getWidth() + xMargin * 2;
-        float height = iconScale * image.getImage().getHeight() + yMargin * 2;
+        float width = iconScale.x * image.getImage().getWidth() + xMargin * 2;
+        float height = iconScale.y * image.getImage().getHeight() + yMargin * 2;
 
         switch( vAlign ) {
             case TOP:
@@ -256,8 +270,8 @@ public class IconComponent extends AbstractGuiComponent
     }
 
     public void reshape( Vector3f pos, Vector3f size ) {
-        float width = iconScale * image.getImage().getWidth();
-        float height = iconScale * image.getImage().getHeight();
+        float width = iconScale.x * image.getImage().getWidth();
+        float height = iconScale.y * image.getImage().getHeight();
         float boxWidth = width + xMargin * 2;
         float boxHeight = height + yMargin * 2;
 
@@ -318,8 +332,8 @@ public class IconComponent extends AbstractGuiComponent
     }
 
     protected void createIcon() {
-        float width = iconScale * image.getImage().getWidth();
-        float height = iconScale * image.getImage().getHeight();
+        float width = iconScale.x * image.getImage().getWidth();
+        float height = iconScale.y * image.getImage().getHeight();
         Quad q = new Quad(width, height);
         icon = new Geometry("icon:" + imagePath, q);
         if( material == null ) {
