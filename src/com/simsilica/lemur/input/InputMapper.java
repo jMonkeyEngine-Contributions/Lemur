@@ -802,7 +802,7 @@ public class InputMapper {
         public void onKeyEvent( KeyInputEvent evt ) {
             if( evt.isRepeating() )
                 return;
-
+                
             StateGroupIndex index = getIndex(evt.getKeyCode(), false);
             if( index == null )
                 return;
