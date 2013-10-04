@@ -189,6 +189,8 @@ public class Label extends Panel {
             this.shadow = new TextComponent(getText(), getFont());
             shadow.setOffset(shadowOffset.x, shadowOffset.y, shadowOffset.z);
             shadow.setFontSize(getFontSize());
+            shadow.setHAlignment(text.getHAlignment());
+            shadow.setVAlignment(text.getVAlignment());
             getControl(GuiControl.class).insertComponent(shadow, text);
         } else if( color == null ) {
             // Need to remove it
