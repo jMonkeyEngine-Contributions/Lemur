@@ -201,6 +201,22 @@ public class Slider extends Panel {
     public double getDelta() {
         return delta;
     }
+    
+    public Button getIncrementButton() {
+        return increment;
+    }
+    
+    public Button getDecrementButton() {
+        return decrement;
+    }
+    
+    public Panel getRangePanel() {
+        return range;
+    }
+    
+    public Button getThumbButton() {
+        return thumb;
+    }
 
     @Override
     public void updateLogicalState(float tpf) {
