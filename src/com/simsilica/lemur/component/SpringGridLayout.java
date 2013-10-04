@@ -199,6 +199,18 @@ public class SpringGridLayout extends AbstractGuiComponent
         switch( fill ) {
             case NONE:
                 return pref;
+            case FIRST:
+                if( index == 0 ) {
+                    return pref + (totalSize - totalPref);
+                } else {
+                    return pref;
+                }
+            case LAST:
+                if( index == count - 1 ) {
+                    return pref + (totalSize - totalPref);
+                } else {
+                    return pref;
+                }
             case EVEN:
                 // Even means that they all grow evenly... not
                 // that they are forced to be the same size.  So

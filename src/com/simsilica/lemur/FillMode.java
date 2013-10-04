@@ -55,9 +55,13 @@ package com.simsilica.lemur;
  *         over the total container size.  Note: this may make children
  *         lay out smaller than their preferred size where they otherwise
  *         wouldn't be.
+ *  FIRST - the first child gets all of the extra space and all other children
+ *          are preferred size.
+ *  LAST  - the last child gets all of the extra space and all other children
+ *          are preferred size.
  *
  *  @author    Paul Speed
  */
 public enum FillMode {
-    NONE, EVEN, PROPORTIONAL, FORCED_EVEN
+    NONE, EVEN, PROPORTIONAL, FORCED_EVEN, FIRST, LAST
 }
