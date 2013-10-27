@@ -62,6 +62,19 @@ import com.jme3.scene.Node;
  *  2D quad using a QuadComponent or something more complicated that
  *  is fully 3D.</p>
  *
+ *  <p>By default, Lemur GUI elements are setup so that their local
+ *  translation determines the position of their top-left corner in
+ *  x/y space.  In other words, the y-axis acts a little differently
+ *  than other axes in that it grows down instead of up.  Within 
+ *  an element, the coordinate system is still the standard JME 
+ *  coordinate system.  It's just how the elements are are arranged
+ *  relative to their own local translation that is different.  This
+ *  makes multi-element layouts more sensible or consistent with other
+ *  GUI libraries.</p>
+ *
+ *  <p>Note: the layout code currently assumes that rotation and
+ *  scale are their default values.</p>
+ *
  *  @author    Paul Speed
  */
 public class Panel extends Node {
