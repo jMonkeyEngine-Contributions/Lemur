@@ -137,6 +137,11 @@ public class TextField extends Panel {
         return text.getHAlignment();
     }
 
+    @StyleAttribute("font")
+    public void setFont( BitmapFont f ) {
+        text.setFont(f);
+    }
+
     public BitmapFont getFont() {
         return text.getFont();
     }
