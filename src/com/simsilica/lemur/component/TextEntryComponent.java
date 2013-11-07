@@ -139,6 +139,7 @@ public class TextEntryComponent extends AbstractGuiComponent
         GuiMaterial mat = GuiGlobals.getInstance().createMaterial(new ColorRGBA(1,1,1,0.75f), false);
         cursor.setMaterial(mat.getMaterial());
         cursor.getMaterial().getAdditionalRenderState().setBlendMode(BlendMode.Alpha);
+        cursor.setUserData("layer", 1);
         bitmapText.attachChild(cursor);
 
         if( model.getText() != null ) {
@@ -226,18 +227,34 @@ public class TextEntryComponent extends AbstractGuiComponent
     }
 
     public void setFont( BitmapFont font ) {
+        if( font == bitmapText.getFont() )
+            return;
+    
+        if( isAttached() ) {
+            bitmapText.removeFromParent();
+        }
+        
         // Can't change the font once created so we'll
         // have to create it fresh
         BitmapText newText = new BitmapText(font);
+        newText.setLineWrapMode(LineWrapMode.Clip);
         newText.setText(getText());
         newText.setColor(getColor());
         newText.setLocalTranslation(bitmapText.getLocalTranslation());
         newText.setSize(getFontSize());
         this.bitmapText = newText;
-
+ 
+        // The cursor is attached to the bitmap text directly
+        // so we need to move it.       
+        bitmapText.attachChild(cursor);
+                
         resizeCursor();
         resetCursorPosition();
         resetText();
+                
+        if( isAttached() ) {
+            getNode().attachChild(bitmapText);
+        }
     }
 
     public BitmapFont getFont() {

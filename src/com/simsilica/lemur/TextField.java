@@ -86,7 +86,8 @@ public class TextField extends Panel {
         super(false, elementId, style);
 
         Styles styles = GuiGlobals.getInstance().getStyles();
-        this.text = new TextEntryComponent(model, styles.getAttributes(elementId.getId(), style).get("font", BitmapFont.class));
+        BitmapFont font = styles.getAttributes(elementId.getId(), style).get("font", BitmapFont.class);
+        this.text = new TextEntryComponent(model, font);
         getControl(GuiControl.class).addComponent(KEY_TEXT, text);
 
         addControl(new MouseEventControl(FocusMouseListener.INSTANCE));

@@ -5,4 +5,7 @@ Lemur TBD
 * Added a ConsumingMouseListener implementation that can be
     used to make GUI elements "opaque" to mouse events.
 * Added TextField.setFont().
+* TextComponent and TextEntryComponent will no longer recreate
+    the BitmapText in setFont() unless the font has actually
+    changed.
 

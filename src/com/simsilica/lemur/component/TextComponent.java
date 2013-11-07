@@ -118,6 +118,9 @@ public class TextComponent extends AbstractGuiComponent
     }
 
     public void setFont( BitmapFont font ) {
+        if( font == bitmapText.getFont() )
+            return;
+            
         if( isAttached() ) {
             bitmapText.removeFromParent();
         }
