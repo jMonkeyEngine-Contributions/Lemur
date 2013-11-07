@@ -1,0 +1,8 @@
+
+Lemur TBD
+---------
+* Updated Panel javadoc to clartify y-inversion in layouts.
+* Added a ConsumingMouseListener implementation that can be
+    used to make GUI elements "opaque" to mouse events.
+* Added TextField.setFont().
+
