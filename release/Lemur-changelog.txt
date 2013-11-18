@@ -8,4 +8,7 @@ Lemur TBD
 * TextComponent and TextEntryComponent will no longer recreate
     the BitmapText in setFont() unless the font has actually
     changed.
+* QuadBackgroundComponent modified to support Textures.
+* Added a HoverMouseListener to better facility fly-over style
+    tool tips.
 
