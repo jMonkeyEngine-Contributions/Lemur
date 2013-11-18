@@ -261,7 +261,7 @@ public class MouseAppState extends BaseAppState {
             if( count > 0 ) {
                 for( CollisionResult cr : results ) {
                     Geometry geom = cr.getGeometry();
-                    Spatial hit = findHitTarget(geom);
+                    Spatial hit = findHitTarget(geom);                    
                     if( hit == null )
                         continue;
 
