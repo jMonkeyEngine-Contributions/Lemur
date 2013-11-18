@@ -39,6 +39,7 @@ import com.jme3.math.*;
 import com.jme3.scene.*;
 import com.jme3.scene.VertexBuffer.Type;
 import com.jme3.scene.shape.Quad;
+import com.jme3.texture.Texture;
 import com.simsilica.lemur.core.GuiControl;
 import com.simsilica.lemur.GuiGlobals;
 import com.simsilica.lemur.core.GuiMaterial;
@@ -52,6 +53,7 @@ public class QuadBackgroundComponent extends AbstractGuiComponent
                                      implements Cloneable, ColoredComponent {
     private Geometry background;
     private ColorRGBA color;
+    private Texture texture;
     private float xMargin = 0;
     private float yMargin = 0;
     private float zOffset = 0.01f;
@@ -61,7 +63,7 @@ public class QuadBackgroundComponent extends AbstractGuiComponent
         this(ColorRGBA.Gray, 0, 0, 0.01f, false);
     }
 
-    public QuadBackgroundComponent( ColorRGBA color ) {
+    public QuadBackgroundComponent( ColorRGBA color ) { 
         this(color, 0, 0, 0.01f, false);
     }
 
@@ -112,6 +114,23 @@ public class QuadBackgroundComponent extends AbstractGuiComponent
 
     public ColorRGBA getColor() {
         return color;
+    }
+
+    public void setTexture( Texture t ) {
+        if( this.texture == t )
+            return;
+        this.texture = t;
+        if( background != null ) {
+            if( lit ) {
+                background.getMaterial().setTexture("DiffuseMap", texture);
+            } else {
+                background.getMaterial().setTexture("ColorMap", texture);
+            }
+        }
+    }
+
+    public Texture getTexture() {
+        return texture;
     }
 
     public void setMargin( float x, float y ) {
@@ -168,6 +187,9 @@ public class QuadBackgroundComponent extends AbstractGuiComponent
             }
             background = new Geometry("background", q);
             GuiMaterial mat = GuiGlobals.getInstance().createMaterial(color, lit);
+            if( texture != null ) {
+                mat.setTexture(texture);
+            }
             mat.getMaterial().getAdditionalRenderState().setBlendMode(BlendMode.Alpha);
             mat.getMaterial().getAdditionalRenderState().setAlphaTest(true);
             mat.getMaterial().getAdditionalRenderState().setAlphaFallOff(0.1f);
