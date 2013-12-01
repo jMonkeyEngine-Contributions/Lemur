@@ -55,12 +55,15 @@ import java.util.Map;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
+import java.util.prefs.BackingStoreException;
+import java.util.prefs.Preferences;
 import javax.script.Bindings;
 import javax.script.ScriptContext;
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
 import javax.script.ScriptException;
 import javax.swing.JFrame;
+import javax.swing.SwingUtilities;
 import org.codehaus.groovy.control.CompilationFailedException;
 import org.codehaus.groovy.control.CompilerConfiguration;
 import org.slf4j.Logger;
@@ -72,6 +75,8 @@ import org.slf4j.LoggerFactory;
  */
 public class GroovyConsoleState extends BaseAppState {
     static Logger log = LoggerFactory.getLogger(GroovyConsoleState.class);
+ 
+    private static final String PREF_LAST_SCRIPT = "lastScript";
     
     private Console console;
     private JFrame frame;
@@ -128,6 +133,10 @@ public class GroovyConsoleState extends BaseAppState {
             imports.add(s);
         }
         importString = null;
+    }
+
+    public List<String> getDefaultImports() {
+        return imports;
     }
 
     protected String getImportString() {
@@ -210,6 +219,20 @@ public class GroovyConsoleState extends BaseAppState {
         console.setShell(new EnhancedShell(console.getShell())); //, scriptList));
         console.run();        
  
+        // See if we have any script text from last time
+        Preferences prefs = Preferences.userNodeForPackage(getClass());
+        final String lastText = prefs.get(PREF_LAST_SCRIPT, null);
+ 
+        System.out.println( "Previous text:\n" + lastText );
+        
+        if( lastText != null ) { 
+            SwingUtilities.invokeLater( new Runnable() {
+                public void run() {
+                    console.getInputArea().setText(lastText);
+                }
+            });
+        }            
+ 
         outputWindow = console.getOutputWindow();
         frame = (JFrame)console.getFrame();
         
@@ -224,6 +247,22 @@ public class GroovyConsoleState extends BaseAppState {
     }
     
     protected void disable() {
+        
+        // See if we can grab the text
+        String text = console.getInputArea().getText();
+        if( text.trim().length() > 0 ) {
+            log.info("Saving for next time:\n" + text);
+            
+            // Save it for next time 
+            Preferences prefs = Preferences.userNodeForPackage(getClass());
+            prefs.put(PREF_LAST_SCRIPT, text);
+            try {
+                prefs.flush();
+            } catch( BackingStoreException e ) {
+                log.warn( "Error saving last script to preferences", e );
+            }
+        }        
+    
         if( frame != null && frame.isDisplayable() ) {
             console.exit(null);
         }
