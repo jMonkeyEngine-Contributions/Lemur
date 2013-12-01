@@ -42,3 +42,19 @@ Class help( Class type ) {
     println "        " + type.metaClass.properties.findAll{it.getter.declaringClass.name == type.name}.collect{it.name}.join("\n        ");
     return type     
 }
+
+Object help( Object o, boolean all ) {
+    println "Info for:" + o ;
+    if( o == null ) {
+        return;
+    }
+    def type = o.class;
+    def local = type.metaClass.properties.findAll{it.getter.declaringClass.name == type.name}.collect{it.name}; 
+    println "    class:" + o.class;
+    println "    properties:" + (all ? " (including supertype properties)":"");
+    println "        " + o.properties.findAll{ all || local.contains(it.key) }.collect{it}.join("\n        ");  
+}
+
+Object help( Object o ) {
+    help( o, false );
+}

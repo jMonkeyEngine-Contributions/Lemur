@@ -64,7 +64,7 @@ public class Main extends SimpleApplication {
     }
 
     public Main() {
-        super( new StatsAppState(), new HudState(), new FlyCamAppState() );
+        super( new StatsAppState(), new HudState(), new CameraMovementState() ); //new FlyCamAppState() );
     }
 
     @Override
@@ -74,6 +74,9 @@ public class Main extends SimpleApplication {
         GuiGlobals.initialize(this);
         InputMapper inputMapper = GuiGlobals.getInstance().getInputMapper();
         MainFunctions.initializeDefaultMappings( inputMapper );
+        CameraMovementFunctions.initializeDefaultMappings( inputMapper );
+
+        inputMapper.activateGroup(MainFunctions.GROUP);
  
         // Load up a custom style for the UI related stuff
         Styles styles = GuiGlobals.getInstance().getStyles();

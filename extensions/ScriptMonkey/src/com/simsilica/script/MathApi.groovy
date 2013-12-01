@@ -34,6 +34,7 @@
 
 import com.jme3.math.*;
 
+scripts.addDefaultImports( "com.jme3.math.*" );
 
 Vector3f vec3( Number x, Number y, Number z ) {
     return new Vector3f(x.floatValue(), y.floatValue(), z.floatValue());

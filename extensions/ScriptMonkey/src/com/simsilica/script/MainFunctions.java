@@ -48,10 +48,12 @@ public class MainFunctions
 {
     public static final String GROUP = "Main";
 
+    public static final FunctionId F_TOGGLE_MOVEMENT = new FunctionId(GROUP, "Toggle Movement");
     public static final FunctionId F_HUD = new FunctionId(GROUP, "HUD Toggle");
 
     public static void initializeDefaultMappings( InputMapper inputMapper )
     {
+        inputMapper.map( F_TOGGLE_MOVEMENT, KeyInput.KEY_SPACE );
         inputMapper.map( F_HUD, KeyInput.KEY_F3 );
     }
 }
