@@ -34,9 +34,9 @@
  
 package com.simsilica.script;
 
-import com.jme3.app.FlyCamAppState;
 import com.jme3.app.SimpleApplication;
 import com.jme3.app.StatsAppState;
+import com.jme3.app.state.ScreenshotAppState;
 import com.jme3.material.Material;
 import com.jme3.math.ColorRGBA;
 import com.jme3.renderer.RenderManager;
@@ -64,7 +64,8 @@ public class Main extends SimpleApplication {
     }
 
     public Main() {
-        super( new StatsAppState(), new HudState(), new CameraMovementState() ); //new FlyCamAppState() );
+        super( new StatsAppState(), new HudState(), new CameraMovementState(),
+               new ScreenshotAppState("ScriptMonkey", System.currentTimeMillis()) );
     }
 
     @Override
