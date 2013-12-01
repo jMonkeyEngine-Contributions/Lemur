@@ -46,6 +46,7 @@ import com.simsilica.lemur.GuiGlobals;
 import com.simsilica.lemur.input.InputMapper;
 import com.simsilica.lemur.style.StyleLoader;
 import com.simsilica.lemur.style.Styles;
+import java.io.File;
 
 /**
  * 
@@ -84,6 +85,18 @@ public class Main extends SimpleApplication {
         scripts.setInitBinding("app", this);
         scripts.addInitializationScript(getClass().getResource("MathApi.groovy"));
         scripts.addInitializationScript(getClass().getResource("CameraApi.groovy"));
+        
+        // Load any scripts in the "scripts" directory
+        File dir = new File("scripts");
+        if( dir.exists() ) {
+            for( File f : dir.listFiles() ) {
+                if( f.getName().toLowerCase().endsWith(".groovy") ) {
+                    scripts.addInitializationScript(f);
+                }
+            }
+        }
+        
+        // And finally attach the script managing state
         stateManager.attach(scripts);
     
         Box b = new Box(1, 1, 1);
