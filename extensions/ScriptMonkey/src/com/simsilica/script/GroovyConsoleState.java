@@ -47,6 +47,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.URL;
 import java.nio.charset.Charset;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -105,6 +106,12 @@ public class GroovyConsoleState extends BaseAppState {
      */
     private Map<Object, String> initScripts = new LinkedHashMap<Object, String>();
 
+    /**
+     *  Default imports that will be added to every script run.
+     */
+    private List<String> imports = new ArrayList<String>();
+    private String importString = null;
+
     public GroovyConsoleState() {
     }
 
@@ -114,6 +121,24 @@ public class GroovyConsoleState extends BaseAppState {
 
     public void toggleEnabled() {
         setEnabled(!isEnabled());
+    }
+
+    public void addDefaultImports( String... array ) {
+        for( String s : array ) {
+            imports.add(s);
+        }
+        importString = null;
+    }
+
+    protected String getImportString() {
+        if( importString == null ) {
+            StringBuilder sb = new StringBuilder();
+            for( String s : imports ) {
+                sb.append( "import " + s + ";\n" );
+            }
+            importString = sb.toString();
+        }
+        return importString;
     }
 
     protected void resetScriptEngine() {
@@ -155,6 +180,7 @@ public class GroovyConsoleState extends BaseAppState {
     public void addInitializationScript( File f ) {
         try {
             String script = Files.toString(f, Charset.forName("UTF-8"));
+            script = getImportString() + script;
             initScripts.put(f, script);
         } catch( IOException e ) {
             throw new RuntimeException("Error reading:" + f, e);
@@ -164,6 +190,7 @@ public class GroovyConsoleState extends BaseAppState {
     public void addInitializationScript( URL resource ) {
         try {
             String script = Resources.toString( resource, Charset.forName("UTF-8"));
+            script = getImportString() + script;
             initScripts.put(resource, script);
         } catch( IOException e ) {
             throw new RuntimeException("Error reading:" + resource, e);
@@ -206,7 +233,7 @@ public class GroovyConsoleState extends BaseAppState {
         private String scriptText;
         
         public ScriptCallable( String scriptText ) {
-            this.scriptText = scriptText;
+            this.scriptText = getImportString() + scriptText;
         }
         
         public Object call() throws ScriptException {

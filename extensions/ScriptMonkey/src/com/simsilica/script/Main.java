@@ -83,8 +83,11 @@ public class Main extends SimpleApplication {
         // Setup the script state
         GroovyConsoleState scripts = new GroovyConsoleState();
         scripts.setInitBinding("app", this);
+        scripts.setInitBinding("scripts", scripts);
+        scripts.addInitializationScript(getClass().getResource("MainApi.groovy"));
         scripts.addInitializationScript(getClass().getResource("MathApi.groovy"));
         scripts.addInitializationScript(getClass().getResource("CameraApi.groovy"));
+        scripts.addInitializationScript(getClass().getResource("ModelApi.groovy"));
         scripts.addInitializationScript(getClass().getResource("FileApi.groovy"));
         
         // Load any scripts in the "scripts" directory
