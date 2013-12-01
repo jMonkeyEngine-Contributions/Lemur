@@ -39,13 +39,27 @@ Spatial loadModel( String model ) {
     return app.assetManager.loadModel(model);
 }
 
+Spatial loadModel( File model ) {
+    def assets = app.assetManager;
+
+    assets.registerLocator(model.parentFile.path, ExpandingLocator.class);
+ 
+    try {
+        return assets.loadModel(model.name);          
+    } finally {
+        assets.unregisterLocator(model.parentFile.path, ExpandingLocator.class);
+    }
+}
+
 Spatial loadModel( File root, String model ) {
     def assets = app.assetManager;
-    
+
+    // Build a list of directories up to some "assets" directory
+    // so that we can try to catch all of the potential roots    
     // Temporarily configure a new locator
     assets.registerLocator(root.path, FileLocator.class);
     try {
-        app.assetManager.loadModel(model);       
+        return assets.loadModel(model);       
     } finally {
         assets.unregisterLocator(root.path, FileLocator.class);
     }
