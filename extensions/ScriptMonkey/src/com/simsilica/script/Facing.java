@@ -36,6 +36,8 @@ package com.simsilica.script;
 
 import com.jme3.math.FastMath;
 import com.jme3.math.Quaternion;
+import com.jme3.math.Vector3f;
+import org.codehaus.groovy.runtime.typehandling.GroovyCastException;
 
 
 /**
@@ -57,6 +59,18 @@ public enum Facing
     private Facing( Quaternion rotation ) {
         this.rotation = rotation;
     }
+ 
+    public <T> T asType(Class<T> type) {
+        if( type == Quaternion.class ) {
+            return (T)rotation;
+        } else if( type == Vector3f.class ) {
+            return (T)rotation.mult(Vector3f.UNIT_Z);
+        } else if( type == String.class ) {
+            return (T)toString(); 
+        } else {
+            throw new GroovyCastException(this, type);
+        }
+    } 
     
     public Quaternion getRotation() {
         return rotation;
