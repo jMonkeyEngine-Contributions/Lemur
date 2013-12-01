@@ -37,6 +37,8 @@ package com.simsilica.script;
 import com.jme3.app.SimpleApplication;
 import com.jme3.app.StatsAppState;
 import com.jme3.app.state.ScreenshotAppState;
+import com.jme3.light.AmbientLight;
+import com.jme3.light.DirectionalLight;
 import com.jme3.material.Material;
 import com.jme3.math.ColorRGBA;
 import com.jme3.renderer.RenderManager;
@@ -83,11 +85,18 @@ public class Main extends SimpleApplication {
         Styles styles = GuiGlobals.getInstance().getStyles();
         new StyleLoader(styles).loadStyleResource( "/com/simsilica/script/glass-style.groovy" );       
  
+        DirectionalLight sun = new DirectionalLight();
+        rootNode.addLight(sun);
+
+        AmbientLight ambient = new AmbientLight();
+        rootNode.addLight(ambient);
      
         // Setup the script state
         GroovyConsoleState scripts = new GroovyConsoleState();
         scripts.setInitBinding("app", this);
         scripts.setInitBinding("scripts", scripts);
+        scripts.setInitBinding("sun", sun);
+        scripts.setInitBinding("ambient", ambient);
         scripts.addInitializationScript(getClass().getResource("MainApi.groovy"));
         scripts.addInitializationScript(getClass().getResource("MathApi.groovy"));
         scripts.addInitializationScript(getClass().getResource("CameraApi.groovy"));
@@ -142,6 +151,10 @@ public class Main extends SimpleApplication {
         mat.setColor("Color", ColorRGBA.Green);
         geom.setMaterial(mat);
         rootNode.attachChild(geom);
+ 
+        /*assetManager.registerLocator("localAssets", FileLocator.class);       
+        Spatial model = assetManager.loadModel("rat/rat.mesh.j3o");
+        rootNode.attachChild(model);*/
     }
 
     @Override
