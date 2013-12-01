@@ -33,6 +33,10 @@
  */
 
 
+// If the "scripts" directory doesn't exist then create it for the user
+new File("scripts").mkdirs();
+
+
 // Some general helper functions.
 
 void help() {
