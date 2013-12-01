@@ -57,6 +57,14 @@ public class ElementId {
         this.selectors = Styles.getSelectors(id);
     }
 
+    public ElementId child( String childId ) {
+        return new ElementId(id + "." + childId); 
+    }
+
+    public ElementId child( ElementId childId ) {
+        return child(childId.getId()); 
+    }
+
     public final String getId() {
         return id;
     }
