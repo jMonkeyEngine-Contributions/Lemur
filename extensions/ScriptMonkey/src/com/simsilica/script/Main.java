@@ -42,6 +42,10 @@ import com.jme3.math.ColorRGBA;
 import com.jme3.renderer.RenderManager;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.shape.Box;
+import com.simsilica.lemur.GuiGlobals;
+import com.simsilica.lemur.input.InputMapper;
+import com.simsilica.lemur.style.StyleLoader;
+import com.simsilica.lemur.style.Styles;
 
 /**
  * 
@@ -59,12 +63,22 @@ public class Main extends SimpleApplication {
     }
 
     public Main() {
-        super( new StatsAppState() ); //, new FlyCamAppState() );
+        super( new StatsAppState(), new HudState(), new FlyCamAppState() );
     }
 
     @Override
     public void simpleInitApp() {
-    
+ 
+        // Initialize Lemur and setup some default key/input mappings.
+        GuiGlobals.initialize(this);
+        InputMapper inputMapper = GuiGlobals.getInstance().getInputMapper();
+        MainFunctions.initializeDefaultMappings( inputMapper );
+ 
+        // Load up a custom style for the UI related stuff
+        Styles styles = GuiGlobals.getInstance().getStyles();
+        new StyleLoader(styles).loadStyleResource( "/com/simsilica/script/glass-style.groovy" );       
+ 
+     
         // Setup the script state
         GroovyConsoleState scripts = new GroovyConsoleState();
         scripts.setInitBinding("app", this);

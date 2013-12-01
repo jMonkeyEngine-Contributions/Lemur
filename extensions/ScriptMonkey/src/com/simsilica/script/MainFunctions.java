@@ -32,28 +32,26 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import com.jme3.math.*;
-import com.simsilica.script.*;
+package com.simsilica.script;
 
-camera = app.getCamera();
+import com.jme3.input.KeyInput;
 
-// Dump all of the Facing enum values into bindings
-// so that we can simply access them by name.
-Facing.values().each {
-    bindings.put(it.name(), it);
-}
+import com.simsilica.lemur.input.FunctionId;
+import com.simsilica.lemur.input.InputMapper;
 
-Quaternion look( Facing facing ) {    
-    camera.setRotation(facing.getRotation());
-    return facing.getRotation();
-}
+/**
+ *
+ *  @version   $Revision$
+ *  @author    Paul Speed
+ */
+public class MainFunctions
+{
+    public static final String GROUP = "Main";
 
-Vector3f go( Number x, Number y, Number z ) {
-    Vector3f v = vec3(x,y,z);
-    camera.setLocation(v);
-    return v;
-}
+    public static final FunctionId F_HUD = new FunctionId(GROUP, "HUD Toggle");
 
-Vector3f go( Vector3f loc ) {
-    go(loc.x, loc.y, loc.z);
+    public static void initializeDefaultMappings( InputMapper inputMapper )
+    {
+        inputMapper.map( F_HUD, KeyInput.KEY_F3 );
+    }
 }
