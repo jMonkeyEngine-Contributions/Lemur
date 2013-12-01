@@ -223,8 +223,6 @@ public class GroovyConsoleState extends BaseAppState {
         Preferences prefs = Preferences.userNodeForPackage(getClass());
         final String lastText = prefs.get(PREF_LAST_SCRIPT, null);
  
-        System.out.println( "Previous text:\n" + lastText );
-        
         if( lastText != null ) { 
             SwingUtilities.invokeLater( new Runnable() {
                 public void run() {
