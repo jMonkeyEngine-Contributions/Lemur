@@ -11,4 +11,8 @@ Lemur TBD
 * QuadBackgroundComponent modified to support Textures.
 * Added a HoverMouseListener to better facility fly-over style
     tool tips.
-
+* Added the ElementId to the toString() of the core GUI elements.
+* MouseAppState modified to do picking on the collision roots in
+    reverse order so that they better act like layers.
+* Added convenience methods to ElementId to grab a child element
+    ID using the dot-notation preferred by the style system.
