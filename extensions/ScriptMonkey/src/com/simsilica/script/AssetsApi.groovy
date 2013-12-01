@@ -32,24 +32,30 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import com.jme3.scene.Spatial;
+
+import com.jme3.asset.*;
 import com.jme3.asset.plugins.FileLocator;
 
-Spatial loadModel( String model ) {
-    return app.assetManager.loadModel(model);
+scripts.addDefaultImports( "com.jme3.asset.*" );
+
+
+// Setup a default local directory for dumping assets
+def localAssets = new File("localAssets");
+if( localAssets.exists() ) {
+    app.assetManager.registerLocator(localAssets.path, FileLocator);
 }
 
-Spatial loadModel( File root, String model ) {
-    def assets = app.assetManager;
-    
-    // Temporarily configure a new locator
-    assets.registerLocator(root.path, FileLocator.class);
-    try {
-        app.assetManager.loadModel(model);       
-    } finally {
-        assets.unregisterLocator(root.path, FileLocator.class);
-    }
-    
+
+// Texture support---------------------------------
+import com.jme3.texture.*;
+scripts.addDefaultImports("com.jme3.texture.*");
+
+Texture loadTexture( TextureKey key ) {
+    return app.assetManager.loadTexture(key);
 }
 
- 
+Texture loadTexture( String assetName ) {
+    return app.assetManager.loadTexture(assetName); 
+}
+
+

@@ -90,6 +90,7 @@ public class Main extends SimpleApplication {
         scripts.addInitializationScript(getClass().getResource("MainApi.groovy"));
         scripts.addInitializationScript(getClass().getResource("MathApi.groovy"));
         scripts.addInitializationScript(getClass().getResource("CameraApi.groovy"));
+        scripts.addInitializationScript(getClass().getResource("AssetsApi.groovy"));
         scripts.addInitializationScript(getClass().getResource("ModelApi.groovy"));
         scripts.addInitializationScript(getClass().getResource("FileApi.groovy"));
         
