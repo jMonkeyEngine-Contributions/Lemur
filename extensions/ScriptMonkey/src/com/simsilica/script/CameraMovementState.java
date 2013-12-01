@@ -65,6 +65,7 @@ public class CameraMovementState extends BaseAppState
     private Quaternion cameraFacing = new Quaternion().fromAngles((float)pitch, (float)yaw, 0);
     private double forward;
     private double side;
+    private double elevation;
     private double speed = 3.0;
 
     public CameraMovementState() {
@@ -104,6 +105,7 @@ public class CameraMovementState extends BaseAppState
                                       CameraMovementFunctions.F_Y_LOOK,
                                       CameraMovementFunctions.F_X_LOOK,
                                       CameraMovementFunctions.F_MOVE,
+                                      CameraMovementFunctions.F_ALTITUDE,
                                       CameraMovementFunctions.F_STRAFE);
 
         inputMapper.addStateListener(this,
@@ -120,6 +122,7 @@ public class CameraMovementState extends BaseAppState
                                           CameraMovementFunctions.F_Y_LOOK,
                                           CameraMovementFunctions.F_X_LOOK,
                                           CameraMovementFunctions.F_MOVE,
+                                          CameraMovementFunctions.F_ALTITUDE,
                                           CameraMovementFunctions.F_STRAFE);
 
         inputMapper.removeStateListener( this,
@@ -142,12 +145,13 @@ public class CameraMovementState extends BaseAppState
 
     @Override
     public void update( float tpf ) {
-        if( forward != 0 || side != 0 ) {
+        if( forward != 0 || side != 0 || elevation != 0 ) {
             Quaternion rot = camera.getRotation();
             Vector3f loc = camera.getLocation();
             Vector3f move = rot.mult(Vector3f.UNIT_Z).multLocal((float)(forward * speed * tpf)); 
             Vector3f strafe = rot.mult(Vector3f.UNIT_X).multLocal((float)(side * speed * tpf));
-            loc = loc.add(move).add(strafe);
+            Vector3f elev = rot.mult(Vector3f.UNIT_Y).multLocal((float)(elevation * speed * tpf));
+            loc = loc.add(move).add(strafe).add(elev);
             camera.setLocation(loc); 
         }
     }
@@ -186,6 +190,9 @@ public class CameraMovementState extends BaseAppState
             return;
         } else if( func == CameraMovementFunctions.F_STRAFE ) {
             this.side = -value;
+            return;
+        } else if( func == CameraMovementFunctions.F_ALTITUDE ) {
+            this.elevation = value;
             return;
         } else {
             return;

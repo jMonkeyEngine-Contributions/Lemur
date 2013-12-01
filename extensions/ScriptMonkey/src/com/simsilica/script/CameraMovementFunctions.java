@@ -56,7 +56,8 @@ public class CameraMovementFunctions {
     public static final FunctionId F_MOVE = new FunctionId(GROUP_MOVEMENT, "Move");
     public static final FunctionId F_STRAFE = new FunctionId(GROUP_MOVEMENT, "Strafe");
 
-    public static final FunctionId F_JUMP = new FunctionId(GROUP_MOVEMENT, "Jump");
+    public static final FunctionId F_ALTITUDE = new FunctionId(GROUP_MOVEMENT, "Altitude");
+    
     public static final FunctionId F_RUN = new FunctionId(GROUP_MOVEMENT, "Run");
 
     public static InputMapper.Mapping MOUSE_X_LOOK;
@@ -75,6 +76,9 @@ public class CameraMovementFunctions {
         inputMapper.map( F_STRAFE, KeyInput.KEY_D );
         inputMapper.map( F_STRAFE, InputState.NEGATIVE, KeyInput.KEY_A );
 
+        inputMapper.map( F_ALTITUDE, KeyInput.KEY_Q );
+        inputMapper.map( F_ALTITUDE, InputState.NEGATIVE, KeyInput.KEY_Z ); 
+
         MOUSE_X_LOOK = inputMapper.map( F_X_LOOK, Axis.MOUSE_X );
         JOY_X_LOOK = inputMapper.map( F_X_LOOK, Axis.JOYSTICK_RIGHT_X );
         inputMapper.map( F_X_LOOK, KeyInput.KEY_RIGHT );
@@ -84,9 +88,6 @@ public class CameraMovementFunctions {
         JOY_Y_LOOK = inputMapper.map( F_Y_LOOK, Axis.JOYSTICK_RIGHT_Y );
         inputMapper.map( F_Y_LOOK, KeyInput.KEY_UP );
         inputMapper.map( F_Y_LOOK, InputState.NEGATIVE, KeyInput.KEY_DOWN );
-
-        inputMapper.map( F_JUMP, KeyInput.KEY_SPACE );
-        inputMapper.map( F_JUMP, Button.JOYSTICK_BUTTON3 );
 
         inputMapper.map( F_RUN, KeyInput.KEY_LSHIFT );
         inputMapper.map( F_RUN, Button.JOYSTICK_RIGHT1 );
