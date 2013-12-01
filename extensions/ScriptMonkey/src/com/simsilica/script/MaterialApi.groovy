@@ -95,6 +95,12 @@ class ParamsWrapper extends AbstractMap {
     public ParamsWrapper( Material material ) {
         this.material = material;
     }
+ 
+    public boolean containsKey( Object key ) {
+        // More performant than the default implementation
+        def mp = material.materialDef.getMaterialParam(String.valueOf(key));
+        return mp != null;
+    }
      
     public Set<String> getNames() {
         return material.materialDef.materialParams.collect{ it.name };
