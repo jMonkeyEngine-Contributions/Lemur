@@ -185,7 +185,7 @@ public class TextField extends Panel {
 
     @Override
     public String toString() {
-        return getClass().getName() + "[text=" + getText() + ", color=" + getColor() + "]";
+        return getClass().getName() + "[text=" + getText() + ", color=" + getColor() + ", elementId=" + getElementId() + "]";
     }
 }
 

@@ -191,7 +191,7 @@ public class Checkbox extends Button {
 
     @Override
     public String toString() {
-        return getClass().getName() + "[text=" + getText() + ", state=" + isChecked() + ", color=" + getColor() + "]";
+        return getClass().getName() + "[text=" + getText() + ", state=" + isChecked() + ", color=" + getColor() + ", elementId=" + getElementId() + "]";
     }
 
     protected static class ToggleCommand implements Command<Button> {
