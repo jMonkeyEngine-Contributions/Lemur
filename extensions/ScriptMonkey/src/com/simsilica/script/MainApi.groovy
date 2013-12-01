@@ -35,6 +35,18 @@
 
 // Some general helper functions.
 
+void help() {
+    println "Default imports:";
+    println "    " + scripts.defaultImports.join("\n    ");
+    println "Default bindings:";
+    println "    " + scripts.initBindings.collect{ it }.join("\n    ");
+    println "";
+    println "Type: help ClassName";
+    println "   to get information about a class.";
+    println "Type: help someObject";
+    println "   to get information about an object's properties.";
+}
+
 Class help( Class type ) {
     println "Info for:" + type;
     println "    super class:" + type.superclass;

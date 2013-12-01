@@ -124,6 +124,10 @@ public class GroovyConsoleState extends BaseAppState {
         initialBindings.put(key, value);
     }
 
+    public Map<String, Object> getInitBindings() {
+        return initialBindings;
+    }
+
     public void toggleEnabled() {
         setEnabled(!isEnabled());
     }
