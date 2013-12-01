@@ -6,6 +6,15 @@
             <extension file="assets-impl.xml" id="assets">
                 <dependency dependsOn="-init-assets" target="-do-init"/>
             </extension>
+            <extension file="launch4j-impl.xml" id="launch4j">
+                <dependency dependsOn="-launch4j-exe" target="jar"/>
+            </extension>
+            <extension file="macapp-impl.xml" id="macapp">
+                <dependency dependsOn="-mac-app" target="jar"/>
+            </extension>
+            <extension file="linuxlauncher-impl.xml" id="linuxlauncher">
+                <dependency dependsOn="-linux-launcher" target="jar"/>
+            </extension>
         </buildExtensions>
         <data xmlns="http://www.netbeans.org/ns/j2se-project/3">
             <name>ScriptMonkey</name>

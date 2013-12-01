@@ -21,6 +21,9 @@ is divided into following sections:
         -->
 <project xmlns:j2seproject1="http://www.netbeans.org/ns/j2se-project/1" xmlns:j2seproject3="http://www.netbeans.org/ns/j2se-project/3" xmlns:jaxrpc="http://www.netbeans.org/ns/j2se-project/jax-rpc" basedir=".." default="default" name="ScriptMonkey-impl">
     <import file="assets-impl.xml"/>
+    <import file="launch4j-impl.xml"/>
+    <import file="macapp-impl.xml"/>
+    <import file="linuxlauncher-impl.xml"/>
     <fail message="Please build using Ant 1.8.0 or higher.">
         <condition>
             <not>
@@ -1019,7 +1022,7 @@ is divided into following sections:
         <!-- Empty placeholder for easier customization. -->
         <!-- You can override this target in the ../build.xml file. -->
     </target>
-    <target depends="init,compile,-pre-jar,-do-jar-with-manifest,-do-jar-without-manifest,-do-jar-with-mainclass,-do-jar-with-libraries,-post-jar" description="Build JAR." name="jar"/>
+    <target depends="init,compile,-pre-jar,-do-jar-with-manifest,-do-jar-without-manifest,-do-jar-with-mainclass,-do-jar-with-libraries,-post-jar,-linux-launcher,-mac-app,-launch4j-exe" description="Build JAR." name="jar"/>
     <!--
                 =================
                 EXECUTION SECTION
