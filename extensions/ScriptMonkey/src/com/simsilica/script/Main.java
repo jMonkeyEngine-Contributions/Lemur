@@ -85,6 +85,7 @@ public class Main extends SimpleApplication {
         scripts.setInitBinding("app", this);
         scripts.addInitializationScript(getClass().getResource("MathApi.groovy"));
         scripts.addInitializationScript(getClass().getResource("CameraApi.groovy"));
+        scripts.addInitializationScript(getClass().getResource("FileApi.groovy"));
         
         // Load any scripts in the "scripts" directory
         File dir = new File("scripts");
