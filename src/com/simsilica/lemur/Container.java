@@ -119,6 +119,6 @@ public class Container extends Panel {
 
     @Override
     public String toString() {
-        return getClass().getName() + "[layout=" + getLayout() + "]";
+        return getClass().getName() + "[layout=" + getLayout() + ", elementId=" + getElementId() + "]";
     }
 }

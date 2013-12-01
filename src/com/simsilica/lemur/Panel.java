@@ -265,6 +265,6 @@ public class Panel extends Node {
 
     @Override
     public String toString() {
-        return getClass().getName() + "[]";
+        return getClass().getName() + "[elementId=" + getElementId() + "]";
     }
 }

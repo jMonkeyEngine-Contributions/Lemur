@@ -177,7 +177,7 @@ public class Button extends Label {
 
     @Override
     public String toString() {
-        return getClass().getName() + "[text=" + getText() + ", color=" + getColor() + "]";
+        return getClass().getName() + "[text=" + getText() + ", color=" + getColor() + ", elementId=" + getElementId() + "]";
     }
 
     protected class ButtonMouseHandler extends DefaultMouseListener {
