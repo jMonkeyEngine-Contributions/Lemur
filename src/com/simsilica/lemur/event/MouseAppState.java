@@ -61,6 +61,7 @@ public class MouseAppState extends BaseAppState {
     private boolean includeDefaultNodes = true;
     private MouseObserver mouseObserver = new MouseObserver();
     private Map<Collidable, RootEntry> roots = new LinkedHashMap<Collidable, RootEntry>();
+    private List<RootEntry> rootList = new ArrayList<RootEntry>();
     private Map<Camera, Ray> rayCache = new HashMap<Camera, Ray>();
 
     private long sampleFrequency = 1000000000 / 60; // 60 fps
@@ -111,6 +112,7 @@ public class MouseAppState extends BaseAppState {
 
     public void addCollisionRoot( Spatial root, ViewPort viewPort ) {
         roots.put(root, new RootEntry(root, viewPort));
+        rootList = null;
     }
 
     public void removeCollisionRoot( ViewPort viewPort ) {
@@ -121,6 +123,7 @@ public class MouseAppState extends BaseAppState {
 
     public void removeCollisionRoot( Spatial root ) {
         RootEntry e = roots.remove(root);
+        rootList = null;
     }
 
     @Override
@@ -194,6 +197,18 @@ public class MouseAppState extends BaseAppState {
             this.hitTarget.getControl(MouseEventControl.class).mouseEntered(event, hitTarget, capture);
         }
     }
+    
+    protected List<RootEntry> getRootList() {
+        if( rootList == null ) {
+            // Build the list backwards so we search for picks top
+            // to bottom.
+            rootList = new ArrayList<RootEntry>(roots.size());
+            for( RootEntry e : roots.values() ) {
+                rootList.add(0, e);
+            }
+        }
+        return rootList;
+    }
 
     protected Ray getPickRay( Camera cam, Vector2f cursor ) {
         Ray result = rayCache.get(cam);
@@ -250,7 +265,7 @@ public class MouseAppState extends BaseAppState {
         }
 
         // Search each root for hits
-        for( RootEntry e : roots.values() ) {
+        for( RootEntry e : getRootList() ) {
             Camera cam = e.viewport.getCamera();
 
             Ray mouseRay = getPickRay(cam, cursor);
