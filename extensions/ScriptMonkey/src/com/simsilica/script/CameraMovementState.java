@@ -35,6 +35,7 @@
 package com.simsilica.script;
 
 import com.jme3.app.Application;
+import com.jme3.math.FastMath;
 import com.jme3.math.Quaternion;
 import com.jme3.math.Vector3f;
 import com.jme3.renderer.Camera;
@@ -59,9 +60,9 @@ public class CameraMovementState extends BaseAppState
     static Logger log = LoggerFactory.getLogger(CameraMovementState.class);
 
     private Camera camera;
-    private double yaw;
+    private double yaw = FastMath.PI;
     private double pitch;
-    private Quaternion cameraFacing = new Quaternion();
+    private Quaternion cameraFacing = new Quaternion().fromAngles((float)pitch, (float)yaw, 0);
     private double forward;
     private double side;
     private double speed = 3.0;

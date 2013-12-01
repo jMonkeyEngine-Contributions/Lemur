@@ -58,3 +58,7 @@ Object help( Object o, boolean all ) {
 Object help( Object o ) {
     help( o, false );
 }
+
+Object getState( Class type ) {
+    return app.stateManager.getState(type);
+}

@@ -45,6 +45,9 @@ Facing.values().each {
 
 Quaternion look( Facing facing ) {    
     camera.setRotation(facing.getRotation());
+    if( getState(CameraMovementState) != null ) {
+        getState(CameraMovementState).setRotation(facing.getRotation());       
+    }
     return facing.getRotation();
 }
 
@@ -57,3 +60,4 @@ Vector3f go( Number x, Number y, Number z ) {
 Vector3f go( Vector3f loc ) {
     go(loc.x, loc.y, loc.z);
 }
+
