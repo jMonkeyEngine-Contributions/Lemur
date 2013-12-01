@@ -58,6 +58,8 @@ File chooseFile( String extension ) {
     def home = homeDirs[extension]
     if( home != null ) {
         openDialog.currentDirectory = home;
+    } else {
+        openDialog.currentDirectory = new File(".");
     }
     
     if( openDialog.showOpenDialog() != JFileChooser.APPROVE_OPTION )
