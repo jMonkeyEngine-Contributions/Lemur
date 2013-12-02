@@ -64,25 +64,6 @@ Texture loadTexture( String assetName ) {
 
 
 
-// Stick the sky stuff here for now
-import com.jme3.util.SkyFactory;
-import com.jme3.scene.Spatial;
-
-Spatial createSky( Texture west, Texture east, Texture north, Texture south, Texture up, Texture down ) {
-    return SkyFactory.createSky(app.assetManager, west, east, north, south, up, down);
-}
-
-Spatial createSky( String west, String east, String north, String south, String up, String down ) {
-    return SkyFactory.createSky(app.assetManager, 
-                                loadTexture(west), 
-                                loadTexture(east), 
-                                loadTexture(north), 
-                                loadTexture(south), 
-                                loadTexture(up), 
-                                loadTexture(down));
-}
-
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

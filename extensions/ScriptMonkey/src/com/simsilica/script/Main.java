@@ -94,6 +94,7 @@ public class Main extends SimpleApplication {
         // Setup the script state
         GroovyConsoleState scripts = new GroovyConsoleState();
         scripts.setInitBinding("app", this);
+        scripts.setInitBinding("rootNode", this.getRootNode());
         scripts.setInitBinding("scripts", scripts);
         scripts.setInitBinding("sun", sun);
         scripts.setInitBinding("ambient", ambient);
@@ -102,6 +103,7 @@ public class Main extends SimpleApplication {
         scripts.addInitializationScript(getClass().getResource("CameraApi.groovy"));
         scripts.addInitializationScript(getClass().getResource("AssetsApi.groovy"));
         scripts.addInitializationScript(getClass().getResource("MaterialApi.groovy"));
+        scripts.addInitializationScript(getClass().getResource("SceneApi.groovy"));
         scripts.addInitializationScript(getClass().getResource("ModelApi.groovy"));
         scripts.addInitializationScript(getClass().getResource("FileApi.groovy"));
         
