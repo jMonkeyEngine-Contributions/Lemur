@@ -40,6 +40,7 @@ Node.metaClass {
     
     plus { Spatial s ->
         delegate.attachChild(s);
+        return delegate
     }
     
     getAt { int index ->
