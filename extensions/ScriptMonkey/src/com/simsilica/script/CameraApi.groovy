@@ -33,6 +33,7 @@
  */
 
 import com.jme3.math.*;
+import com.jme3.scene.Spatial;
 import com.simsilica.script.*;
 
 camera = app.getCamera();
@@ -50,6 +51,20 @@ Quaternion look( Facing facing ) {
     }
     return facing.getRotation();
 }
+
+Quaternion lookAt( Vector3f v ) {
+    camera.lookAt(v, Vector3f.UNIT_Y);
+    return camera.rotation;
+}
+
+Quaternion lookAt( Number x, Number y, Number z ) {
+    lookAt(vec3(x,y,z));
+}
+
+
+Quaternion lookAt( Spatial s ) {
+    lookAt(s.worldTranslation);
+} 
 
 Vector3f go( Number x, Number y, Number z ) {
     Vector3f v = vec3(x,y,z);
