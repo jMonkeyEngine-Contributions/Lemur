@@ -36,6 +36,93 @@
 // If the "scripts" directory doesn't exist then create it for the user
 new File("scripts").mkdirs();
 
+import com.simsilica.script.*;
+
+// Mode hooks
+modeHooks = [:]
+
+class ModeHook implements ModeListener {
+    String name;
+    Boolean enabled;
+    Set modes = [];    
+    Closure onEnabled;
+    Closure onDisabled;
+ 
+    public ModeHook modes( String... array ) {
+        modes.addAll(array);
+        return this;   
+    }
+    
+    public Set getModes() {
+        return modes;
+    }
+ 
+    protected void updateEnabled() {
+        boolean b = modes.contains(AppMode.getMode());
+        if( b == enabled ) {
+            return;
+        }
+        if( b ) {
+            runEnabled();
+        } else {
+            runDisabled();
+        }
+    }
+ 
+    protected void runEnabled() {
+        if( onEnabled == null )
+            return;
+        onEnabled();
+    }
+    
+    protected void runDisabled() {
+        if( onDisabled == null )
+            return;
+        onDisabled();
+    }
+    
+    public ModeHook onEnabled( Closure c ) {    
+        onEnabled = c; 
+        return this;
+    }
+    
+    public ModeHook onDisabled( Closure c ) {
+        onDisabled = c;
+        return this;
+    }
+    
+    public void modeChanged( String mode, String lastMode ) {
+        if( modes.contains(mode) || modes.contains(lastMode) ) {
+            updateEnabled();
+        }
+    }
+    
+    public void release() {
+        modeHooks.remove(name);
+        AppMode.instance.removeModeListener(modeHook);
+    }         
+}
+
+ModeHook modeHook( String name, Closure config ) {
+    def result = modeHooks.get(name);
+    if( result == null ) {
+        result = new ModeHook("name":name);
+        modeHooks.put(name, result);
+        AppMode.instance.addModeListener(result);
+    }
+    if( config != null ) {
+        config.setDelegate(result);
+        config();
+    }
+    return result;
+}
+
+ModeHook modeHook( String name ) {
+    return modeHook(name, null);
+}
+
+
+
 
 // Some general helper functions.
 
@@ -64,6 +151,10 @@ Object help( Object o, boolean all ) {
     if( o == null ) {
         return;
     }
+    if( o.hasProperty("help") ) {
+        println o.help;
+        return;
+    }    
     def type = o.class;
     def local = type.metaClass.properties.findAll{it.getter.declaringClass.name == type.name}.collect{it.name}; 
     println "    class:" + o.class;
