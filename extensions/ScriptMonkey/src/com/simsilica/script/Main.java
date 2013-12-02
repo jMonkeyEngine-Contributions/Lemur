@@ -66,7 +66,10 @@ public class Main extends SimpleApplication {
     }
 
     public Main() {
-        super( new StatsAppState(), new HudState(), new CameraMovementState(),
+        super( new StatsAppState(), 
+               new HudState(), 
+               new CameraMovementState(),
+               AppMode.getInstance(),
                new ScreenshotAppState("ScriptMonkey", System.currentTimeMillis()) );
     }
 

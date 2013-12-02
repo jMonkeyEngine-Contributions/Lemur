@@ -59,6 +59,9 @@ public class CameraMovementState extends BaseAppState
 
     static Logger log = LoggerFactory.getLogger(CameraMovementState.class);
 
+    // This state owns the "Fly Camera" mode.
+    public static final String MODE_FLY_CAMERA = "Fly Camera";
+
     private Camera camera;
     private double yaw = FastMath.PI;
     private double pitch;
@@ -73,7 +76,11 @@ public class CameraMovementState extends BaseAppState
     }
 
     public void toggleEnabled() {
-        setEnabled(!isEnabled());
+        // If we fail to push the state then it means
+        // we already are that state, so pop it.
+        if( !AppMode.pushMode(MODE_FLY_CAMERA) ) {
+            AppMode.popMode(MODE_FLY_CAMERA);           
+        }
     }
 
     public void setPitch( float pitch ) {
@@ -98,6 +105,8 @@ public class CameraMovementState extends BaseAppState
     protected void initialize(Application app) {
         this.camera = app.getCamera();
         
+        AppMode.getInstance().onModeEnable( this, MODE_FLY_CAMERA );
+        
         InputMapper inputMapper = GuiGlobals.getInstance().getInputMapper();
         inputMapper.addDelegate( MainFunctions.F_TOGGLE_MOVEMENT, this, "toggleEnabled" );
         
@@ -114,6 +123,8 @@ public class CameraMovementState extends BaseAppState
 
     @Override
     protected void cleanup(Application app) {
+
+        AppMode.getInstance().clearModeLinks( this );
     
         InputMapper inputMapper = GuiGlobals.getInstance().getInputMapper();
         inputMapper.removeDelegate( MainFunctions.F_TOGGLE_MOVEMENT, this, "toggleEnabled" );
