@@ -1,0 +1,11 @@
+
+Release TBD
+-------------
+* fixed a bug that would cause node += child to set node to an int.
+* Added initial "mode" support as a global app state.
+* Added "modeHook" scripting support
+
+
+Release r1269
+--------------
+* initial upload
