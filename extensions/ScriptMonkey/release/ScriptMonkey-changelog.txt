@@ -5,6 +5,7 @@ Release TBD
 * Added initial "mode" support as a global app state.
 * Added "modeHook" scripting support
 * Added ColorRGBA math add-ons like for the Vector classes.
+* Added camera lookAt convenience functions.  Takes Spatial, Vector3f, or x,y,z
 
 
 Release r1269
