@@ -1,5 +1,5 @@
 
-Release TBD
+Release 1279
 -------------
 * fixed a bug that would cause node += child to set node to an int.
 * Added initial "mode" support as a global app state.
