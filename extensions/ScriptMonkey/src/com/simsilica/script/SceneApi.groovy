@@ -35,13 +35,27 @@
 import com.jme3.scene.*;
 
 
+// Some general spatial enhancements
+Spatial.metaClass {
+    visit { Closure visitor ->
+        delegate.depthFirstTraversal( visitor as SceneGraphVisitor );
+    }
+
+    visit { Class type, Closure visitor ->
+        delegate.depthFirstTraversal( {
+                if( type.isInstance(it) ) {
+                    visitor(it);
+                }
+            } as SceneGraphVisitor);
+    }
+    
+    flatten {
+        return delegate;
+    }
+}
+
 // Some Node enhancements
 Node.metaClass {
-    
-    plus { Spatial s ->
-        delegate.attachChild(s);
-        return delegate
-    }
     
     getAt { int index ->
         delegate.getChild(index); 
@@ -50,14 +64,23 @@ Node.metaClass {
     getAt { String name ->
         delegate.getChild(name);
     }      
+ 
+    leftShift { Spatial s ->
+        delegate.attachChild(s);
+    }
+ 
+    // This will make it work nice with each, findAll, etc.   
+    iterator {
+        delegate.children.iterator();
+    }
+ 
+    flatten {
+        def result = [delegate];
+        children.each{ result.addAll(it.flatten()) }
+        return result;
+    }      
 }
 
-// Some general spatial enhancements
-Spatial.metaClass {
-    visit { Closure visitor ->
-        delegate.depthFirstTraversal( visitor as SceneGraphVisitor );
-    }
-}
 
 
 

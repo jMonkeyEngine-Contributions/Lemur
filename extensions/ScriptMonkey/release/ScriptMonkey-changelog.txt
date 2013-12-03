@@ -12,6 +12,14 @@ Release TBD
     support.
 * Exposed the selected spatial through a "selected" binding and allow easy script-based
     selection changing with setSelected()
+* Removed the Node.plus() overload because it works strangely in the case of node += child
+    and doesn't look right as just node + child.  Replaced it with leftShift, ie: node << child
+* Added Node.leftShift to add a child to a node.
+* Added ability to Node to do .each{}, .findAll{}, etc.
+* Added Spatial.flatten() to flatten the spatial into a single collection of itself and all
+    of its children.
+* Added visit(Class) version of the visit method for visiting only nodes of a specific
+    type.  ie: rootNode.visit(Geometry) { println it }
 
 
 Release r1269
