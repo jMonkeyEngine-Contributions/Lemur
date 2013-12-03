@@ -66,19 +66,36 @@ Spatial.metaClass {
 // Stick the sky stuff here for now
 import com.jme3.util.SkyFactory;
 import com.jme3.texture.Texture;
+import com.simsilica.script.SelectionState;
 
 Spatial createSky( Texture west, Texture east, Texture north, Texture south, Texture up, Texture down ) {
-    return SkyFactory.createSky(app.assetManager, west, east, north, south, up, down);
+    Spatial result = SkyFactory.createSky(app.assetManager, west, east, north, south, up, down);
+    
+    // Automatically add skies to the pick-ignore list if we have
+    // a selection state
+    if( getState(SelectionState) != null ) {
+        getState(SelectionState).addIgnore(result);
+    }
+     
+    return result;
 }
 
 Spatial createSky( String west, String east, String north, String south, String up, String down ) {
-    return SkyFactory.createSky(app.assetManager, 
-                                loadTexture(west), 
-                                loadTexture(east), 
-                                loadTexture(north), 
-                                loadTexture(south), 
-                                loadTexture(up), 
-                                loadTexture(down));
+    Spatial result = SkyFactory.createSky(app.assetManager, 
+                                          loadTexture(west), 
+                                          loadTexture(east), 
+                                          loadTexture(north), 
+                                          loadTexture(south), 
+                                          loadTexture(up), 
+                                          loadTexture(down));
+    
+    // Automatically add skies to the pick-ignore list if we have
+    // a selection state
+    if( getState(SelectionState) != null ) {
+        getState(SelectionState).addIgnore(result);
+    }
+     
+    return result;
 }
 
 

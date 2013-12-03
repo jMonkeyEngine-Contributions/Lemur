@@ -293,20 +293,16 @@ public class GroovyConsoleState extends BaseAppState {
         @Override
         public Object run(String scriptText, String fileName, List list) throws CompilationFailedException {
  
-            // Transfer the bindings from the context
-            globalBindings.putAll( getContext().getVariables() );
-            
             // Evaluate the script on the render thread
             Future future = getApplication().enqueue(new ScriptCallable(scriptText));
             
             try {
                 // And we wait for it.
                 Object result = future.get();
-                
-                // And transfer the bindings back again in case any new
-                // ones were added
-                getContext().getVariables().putAll(globalBindings);
-                
+
+//System.out.println( "   done-------" );
+//System.out.println( "   globalBindings:" + globalBindings ); 
+//System.out.println( "   contextVariables:" + getContext().getVariables() ); 
                 return result;
             } catch( InterruptedException e ) {
                 throw new GroovyRuntimeException("Interrupted executing script", e);

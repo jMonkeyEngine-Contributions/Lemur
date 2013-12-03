@@ -38,6 +38,12 @@ new File("scripts").mkdirs();
 
 import com.simsilica.script.*;
 
+// General utilities
+Object getState( Class type ) {
+    return app.stateManager.getState(type);
+}
+
+
 // Mode hooks
 modeHooks = [:]
 
@@ -122,6 +128,24 @@ ModeHook modeHook( String name ) {
 }
 
 
+// Selection management
+import com.jme3.scene.Spatial;
+Spatial setSelected( Spatial s ) {
+    if( getState(SelectionState) != null ) {
+        getState(SelectionState).setSelectedSpatial(s);
+    }
+    return s;
+} 
+
+// Some default listener setup
+// When the selection changes we will stick it in a binding
+if( getState(SelectionState) != null ) {
+    getState(SelectionState).addSelectionListener( { s, last ->
+        selected = s;
+    } as SelectionListener );
+}
+selected = null;
+
 
 
 // Some general helper functions.
@@ -166,6 +190,4 @@ Object help( Object o ) {
     help( o, false );
 }
 
-Object getState( Class type ) {
-    return app.stateManager.getState(type);
-}
+

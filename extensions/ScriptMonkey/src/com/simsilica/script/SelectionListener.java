@@ -32,46 +32,17 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import com.jme3.math.*;
+package com.simsilica.script;
+
 import com.jme3.scene.Spatial;
-import com.simsilica.script.*;
 
-camera = app.getCamera();
 
-// Dump all of the Facing enum values into bindings
-// so that we can simply access them by name.
-Facing.values().each {
-    bindings.put(it.name(), it);
+/**
+ *  Notified when the current selection changes.
+ *
+ *  @author    Paul Speed
+ */
+public interface SelectionListener {
+    
+    public void selectionChanged( Spatial selection, Spatial previous );
 }
-
-Quaternion look( Facing facing ) {    
-    camera.setRotation(facing.getRotation());
-    if( getState(CameraMovementState) != null ) {
-        getState(CameraMovementState).setRotation(facing.getRotation());       
-    }
-    return facing.getRotation();
-}
-
-Quaternion lookAt( Vector3f v ) {
-    camera.lookAt(v, Vector3f.UNIT_Y);
-    return camera.rotation;
-}
-
-Quaternion lookAt( Number x, Number y, Number z ) {
-    lookAt(vec3(x,y,z));
-}
-
-Quaternion lookAt( Spatial s ) {
-    lookAt(s.worldTranslation);
-} 
-
-Vector3f go( Number x, Number y, Number z ) {
-    Vector3f v = vec3(x,y,z);
-    camera.setLocation(v);
-    return v;
-}
-
-Vector3f go( Vector3f loc ) {
-    go(loc.x, loc.y, loc.z);
-}
-

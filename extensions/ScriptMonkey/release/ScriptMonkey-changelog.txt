@@ -6,6 +6,12 @@ Release TBD
 * Added "modeHook" scripting support
 * Added ColorRGBA math add-ons like for the Vector classes.
 * Added camera lookAt convenience functions.  Takes Spatial, Vector3f, or x,y,z
+* Fixed a legacy bug in the console state where binding variables set through 
+    callbacks were getting wiped out.
+* Added a SelectionState to keep track of the selected spatial and provide click-through
+    support.
+* Exposed the selected spatial through a "selected" binding and allow easy script-based
+    selection changing with setSelected()
 
 
 Release r1269

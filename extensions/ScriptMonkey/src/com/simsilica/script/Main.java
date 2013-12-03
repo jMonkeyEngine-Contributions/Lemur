@@ -69,6 +69,7 @@ public class Main extends SimpleApplication {
         super( new StatsAppState(), 
                new HudState(), 
                new CameraMovementState(),
+               new SelectionState(),
                AppMode.getInstance(),
                new ScreenshotAppState("ScriptMonkey", System.currentTimeMillis()) );
     }
@@ -83,6 +84,8 @@ public class Main extends SimpleApplication {
         CameraMovementFunctions.initializeDefaultMappings( inputMapper );
 
         inputMapper.activateGroup(MainFunctions.GROUP);
+ 
+        AppMode.setMode(SelectionState.MODE_SELECTION);
  
         // Load up a custom style for the UI related stuff
         Styles styles = GuiGlobals.getInstance().getStyles();
@@ -124,7 +127,7 @@ public class Main extends SimpleApplication {
         stateManager.attach(scripts);
     
         Box b = new Box(1, 1, 1);
-        Geometry geom = new Geometry("Box", b);
+        Geometry geom = new Geometry("Box1", b);
 
         Material mat = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
         mat.setColor("Color", ColorRGBA.Blue);
@@ -132,7 +135,7 @@ public class Main extends SimpleApplication {
         rootNode.attachChild(geom);
 
         b = new Box(1, 1, 1);
-        geom = new Geometry("Box", b);
+        geom = new Geometry("Box2", b);
         geom.setLocalTranslation(10, 0, 10 );
 
         mat = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
@@ -141,7 +144,7 @@ public class Main extends SimpleApplication {
         rootNode.attachChild(geom);
         
         b = new Box(1, 1, 1);
-        geom = new Geometry("Box", b);
+        geom = new Geometry("Box3", b);
         geom.setLocalTranslation(0, 10, 10 );
 
         mat = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
@@ -150,7 +153,7 @@ public class Main extends SimpleApplication {
         rootNode.attachChild(geom);
         
         b = new Box(1, 1, 1);
-        geom = new Geometry("Box", b);
+        geom = new Geometry("Box4", b);
         geom.setLocalTranslation(0, -10, 10 );
 
         mat = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
