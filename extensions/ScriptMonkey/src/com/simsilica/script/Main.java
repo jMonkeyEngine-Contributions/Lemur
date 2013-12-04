@@ -112,6 +112,7 @@ public class Main extends SimpleApplication {
         scripts.addInitializationScript(getClass().getResource("SceneApi.groovy"));
         scripts.addInitializationScript(getClass().getResource("ModelApi.groovy"));
         scripts.addInitializationScript(getClass().getResource("FileApi.groovy"));
+        scripts.addInitializationScript(getClass().getResource("InterfaceApi.groovy"));
         
         // Load any scripts in the "scripts" directory
         File dir = new File("scripts");

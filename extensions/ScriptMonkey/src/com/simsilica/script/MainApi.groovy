@@ -43,6 +43,10 @@ Object getState( Class type ) {
     return app.stateManager.getState(type);
 }
 
+// A global 'log'
+import org.slf4j.LoggerFactory;
+log = LoggerFactory.getLogger("scripts");
+
 
 // Mode hooks
 modeHooks = [:]

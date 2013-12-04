@@ -1,4 +1,11 @@
 
+Release TBD
+------------
+* Added a standard log binding that scripts can use for logging.
+* Added the basic HUD window support.
+* Added button click hook support and window-managed buttons.
+
+
 Release 1279
 -------------
 * fixed a bug that would cause node += child to set node to an int.
