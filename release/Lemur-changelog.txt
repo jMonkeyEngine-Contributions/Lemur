@@ -16,3 +16,7 @@ Lemur TBD
     reverse order so that they better act like layers.
 * Added convenience methods to ElementId to grab a child element
     ID using the dot-notation preferred by the style system.
+* Added standard get() method to Attributes that looks up the
+    value without doing a default value check (which requires knowing
+    the type).
+* Add the ability to retrieve the command lists from a button.

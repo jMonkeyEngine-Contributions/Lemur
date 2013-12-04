@@ -74,6 +74,10 @@ public class Attributes {
         values.put( attribute, value );
     }
 
+    public <T> T get( String attribute ) {
+        return (T)values.get(attribute);
+    }
+
     public <T> T get( String attribute, Class<T> type ) {
         return get(attribute, type, true);
     }

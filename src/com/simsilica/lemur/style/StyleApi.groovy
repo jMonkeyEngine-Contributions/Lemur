@@ -55,7 +55,7 @@ Attributes.metaClass {
             c();
         }
         return delegate;        
-    }
+    }    
 }
 
 Attributes selector( String style, Closure c ) {
