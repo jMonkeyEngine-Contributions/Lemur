@@ -44,6 +44,7 @@ Object getState( Class type ) {
 }
 
 // A global 'log'
+import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 log = LoggerFactory.getLogger("scripts");
 
@@ -52,6 +53,8 @@ log = LoggerFactory.getLogger("scripts");
 modeHooks = [:]
 
 class ModeHook implements ModeListener {
+    static Logger log = LoggerFactory.getLogger("scripts.ModeHook");
+    
     String name;
     Boolean enabled;
     Set modes = [];    
@@ -72,10 +75,14 @@ class ModeHook implements ModeListener {
         if( b == enabled ) {
             return;
         }
-        if( b ) {
-            runEnabled();
-        } else {
-            runDisabled();
+        try {
+            if( b ) {
+                runEnabled();
+            } else {
+                runDisabled();
+            }
+        } catch( Exception e ) {
+            log.error("Error running hooks", e );
         }
     }
  
@@ -150,6 +157,63 @@ if( getState(SelectionState) != null ) {
 }
 selected = null;
 
+
+// Selection hooks
+selectionHooks = [:]
+
+// We could go directly to the listener interface but I think
+// it's useful to mimic a consistent hook idiom and also it
+// formalizes the selection and deselection parts.  Callers
+// can always add listeners directly to the state if they
+// want direct listener support.
+class SelectionHook implements SelectionListener {
+    static Logger log = LoggerFactory.getLogger("scripts.ModeHook");
+    
+    String name;
+    Closure selected;
+    Closure deselected;
+    
+    public SelectionHook onSelected( Closure c ) {    
+        selected = c; 
+        return this;
+    }
+    
+    public SelectionHook onDeselected( Closure c ) {
+        deselected = c;
+        return this;
+    }
+    
+    public void selectionChanged( Spatial selection, Spatial previous ) {
+System.out.println( "selectionChanged(" + selection + ", " + previous + ")" );    
+        try {
+            if( previous != null && deselected != null ) {
+                deselected(previous);
+            } 
+            if( selection != null && selected != null ) {
+                selected(selection);
+            }
+        } catch( Exception e ) {
+            log.error("Error running hooks", e);
+        }
+    }
+}
+
+SelectionListener selectionHook( String name, Closure config ) {
+    def hook = selectionHooks.get(name);
+    if( hook == null ) {
+        hook = new SelectionHook(name:name);
+        selectionHooks.put(name, hook); 
+        getState(SelectionState).addSelectionListener(hook);
+    }
+    if( config != null ) {
+        hook.with(config);
+    }
+    return hook; 
+}
+
+SelectionListener selectionHook( String name ) {
+    return selectionHook(name, null);
+}
 
 
 // Some general helper functions.

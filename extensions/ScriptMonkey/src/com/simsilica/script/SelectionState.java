@@ -48,7 +48,6 @@ import com.jme3.scene.Spatial;
 import com.jme3.util.SafeArrayList;
 import com.simsilica.lemur.event.BaseAppState;
 import com.simsilica.lemur.event.DefaultRawInputListener;
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -68,6 +67,12 @@ public class SelectionState extends BaseAppState
 {
     // This state owns the "Selection" mode.
     public static final String MODE_SELECTION = "Selection";
+ 
+    /**
+     *  Set this user data to a Geometry if it should be ignored
+     *  in the selection chain.
+     */
+    public static final String UD_IGNORE = "ignoreSelection";
     
     private MouseObserver mouseObserver = new MouseObserver();
     private Ray ray = new Ray(); // we reuse it
@@ -83,7 +88,7 @@ public class SelectionState extends BaseAppState
      *  A set of Geometries to ignore during picking... this is necessary
      *  because collisions with the sky are dumb.
      */
-    private Set<Spatial> ignore = new HashSet<Spatial>(); 
+    //private Set<Spatial> ignore = new HashSet<Spatial>(); 
  
     /**
      *  The root node we will do picking against.
@@ -116,7 +121,14 @@ public class SelectionState extends BaseAppState
     }
     
     public void addIgnore( Spatial... ignore ) {
-        this.ignore.addAll( Arrays.asList(ignore) );
+        //this.ignore.addAll( Arrays.asList(ignore) );
+        for( Spatial s : ignore ) {
+            s.setUserData(UD_IGNORE, true);
+        } 
+    }
+ 
+    protected boolean isIgnored( Spatial s ) {
+        return s.getUserData(UD_IGNORE) == Boolean.TRUE;
     }
  
     public void addSelectionListener( SelectionListener l ) {
@@ -176,7 +188,7 @@ public class SelectionState extends BaseAppState
         }
         
         this.hover = hover;
-        
+
         // Notify listeners
         
         // If the hover changes then clear the previous selection
@@ -221,7 +233,7 @@ public class SelectionState extends BaseAppState
         boolean remove = false;
         for( CollisionResult cr : collisions ) {
             Geometry geom = cr.getGeometry();
-            if( ignore.contains(geom) ) {
+            if( isIgnored(geom) ) {
                 continue;
             }
             if( remove ) {
@@ -239,7 +251,7 @@ public class SelectionState extends BaseAppState
  
         for( CollisionResult cr : collisions ) {
             Geometry geom = cr.getGeometry();
-            if( ignore.contains(geom) ) {
+            if( isIgnored(geom) ) {
                 continue;
             }
                        
@@ -280,7 +292,7 @@ public class SelectionState extends BaseAppState
                     return;
                 }
             }
-            if( ignore.contains(geom) ) {
+            if( isIgnored(geom) ) {
                 continue;
             }
             setHover(geom);

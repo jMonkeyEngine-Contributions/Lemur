@@ -4,6 +4,9 @@ Release TBD
 * Added a standard log binding that scripts can use for logging.
 * Added the basic HUD window support.
 * Added button click hook support and window-managed buttons.
+* Added a selectionHook API
+* Added a SelectionIndicator control that can be attached to any
+    spatial to highlight its Mesh(es) as wire frame.
 
 
 Release 1279
