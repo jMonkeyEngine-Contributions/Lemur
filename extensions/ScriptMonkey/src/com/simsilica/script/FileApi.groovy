@@ -35,6 +35,9 @@
 
 import javax.swing.filechooser.FileFilter
 import javax.swing.JFileChooser
+import javax.swing.SwingUtilities
+
+import com.simsilica.script.*;
 
 homeDirs = [:]
 
@@ -62,8 +65,22 @@ File chooseFile( String extension ) {
         openDialog.currentDirectory = new File(".");
     }
     
-    if( openDialog.showOpenDialog() != JFileChooser.APPROVE_OPTION )
+    def dialogResult;
+    
+    if( !SwingUtilities.isEventDispatchThread() ) {
+        SwingUtilities.invokeAndWait( {
+                // Try to bring the scripting console to front
+                // so that the dialog will also open in front
+                getState(GroovyConsoleState).toFront();
+                dialogResult = openDialog.showOpenDialog();
+            } as Runnable );
+    } else {
+        dialogResult = openDialog.showOpenDialog();
+    }
+    
+    if( dialogResult != JFileChooser.APPROVE_OPTION ) {
         return null;
+    }
  
     def result = openDialog.selectedFile;
     

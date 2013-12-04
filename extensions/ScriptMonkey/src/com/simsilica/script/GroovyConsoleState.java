@@ -128,6 +128,12 @@ public class GroovyConsoleState extends BaseAppState {
         return initialBindings;
     }
 
+    public void toFront() {
+        if( frame != null ) {
+            frame.toFront();
+        }
+    }
+
     public void toggleEnabled() {
         setEnabled(!isEnabled());
     }
@@ -161,6 +167,10 @@ public class GroovyConsoleState extends BaseAppState {
         globalBindings = engine.createBindings();
         engine.setBindings(globalBindings, ScriptContext.ENGINE_SCOPE); 
  
+        // Clear the old imports
+        imports.clear();
+        importString = null;
+ 
         // Provide direct access to the bindings as a binding.
         // This can be useful for debugging 'not found' errors
         // inside scripts.
@@ -173,7 +183,8 @@ public class GroovyConsoleState extends BaseAppState {
         for( Map.Entry<Object, String> e : initScripts.entrySet() ) {
             try {
                 String script = e.getValue();
-                engine.eval(script);
+                script = getImportString() + script;
+                engine.eval(script); 
             } catch( ScriptException ex ) {
                 throw new GroovyRuntimeException("Error executing initialization script:" + e.getKey(), ex);
             }
@@ -203,7 +214,6 @@ public class GroovyConsoleState extends BaseAppState {
     public void addInitializationScript( URL resource ) {
         try {
             String script = Resources.toString( resource, Charset.forName("UTF-8"));
-            script = getImportString() + script;
             initScripts.put(resource, script);
         } catch( IOException e ) {
             throw new RuntimeException("Error reading:" + resource, e);
