@@ -38,6 +38,62 @@
 
 import com.jme3.material.*;
 import com.jme3.shader.VarType;
+import com.jme3.texture.*;
+import java.nio.*;
+
+// Add some type checking to VarType because it doesn't have
+// any on its own.
+VarType.metaClass {
+    isCompatible{ value ->
+        if( value == null ) {
+            return true;
+        }
+        switch(delegate) {
+            case VarType.Texture2D:
+                return value instanceof Texture2D;
+            case VarType.Texture3D:
+                return value instanceof Texture3D;           
+            case VarType.TextureArray:           
+                return value.class.isArray() && Texture.class.isAssignableFrom(value.class.getComponentType()); 
+            case VarType.Float:
+                return value instanceof Float;
+            case VarType.Vector2:
+                return value instanceof Vector2f;
+            case VarType.Vector3:
+                return value instanceof Vector3f;
+            case VarType.Vector4:
+                return value instanceof ColorRGBA || value instanceof Vector4f || value instanceof Quaternion; 
+            case VarType.Boolean:
+                return value instanceof Boolean;
+            case VarType.Matrix3:
+                return value instanceof Matrix3f;
+            case VarType.Matrix4:
+                return value instanceof Matrix4f;
+            case VarType.FloatArray:
+                return value.class.isArray() && value.class.getComponentType() == Float.TYPE; 
+            case VarType.Vector2Array:
+                return value.class.isArray() && value.class.getComponentType() == Vector2f.class; 
+            case VarType.Vector3Array:
+                return value.class.isArray() && value.class.getComponentType() == Vector3f.class; 
+            case VarType.Vector4Array:
+                return value.class.isArray() && value.class.getComponentType() == Vector4f.class; 
+            case VarType.Matrix4Array:
+                return value.class.isArray() && value.class.getComponentType() == Matrix4f.class; 
+            case VarType.IntArray:
+                return value.class.isArray() && value.class.getComponentType() == Integer.TYPE; 
+            case VarType.Int:
+                return value instanceof Integer;
+            case VarType.TextureBuffer:           
+                // FIXME
+                return true;
+            case VarType.TextureCubeMap:
+                // FIXME
+                return true;
+            default:
+                throw new UnsupportedOperationException("Unsupported uniform type: " + delegate);
+        }        
+    }
+}
 
 /**
  *  Wraps a JME MatParam and makes it look like a Map.Entry.
@@ -67,14 +123,16 @@ class ParameterWrapper implements Map.Entry {
         return mp?.value
     }
     
-    public Object setValue( Object val ) {
-        
-        println( "Need to set" + param.name + " to:" + val );
+    public Object setValue( Object val ) {        
         def result = param.value;       
         if( val == null ) {
             material.clearParam(param.name);
         } else {
-            println( "calling setParam(" + param.name + ", " + param.varType + ", " + val + ") on :" + material );
+            // Check the type of the parameter because JME doesn't do
+            // it until rendering and crashes the whole app
+            if( !param.varType.isCompatible(val) ) {
+                throw new IllegalArgumentException( "Value is not compatible with parameter type:" + param.varType );
+            }
             material.setParam(param.name, param.varType, val);
         }
         return result;
