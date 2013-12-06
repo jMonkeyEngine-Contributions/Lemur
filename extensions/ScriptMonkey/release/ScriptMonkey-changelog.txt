@@ -10,7 +10,10 @@ Release TBD
 * Fixed a bug where default imports weren't being made available
     to initialization scripts.    
 * Fixed a problem where the file chooser dialog wasn't being 
-    brought to front when invoked from an in-HUD button press.    
+    brought to front when invoked from an in-HUD button press.
+* Modified the material param stuff to do its own type checking
+    because JME waits until render time to resolve these and
+    then the app crashes.
 
 
 Release 1279
