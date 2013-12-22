@@ -64,6 +64,10 @@ public class DragHandler extends DefaultMouseListener {
         return drag != null;
     }
 
+    protected Vector2f getDragStartLocation() {
+        return drag;
+    }
+
     protected void startDrag( MouseButtonEvent event, Spatial target, Spatial capture ) {
         drag = new Vector2f(event.getX(), event.getY());
         basePosition = capture.getWorldTranslation().clone();
