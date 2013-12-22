@@ -60,30 +60,16 @@ public class MouseAppState extends BaseAppState {
 
     private boolean includeDefaultNodes = true;
     private MouseObserver mouseObserver = new MouseObserver();
-    private Map<Collidable, RootEntry> roots = new LinkedHashMap<Collidable, RootEntry>();
-    private List<RootEntry> rootList = new ArrayList<RootEntry>();
-    private Map<Camera, Ray> rayCache = new HashMap<Camera, Ray>();
-
+    
     private long sampleFrequency = 1000000000 / 60; // 60 fps
     private long lastSample = 0;
 
     /**
-     *  The spatial that currently has the mouse over it.
+     *  The session that tracks the state of pick events from one
+     *  event frame to the next.
      */
-    private Spatial hitTarget;
-
-    /**
-     *  The spatial that is the target of an active event sequence, ie:
-     *  it captured the mouse when a button was clicked.
-     */
-    private Spatial capture;
-
-    /**
-     *  The set of spatials that recieve an event.  Used during frame
-     *  processing and kept at this level to avoid recreating every
-     *  event frame.
-     */
-    private Set<Spatial> delivered = new HashSet<Spatial>();
+    private PickEventSession session = new PickEventSession();
+    
 
     public MouseAppState( Application app ) {
         setEnabled(true);
@@ -94,36 +80,23 @@ public class MouseAppState extends BaseAppState {
     }
 
     public ViewPort findViewPort( Spatial s ) {
-        Spatial root = s;
-        while( root.getParent() != null ) {
-            root = root.getParent();
-        }
-        RootEntry e = roots.get(root);
-        if( e == null )
-            return null;
-        return e.viewport;
+        return session.findViewPort(s);
     }
 
     public void addCollisionRoot( ViewPort viewPort ) {
-        for( Spatial s : viewPort.getScenes() ) {
-            addCollisionRoot(s, viewPort);
-        }
+        session.addCollisionRoot(viewPort);
     }
 
     public void addCollisionRoot( Spatial root, ViewPort viewPort ) {
-        roots.put(root, new RootEntry(root, viewPort));
-        rootList = null;
+        session.addCollisionRoot(root, viewPort);
     }
 
     public void removeCollisionRoot( ViewPort viewPort ) {
-        for( Spatial s : viewPort.getScenes() ) {
-            removeCollisionRoot(s);
-        }
+        session.removeCollisionRoot(viewPort);
     }
 
     public void removeCollisionRoot( Spatial root ) {
-        RootEntry e = roots.remove(root);
-        rootList = null;
+        session.removeCollisionRoot(root);
     }
 
     @Override
@@ -137,6 +110,10 @@ public class MouseAppState extends BaseAppState {
     @Override
     protected void cleanup( Application app ) {
         app.getInputManager().removeRawInputListener(mouseObserver);
+        if( includeDefaultNodes ) {
+            removeCollisionRoot( app.getGuiViewPort() );
+            removeCollisionRoot( app.getViewPort() );
+        }        
     }
 
     @Override
@@ -147,86 +124,6 @@ public class MouseAppState extends BaseAppState {
     @Override
     protected void disable() {
         getApplication().getInputManager().setCursorVisible(false);
-    }
-
-    protected void releaseCapture() {
-        if( capture != null ) {
-            // Deliver a fake "up" event to remove the
-            // capture
-            MouseButtonEvent event = new MouseButtonEvent(0, false, -1000, -1000);
-            capture.getControl( MouseEventControl.class ).mouseButtonEvent(event, hitTarget, capture);
-            capture = null;
-        }
-
-        setCurrentHitTarget(null, new Vector2f(-1000, -1000));
-    }
-
-    /**
-     *  Finds a spatial in the specified spatial's hierarchy that
-     *  is capable of recieving mouse events.
-     */
-    protected Spatial findHitTarget( Spatial hit ) {
-        for( Spatial s = hit; s != null; s = s.getParent() ) {
-            MouseEventControl control = s.getControl(MouseEventControl.class);
-            if( control != null && control.isEnabled() ) {
-                return s;
-            }
-        }
-        return null;
-    }
-
-    protected void setCurrentHitTarget( Spatial s, Vector2f cursor ) {
-
-        if( this.hitTarget == s )
-            return;
-
-        MouseMotionEvent event = null;
-
-        if( this.hitTarget != null ) {
-            // Exiting
-            event = new MouseMotionEvent((int)cursor.x, (int)cursor.y, 0, 0, 0, 0);
-            this.hitTarget.getControl(MouseEventControl.class).mouseExited(event, hitTarget, capture);
-        }
-        this.hitTarget = s;
-        if( this.hitTarget != null ) {
-            // Entering
-            if( event == null ) {
-                event = new MouseMotionEvent((int)cursor.x, (int)cursor.y, 0, 0, 0, 0);
-            }
-
-            this.hitTarget.getControl(MouseEventControl.class).mouseEntered(event, hitTarget, capture);
-        }
-    }
-    
-    protected List<RootEntry> getRootList() {
-        if( rootList == null ) {
-            // Build the list backwards so we search for picks top
-            // to bottom.
-            rootList = new ArrayList<RootEntry>(roots.size());
-            for( RootEntry e : roots.values() ) {
-                rootList.add(0, e);
-            }
-        }
-        return rootList;
-    }
-
-    protected Ray getPickRay( Camera cam, Vector2f cursor ) {
-        Ray result = rayCache.get(cam);
-        if( result != null )
-            return result;
-
-        if( cam.isParallelProjection() ) {
-            // Treat it like a screen viewport
-            result = new Ray(new Vector3f(cursor.x, cursor.y, 1000), new Vector3f(0, 0, -1));
-        } else {
-            // It's perspective...
-            Vector3f clickFar  = cam.getWorldCoordinates(cursor, 1);
-            Vector3f clickNear = cam.getWorldCoordinates(cursor, 0);
-            result = new Ray(clickNear, clickFar.subtractLocal(clickNear).normalizeLocal());
-        }
-
-        rayCache.put( cam, result );
-        return result;
     }
 
     @Override
@@ -240,109 +137,12 @@ public class MouseAppState extends BaseAppState {
 
         Vector2f cursor = getApplication().getInputManager().getCursorPosition();
 
-        // Note: roots are processed in the order that they
-        // were added... so guiNodes, etc. always come first.
-        CollisionResults results = new CollisionResults();
-        Spatial firstHit = null;
-        MouseMotionEvent event = null;
-        Spatial target = null;
-
-        // Always clear the caches first
-        rayCache.clear();
-        delivered.clear();
-
-        // If there is a captured spatial then always deliver an
-        // event to it... and do it first.  a) it's more consistent
-        // and b) if it consumes the event then we can stop already.
-        if( capture != null ) {
-            event = new MouseMotionEvent((int)cursor.x, (int)cursor.y, 0, 0, 0, 0);
-            delivered.add(capture);
-            capture.getControl(MouseEventControl.class).mouseMoved(event, capture, capture);
-            if( event.isConsumed() ) {
-                // We're done already
-                return;
-            }
-        }
-
-        // Search each root for hits
-        for( RootEntry e : getRootList() ) {
-            Camera cam = e.viewport.getCamera();
-
-            Ray mouseRay = getPickRay(cam, cursor);
-
-            // Rather than process every root, we will stop when
-            // we find one that is ready to consume our event
-            int count = e.root.collideWith(mouseRay, results);
-            if( count > 0 ) {
-                for( CollisionResult cr : results ) {
-                    Geometry geom = cr.getGeometry();
-                    Spatial hit = findHitTarget(geom);                    
-                    if( hit == null )
-                        continue;
-
-                    if( firstHit == null ) {
-                        setCurrentHitTarget(hit, cursor);
-                        firstHit = hit;
-                    }
-
-                    // See if this is one that will take our event
-                    if( event == null ) {
-                        event = new MouseMotionEvent((int)cursor.x, (int)cursor.y, 0, 0, 0, 0);
-                    }
-
-                    // Only deliver events to each hit once.
-                    if( delivered.add(hit) ) {
-                        hit.getControl(MouseEventControl.class).mouseMoved(event, hit, capture);
-
-                        // If the event is consumed then we're done
-                        if( event.isConsumed() ) {
-                            return;
-                        }
-                    }
-                }
-            }
-            results.clear();
-        }
-
-        if( firstHit == null ) {
-            setCurrentHitTarget(null, cursor);
-        }
+        session.cursorMoved((int)cursor.x, (int)cursor.y);
     }
 
     protected void dispatch(MouseButtonEvent evt) {
-        if( evt.isPressed() ) {
-            capture = hitTarget;
-        } else if( capture != null ) {
-            // Try to deliver it there first
-            capture.getControl(MouseEventControl.class).mouseButtonEvent(evt, hitTarget, capture);
-            capture = null;
-
-            // If the event was consumed then we're done
-            if( evt.isConsumed() )
-                return;
-        }
-
-        if( hitTarget == null  )
-            {
-            // Here we should actually do a hit query with the event's location
-            // so that we handle the case where we receive an event for something
-            // that wasn't entered or captured yet, like when frames are slow or
-            // for simulated mouse events from touch.
-            return;
-            }
-
-        hitTarget.getControl(MouseEventControl.class).mouseButtonEvent(evt, hitTarget, capture);
-    }
-
-    protected class RootEntry {
-
-        protected ViewPort viewport;
-        protected Collidable root;
-
-        public RootEntry( Collidable root, ViewPort viewport ) {
-            this.viewport = viewport;
-            this.root = root;
-        }
+        if( session.buttonEvent(evt.getButtonIndex(), evt.getX(), evt.getY(), evt.isPressed()) )
+            evt.setConsumed();
     }
 
     protected class MouseObserver extends DefaultRawInputListener {
