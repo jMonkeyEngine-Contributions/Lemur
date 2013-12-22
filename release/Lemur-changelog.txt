@@ -1,7 +1,7 @@
 
 Lemur TBD
 ---------
-* Updated Panel javadoc to clartify y-inversion in layouts.
+* Updated Panel javadoc to clarify y-inversion in layouts.
 * Added a ConsumingMouseListener implementation that can be
     used to make GUI elements "opaque" to mouse events.
 * Added TextField.setFont().
@@ -20,3 +20,16 @@ Lemur TBD
     value without doing a default value check (which requires knowing
     the type).
 * Add the ability to retrieve the command lists from a button.
+* Added a double-gradient.png standard icon for creating 'glass-like'
+    vertical bevels.
+* Added a protected getDragStartLocation() to the default DragHandler 
+    implementation so that subclasses can retrieve it if needed.  Useful
+    for implementations that will indicate "rubber-banding" or similar. 
+* Added a PickEventSession to handle delivery of cursor-based events
+    to pickable components.  Useful for non-mouse based event handling
+    (ie: joysticks, touch, etc.) or when event locations need to be
+    rempapped during event processing.
+* Changed MouseAppState to use a PickEventSession for its picking and
+    event delivery.
+    
+    
