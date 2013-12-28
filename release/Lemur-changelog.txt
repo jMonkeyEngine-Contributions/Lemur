@@ -31,5 +31,10 @@ Lemur TBD
     rempapped during event processing.
 * Changed MouseAppState to use a PickEventSession for its picking and
     event delivery.
+* Added Cursor-related events, listeners, and a CursorEventControl that
+    works similarly to MouseEventControl but provides information about
+    the collision.
+* Converted Slider and DragHandler to use the new cursor events so that
+    they could better calculate projection.    
     
     

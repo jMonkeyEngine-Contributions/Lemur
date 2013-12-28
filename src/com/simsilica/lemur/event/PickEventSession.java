@@ -105,6 +105,9 @@ public class PickEventSession {
     }
 
     public ViewPort findViewPort( Spatial s ) {
+        if( s == null ) {
+            return null;
+        }
         Spatial root = s;
         while( root.getParent() != null ) {
             root = root.getParent();
@@ -143,34 +146,56 @@ public class PickEventSession {
      */
     protected Spatial findHitTarget( Spatial hit ) {
         for( Spatial s = hit; s != null; s = s.getParent() ) {
-            MouseEventControl control = s.getControl(MouseEventControl.class);
-            if( control != null && control.isEnabled() ) {
+            CursorEventControl control1 = s.getControl(CursorEventControl.class);
+            if( control1 != null && control1.isEnabled() ) {
+                return s;
+            }
+            MouseEventControl control2 = s.getControl(MouseEventControl.class);
+            if( control2 != null && control2.isEnabled() ) {
                 return s;
             }
         }
         return null;
     }
 
-    protected void setCurrentHitTarget( Spatial s, Vector2f cursor ) {
+    protected void setCurrentHitTarget( ViewPort viewport, Spatial s, Vector2f cursor, CollisionResult cr ) {
 
         if( this.hitTarget == s )
             return;
 
-        MouseMotionEvent event = null;
+        CursorMotionEvent event1 = null;
+        MouseMotionEvent event2 = null;
 
         if( this.hitTarget != null ) {
-            // Exiting
-            event = new MouseMotionEvent((int)cursor.x, (int)cursor.y, 0, 0, 0, 0);
-            this.hitTarget.getControl(MouseEventControl.class).mouseExited(event, hitTarget, capture);
+            if( this.hitTarget.getControl(MouseEventControl.class) != null ) {
+                // Exiting
+                event2 = new MouseMotionEvent((int)cursor.x, (int)cursor.y, 0, 0, 0, 0);
+                this.hitTarget.getControl(MouseEventControl.class).mouseExited(event2, hitTarget, capture);
+            }
+            if( this.hitTarget.getControl(CursorEventControl.class) != null ) {
+                // Exiting
+                event1 = new CursorMotionEvent(viewport, hitTarget, cursor.x, cursor.y, null);
+                this.hitTarget.getControl(CursorEventControl.class).cursorExited(event1, hitTarget, capture);
+            } 
         }
         this.hitTarget = s;
         if( this.hitTarget != null ) {
-            // Entering
-            if( event == null ) {
-                event = new MouseMotionEvent((int)cursor.x, (int)cursor.y, 0, 0, 0, 0);
-            }
+            if( this.hitTarget.getControl(MouseEventControl.class) != null ) {
+                // Entering
+                if( event2 == null ) {
+                    event2 = new MouseMotionEvent((int)cursor.x, (int)cursor.y, 0, 0, 0, 0);
+                }
 
-            this.hitTarget.getControl(MouseEventControl.class).mouseEntered(event, hitTarget, capture);
+                this.hitTarget.getControl(MouseEventControl.class).mouseEntered(event2, hitTarget, capture);
+            }
+            if( this.hitTarget.getControl(CursorEventControl.class) != null ) {
+                // Entering
+                if( event1 == null ) {
+                    event1 = new CursorMotionEvent(viewport, hitTarget, cursor.x, cursor.y, null);
+                }
+                
+                this.hitTarget.getControl(CursorEventControl.class).cursorEntered(event1, hitTarget, capture);
+            } 
         }
     }
     
@@ -206,7 +231,7 @@ public class PickEventSession {
     }
 
     public boolean cursorMoved( int x, int y ) {
-    
+ 
         Vector2f cursor = new Vector2f(x,y);
     
         // Note: roots are processed in the order that they
@@ -224,13 +249,27 @@ public class PickEventSession {
         // event to it... and do it first.  a) it's more consistent
         // and b) if it consumes the event then we can stop already.
         if( capture != null ) {
-            event = new MouseMotionEvent((int)cursor.x, (int)cursor.y, 0, 0, 0, 0);
-            delivered.add(capture);
-            capture.getControl(MouseEventControl.class).mouseMoved(event, capture, capture);
-            if( event.isConsumed() ) {
-                // We're done already
-                return true;
+ 
+            // To properly emulate the old behavior, we need to deliver to both
+            // controls.           
+            if( capture.getControl(MouseEventControl.class) != null ) {
+                event = new MouseMotionEvent((int)cursor.x, (int)cursor.y, 0, 0, 0, 0);
+                delivered.add(capture);
+                capture.getControl(MouseEventControl.class).mouseMoved(event, capture, capture);
+                if( event.isConsumed() ) {
+                    // We're done already
+                    return true;
+                }
             }
+            if( capture.getControl(CursorEventControl.class) != null ) {
+                CursorMotionEvent cme = new CursorMotionEvent(findViewPort(capture), capture, cursor.x, cursor.y, null);
+                delivered.add(capture);
+                capture.getControl(CursorEventControl.class).cursorMoved(cme, capture, capture);
+                if( cme.isConsumed() ) {
+                    // We're done already
+                    return true;
+                }
+            } 
         }
 
         // Search each root for hits
@@ -250,23 +289,36 @@ public class PickEventSession {
                         continue;
 
                     if( firstHit == null ) {
-                        setCurrentHitTarget(hit, cursor);
+                        setCurrentHitTarget(e.viewport, hit, cursor, cr);
                         firstHit = hit;
-                    }
-
-                    // See if this is one that will take our event
-                    if( event == null ) {
-                        event = new MouseMotionEvent((int)cursor.x, (int)cursor.y, 0, 0, 0, 0);
                     }
 
                     // Only deliver events to each hit once.
                     if( delivered.add(hit) ) {
-                        hit.getControl(MouseEventControl.class).mouseMoved(event, hit, capture);
+                        
+                        if( hit.getControl(MouseEventControl.class) != null ) {
+                            // See if this is one that will take our event
+                            if( event == null ) {
+                                event = new MouseMotionEvent((int)cursor.x, (int)cursor.y, 0, 0, 0, 0);
+                            }
 
-                        // If the event is consumed then we're done
-                        if( event.isConsumed() ) {
-                            return true;
+                            hit.getControl(MouseEventControl.class).mouseMoved(event, hit, capture);
+    
+                            // If the event is consumed then we're done
+                            if( event.isConsumed() ) {
+                                return true;
+                            }
                         }
+                        
+                        if( hit.getControl(CursorEventControl.class) != null ) {
+                            CursorMotionEvent cme = new CursorMotionEvent(e.viewport, hit, cursor.x, cursor.y, cr);
+                            hit.getControl(CursorEventControl.class).cursorMoved(cme, hit, capture);
+                            
+                            // If the event is consumed then we're done
+                            if( cme.isConsumed() ) {
+                                return true;
+                            }
+                        } 
                     }
                 }
             }
@@ -274,27 +326,44 @@ public class PickEventSession {
         }
 
         if( firstHit == null ) {
-            setCurrentHitTarget(null, cursor);
+            setCurrentHitTarget(null, null, cursor, null);
         }
         return false;
     }
 
     public boolean buttonEvent( int buttonIndex, int x, int y, boolean pressed ) {
-        
-        MouseButtonEvent event = null;
+ 
+        CursorButtonEvent event1 = null;
+        MouseButtonEvent event2 = null;
         
         if( pressed ) {
             capture = hitTarget;
         } else if( capture != null ) {
             // Try to deliver it to capture first
-            event = new MouseButtonEvent(buttonIndex, pressed, x, y);
-            capture.getControl(MouseEventControl.class).mouseButtonEvent(event, hitTarget, capture);
-            
+ 
+            Spatial tempCapture = capture;
             // The button was released so we can clear the capture
-            capture = null;
+            capture = null;            
+            boolean consumed = false;
             
-            // If the event was consumed then we're done
-            if( event.isConsumed() )
+            if( tempCapture.getControl(MouseEventControl.class) != null ) {
+                event2 = new MouseButtonEvent(buttonIndex, pressed, x, y);
+                tempCapture.getControl(MouseEventControl.class).mouseButtonEvent(event2, hitTarget, tempCapture);            
+            
+                // If the event was consumed then we're done
+                if( event2.isConsumed() )
+                    consumed = true;
+            }
+            
+            if( tempCapture.getControl(CursorEventControl.class) != null ) {
+                event1 = new CursorButtonEvent(buttonIndex, pressed, findViewPort(hitTarget), hitTarget, x, y, null);
+                tempCapture.getControl(CursorEventControl.class).cursorButtonEvent(event1, hitTarget, tempCapture); 
+            
+                // If the event was consumed then we're done
+                if( event1.isConsumed() )
+                    consumed = true;
+            } 
+            if( consumed ) 
                 return true;
         }
  
@@ -307,39 +376,40 @@ public class PickEventSession {
             return false;
             }
 
-        if( event == null ) {           
-            event = new MouseButtonEvent(buttonIndex, pressed, x, y);
+        boolean consumed = false;
+        if( hitTarget.getControl(MouseEventControl.class) != null ) {
+            if( event2 == null ) {           
+                event2 = new MouseButtonEvent(buttonIndex, pressed, x, y);
+            }
+        
+            hitTarget.getControl(MouseEventControl.class).mouseButtonEvent(event2, hitTarget, capture);                           
+            if( event2.isConsumed() ) {
+                consumed = true;
+            }
         }
         
-        hitTarget.getControl(MouseEventControl.class).mouseButtonEvent(event, hitTarget, capture);                           
-        return event.isConsumed();   
-    }
-
-    protected void dispatch(MouseButtonEvent evt) {
-        if( evt.isPressed() ) {
-            capture = hitTarget;
-        } else if( capture != null ) {
-            // Try to deliver it there first
-            capture.getControl(MouseEventControl.class).mouseButtonEvent(evt, hitTarget, capture);
-            capture = null;
-
-            // If the event was consumed then we're done
-            if( evt.isConsumed() )
-                return;
-        }
-
-        if( hitTarget == null  )
-            {
-            // Here we should actually do a hit query with the event's location
-            // so that we handle the case where we receive an event for something
-            // that wasn't entered or captured yet, like when frames are slow or
-            // for simulated mouse events from touch.
-            return;
+        // It's kind of a bug but when delivering to a single MouseEventControl, the
+        // 'consumed' state is ignored.  To emulate the behavior of both of these listener
+        // sets being together, I'll ignore the consumed flag here also.
+        // Where this comes up is in the slider thumb where previously the button click
+        // listener and the dragger were part of the same MouseEventControl and thus the
+        // drag still saw the mouse button events even though the Button itself is consuming
+        // them first.
+        // In reality, we probably want some way to add the drag listener to the beginning
+        // of the list. 
+         
+        if( hitTarget.getControl(CursorEventControl.class) != null ) {
+            if( event1 == null ) {
+                event1 = new CursorButtonEvent(buttonIndex, pressed, findViewPort(hitTarget), hitTarget, x, y, null);
             }
-
-        hitTarget.getControl(MouseEventControl.class).mouseButtonEvent(evt, hitTarget, capture);
+            
+            hitTarget.getControl(CursorEventControl.class).cursorButtonEvent(event1, hitTarget, capture);                           
+            if( event1.isConsumed() ) {
+                consumed = true;
+            }
+        }   
+        return consumed;
     }
-
     
     public static class RootEntry {
 
@@ -349,6 +419,11 @@ public class PickEventSession {
         public RootEntry( Collidable root, ViewPort viewport ) {
             this.viewport = viewport;
             this.root = root;
+        }
+        
+        @Override
+        public String toString() {
+            return "RootEntry[viewport=" + viewport + ", root=" + root + "]";
         }
     }
 }

@@ -38,18 +38,19 @@ import com.simsilica.lemur.style.StyleDefaults;
 import com.simsilica.lemur.style.Attributes;
 import com.simsilica.lemur.style.ElementId;
 import com.simsilica.lemur.style.Styles;
-import com.simsilica.lemur.event.DefaultMouseListener;
 import com.simsilica.lemur.event.MouseEventControl;
 import com.simsilica.lemur.core.VersionedReference;
 import com.simsilica.lemur.core.GuiControl;
 import com.jme3.input.MouseInput;
-import com.jme3.input.event.MouseButtonEvent;
-import com.jme3.input.event.MouseMotionEvent;
 import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Spatial;
 
 import com.simsilica.lemur.component.BorderLayout;
+import com.simsilica.lemur.event.CursorButtonEvent;
+import com.simsilica.lemur.event.CursorEventControl;
+import com.simsilica.lemur.event.CursorMotionEvent;
+import com.simsilica.lemur.event.DefaultCursorListener;
 
 
 /**
@@ -157,12 +158,8 @@ public class Slider extends Panel {
 
         thumb = new Button(null, true, new ElementId(THUMB_ID), style);
         ButtonDragger dragger = new ButtonDragger();
-        thumb.getControl( MouseEventControl.class ).addMouseListener(dragger);
-        if( range.getControl(MouseEventControl.class) == null ) {
-            range.addControl(new MouseEventControl(dragger));
-        } else {
-            range.getControl(MouseEventControl.class).addMouseListener(dragger);
-        }
+        CursorEventControl.addListenersToSpatial(thumb, dragger);
+        CursorEventControl.addListenersToSpatial(range, dragger);
         attachChild(thumb);
 
         // A child that is not managed by the layout will not otherwise lay itself
@@ -283,13 +280,13 @@ public class Slider extends Panel {
         }
     }
 
-    private class ButtonDragger extends DefaultMouseListener {
+    private class ButtonDragger extends DefaultCursorListener {
 
         private Vector2f drag = null;
         private double startPercent;
 
         @Override
-        public void mouseButtonEvent( MouseButtonEvent event, Spatial target, Spatial capture ) {
+        public void cursorButtonEvent( CursorButtonEvent event, Spatial target, Spatial capture ) {
             if( event.getButtonIndex() != MouseInput.BUTTON_LEFT )
                 return;
 
@@ -307,7 +304,7 @@ public class Slider extends Panel {
         }
 
         @Override
-        public void mouseMoved( MouseMotionEvent event, Spatial target, Spatial capture ) {
+        public void cursorMoved( CursorMotionEvent event, Spatial target, Spatial capture ) {
             if( drag == null )
                 return;
 
@@ -328,8 +325,8 @@ public class Slider extends Panel {
                     break;
             }
 
-            v1 = GuiGlobals.getInstance().getScreenCoordinates(range, v1);
-            v2 = GuiGlobals.getInstance().getScreenCoordinates(range, v2);
+            v1 = event.getRelativeViewCoordinates(range, v1);  
+            v2 = event.getRelativeViewCoordinates(range, v2);  
 
             Vector3f dir = v2.subtract(v1);
             float length = dir.length();
