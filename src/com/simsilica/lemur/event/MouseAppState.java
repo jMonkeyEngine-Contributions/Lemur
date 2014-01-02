@@ -34,21 +34,12 @@
 
 package com.simsilica.lemur.event;
 
-import java.util.*;
 
 import com.jme3.app.Application;
-import com.jme3.collision.Collidable;
-import com.jme3.collision.CollisionResult;
-import com.jme3.collision.CollisionResults;
 import com.jme3.input.event.MouseButtonEvent;
 import com.jme3.input.event.MouseMotionEvent;
-import com.jme3.math.Ray;
 import com.jme3.math.Vector2f;
-import com.jme3.math.Vector3f;
-import com.jme3.renderer.Camera;
 import com.jme3.renderer.ViewPort;
-import com.jme3.scene.Geometry;
-import com.jme3.scene.Mesh;
 import com.jme3.scene.Spatial;
 
 
@@ -79,6 +70,7 @@ public class MouseAppState extends BaseAppState {
         app.getInputManager().addRawInputListener(mouseObserver);
     }
 
+    @Deprecated
     public ViewPort findViewPort( Spatial s ) {
         return session.findViewPort(s);
     }

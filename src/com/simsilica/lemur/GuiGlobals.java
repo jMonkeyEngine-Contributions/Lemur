@@ -268,6 +268,7 @@ public class GuiGlobals {
         keyInterceptor.removeKeyListener(l);
     }
 
+    @Deprecated
     public ViewPort getCollisionViewPort( Spatial s ) {
         return mouseState.findViewPort(s);
     }
@@ -280,6 +281,7 @@ public class GuiGlobals {
         return mouseState.isEnabled();
     }
 
+    @Deprecated
     public Vector3f getScreenCoordinates( Spatial relativeTo, Vector3f pos ) {
         ViewPort vp = getCollisionViewPort(relativeTo);
         if( vp == null ) {
