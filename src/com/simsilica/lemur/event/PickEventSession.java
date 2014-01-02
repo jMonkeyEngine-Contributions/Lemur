@@ -93,6 +93,7 @@ public class PickEventSession {
     
     protected PickEventSession( Map<Collidable, RootEntry> roots ) {
         this.roots.putAll(roots);
+        this.rootList = null;
     } 
  
     /**
