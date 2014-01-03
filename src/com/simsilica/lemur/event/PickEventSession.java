@@ -142,6 +142,47 @@ public class PickEventSession {
     }
 
     /**
+     *  Clears the current hit target that is used for entered/exited processing.
+     *  This will cause any currently 'entered' spatial to receive an 'exited'
+     *  event.  This is useful for when the thing that initiated this session is
+     *  done (temporarily or otherwise) sending events to this session.
+     */
+    public void clearHitTarget() {
+        if( hitTarget == null ) {
+            return;
+        }
+        setCurrentHitTarget(null, null, new Vector2f(-1,-1), null);        
+    }
+ 
+    /**
+     *  Clears the current capture even if a 'button released' is not received.
+     *  This is useful for cases where nested pick event sessions need to be
+     *  cleared because they won't be receiving a released event otherwise. (For
+     *  example, the button was released outside whatever is being nested.)
+     */
+    /*
+    It is better to send the mouse button event in this case so that events
+    are sent properly.
+    public void clearCapture() {
+        capture = null;
+    }*/
+ 
+    /**
+     *  Clears the hit target and clears all internal data including collision roots.
+     */   
+    public void close() {
+        clearHitTarget();
+        capture = null;
+        
+        // Just in case
+        rayCache.clear();
+        delivered.clear();
+        
+        roots.clear();
+        rootList = null;
+    }
+
+    /**
      *  Finds a spatial in the specified spatial's hierarchy that
      *  is capable of recieving mouse events.
      */
