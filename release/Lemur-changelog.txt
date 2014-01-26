@@ -35,6 +35,8 @@ Lemur TBD
     works similarly to MouseEventControl but provides information about
     the collision.
 * Converted Slider and DragHandler to use the new cursor events so that
-    they could better calculate projection.    
+    they could better calculate projection.
+* Optimized QuadBackgroundComponent to avoid resizing the quad if its
+    size hasn't changed.        
     
     

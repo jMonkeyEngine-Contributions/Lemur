@@ -81,6 +81,26 @@ public class QuadBackgroundComponent extends AbstractGuiComponent
         setColor(color);
     }
 
+    public QuadBackgroundComponent( Texture texture ) { 
+        this(texture, 0, 0, 0.01f, false);
+    }
+
+    public QuadBackgroundComponent( Texture texture, float xMargin, float yMargin ) {
+        this(texture, xMargin, yMargin, 0.01f, false);
+    }
+
+    public QuadBackgroundComponent( Texture texture,
+                                    float xMargin, float yMargin, float zOffset,
+                                    boolean lit ) {
+        this.xMargin = xMargin;
+        this.yMargin = yMargin;
+        this.zOffset = zOffset;
+        this.lit = lit;
+        setTexture(texture);
+        setColor(ColorRGBA.White);
+    }
+
+
     @Override
     public QuadBackgroundComponent clone() {
         QuadBackgroundComponent result = (QuadBackgroundComponent)super.clone();
@@ -198,7 +218,9 @@ public class QuadBackgroundComponent extends AbstractGuiComponent
         } else {
             // Else reset the size of the quad
             Quad q = (Quad)background.getMesh();
-            q.updateGeometry(size.x, size.y);
+            if( size.x != q.getWidth() || size.y != q.getHeight() ) {               
+                q.updateGeometry(size.x, size.y);
+            }
         }
     }
 }
