@@ -304,7 +304,20 @@ public class PickEventSession {
                 }
             }
             if( capture.getControl(CursorEventControl.class) != null ) {
-                CursorMotionEvent cme = new CursorMotionEvent(findViewPort(capture), capture, cursor.x, cursor.y, null);
+                // Actually, we do need to find the collision or else we don't
+                // deliver any proper motion activity to things when the button
+                // is down.
+                ViewPort captureView = findViewPort(capture); 
+                Ray mouseRay = getPickRay(captureView.getCamera(), cursor);
+
+                // But we don't have to pick the whole hiearchy...
+                int count = capture.collideWith(mouseRay, results);
+                CollisionResult cr = null;
+                if( count > 0 ) {
+                    cr = results.getClosestCollision();
+                    results.clear();
+                }
+                CursorMotionEvent cme = new CursorMotionEvent(captureView, capture, cursor.x, cursor.y, cr);
                 delivered.add(capture);
                 capture.getControl(CursorEventControl.class).cursorMoved(cme, capture, capture);
                 if( cme.isConsumed() ) {
