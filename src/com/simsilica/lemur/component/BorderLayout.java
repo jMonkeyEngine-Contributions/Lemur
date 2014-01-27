@@ -188,8 +188,8 @@ public class BorderLayout extends AbstractGuiComponent
 
         // See if there is already a child there
         Node existing = children.remove(pos);
-        if( existing != null ) {
-            existing.removeFromParent();
+        if( existing != null && parent != null ) {
+            parent.getNode().detachChild(existing);
         }
 
         children.put(pos, n);
@@ -219,10 +219,31 @@ public class BorderLayout extends AbstractGuiComponent
     public void removeChild( Node n ) {
         if( !children.values().remove(n) )
             throw new RuntimeException( "Node is not a child of this layout." );
-
-        n.removeFromParent();
+    
+        if( parent != null ) {
+            parent.getNode().detachChild(n);
+        }
 
         invalidate();
+    }
+
+    public Collection<Node> getChildren() {
+        return Collections.unmodifiableCollection(children.values());
+    }
+
+    public void clearChildren() {
+        if( parent != null ) {
+            // Need to detach any children    
+            for( Node n : children.values() ) {
+                // Detaching from the parent we know prevents
+                // accidentally detaching a node that has been
+                // reparented without our knowledge
+                parent.getNode().detachChild(n);
+            }
+        }
+     
+        children.clear();
+        invalidate();   
     }
 
     @Override

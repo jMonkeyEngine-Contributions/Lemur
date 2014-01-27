@@ -370,6 +370,30 @@ public class SpringGridLayout extends AbstractGuiComponent
         }
     }
 
+    public Collection<Node> getChildren() {
+        return Collections.unmodifiableSet(lookup.keySet());
+    }
+
+    public void clearChildren() {
+ 
+        if( parent != null ) {
+            // Need to detach any children    
+            for( Entry e : lookup.values() ) {
+                // Detaching from the parent we know prevents
+                // accidentally detaching a node that has been
+                // reparented without our knowledge
+                parent.getNode().detachChild(e.child);
+            }
+        }
+        
+        children.clear();
+        lookup.clear();
+        children.clear();
+        rowCount = 0;
+        columnCount = 0;          
+        invalidate();
+    }
+
     protected void remove( Entry e ) {
         if( parent != null ) {
             parent.getNode().detachChild(e.child);
@@ -381,7 +405,7 @@ public class SpringGridLayout extends AbstractGuiComponent
 
         rowMap.remove(e.col);
 
-        // Really need to recalculate the max row and col
+        // Really need to recalculate the max row and col  
 
         invalidate();
     }

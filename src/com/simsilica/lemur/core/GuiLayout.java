@@ -35,6 +35,7 @@
 package com.simsilica.lemur.core;
 
 import com.jme3.scene.Node;
+import java.util.Collection;
 
 
 /**
@@ -46,5 +47,7 @@ import com.jme3.scene.Node;
 public interface GuiLayout extends GuiComponent {
     public <T extends Node> T addChild( T n, Object... constraints );
     public void removeChild( Node n );
+    public Collection<Node> getChildren();
+    public void clearChildren();
     public GuiLayout clone();
 }

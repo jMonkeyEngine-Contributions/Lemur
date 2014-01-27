@@ -37,6 +37,8 @@ Lemur TBD
 * Converted Slider and DragHandler to use the new cursor events so that
     they could better calculate projection.
 * Optimized QuadBackgroundComponent to avoid resizing the quad if its
-    size hasn't changed.        
+    size hasn't changed.
+* Added getChildren() and clearChildren() to GuiLayout and its 
+    implementations.        
     
     
