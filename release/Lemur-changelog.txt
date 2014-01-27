@@ -40,5 +40,6 @@ Lemur TBD
     size hasn't changed.
 * Added getChildren() and clearChildren() to GuiLayout and its 
     implementations.        
-    
+* Fixed SpringGridLayout.remove() to recalculate the row and column
+    counts.   
     

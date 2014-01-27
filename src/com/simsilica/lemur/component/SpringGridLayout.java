@@ -405,7 +405,18 @@ public class SpringGridLayout extends AbstractGuiComponent
 
         rowMap.remove(e.col);
 
-        // Really need to recalculate the max row and col  
+        // Recalculate the row and column count in case
+        // we have shrunk.
+        rowCount = 0;
+        columnCount = 0;
+        for( Entry child : lookup.values() ) {
+            if( child.row + 1 > rowCount ) {
+                rowCount = child.row + 1;
+            }
+            if( child.col + 1 > columnCount ) {
+                columnCount = child.col + 1;
+            }
+        }
 
         invalidate();
     }
