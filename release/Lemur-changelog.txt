@@ -42,4 +42,4 @@ Lemur TBD
     implementations.        
 * Fixed SpringGridLayout.remove() to recalculate the row and column
     counts.   
-    
+* Exposed button states isPressed() and isHighlightOn().    

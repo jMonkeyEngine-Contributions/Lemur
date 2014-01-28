@@ -70,6 +70,8 @@ public class Button extends Label {
     private ColorRGBA shadowColor;
     private ColorRGBA highlightColor;
     private ColorRGBA highlightShadowColor;
+    private boolean highlightOn;
+    private boolean pressed;
     private CommandMap<Button, ButtonAction> commandMap
                                                 = new CommandMap<Button, ButtonAction>(this);
 
@@ -172,7 +174,16 @@ public class Button extends Label {
         return enabled;
     }
 
+    public boolean isPressed() {
+        return pressed;
+    }
+
+    public boolean isHighlightOn() {
+        return highlightOn;
+    }
+
     protected void showHighlight( boolean f ) {
+        highlightOn = f;
         if( f ) {
             if( getHighlightColor() != null )
                 super.setColor(getHighlightColor());
@@ -204,6 +215,7 @@ public class Button extends Label {
             if( !isEnabled() )
                 return;
 
+            pressed = event.isPressed();
             if( event.isPressed() ) {
                 commandMap.runCommands(ButtonAction.Down);
             } else {
