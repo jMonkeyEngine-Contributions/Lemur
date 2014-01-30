@@ -51,4 +51,7 @@ Lemur TBD
     FillMode.FORCED_EVEN is used for an axis.
 * Updated the javadoc for MouseAppState and PickEventSession
 * Added a TouchAppState for handling touch events similar to
-    how mouse events are handled but supporting multi-touch.    
+    how mouse events are handled but supporting multi-touch.
+* GuiGlobals updated to automatically include touch support if
+    detected.  (Currently if touch is detected then the mouse
+    support is disabled.)    

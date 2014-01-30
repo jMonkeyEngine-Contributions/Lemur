@@ -58,6 +58,7 @@ import com.jme3.renderer.queue.RenderQueue;
 import com.jme3.renderer.queue.RenderQueue.Bucket;
 import com.jme3.scene.Spatial;
 import com.jme3.texture.Texture;
+import com.simsilica.lemur.event.TouchAppState;
 import com.simsilica.lemur.input.InputMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -102,6 +103,7 @@ public class GuiGlobals {
     private InputMapper  inputMapper;
     private KeyInterceptState keyInterceptor;
     private MouseAppState mouseState;
+    private TouchAppState touchState;
     private FocusManagerState focusState;
     private String iconBase;
 
@@ -124,11 +126,29 @@ public class GuiGlobals {
     protected GuiGlobals( Application app ) {
         this.assets = app.getAssetManager();
         this.keyInterceptor = new KeyInterceptState(app);
-        this.mouseState = new MouseAppState(app);
+        
+        // For now, pick either mouse or touch based on the
+        // availability of touch.  It's an either/or at the 
+        // moment but the rest of the code is setup to support
+        // both at once should we ever want to support touch
+        // devices that also may have a mouse connected.
+        if (app.getContext().getTouchInput() == null) {
+            this.mouseState = new MouseAppState(app);
+        } else {
+            this.touchState = new TouchAppState(app);
+        }
+        
         this.inputMapper = new InputMapper(app.getInputManager());
         this.focusState = new FocusManagerState();
         app.getStateManager().attach(keyInterceptor);
-        app.getStateManager().attach(mouseState);
+        
+        if( mouseState != null ) {
+            app.getStateManager().attach(mouseState);
+        }
+        if( touchState != null ) {
+            app.getStateManager().attach(touchState);
+        }
+        
         app.getStateManager().attach(focusState);
 
         styles = new Styles();
@@ -270,15 +290,48 @@ public class GuiGlobals {
 
     @Deprecated
     public ViewPort getCollisionViewPort( Spatial s ) {
-        return mouseState.findViewPort(s);
+        if( mouseState != null ) {
+            return mouseState.findViewPort(s);
+        } else if( touchState != null ) {
+            return touchState.findViewPort(s);
+        } else {
+            return null;
+        }
     }
 
+    /**
+     *  @Deprecated Use setCursorEventsEnabled() instead.
+     */
+    @Deprecated
     public void setMouseEventsEnabled( boolean f ) {
-        mouseState.setEnabled(f);
+        setCursorEventsEnabled(f);
+    }
+    
+    public void setCursorEventsEnabled( boolean f ) {
+        if( mouseState != null ) {
+            mouseState.setEnabled(f);
+        }
+        if( touchState != null ) {
+            touchState.setEnabled(f);
+        }
     }
 
+    /**
+     *  @Deprecated Use isCursorEventsEnabled() instead.
+     */
+    @Deprecated
     public boolean isMouseEventsEnabled() {
-        return mouseState.isEnabled();
+        return isCursorEventsEnabled(); 
+    }
+    
+    public boolean isCursorEventsEnabled() {
+        if( mouseState != null ) {
+            return mouseState.isEnabled();
+        } else if( touchState != null ) {
+            return touchState.isEnabled();
+        } else {
+            return false;
+        }        
     }
 
     @Deprecated
