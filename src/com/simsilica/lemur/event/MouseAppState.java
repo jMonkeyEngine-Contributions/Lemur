@@ -44,7 +44,29 @@ import com.jme3.scene.Spatial;
 
 
 /**
+ *  Keeps track of a set of "collision roots" for mouse picking
+ *  and performs the pick event processing necessary to deliver
+ *  MouseEvents and CollisionEvents to spatials with either the
+ *  MouseEventControl or CursorEventControl attached.  (The
+ *  actual event delivery is done by the PickEventSession class
+ *  for which this app state has one active session.)
  *
+ *  <h2>PickEventSession behavior:</h2>
+ *
+ *  <p>Collision roots may either be perspective or orthogonal
+ *  and the appropriate type of collision is done.  The ViewPort's
+ *  camera is used to detect the difference.</p>
+ *
+ *  <p>Events are delivered in near to far order to any 'target'
+ *  that the cursor ray collides with until the event is consumed.
+ *  Enter and exit events are delivered as targets are acquired or
+ *  lost.</p>
+ *
+ *  <p>If a button down event happens over a target then it is considered
+ *  'captured'.  This spatial will be provided to subsequent events
+ *  in addition to the normal target.  Furthermore, any new motion
+ *  events are always delivered to the captured spatial first.<p>  
+ * 
  *  @author    Paul Speed
  */
 public class MouseAppState extends BaseAppState {

@@ -62,6 +62,20 @@ import java.util.Set;
  *  be needed by joysticks or when clicking on off-screen rendered
  *  views of different scenes.
  *
+ *  <p>Collision roots may either be perspective or orthogonal
+ *  and the appropriate type of collision is done.  The ViewPort's
+ *  camera is used to detect the difference.</p>
+ *
+ *  <p>Events are delivered in near to far order to any 'target'
+ *  that the cursor ray collides with until the event is consumed.
+ *  Enter and exit events are delivered as targets are acquired or
+ *  lost.</p>
+ *
+ *  <p>If a button down event happens over a target then it is considered
+ *  'captured'.  This spatial will be provided to subsequent events
+ *  in addition to the normal target.  Furthermore, any new motion
+ *  events are always delivered to the captured spatial first.<p>   
+ *
  *  @author    Paul Speed 
  */
 public class PickEventSession {

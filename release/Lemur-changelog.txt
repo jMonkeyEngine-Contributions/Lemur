@@ -48,4 +48,7 @@ Lemur TBD
 * Modified SpringGridLayout to allow null children.  This can be useful
     for padding out the edges for FillMode.FORCED_EVEN
 * Fixed SpringGridLayout to report the proper preferred size when
-    FillMode.FORCED_EVEN is used for an axis.    
+    FillMode.FORCED_EVEN is used for an axis.
+* Updated the javadoc for MouseAppState and PickEventSession
+* Added a TouchAppState for handling touch events similar to
+    how mouse events are handled but supporting multi-touch.    
