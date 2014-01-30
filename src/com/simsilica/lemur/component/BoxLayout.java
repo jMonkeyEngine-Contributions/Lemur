@@ -277,4 +277,18 @@ public class BoxLayout extends AbstractGuiComponent
         }
     }
 
+    public Collection<Node> getChildren() {
+        return Collections.unmodifiableList(children);
+    }
+
+    public void clearChildren() {
+        if( parent != null ) {
+            for( Node n : children ) {
+                parent.getNode().detachChild(n);
+            }
+        }
+        children.clear();
+        invalidate();        
+    }
+
 }
