@@ -184,12 +184,34 @@ public class SpringGridLayout extends AbstractGuiComponent
         float maxAlternate = refreshRowColPrefs();
 
         lastPreferredSize.set(0,0,0);
-        for( float f : rowPrefs ) {
-            addMajor(lastPreferredSize, f);
+        if( mainFill == FillMode.FORCED_EVEN ) {
+            // Need to calculate the max size and then multiply
+            // by count.  In FORCED_EVEN, all rows will be the
+            // same size so the preferred size means that no one
+            // has to shrink.
+            float max = 0;
+            for( float f : rowPrefs ) {
+                max = Math.max(max, f);
+            }
+            addMajor(lastPreferredSize, max * rowCount);
+        } else {
+            for( float f : rowPrefs ) {
+                addMajor(lastPreferredSize, f);
+            }
         }
 
-        for( float f : colPrefs ) {
-            addMinor(lastPreferredSize, f);
+        if( mainFill == FillMode.FORCED_EVEN ) {
+            // Need to calculate the max size and then multiply
+            // by count
+            float max = 0;
+            for( float f : colPrefs ) {
+                max = Math.max(max, f);
+            }
+            addMinor(lastPreferredSize, max * columnCount);
+        } else {
+            for( float f : colPrefs ) {
+                addMinor(lastPreferredSize, f);
+            }
         }
         addAlternate(lastPreferredSize, maxAlternate);
         size.addLocal(lastPreferredSize);
