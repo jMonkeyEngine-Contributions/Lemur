@@ -42,4 +42,8 @@ Lemur TBD
     implementations.        
 * Fixed SpringGridLayout.remove() to recalculate the row and column
     counts.   
-* Exposed button states isPressed() and isHighlightOn().    
+* Exposed button states isPressed() and isHighlightOn().
+* Added a method to SpringGridLayout to get the node at a specific
+    row and column.
+* Modified SpringGridLayout to allow null children.  This can be useful
+    for padding out the edges for FillMode.FORCED_EVEN

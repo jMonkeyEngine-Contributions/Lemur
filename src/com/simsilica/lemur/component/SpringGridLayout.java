@@ -171,7 +171,7 @@ public class SpringGridLayout extends AbstractGuiComponent
             for( Map.Entry<Integer, Entry> colEntry : rowEntry.getValue().entrySet() ) {
                 int col = colEntry.getKey();
                 Entry e = colEntry.getValue();
-                Vector3f v = e.child.getControl(GuiControl.class).getPreferredSize();
+                Vector3f v = e.getPreferredSize();
                 rowPrefs[row] = Math.max(rowPrefs[row], getMajor(v));
                 colPrefs[col] = Math.max(colPrefs[col], getMinor(v));
                 maxAlternate = Math.max(getAlternate(v), maxAlternate);
@@ -275,13 +275,13 @@ public class SpringGridLayout extends AbstractGuiComponent
                 addMajor(offset, rowOffsets[e.row]);
                 addMinor(offset, colOffsets[e.col]);
                 offset.y *= -1;
-                e.child.setLocalTranslation(pos.add(offset));
+                e.setTranslation(pos.add(offset));
 
                 Vector3f childSize = size.clone();
                 setMajor(childSize, rowSizes[e.row]);
                 setMinor(childSize, colSizes[e.col]);
 
-                e.child.getControl(GuiControl.class).setSize(childSize);
+                e.setSize(childSize);
             }
         }
     }
@@ -296,13 +296,13 @@ public class SpringGridLayout extends AbstractGuiComponent
     }
 
     public <T extends Node> T addChild( int row, int column, T n ) {
-        if( n.getControl(GuiControl.class) == null )
+        if( n != null && n.getControl(GuiControl.class) == null )
             throw new IllegalArgumentException( "Child is not GUI element." );
 
         Map<Integer, Entry> rowMap = getRow(row, true);
         Entry existing = rowMap.get(column);
         if( existing != null ) {
-            existing.child.removeFromParent();
+            existing.detach();
         }
 
         Entry previous = lookup.get(n);
@@ -316,10 +316,7 @@ public class SpringGridLayout extends AbstractGuiComponent
         rowCount = Math.max(rowCount, row + 1);
         columnCount = Math.max(columnCount, column + 1);
 
-        if( parent != null ) {
-            // We are attached
-            parent.getNode().attachChild(n);
-        }
+        entry.attach();
 
         invalidate();
         return n;
@@ -362,6 +359,19 @@ public class SpringGridLayout extends AbstractGuiComponent
         return n;
     }
 
+    public Node getChild( int row, int column ) {
+        Map<Integer, Entry> rowMap = getRow(row, false);
+        if( rowMap == null ) {
+            return null;
+        }
+        
+        Entry existing = rowMap.get(column);
+        if( existing == null ) {
+            return null;
+        }
+        return existing.child;
+    }
+
     public void removeChild( Node n ) {
         // No fast way to do this right now
         Entry entry = lookup.remove(n);
@@ -379,10 +389,7 @@ public class SpringGridLayout extends AbstractGuiComponent
         if( parent != null ) {
             // Need to detach any children    
             for( Entry e : lookup.values() ) {
-                // Detaching from the parent we know prevents
-                // accidentally detaching a node that has been
-                // reparented without our knowledge
-                parent.getNode().detachChild(e.child);
+                e.detach();
             }
         }
         
@@ -395,9 +402,8 @@ public class SpringGridLayout extends AbstractGuiComponent
     }
 
     protected void remove( Entry e ) {
-        if( parent != null ) {
-            parent.getNode().detachChild(e.child);
-        }
+    
+        e.detach();
 
         Map<Integer, Entry> rowMap = getRow(e.row, false);
         if( rowMap == null )
@@ -427,7 +433,7 @@ public class SpringGridLayout extends AbstractGuiComponent
         Node self = parent.getNode();
         for( Map<Integer, Entry> r : children.values() ) {
             for( Entry e : r.values() ) {
-                self.attachChild(e.child);
+                e.attach();
             }
         }
     }
@@ -437,7 +443,7 @@ public class SpringGridLayout extends AbstractGuiComponent
         this.parent = null;
         for( Map<Integer, Entry> r : children.values() ) {
             for( Entry e : r.values() ) {
-                e.child.removeFromParent();
+                e.detach();
             }
         }
     }
@@ -451,6 +457,44 @@ public class SpringGridLayout extends AbstractGuiComponent
             this.row = row;
             this.col = col;
             this.child = child;
+        }
+ 
+        public Vector3f getPreferredSize() {
+            if( child == null )
+                return new Vector3f(0,0,0);            
+            return child.getControl(GuiControl.class).getPreferredSize(); 
+        }
+        
+        public void setTranslation( Vector3f v ) {
+            if( child == null )
+                return;
+            child.setLocalTranslation(v);
+        }
+        
+        public void setSize( Vector3f v ) {
+            if( child == null )
+                return;
+            child.getControl(GuiControl.class).setSize(v);
+        }
+        
+        public void attach() {
+            if( child == null )
+                return;
+            if( parent == null )
+                return;
+            
+            parent.getNode().attachChild(child);
+        }
+        
+        public void detach() {
+            if( child == null )
+                return;
+            if( parent == null )
+                return;
+            // Detaching from the parent we know prevents
+            // accidentally detaching a node that has been
+            // reparented without our knowledge
+            parent.getNode().detachChild(child);               
         }
     }
 }
