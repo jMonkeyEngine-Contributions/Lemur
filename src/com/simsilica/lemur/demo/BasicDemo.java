@@ -53,8 +53,8 @@ import com.simsilica.lemur.Slider;
 import com.simsilica.lemur.component.DynamicInsetsComponent;
 import com.simsilica.lemur.component.QuadBackgroundComponent;
 import com.simsilica.lemur.component.TbtQuadBackgroundComponent;
-import com.simsilica.lemur.core.GuiControl;
 import com.simsilica.lemur.core.VersionedReference;
+import com.simsilica.lemur.event.CursorEventControl;
 import com.simsilica.lemur.event.DragHandler;
 import com.simsilica.lemur.event.MouseEventControl;
 import com.simsilica.lemur.style.ElementId;
@@ -187,7 +187,7 @@ public class BasicDemo extends SimpleApplication {
         test.setInsetsComponent(new DynamicInsetsComponent(0.5f, 0.5f, 0.5f, 0.5f));
         testPanel.setLocalTranslation( 400, 400, 0 );
 
-        testPanel.addControl( new MouseEventControl(new DragHandler()) );
+        CursorEventControl.addListenersToSpatial(testPanel, new DragHandler());
         guiNode.attachChild( testPanel );
     }
 

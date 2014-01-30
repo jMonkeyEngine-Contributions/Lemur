@@ -35,14 +35,12 @@
 package com.simsilica.lemur.event;
 
 import com.jme3.input.MouseInput;
-import com.jme3.input.event.MouseButtonEvent;
-import com.jme3.input.event.MouseMotionEvent;
 import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
 import com.jme3.renderer.Camera;
 import com.jme3.renderer.ViewPort;
+import com.jme3.renderer.queue.RenderQueue.Bucket;
 import com.jme3.scene.Spatial;
-import com.simsilica.lemur.GuiGlobals;
 
 
 /**
@@ -50,7 +48,7 @@ import com.simsilica.lemur.GuiGlobals;
  *
  *  @author    Paul Speed
  */
-public class DragHandler extends DefaultMouseListener {
+public class DragHandler extends DefaultCursorListener {
 
     private Vector2f drag = null;
     private Vector3f basePosition;
@@ -68,13 +66,13 @@ public class DragHandler extends DefaultMouseListener {
         return drag;
     }
 
-    protected void startDrag( MouseButtonEvent event, Spatial target, Spatial capture ) {
+    protected void startDrag( CursorButtonEvent event, Spatial target, Spatial capture ) {
         drag = new Vector2f(event.getX(), event.getY());
         basePosition = capture.getWorldTranslation().clone();
         event.setConsumed();
     }
 
-    protected void endDrag( MouseButtonEvent event, Spatial target, Spatial capture ) {
+    protected void endDrag( CursorButtonEvent event, Spatial target, Spatial capture ) {
         if( consumeDrops )
             event.setConsumed();
         drag = null;
@@ -82,7 +80,7 @@ public class DragHandler extends DefaultMouseListener {
     }
 
     @Override
-    public void mouseButtonEvent( MouseButtonEvent event, Spatial target, Spatial capture ) {
+    public void cursorButtonEvent( CursorButtonEvent event, Spatial target, Spatial capture ) {
         if( event.getButtonIndex() != MouseInput.BUTTON_LEFT )
             return;
 
@@ -98,11 +96,11 @@ public class DragHandler extends DefaultMouseListener {
     }
 
     @Override
-    public void mouseMoved( MouseMotionEvent event, Spatial target, Spatial capture ) {
+    public void cursorMoved( CursorMotionEvent event, Spatial target, Spatial capture ) {
         if( drag == null || capture == null )
             return;
 
-        ViewPort vp = GuiGlobals.getInstance().getCollisionViewPort( capture );
+        ViewPort vp = event.getViewPort(); 
         Camera cam = vp.getCamera();
 
         if( consumeDrags ) {
@@ -111,7 +109,7 @@ public class DragHandler extends DefaultMouseListener {
 
         // If it's an ortho camera then we'll assume 1:1 mapping
         // for now.
-        if( cam.isParallelProjection() ) {
+        if( cam.isParallelProjection() || capture.getQueueBucket() == Bucket.Gui ) {
             Vector2f current = new Vector2f(event.getX(), event.getY());
             Vector2f delta = current.subtract(drag);
             capture.setLocalTranslation(basePosition.add(delta.x, delta.y, 0));
@@ -119,7 +117,7 @@ public class DragHandler extends DefaultMouseListener {
         }
 
         // Figure out how far away the center of the spatial is
-        Vector3f pos = basePosition; //capture.getWorldTranslation();
+        Vector3f pos = basePosition; 
         Vector3f localPos = pos.subtract(cam.getLocation());
         float dist = cam.getDirection().dot(localPos);
 

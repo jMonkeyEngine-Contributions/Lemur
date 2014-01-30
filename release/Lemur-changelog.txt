@@ -54,4 +54,8 @@ Lemur TBD
     how mouse events are handled but supporting multi-touch.
 * GuiGlobals updated to automatically include touch support if
     detected.  (Currently if touch is detected then the mouse
-    support is disabled.)    
+    support is disabled.)
+* Updated DragHandler to be a CursorEventListener instead of a 
+    MouseEventListener.  This means it can avoid using the deprecated
+    back door methods to getting ViewPort info since it is now part
+    of the cursor event itself.        
