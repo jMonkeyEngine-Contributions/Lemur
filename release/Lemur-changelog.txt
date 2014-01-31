@@ -58,4 +58,6 @@ Lemur TBD
 * Updated DragHandler to be a CursorEventListener instead of a 
     MouseEventListener.  This means it can avoid using the deprecated
     back door methods to getting ViewPort info since it is now part
-    of the cursor event itself.        
+    of the cursor event itself.
+* Fixed SpringGridLayout to do better clean-up if replacing an
+    existing node at a specific row, column.

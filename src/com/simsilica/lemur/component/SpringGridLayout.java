@@ -321,19 +321,27 @@ public class SpringGridLayout extends AbstractGuiComponent
         if( n != null && n.getControl(GuiControl.class) == null )
             throw new IllegalArgumentException( "Child is not GUI element." );
 
+        // Remove any element that is already at this row/column
         Map<Integer, Entry> rowMap = getRow(row, true);
         Entry existing = rowMap.get(column);
         if( existing != null ) {
-            existing.detach();
+            remove(existing);
         }
 
+        // Remove a previous entry for this node if we've
+        // seen it before
         Entry previous = lookup.get(n);
         if( previous != null ) {
             remove(previous);
         }
+        
+        // Now we can create our grid cell entry and set it up.
         Entry entry = new Entry(row, column, n);
         rowMap.put(column, entry);
-        lookup.put(n, entry);
+        
+        if( n != null ) {
+            lookup.put(n, entry);
+        }
 
         rowCount = Math.max(rowCount, row + 1);
         columnCount = Math.max(columnCount, column + 1);
@@ -432,6 +440,10 @@ public class SpringGridLayout extends AbstractGuiComponent
             return;
 
         rowMap.remove(e.col);
+
+        if( e.child != null ) {
+            lookup.remove(e.child);
+        }
 
         // Recalculate the row and column count in case
         // we have shrunk.
