@@ -126,15 +126,13 @@ public class GuiGlobals {
     protected GuiGlobals( Application app ) {
         this.assets = app.getAssetManager();
         this.keyInterceptor = new KeyInterceptState(app);
-        
-        // For now, pick either mouse or touch based on the
-        // availability of touch.  It's an either/or at the 
-        // moment but the rest of the code is setup to support
-        // both at once should we ever want to support touch
-        // devices that also may have a mouse connected.
-        if (app.getContext().getTouchInput() == null) {
-            this.mouseState = new MouseAppState(app);
-        } else {
+ 
+        // We always create a MouseAppState and then optionally
+        // create a TouchAppState.  The TouchAppState will enable
+        // or disable the MouseAppState based on whether or not
+        // simulated mouse events is enabled.       
+        this.mouseState = new MouseAppState(app);
+        if( app.getContext().getTouchInput() != null ) {
             this.touchState = new TouchAppState(app);
         }
         
@@ -142,9 +140,7 @@ public class GuiGlobals {
         this.focusState = new FocusManagerState();
         app.getStateManager().attach(keyInterceptor);
         
-        if( mouseState != null ) {
-            app.getStateManager().attach(mouseState);
-        }
+        app.getStateManager().attach(mouseState);
         if( touchState != null ) {
             app.getStateManager().attach(touchState);
         }
@@ -290,13 +286,11 @@ public class GuiGlobals {
 
     @Deprecated
     public ViewPort getCollisionViewPort( Spatial s ) {
-        if( mouseState != null ) {
-            return mouseState.findViewPort(s);
-        } else if( touchState != null ) {
-            return touchState.findViewPort(s);
-        } else {
-            return null;
+        ViewPort result = mouseState.findViewPort(s);
+        if( result == null && touchState != null ) {
+            result = touchState.findViewPort(s);
         }
+        return result; 
     }
 
     /**
@@ -308,9 +302,7 @@ public class GuiGlobals {
     }
     
     public void setCursorEventsEnabled( boolean f ) {
-        if( mouseState != null ) {
-            mouseState.setEnabled(f);
-        }
+        mouseState.setEnabled(f);
         if( touchState != null ) {
             touchState.setEnabled(f);
         }
@@ -325,9 +317,10 @@ public class GuiGlobals {
     }
     
     public boolean isCursorEventsEnabled() {
-        if( mouseState != null ) {
-            return mouseState.isEnabled();
-        } else if( touchState != null ) {
+        if( mouseState.isEnabled() ) {
+            return true;
+        }
+        if( touchState != null ) {
             return touchState.isEnabled();
         } else {
             return false;
