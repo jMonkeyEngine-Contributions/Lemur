@@ -63,12 +63,18 @@ import com.simsilica.lemur.event.DefaultCursorListener;
 public class Slider extends Panel {
 
     public static final String ELEMENT_ID = "slider";
-    public static final String UP_ID = "slider.up.button";
+    /*public static final String UP_ID = "slider.up.button";
     public static final String DOWN_ID = "slider.down.button";
     public static final String LEFT_ID = "slider.left.button";
     public static final String RIGHT_ID = "slider.right.button";
     public static final String THUMB_ID = "slider.thumb.button";
-    public static final String RANGE_ID = "slider.range";
+    public static final String RANGE_ID = "slider.range";*/
+    public static final String UP_ID = "up.button";
+    public static final String DOWN_ID = "down.button";
+    public static final String LEFT_ID = "left.button";
+    public static final String RIGHT_ID = "right.button";
+    public static final String THUMB_ID = "thumb.button";
+    public static final String RANGE_ID = "range";
 
     private BorderLayout layout;
     private Axis axis;
@@ -117,6 +123,10 @@ public class Slider extends Panel {
         this(model, axis, true, new ElementId(ELEMENT_ID), style);
     }
 
+    public Slider( RangedValueModel model, Axis axis, ElementId elementId, String style ) {
+        this(model, axis, true, elementId, style);
+    }
+
     protected Slider( RangedValueModel model, Axis axis, boolean applyStyles,
                       ElementId elementId, String style ) {
         super(false, elementId, style);
@@ -136,27 +146,27 @@ public class Slider extends Panel {
         switch( axis ) {
             case X:
                 increment = layout.addChild(BorderLayout.Position.East,
-                                            new Button(null, true, new ElementId(RIGHT_ID), style));
+                                            new Button(null, true, elementId.child(RIGHT_ID), style));
                 increment.addClickCommands( new ChangeValueCommand(1) );
                 decrement = layout.addChild(BorderLayout.Position.West,
-                                            new Button(null, true, new ElementId(LEFT_ID), style));
+                                            new Button(null, true, elementId.child(LEFT_ID), style));
                 decrement.addClickCommands( new ChangeValueCommand(-1) );
-                range = layout.addChild(new Panel(true, 50, 2, new ElementId(RANGE_ID), style));
+                range = layout.addChild(new Panel(true, 50, 2, elementId.child(RANGE_ID), style));
                 break;
             case Y:
                 increment = layout.addChild(BorderLayout.Position.North,
-                                            new Button(null, true, new ElementId(UP_ID), style));
+                                            new Button(null, true, elementId.child(UP_ID), style));
                 increment.addClickCommands( new ChangeValueCommand(1) );
                 decrement = layout.addChild(BorderLayout.Position.South,
-                                            new Button(null, true, new ElementId(DOWN_ID), style));
+                                            new Button(null, true, elementId.child(DOWN_ID), style));
                 decrement.addClickCommands( new ChangeValueCommand(-1) );
-                range = layout.addChild(new Panel(true, 2, 50, new ElementId(RANGE_ID), style));
+                range = layout.addChild(new Panel(true, 2, 50, elementId.child(RANGE_ID), style));
                 break;
             case Z:
                 throw new IllegalArgumentException("Z axis not yet supported.");
         }
 
-        thumb = new Button(null, true, new ElementId(THUMB_ID), style);
+        thumb = new Button(null, true, elementId.child(THUMB_ID), style);
         ButtonDragger dragger = new ButtonDragger();
         CursorEventControl.addListenersToSpatial(thumb, dragger);
         CursorEventControl.addListenersToSpatial(range, dragger);
@@ -173,11 +183,12 @@ public class Slider extends Panel {
 
     @StyleDefaults(ELEMENT_ID)
     public static void initializeDefaultStyles( Styles styles, Attributes attrs ) {
-        styles.getSelector(UP_ID, null).set("text", "^", false);
-        styles.getSelector(DOWN_ID, null).set("text", "v", false);
-        styles.getSelector(LEFT_ID, null).set("text", "<", false);
-        styles.getSelector(RIGHT_ID, null).set("text", ">", false);
-        styles.getSelector(THUMB_ID, null).set("text", "#", false);
+        ElementId parent = new ElementId(ELEMENT_ID);
+        styles.getSelector(parent.child(UP_ID), null).set("text", "^", false);
+        styles.getSelector(parent.child(DOWN_ID), null).set("text", "v", false);
+        styles.getSelector(parent.child(LEFT_ID), null).set("text", "<", false);
+        styles.getSelector(parent.child(RIGHT_ID), null).set("text", ">", false);
+        styles.getSelector(parent.child(THUMB_ID), null).set("text", "#", false);
     }
 
     public void setModel( RangedValueModel model ) {

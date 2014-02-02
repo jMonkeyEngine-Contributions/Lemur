@@ -64,4 +64,11 @@ Lemur TBD
 * Added collection based addCommands() to CommandMap
 * Added a (style IDed) setter to Button for setting the whole
     command map.
-* Added some ElementId-based Attributes 'getters' to the Styles API. 
+* Added some ElementId-based getSelector() methods to the Styles API.
+* Redid how the nested elements of a Slider are IDed.  The class constants
+    now refer to the nested part and not the whole ID.  This means that
+    if the user sets their own ElementId for the slider that the children
+    will match.
+    (Breaking change: for style code expecting the old element IDs.)
+* Added an aditional full-parameter constructor to Slider.
+ 
