@@ -93,6 +93,7 @@ public class TbtQuadBackgroundComponent extends AbstractGuiComponent
     private Geometry background;
     private Texture texture;
     private ColorRGBA color;
+    private GuiMaterial material;
     private float xMargin = 0;
     private float yMargin = 0;
     private float zOffset = 0.01f;
@@ -117,6 +118,7 @@ public class TbtQuadBackgroundComponent extends AbstractGuiComponent
         this.zOffset = zOffset;
         this.lit = lit;
         setTexture(texture);
+        createMaterial();
     }
 
     public static TbtQuadBackgroundComponent create( String texture,
@@ -150,6 +152,7 @@ public class TbtQuadBackgroundComponent extends AbstractGuiComponent
         result.background = null;
 
         // Deep clone the things we don't really want to share
+        result.material = material.clone();
         result.quad = result.quad.clone();
 
         return result;
@@ -170,11 +173,8 @@ public class TbtQuadBackgroundComponent extends AbstractGuiComponent
 
     public void setColor( ColorRGBA c ) {
         this.color = c;
-        if( background != null ) {
-            if( lit )
-                background.getMaterial().setColor("Diffuse", color);
-            else
-                background.getMaterial().setColor("Color", color);
+        if( material != null ) {
+            material.setColor(color);
         }
     }
 
@@ -186,12 +186,8 @@ public class TbtQuadBackgroundComponent extends AbstractGuiComponent
         if( this.texture == t )
             return;
         this.texture = t;
-        if( background != null ) {
-            if( lit ) {
-                background.getMaterial().setTexture("DiffuseMap", texture);
-            } else {
-                background.getMaterial().setTexture("ColorMap", texture);
-            }
+        if( material != null ) {
+            material.setTexture(texture);
         }
     }
 
@@ -219,6 +215,10 @@ public class TbtQuadBackgroundComponent extends AbstractGuiComponent
         return zOffset;
     }
 
+    public GuiMaterial getMaterial() {
+        return material;
+    }
+
     public void calculatePreferredSize( Vector3f size ) {
         size.x += xMargin * 2;
         size.y += yMargin * 2;
@@ -238,14 +238,20 @@ public class TbtQuadBackgroundComponent extends AbstractGuiComponent
         size.z -= Math.abs(zOffset);
     }
 
+    protected void createMaterial() {
+        material = GuiGlobals.getInstance().createMaterial(texture, lit);
+        if( color != null ) {
+            material.setColor(color);
+        }
+        material.getMaterial().getAdditionalRenderState().setBlendMode(BlendMode.Alpha);
+    }
+
     protected void createGeometry() {
         background = new Geometry("background", quad);
-        GuiMaterial mat = GuiGlobals.getInstance().createMaterial(texture, lit);
-        if( color != null ) {
-            mat.setColor(color);
+        if( material != null ) {
+            createMaterial();
         }
-        mat.getMaterial().getAdditionalRenderState().setBlendMode(BlendMode.Alpha);
-        background.setMaterial(mat.getMaterial());
+        background.setMaterial(material.getMaterial());
         getNode().attachChild(background);
     }
 

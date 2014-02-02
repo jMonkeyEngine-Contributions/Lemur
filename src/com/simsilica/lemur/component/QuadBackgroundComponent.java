@@ -54,6 +54,7 @@ public class QuadBackgroundComponent extends AbstractGuiComponent
     private Geometry background;
     private ColorRGBA color;
     private Texture texture;
+    private GuiMaterial material;
     private float xMargin = 0;
     private float yMargin = 0;
     private float zOffset = 0.01f;
@@ -79,6 +80,7 @@ public class QuadBackgroundComponent extends AbstractGuiComponent
         this.zOffset = zOffset;
         this.lit = lit;
         setColor(color);
+        createMaterial();
     }
 
     public QuadBackgroundComponent( Texture texture ) { 
@@ -98,12 +100,14 @@ public class QuadBackgroundComponent extends AbstractGuiComponent
         this.lit = lit;
         setTexture(texture);
         setColor(ColorRGBA.White);
+        createMaterial();
     }
 
 
     @Override
     public QuadBackgroundComponent clone() {
         QuadBackgroundComponent result = (QuadBackgroundComponent)super.clone();
+        result.material = material.clone();
         result.background = null;
         return result;
     }
@@ -123,12 +127,8 @@ public class QuadBackgroundComponent extends AbstractGuiComponent
 
     public void setColor( ColorRGBA c ) {
         this.color = c;
-        if( background != null ) {
-            if( lit ) {
-                background.getMaterial().setColor("Diffuse", color);
-            } else {
-                background.getMaterial().setColor("Color", color);
-            }
+        if( material != null ) {
+            material.setColor(color);
         }
     }
 
@@ -140,12 +140,8 @@ public class QuadBackgroundComponent extends AbstractGuiComponent
         if( this.texture == t )
             return;
         this.texture = t;
-        if( background != null ) {
-            if( lit ) {
-                background.getMaterial().setTexture("DiffuseMap", texture);
-            } else {
-                background.getMaterial().setTexture("ColorMap", texture);
-            }
+        if( material != null ) {
+            material.setTexture(texture);
         }
     }
 
@@ -173,6 +169,10 @@ public class QuadBackgroundComponent extends AbstractGuiComponent
         return zOffset;
     }
 
+    public GuiMaterial getMaterial() {
+        return material;
+    }
+
     public void calculatePreferredSize( Vector3f size ) {
         size.x += xMargin * 2;
         size.y += yMargin * 2;
@@ -192,6 +192,16 @@ public class QuadBackgroundComponent extends AbstractGuiComponent
         size.z -= Math.abs(zOffset);
     }
 
+    protected void createMaterial() {
+        material = GuiGlobals.getInstance().createMaterial(color, lit);
+        if( texture != null ) {
+            material.setTexture(texture);
+        }
+        material.getMaterial().getAdditionalRenderState().setBlendMode(BlendMode.Alpha);
+        material.getMaterial().getAdditionalRenderState().setAlphaTest(true);
+        material.getMaterial().getAdditionalRenderState().setAlphaFallOff(0.1f);
+    }
+
     protected void refreshBackground( Vector3f size ) {
         if( background == null ) {
             Quad q = new Quad(size.x, size.y);
@@ -206,14 +216,10 @@ public class QuadBackgroundComponent extends AbstractGuiComponent
                             });
             }
             background = new Geometry("background", q);
-            GuiMaterial mat = GuiGlobals.getInstance().createMaterial(color, lit);
-            if( texture != null ) {
-                mat.setTexture(texture);
+            if( material != null ) {
+                createMaterial();
             }
-            mat.getMaterial().getAdditionalRenderState().setBlendMode(BlendMode.Alpha);
-            mat.getMaterial().getAdditionalRenderState().setAlphaTest(true);
-            mat.getMaterial().getAdditionalRenderState().setAlphaFallOff(0.1f);
-            background.setMaterial(mat.getMaterial());
+            background.setMaterial(material.getMaterial());
             getNode().attachChild(background);
         } else {
             // Else reset the size of the quad

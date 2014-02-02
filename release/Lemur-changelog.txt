@@ -72,4 +72,5 @@ Lemur TBD
     (Breaking change: for style code expecting the old element IDs.)
 * Added an aditional full-parameter constructor to Slider.
 * Fixed DefaultRangedValueModel to reclamp the value if the range changes.
- 
+* QuadBackgroundComponent and TbtQuadBackgroundComponent manage their
+    internal material better and now expose the GuiMaterial to callers. 
