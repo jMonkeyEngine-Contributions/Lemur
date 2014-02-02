@@ -71,4 +71,5 @@ Lemur TBD
     will match.
     (Breaking change: for style code expecting the old element IDs.)
 * Added an aditional full-parameter constructor to Slider.
+* Fixed DefaultRangedValueModel to reclamp the value if the range changes.
  

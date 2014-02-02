@@ -107,7 +107,10 @@ public class DefaultRangedValueModel implements RangedValueModel {
     }
 
     public void setMaximum( double max ) {
+        if( this.max == max ) 
+            return;
         this.max = max;
+        checkRange();
     }
 
     public double getMaximum() {
@@ -115,7 +118,10 @@ public class DefaultRangedValueModel implements RangedValueModel {
     }
 
     public void setMinimum( double min ) {
+        if( this.min == min ) 
+            return;
         this.min = min;
+        checkRange();
     }
 
     public double getMinimum() {
