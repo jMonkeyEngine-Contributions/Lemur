@@ -63,4 +63,5 @@ Lemur TBD
     existing node at a specific row, column.
 * Added collection based addCommands() to CommandMap
 * Added a (style IDed) setter to Button for setting the whole
-    command map. 
+    command map.
+* Added some ElementId-based Attributes 'getters' to the Styles API. 

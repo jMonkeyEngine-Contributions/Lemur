@@ -238,11 +238,27 @@ public class Styles {
         return getSelector(DEFAULT_ELEMENT, style);
     }
 
+    public Attributes getSelector( ElementId id, String style ) {
+        return getSelector(id.getId(), style);
+    }
+    
     public Attributes getSelector( String id, String style ) {
         Selector key = new ElementSelector(id);
         return getAttributes(key, style, true);
     }
 
+    public Attributes getSelector( ElementId parent, ElementId child, String style ) {
+        return getSelector(parent.getId(), child.getId(), style);
+    }    
+    
+    public Attributes getSelector( ElementId parent, String child, String style ) {
+        return getSelector(parent.getId(), child, style);
+    }
+    
+    public Attributes getSelector( String parent, ElementId child, String style ) {
+        return getSelector(parent, child.getId(), style);
+    }
+    
     public Attributes getSelector( String parent, String child, String style ) {
         Selector key = new ContainsSelector(parent, child);
         return getAttributes(key, style, true);
@@ -279,6 +295,11 @@ public class Styles {
 
         List<Selector> list = new ArrayList<Selector>();
         list.add(new ElementSelector(id));
+
+        // Note: this implementation (currently) doesn't support
+        // ContainsSelector("foo", "bar.baz")
+        // This means something like
+        // getSelector("slider", "up.button", style) won't work.
 
         int last = parts.length - 1;
         while( last >= 0 ) {
