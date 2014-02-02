@@ -170,7 +170,12 @@ public class TouchAppState extends BaseAppState {
         PickEventSession targetSession = sessionMap.get(pointerId);
         // call cursorMoved to update the hitTarget before calling buttonEvent
         boolean moveConsumed = targetSession.cursorMoved(x, y);
-        boolean buttonConsumed = targetSession.buttonEvent(pointerId, x, y, pressed);
+        // We are passing BUTTON_LEFT to buttonEvent all the time.
+        // This is ok because touch motion is separated by individual
+        // targetSesstions for each finger.  Since each session only gets the
+        // touch motion for the finger that is associated with the session,
+        // it's ok to not track the touch pointerId inside each session.
+        boolean buttonConsumed = targetSession.buttonEvent(MouseInput.BUTTON_LEFT, x, y, pressed);
         if (buttonConsumed && !pressed) {
             targetSession.clearHitTarget();
         }
