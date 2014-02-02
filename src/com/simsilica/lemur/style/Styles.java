@@ -294,21 +294,41 @@ public class Styles {
         String[] parts = id.split("\\.");
 
         List<Selector> list = new ArrayList<Selector>();
-        list.add(new ElementSelector(id));
 
-        // Note: this implementation (currently) doesn't support
-        // ContainsSelector("foo", "bar.baz")
-        // This means something like
-        // getSelector("slider", "up.button", style) won't work.
+        if( parts.length == 1 ) {
+            // The simple way
+            list.add(new ElementSelector(id));
+        } else {
+            // Create several 'selector' types for various ID 
+            // combinations.  Eventually we will not be able to get
+            // away with this anymore because of the following...
+            //            
+            // Note: this implementation (currently) doesn't support
+            // ContainsSelector("foo", "bar.baz")
+            // This means something like
+            // getSelector("slider", "up.button", style) won't work.
 
-        int last = parts.length - 1;
-        while( last >= 0 ) {
-            String top = parts[last--];
-            for( int i = last; i >= 0; i-- ) {
-                list.add(new ContainsSelector(parts[i], top));
+            // We want to at least support uncontained partial IDs
+            // until we fix the above.  This lets us set all of the
+            // up.button, down.button, etc. at once.
+
+            // Do it by chopping up the ID as we go... and now
+            // we can include "full ID" in this loop.
+            int start = 0;
+            for( int i = 0; i < parts.length - 1; i++ ) {            
+                list.add(new ElementSelector(id.substring(start)));
+                start += parts[i].length() + 1;      
             }
-            list.add(new ElementSelector(top));
-        }
+            
+            int last = parts.length - 1;
+            while( last >= 0 ) {
+                String top = parts[last--];
+                for( int i = last; i >= 0; i-- ) {
+                    list.add(new ContainsSelector(parts[i], top));
+                }
+                list.add(new ElementSelector(top));            
+            }
+        }        
         list.add(new ElementSelector(KEY_DEFAULT));
 
         Selector[] results = list.toArray(new Selector[list.size()]);

@@ -85,6 +85,6 @@ public class ContainsSelector implements Selector {
 
     @Override
     public String toString() {
-        return "Selector[" + parent + " " + child + "]";
+        return "Selector[" + parent + " | " + child + "]";
     }
 }
