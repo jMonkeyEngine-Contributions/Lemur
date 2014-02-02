@@ -193,7 +193,7 @@ public class TouchAppState extends BaseAppState {
 
         @Override
         public void onTouchEvent(TouchEvent te) {
-            if (!isEnabled() || getApplication().getInputManager().getSimulateMouse()) {
+            if (!isEnabled()) {
                 return;
             }
             switch (te.getType()) {
