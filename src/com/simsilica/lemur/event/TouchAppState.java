@@ -36,6 +36,7 @@ package com.simsilica.lemur.event;
 
 
 import com.jme3.app.Application;
+import com.jme3.input.MouseInput;
 import com.jme3.input.event.TouchEvent;
 import com.jme3.renderer.ViewPort;
 import com.jme3.scene.Spatial;
