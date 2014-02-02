@@ -248,7 +248,7 @@ public class TbtQuadBackgroundComponent extends AbstractGuiComponent
 
     protected void createGeometry() {
         background = new Geometry("background", quad);
-        if( material != null ) {
+        if( material == null ) {
             createMaterial();
         }
         background.setMaterial(material.getMaterial());

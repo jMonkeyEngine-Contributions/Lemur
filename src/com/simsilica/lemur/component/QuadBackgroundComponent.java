@@ -216,7 +216,7 @@ public class QuadBackgroundComponent extends AbstractGuiComponent
                             });
             }
             background = new Geometry("background", q);
-            if( material != null ) {
+            if( material == null ) {
                 createMaterial();
             }
             background.setMaterial(material.getMaterial());
