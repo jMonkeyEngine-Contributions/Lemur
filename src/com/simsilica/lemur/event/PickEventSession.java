@@ -405,6 +405,11 @@ public class PickEventSession {
         CursorButtonEvent event1 = null;
         MouseButtonEvent event2 = null;
         
+        // Make sure all of the collision state is up to date with this latest
+        // cursor location.  We may not have had a chance to process a cursorMoved
+        // before this button event comes to us.
+        cursorMoved(x,y); 
+        
         if( pressed ) {
             capture = hitTarget;
         } else if( capture != null ) {
@@ -438,10 +443,7 @@ public class PickEventSession {
  
         if( hitTarget == null  )
             {
-            // Here we should actually do a hit query with the event's location
-            // so that we handle the case where we receive an event for something
-            // that wasn't entered or captured yet, like when frames are slow or
-            // for simulated mouse events from touch.
+            // We aren't intersecting anything anymore
             return false;
             }
 
