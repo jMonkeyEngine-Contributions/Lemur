@@ -62,8 +62,6 @@ public class TouchAppState extends BaseAppState {
     private long sampleFrequency = 1000000000 / 60; // 60 fps
     private long lastSample = 0;
 
-    private MouseAppState mouseState;
-
     /**
      *  The session that tracks the state of pick events from one
      *  event frame to the next.
@@ -147,28 +145,6 @@ public class TouchAppState extends BaseAppState {
         getApplication().getInputManager().setCursorVisible(false);
     }
 
-    private MouseAppState getMouseState() {
-        if( mouseState == null ) {
-            mouseState = getState(MouseAppState.class);
-        }
-        return mouseState;
-    }
-
-    private void updateMouseState() {
-        MouseAppState mas = getMouseState();
-        if( mas == null ) {
-            return;
-        }
-        // We have to base the mouse state enabling on only
-        // the sim mouse flag.  If we base it on enable/disable
-        // state then there is an ordering issue with how GuiGlobals
-        // disables and enables these states.  Any code that is specifically
-        // disabling this state outside of GuiGlobals can also manually
-        // enable MouseAppState if it is disable.
-        boolean mouseOn = getApplication().getInputManager().getSimulateMouse();
-        mas.setEnabled(mouseOn);
-    }
-
     @Override
     public void update( float tpf ) {
         super.update(tpf);
@@ -179,16 +155,6 @@ public class TouchAppState extends BaseAppState {
         lastSample = time;
 
         dispatchMotion();
-        
-        // Do this after and only at the update frequency.  This has
-        // some consequences.  Only doing it at the update frequency
-        // means that we likely process at least one mouse update loop
-        // after setSimulateMouse() is turned off.  Thus, we have to
-        // do it after dispatchMotion() so that users don't get two
-        // sets of events (MouseAppState always gets the events first).
-        // At 1/60th of a second delay, I think this is ok for apps that
-        // mess with their simulate mouse status at runtime.
-        updateMouseState();
     }
 
     protected void dispatchMotion() {
