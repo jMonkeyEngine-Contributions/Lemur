@@ -51,6 +51,7 @@ import com.jme3.scene.Spatial;
 import com.simsilica.lemur.core.CommandMap;
 import com.simsilica.lemur.component.QuadBackgroundComponent;
 import java.util.List;
+import java.util.Map;
 
 
 /**
@@ -120,6 +121,16 @@ public class Button extends Label {
     public List<Command<? super Button>> getClickCommands() {
         return commandMap.get(ButtonAction.Click, false);
     }
+
+    @StyleAttribute("buttonCommands")
+    public void setButtonCommands( Map<ButtonAction, List<Command<? super Button>>> map ) {
+        commandMap.clear();
+        // We don't use putAll() because (right now) it would potentially
+        // put the wrong list implementations into the command map.
+        for( Map.Entry<ButtonAction, List<Command<? super Button>>> e : map.entrySet() ) {
+            commandMap.addCommands(e.getKey(), e.getValue());
+        }
+    } 
 
     @StyleAttribute("color")
     @Override

@@ -62,4 +62,5 @@ Lemur TBD
 * Fixed SpringGridLayout to do better clean-up if replacing an
     existing node at a specific row, column.
 * Added collection based addCommands() to CommandMap
-
+* Added a (style IDed) setter to Button for setting the whole
+    command map. 
