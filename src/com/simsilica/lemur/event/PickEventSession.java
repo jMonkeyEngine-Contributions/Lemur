@@ -439,13 +439,18 @@ public class PickEventSession {
             } 
             if( consumed ) 
                 return true;
+                
+            // Also if the hitTarget is the same as the capture then
+            // we've already delivered the event... don't do it again.
+            if( tempCapture == hitTarget ) {
+                return false;
+            }                
         }
  
-        if( hitTarget == null  )
-            {
+        if( hitTarget == null  ) {
             // We aren't intersecting anything anymore
             return false;
-            }
+        }
 
         boolean consumed = false;
         if( hitTarget.getControl(MouseEventControl.class) != null ) {
