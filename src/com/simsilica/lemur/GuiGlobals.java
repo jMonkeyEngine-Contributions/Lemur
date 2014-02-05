@@ -300,7 +300,7 @@ public class GuiGlobals {
     }
 
     /**
-     *  @Deprecated Use setCursorEventsEnabled() instead.
+     *  @deprecated Use setCursorEventsEnabled() instead.
      */
     @Deprecated
     public void setMouseEventsEnabled( boolean f ) {
@@ -317,7 +317,7 @@ public class GuiGlobals {
     }
 
     /**
-     *  @Deprecated Use isCursorEventsEnabled() instead.
+     *  @deprecated Use isCursorEventsEnabled() instead.
      */
     @Deprecated
     public boolean isMouseEventsEnabled() {
