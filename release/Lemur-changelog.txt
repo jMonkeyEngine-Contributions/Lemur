@@ -1,6 +1,6 @@
 
-Lemur TBD
----------
+Lemur r1327
+------------
 * Updated Panel javadoc to clarify y-inversion in layouts.
 * Added a ConsumingMouseListener implementation that can be
     used to make GUI elements "opaque" to mouse events.
