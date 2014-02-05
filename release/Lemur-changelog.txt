@@ -1,4 +1,10 @@
 
+Lemur TBD
+----------
+* TouchAppState fixed to avoid some minor per-update garbage
+    creation.
+
+
 Lemur r1327
 ------------
 * Updated Panel javadoc to clarify y-inversion in layouts.

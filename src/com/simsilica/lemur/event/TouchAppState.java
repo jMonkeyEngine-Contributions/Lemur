@@ -159,6 +159,9 @@ public class TouchAppState extends BaseAppState {
     }
 
     protected void dispatchMotion() {
+        if (sessionMap.isEmpty()) {
+            return;
+        }
         for (int pointerId: sessionMap.keySet()) {
             Location lastLocation = locationMap.get(pointerId);
             if (lastLocation != null) {
