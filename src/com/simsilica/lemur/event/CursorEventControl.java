@@ -70,11 +70,30 @@ public class CursorEventControl extends AbstractControl {
      *  doesn't exist, while adding the specified listeners.
      */
     public static void addListenersToSpatial( Spatial s, CursorListener... listeners ) {
+        if( s == null ) {
+            return;
+        }
         CursorEventControl mec = s.getControl(CursorEventControl.class);
         if( mec == null ) {
             s.addControl(new CursorEventControl(listeners));
         } else {
             mec.listeners.addAll(Arrays.asList(listeners));
+        }
+    }
+
+    /**
+     *  Convenience method that will remove the specified listeners
+     *  from a Spatial only if a CursorEventControl already exists.
+     */
+    public static void removeListenersFromSpatial( Spatial s, CursorListener... listeners ) {
+        if( s == null ) {
+            return;
+        }
+        CursorEventControl mec = s.getControl(CursorEventControl.class);        
+        if( mec == null ) {
+            return;
+        } else {
+            mec.listeners.removeAll(Arrays.asList(listeners));
         }
     }
 

@@ -75,4 +75,8 @@ Lemur TBD
 * QuadBackgroundComponent and TbtQuadBackgroundComponent manage their
     internal material better and now expose the GuiMaterial to callers.
 * Mouse button events now force a mouse move event just in case the button
-    event comes sooner than the latest pick info.        
+    event comes sooner than the latest pick info.
+* Added a removeListenersFromSpatial() method to MouseEventControl (and
+    CursorEventControl) that acts just like the addListenersToSpatial()
+    in that it will ignore spatials without the MouseEventControl.
+* Perform null checks in addListenersToSpatial() and removeListenersFromSpatial().            
