@@ -49,12 +49,10 @@ public class ElementId {
 
     private String id;
     private String[] parts;
-    private Selector[] selectors;
 
     public ElementId( String id ) {
         this.id = id;
         this.parts = id.split("\\.");
-        this.selectors = Styles.getSelectors(id);
     }
 
     public ElementId child( String childId ) {
@@ -71,10 +69,6 @@ public class ElementId {
 
     public final String[] getParts() {
         return parts;
-    }
-
-    public final Selector[] getSelectors() {
-        return selectors;
     }
 
     @Override

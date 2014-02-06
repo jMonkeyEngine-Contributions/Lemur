@@ -60,6 +60,26 @@ public class Attributes {
         }
     }
 
+    /**
+     *  Like applyNew except that it returns a new Attributes object
+     *  and leaves the original intact if a merge is necessary.
+     *  If the specified attributes to merge are empty then this
+     *  attributes object is returned.
+     */
+    protected Attributes merge( Attributes atts ) {
+        if( atts.isEmpty() ) {
+            return this;
+        } 
+        Attributes result = new Attributes(parent);
+        result.values.putAll(this.values);
+        result.applyNew(atts);
+        return result;
+    }
+
+    public boolean isEmpty() {
+        return values.isEmpty();
+    }
+
     public boolean hasAttribute( String key ) {
         return values.containsKey(key);
     }

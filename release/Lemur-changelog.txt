@@ -3,6 +3,8 @@ Lemur TBD
 ----------
 * TouchAppState fixed to avoid some minor per-update garbage
     creation.
+* Refactored how Styles are kept internally.  This fixes some
+    limitations that existed with parent/child selectors.    
 
 
 Lemur r1327

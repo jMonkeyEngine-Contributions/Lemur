@@ -120,21 +120,18 @@ public class Styles {
 
     public static final String KEY_DEFAULT = "default";
     public static final String DEFAULT_STYLE = "default";
-    public static final String DEFAULT_ELEMENT = "default";
+    public static final ElementId DEFAULT_ELEMENT = new ElementId("default");
 
     private static Map<Class, List<Method>> methodIndex = new HashMap<Class, List<Method>>();
     private Set<Class> initialized = new HashSet<Class>();
 
 
     /**
-     *  Maps style name to its set of selectors.  Each style refers
-     *  to a map of Selector keys and their attribute values.  When attributes
-     *  are looked up for a specific element ID, the ID is broken down into
-     *  separate selectors and the attributes are combined in a hierarchy from
-     *  this map.  Each of these Attributes objects if flat.
+     *  Maps a particular style to its style tree.  The style tree
+     *  contains the tail-first hierarchy of selectors that are
+     *  then composed to form a given elements attributes.
      */
-    private Map<String,Map<Selector,Attributes>> styleMap
-                                            = new HashMap<String,Map<Selector,Attributes>>();
+    private Map<String, StyleTree> styleTrees = new HashMap<String, StyleTree>();
 
     /**
      *  Contains the map of lazily compiled attributes for a given
@@ -174,64 +171,86 @@ public class Styles {
         return (T)defaults.get(type);
     }
 
+    /**
+     *  Retrieves the compiled attributes for the specified element ID
+     *  and default style.  The attributes are compiled based on the 
+     *  selector rules and attributes setup prior to this call.
+     */
+    public Attributes getAttributes( ElementId elementId ) {
+        return getAttributes(elementId, DEFAULT_STYLE);
+    }
+
+    /**
+     *  Retrieves the compiled attributes for the specified element ID
+     *  and style.  The attributes are compiled based on the 
+     *  selector rules and attributes setup prior to this call.
+     */
+    public Attributes getAttributes( ElementId elementId, String style ) {
+        
+        if( style == null ) {
+            style = DEFAULT_STYLE;
+        }
+        // See if we already have a cached version
+        String key = styleKey(elementId, style); 
+        Attributes result = attributeMap.get(key);
+        if( result == null ) {
+            // Look it up and cache it
+            result = getTree(style, true).getAttributes(elementId);
+ 
+            // If this is not the default element then apply any
+            // style-specific default attributes
+            if( !DEFAULT_ELEMENT.equals(elementId) ) {
+                result = result.merge(getTree(style, true).getAttributes(DEFAULT_ELEMENT));
+            }
+            
+            // Apply default styles too if necessary            
+            if( !DEFAULT_STYLE.equals(style) ) {                
+                // Look-up the element ID in the default style
+                Attributes toMerge = getAttributes(elementId, DEFAULT_STYLE);
+                result = result.merge(toMerge);
+            }
+                        
+            // Cache it                        
+            attributeMap.put(key, result);             
+        }
+        return result;
+    }
+
+    /**
+     *  Retrieves the compiled attributes for the specified element ID
+     *  and default style.  The attributes are compiled based on the 
+     *  selector rules and attributes setup prior to this call.
+     */
     public Attributes getAttributes( String elementId ) {
-        return getStyle(elementId, DEFAULT_STYLE, true);
+        return getAttributes(new ElementId(elementId), DEFAULT_STYLE);
     }
 
+    /**
+     *  Retrieves the compiled attributes for the specified element ID
+     *  and style.  The attributes are compiled based on the 
+     *  selector rules and attributes setup prior to this call.
+     */
     public Attributes getAttributes( String elementId, String style ) {
-        if( style == null )
+        return getAttributes(new ElementId(elementId), style);
+    }
+
+    protected String styleKey( ElementId elementId, String style ) {
+        if( style == null || style.equals(DEFAULT_STYLE) ) {
+            return elementId.getId();
+        }
+        return style + ":" + elementId.getId(); 
+    }
+
+    protected StyleTree getTree( String style, boolean create ) {
+        if( style == null ) {
             style = DEFAULT_STYLE;
-        return getStyle(elementId, style, true);
-    }
-
-    protected Attributes getStyle( String id, String style, boolean create ) {
-        Attributes result = attributeMap.get(id + "." + style);
-        if( result == null && create ) {
-            result = new Attributes(this);
-            compile(id, style, result);
-            if( style != DEFAULT_STYLE )
-                compile(id, DEFAULT_STYLE, result);
-            attributeMap.put(id, result);
         }
-        return result;
-    }
-
-    protected void compile( String id, String style, Attributes attributes ) {
-        Map<Selector,Attributes> map = styleMap.get(style);
-        if( map == null || map.isEmpty() )
-            return;
-
-        Selector[] parts = getSelectors(id);
-        for( Selector s : parts ) {
-            Attributes sub = map.get(s);
-            if( sub == null )
-                continue;
-            attributes.applyNew(sub);
+        StyleTree tree = styleTrees.get(style);
+        if( tree == null && create ) {
+            tree = new StyleTree(this);
+            styleTrees.put(style, tree);            
         }
-    }
-
-    protected Map<Selector,Attributes> getSelectorMap( String style, boolean create ) {
-        Map<Selector,Attributes> result = styleMap.get(style);
-        if( result == null && create ) {
-            result = new HashMap<Selector,Attributes>();
-            styleMap.put(style, result);
-        }
-        return result;
-    }
-
-    protected Attributes getAttributes( Selector key, String style, boolean create ) {
-        if( style == null )
-            style = DEFAULT_STYLE;
-        Map<Selector, Attributes> selMap = getSelectorMap(style,create);
-        if( selMap == null )
-            return null;
-
-        Attributes result = selMap.get(key);
-        if( result == null && create ) {
-            result = new Attributes(this);
-            selMap.put(key, result);
-        }
-        return result;
+        return tree;
     }
 
     public Attributes getSelector( String style ) {
@@ -239,38 +258,37 @@ public class Styles {
     }
 
     public Attributes getSelector( ElementId id, String style ) {
-        return getSelector(id.getId(), style);
+        // The implication is that we're about to set new style attributes...
+        // so clear the cache
+        clearCache();    
+        return getTree(style, true).getSelector(id, true);
     }
     
     public Attributes getSelector( String id, String style ) {
-        Selector key = new ElementSelector(id);
-        return getAttributes(key, style, true);
+        return getSelector(new ElementId(id), style); 
     }
 
     public Attributes getSelector( ElementId parent, ElementId child, String style ) {
-        return getSelector(parent.getId(), child.getId(), style);
+        clearCache();    
+        return getTree(style, true).getSelector(parent, child, true);
     }    
     
     public Attributes getSelector( ElementId parent, String child, String style ) {
-        return getSelector(parent.getId(), child, style);
+        return getSelector(parent, new ElementId(child), style);
     }
     
     public Attributes getSelector( String parent, ElementId child, String style ) {
-        return getSelector(parent, child.getId(), style);
+        return getSelector(new ElementId(parent), child, style);
     }
     
     public Attributes getSelector( String parent, String child, String style ) {
-        Selector key = new ContainsSelector(parent, child);
-        return getAttributes(key, style, true);
+        return getSelector(new ElementId(parent), new ElementId(child), style);
     }
 
     public static void main( String... args ) {
 
         ElementId id = new ElementId( "slider.thumb.button" );
         System.out.println( "Parts:" + Arrays.asList(id.getParts()) );
-
-        for( Selector s : id.getSelectors() )
-            System.out.println( "   " + s );
 
         Styles test = new Styles();
 
@@ -283,56 +301,11 @@ public class Styles {
         test.getSelector( "button", "foo" ).set( "action", "null" );
         test.getSelector( "foo" ).set( "color", "yellow" );
 
-        Attributes a1 = test.getStyle( "slider.thumb.button", DEFAULT_STYLE, true );
+        Attributes a1 = test.getAttributes( "slider.thumb.button", DEFAULT_STYLE );
         System.out.println( "a1:" + a1 );
 
-        Attributes a2 = test.getStyle( "slider.thumb.button", "foo", true );
+        Attributes a2 = test.getAttributes( "slider.thumb.button", "foo" );
         System.out.println( "a2:" + a2 );
-    }
-
-    public static Selector[] getSelectors( String id ) {
-        String[] parts = id.split("\\.");
-
-        List<Selector> list = new ArrayList<Selector>();
-
-        if( parts.length == 1 ) {
-            // The simple way
-            list.add(new ElementSelector(id));
-        } else {
-            // Create several 'selector' types for various ID 
-            // combinations.  Eventually we will not be able to get
-            // away with this anymore because of the following...
-            //            
-            // Note: this implementation (currently) doesn't support
-            // ContainsSelector("foo", "bar.baz")
-            // This means something like
-            // getSelector("slider", "up.button", style) won't work.
-
-            // We want to at least support uncontained partial IDs
-            // until we fix the above.  This lets us set all of the
-            // up.button, down.button, etc. at once.
-
-            // Do it by chopping up the ID as we go... and now
-            // we can include "full ID" in this loop.
-            int start = 0;
-            for( int i = 0; i < parts.length - 1; i++ ) {            
-                list.add(new ElementSelector(id.substring(start)));
-                start += parts[i].length() + 1;      
-            }
-            
-            int last = parts.length - 1;
-            while( last >= 0 ) {
-                String top = parts[last--];
-                for( int i = last; i >= 0; i-- ) {
-                    list.add(new ContainsSelector(parts[i], top));
-                }
-                list.add(new ElementSelector(top));            
-            }
-        }        
-        list.add(new ElementSelector(KEY_DEFAULT));
-
-        Selector[] results = list.toArray(new Selector[list.size()]);
-        return results;
     }
 
     public void initializeStyles(Class c) {
@@ -413,11 +386,21 @@ public class Styles {
         return results;
     }
 
+    @Deprecated
     public void applyStyles( Object o, String elementId ) {
-        applyStyles(o, elementId, DEFAULT_STYLE);
+        applyStyles(o, new ElementId(elementId), DEFAULT_STYLE); 
     }
 
+    @Deprecated
     public void applyStyles( Object o, String elementId, String style ) {
+        applyStyles(o, new ElementId(elementId), style);
+    }
+    
+    public void applyStyles( Object o, ElementId elementId ) {
+        applyStyles(o, elementId, DEFAULT_STYLE);
+    }
+    
+    public void applyStyles( Object o, ElementId elementId, String style ) {
         if( style == null )
             style = DEFAULT_STYLE;
 

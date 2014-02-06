@@ -177,6 +177,11 @@ public class StyleTree {
         System.out.println( indent + "}" );
     }
 
+    protected void debug() {
+        System.out.println( "Style tree:" );
+        dump(root, "   ");
+    }
+
     public static void main( String... args ) {
         
         Styles styles = new Styles();
@@ -222,11 +227,6 @@ public class StyleTree {
             System.out.println( "test [" + tests[i][0] + "] = " + attrs );
             System.out.println( "    should be:" + tests[i][1] );
         }                                    
-        /*System.out.println( "test [slider.up.button]:" 
-                            + tree.getAttributes(new ElementId("slider.up.button")) );
-        System.out.println( "test [races.list.slider.up.button]:" 
-                            + tree.getAttributes(new ElementId("races.list.slider.up.button")) );
-        System.out.println( "test [button]:" + tree.getAttributes(new ElementId("button")) );*/
     }
 
     protected class Node {
