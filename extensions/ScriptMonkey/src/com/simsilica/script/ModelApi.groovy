@@ -39,6 +39,10 @@ Spatial loadModel( String model ) {
     return app.assetManager.loadModel(model);
 }
 
+Spatial loadModel( AssetKey key ) {
+    return app.assetManager.loadModel(key);
+}
+
 Spatial loadModel( File model ) {
     def assets = app.assetManager;
 

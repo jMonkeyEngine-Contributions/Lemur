@@ -169,7 +169,7 @@ public class CameraMovementState extends BaseAppState
  
     public void valueChanged( FunctionId func, InputState value, double tpf ) {
     
-        boolean b = value == InputState.POSITIVE;
+        boolean b = value == InputState.Positive;
 
         if( func == CameraMovementFunctions.F_RUN ) {
             if( b ) {

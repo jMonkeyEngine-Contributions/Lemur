@@ -29,7 +29,7 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
  * LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
  * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
- * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ * SOFTWARE, Even IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
 package com.simsilica.script;
@@ -97,7 +97,7 @@ public class HudState extends BaseAppState
         if( east == null )
             {
             east = new Container();
-            east.setLayout( new SpringGridLayout( Axis.Y, Axis.X, FillMode.NONE, FillMode.EVEN ) );
+            east.setLayout( new SpringGridLayout( Axis.Y, Axis.X, FillMode.None, FillMode.Even ) );
             east.setInsets( new Insets3f( 5, 5, 5, 5 ) );            
             container.addChild( east, Position.East );            
             }
@@ -109,7 +109,7 @@ public class HudState extends BaseAppState
         if( west == null )
             {
             west = new Container();
-            west.setLayout( new SpringGridLayout( Axis.Y, Axis.X, FillMode.NONE, FillMode.EVEN ) );
+            west.setLayout( new SpringGridLayout( Axis.Y, Axis.X, FillMode.None, FillMode.Even ) );
             west.setInsets( new Insets3f( 5, 5, 5, 5 ) );            
             container.addChild( west, Position.West );            
             }
