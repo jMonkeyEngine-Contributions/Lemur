@@ -41,6 +41,7 @@ import com.jme3.font.Rectangle;
 import com.jme3.math.*;
 import com.simsilica.lemur.core.GuiControl;
 import com.simsilica.lemur.HAlignment;
+import com.simsilica.lemur.LayerComparator;
 import com.simsilica.lemur.VAlignment;
 
 
@@ -57,6 +58,7 @@ public class TextComponent extends AbstractGuiComponent
     private HAlignment hAlign = HAlignment.LEFT;
     private VAlignment vAlign = VAlignment.TOP;
     private Vector3f offset = null;
+    private int layer;
 
     public TextComponent( String text, BitmapFont font ) {
         this.bitmapText = new BitmapText(font);
@@ -93,6 +95,18 @@ public class TextComponent extends AbstractGuiComponent
 
     public String getText() {
         return bitmapText.getText();
+    }
+
+    public void setLayer( int layer ) {
+        if( this.layer == layer ) {
+            return;
+        }
+        this.layer = layer;
+        resetLayer();        
+    }
+    
+    public int getLayer() {
+        return layer;
     }
 
     public void setHAlignment( HAlignment a ) {
@@ -133,6 +147,7 @@ public class TextComponent extends AbstractGuiComponent
         newText.setLocalTranslation(bitmapText.getLocalTranslation());
         newText.setSize(getFontSize());
         this.bitmapText = newText;
+        resetLayer();
 
         // Need to invalidate because we probably changed size
         // And that will realign us, etc. anyway.
@@ -273,5 +288,9 @@ public class TextComponent extends AbstractGuiComponent
                 bitmapText.setVerticalAlignment(VAlign.Center);
                 break;
         }
+    }
+    
+    protected void resetLayer() {
+        LayerComparator.resetLayer(bitmapText, layer);    
     }
 }
