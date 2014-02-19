@@ -87,6 +87,7 @@ public class Label extends Panel {
         Styles styles = GuiGlobals.getInstance().getStyles();
         BitmapFont font = styles.getAttributes(elementId.getId(), style).get("font", BitmapFont.class);
         this.text = new TextComponent(s, font);
+        text.setLayer(3);
 
         getControl(GuiControl.class).addComponent(KEY_TEXT, text);
 
@@ -187,6 +188,7 @@ public class Label extends Panel {
 
             // Else we need to create the shadow
             this.shadow = new TextComponent(getText(), getFont());
+            shadow.setLayer(2);
             shadow.setOffset(shadowOffset.x, shadowOffset.y, shadowOffset.z);
             shadow.setFontSize(getFontSize());
             shadow.setHAlignment(text.getHAlignment());
