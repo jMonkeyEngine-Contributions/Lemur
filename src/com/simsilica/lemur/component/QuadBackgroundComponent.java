@@ -216,6 +216,10 @@ public class QuadBackgroundComponent extends AbstractGuiComponent
                             });
             }
             background = new Geometry("background", q);
+            // Can't do this even though it seems logical because it
+            // is just as likely that we are in bucket.gui.  It is up to
+            // the caller to put the main 3D ui in the transparent bucket
+            //background.setQueueBucket(Bucket.Transparent); 
             if( material == null ) {
                 createMaterial();
             }
