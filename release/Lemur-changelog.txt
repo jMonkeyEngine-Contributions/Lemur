@@ -1,6 +1,6 @@
 
-Lemur TBD
-----------
+Lemur r1375
+------------
 * TouchAppState fixed to avoid some minor per-update garbage
     creation.
 * Refactored how Styles are kept internally.  This fixes some
