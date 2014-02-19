@@ -4,7 +4,24 @@ Lemur TBD
 * TouchAppState fixed to avoid some minor per-update garbage
     creation.
 * Refactored how Styles are kept internally.  This fixes some
-    limitations that existed with parent/child selectors.    
+    limitations that existed with parent/child selectors.
+* LayerComparator's setLayer() utility methods were modified to
+    treat layer 0 as null so the attribute gets removed.
+* Added layer number support to TextComponent and modified
+    Label to give text components layers that will be less
+    likely to conflict with backgrounds (also text with shadows).
+* Fixed a small event consumption bug in PickEventSession that
+    only affected cases where MouseEventControl and CursorEventControl
+    were used on a spatial together.
+* Fixed the camel-casing on the FillMode enum.  This will break anyone
+    using the old names but enums are hard to fix nicely and I feel
+    it's better to bite the bullet now.
+* Fixed the camel-casing on the HAlignment and VAlignment enums.  This
+    will break anyone using the old names, see above for reasoning.
+* Fixed the camel-casing on the InputState enum.  This will break anyone 
+    using the old names, see above for reasoning.
+    Sorry for the trouble.
+    
 
 
 Lemur r1327
