@@ -42,6 +42,7 @@ import com.jme3.renderer.ViewPort;
 import com.jme3.scene.Spatial;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.logging.Logger;
 
 
@@ -68,25 +69,27 @@ public class TouchAppState extends BaseAppState {
      *  event frame to the next.
      */
     private PickEventSession session = new PickEventSession();
-    private Map<Integer, PickEventSession> sessionMap = new HashMap<Integer, PickEventSession>();
-    private Map<Integer, Location> locationMap = new HashMap<Integer, Location>();
+    protected Map<Integer, PointerData> pointerDataMap = new HashMap<Integer, PointerData>();
 
-    // storage class for the last touch locations of the active pointers
-    private class Location {
-        private int x;
-        private int y;
+    /**
+     * Storage class for the session and last location of the touch events
+     *  for a single pointer (finger for touch). </br>
+     * Not using a Vector2f to minimize garbage collection since the
+     *  touch event from jME provides 2 floats for x and y.
+     */
+    protected class PointerData {
+        private int pointerId;
+        private PickEventSession session;
+        private int lastX;
+        private int lastY;
 
-        private Location(int x, int y) {
-            this.x = x;
-            this.y = y;
-        }
-
-        private void set(int x, int y) {
-            this.x = x;
-            this.y = y;
+        protected PointerData(int pointerId, PickEventSession session, int lastX, int lastY) {
+            this.pointerId = pointerId;
+            this.session = session;
+            this.lastX = lastX;
+            this.lastY = lastY;
         }
     }
-
 
     public TouchAppState( Application app ) {
         setEnabled(true);
@@ -132,8 +135,7 @@ public class TouchAppState extends BaseAppState {
             removeCollisionRoot( app.getGuiViewPort() );
             removeCollisionRoot( app.getViewPort() );
         }
-        sessionMap.clear();
-        locationMap.clear();
+        pointerDataMap.clear();
     }
 
     @Override
@@ -158,46 +160,79 @@ public class TouchAppState extends BaseAppState {
         dispatchMotion();
     }
 
+    /**
+     * Dispatches the last touch locations to the active PickEventSessions. </br>
+     * When touch motion events occur, the touch location is stored and then
+     * dispatched at the frequency defined to avoid sending more motions
+     * than necessary.
+     * An early out is provided if no PickEventSessions are active (ie. no touch
+     * pointers are active).
+     */
     protected void dispatchMotion() {
-        if (sessionMap.isEmpty()) {
+        if (pointerDataMap.isEmpty()) {
             return;
         }
-        for (int pointerId: sessionMap.keySet()) {
-            Location lastLocation = locationMap.get(pointerId);
-            if (lastLocation != null) {
-                sessionMap.get(pointerId).cursorMoved(lastLocation.x, lastLocation.y);
-            }
+        for (Entry<Integer, PointerData> entry: pointerDataMap.entrySet()) {
+            PointerData pointerData = entry.getValue();
+            pointerData.session.cursorMoved(
+                    pointerData.lastX, pointerData.lastY);
         }
     }
 
-    protected boolean dispatchButton(int pointerId, int x, int y, boolean pressed) {
-        PickEventSession targetSession = sessionMap.get(pointerId);
-        // call cursorMoved to update the hitTarget before calling buttonEvent
-        boolean moveConsumed = targetSession.cursorMoved(x, y);
+    /**
+     * Dispatches a button action to the appropriate PickEventSession for the
+     * touch pointer provided.
+     * @param pointerData  PointerData object for the appropriate touch pointer
+     * @param pressed  True when pressed, False when released
+     * @return  True if the PickEventSession consumed the event, False otherwise.
+     */
+    protected boolean dispatchButton(PointerData pointerData, boolean pressed) {
         // We are passing BUTTON_LEFT to buttonEvent all the time.
         // This is ok because touch motion is separated by individual
         // targetSesstions for each finger.  Since each session only gets the
         // touch motion for the finger that is associated with the session,
         // it's ok to not track the touch pointerId inside each session.
-        boolean buttonConsumed = targetSession.buttonEvent(MouseInput.BUTTON_LEFT, x, y, pressed);
+        boolean buttonConsumed = pointerData.session.buttonEvent(
+                MouseInput.BUTTON_LEFT, pointerData.lastX, pointerData.lastY, pressed);
         if (buttonConsumed && !pressed) {
-            targetSession.clearHitTarget();
+            // For the UP event, clear the hitTarget so mouseExited will be
+            // called.  This is necessary because for touch there are no additional
+            // mouse motions after the UP to cause mouseExited to be called.
+            pointerData.session.clearHitTarget();
         }
         return buttonConsumed;
     }
 
-    protected PickEventSession getPickSession(int pointerId) {
-        PickEventSession targetSession;
-        if (sessionMap.isEmpty()) {
-            targetSession = session;
-        } else if (!sessionMap.containsKey(pointerId)) {
-            targetSession = session.clone();
+    /**
+     * Returns (or creates) the PointerData object with the appropriate
+     * PickEventSession and X/Y coordinates for the provided pointerId. </br>
+     * The provided X and Y locations are stored in the PointerData object for
+     * created PointerData objects and updated if the PointerData object already exists.
+     * @param pointerId  Touch pointer id
+     * @param x  X component of the touch location in pixels
+     * @param y  Y component of the touch location in pixels
+     * @return  Associated PointerData object which contains the appropriate
+     * PickEventSession and X/Y coordinates of the last touch event
+     */
+    protected PointerData getPointerData(int pointerId, int x, int y) {
+        PointerData pointerData;
+        if (pointerDataMap.isEmpty()) {
+            pointerData = new PointerData(pointerId, session, x, y);
+        } else if (!pointerDataMap.containsKey(pointerId)) {
+            pointerData = new PointerData(pointerId, session.clone(), x, y);
         } else {
-            targetSession = sessionMap.get(pointerId);
+            pointerData = pointerDataMap.get(pointerId);
+            pointerData.lastX = x;
+            pointerData.lastY = y;
         }
-        return targetSession;
+        pointerDataMap.put(pointerId, pointerData);
+        return pointerData;
     }
 
+    /**
+     * TouchObserver provides the touch event data (pointer, x, and y) to the
+     * Lemur pick session for processing.
+     */
     protected class TouchObserver extends DefaultRawInputListener {
 
         @Override
@@ -205,26 +240,32 @@ public class TouchAppState extends BaseAppState {
             if (!isEnabled()) {
                 return;
             }
+            PointerData pointerData;
             switch (te.getType()) {
                 case DOWN:
-                    sessionMap.put(te.getPointerId(), getPickSession(te.getPointerId()));
-                    locationMap.put(te.getPointerId(), new Location((int)te.getX(), (int)te.getY()));
-                    if (dispatchButton(te.getPointerId(), (int)te.getX(), (int)te.getY(), true)) {
+                    pointerData = getPointerData(
+                            te.getPointerId(), (int)te.getX(), (int)te.getY());
+                    if (dispatchButton(pointerData, true)) {
                         te.setConsumed();
                     }
                     break;
                 case MOVE:
-                    Location lastLocation = locationMap.get(te.getPointerId());
-                    if (lastLocation != null) {
-                        lastLocation.set((int)te.getX(), (int)te.getY());
+                    pointerData = pointerDataMap.get(te.getPointerId());
+                    if (pointerData != null) {
+                        pointerData.lastX = (int)te.getX();
+                        pointerData.lastY = (int)te.getY();
                     }
                     break;
                 case UP:
-                    if (dispatchButton(te.getPointerId(), (int)te.getX(), (int)te.getY(), false)) {
-                        te.setConsumed();
+                    pointerData = pointerDataMap.get(te.getPointerId());
+                    if (pointerData != null) {
+                        pointerData.lastX = (int)te.getX();
+                        pointerData.lastY = (int)te.getY();
+                        if (dispatchButton(pointerData, false)) {
+                            te.setConsumed();
+                        }
+                        pointerDataMap.remove(te.getPointerId());
                     }
-                    locationMap.remove(te.getPointerId());
-                    sessionMap.remove(te.getPointerId());
                     break;
                 default:
                     break;
@@ -232,5 +273,3 @@ public class TouchAppState extends BaseAppState {
         }
     }
 }
-
-
