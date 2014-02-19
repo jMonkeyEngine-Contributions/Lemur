@@ -29,7 +29,7 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
  * LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
  * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
- * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ * SOFTWARE, Even IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
 package com.simsilica.lemur.component;
@@ -62,7 +62,7 @@ public class BoxLayout extends AbstractGuiComponent
     private Vector3f lastPreferredSize;
 
     public BoxLayout() {
-        this(Axis.Y, FillMode.EVEN);
+        this(Axis.Y, FillMode.Even);
     }
 
     public BoxLayout( Axis axis, FillMode fill ) {
@@ -137,7 +137,7 @@ public class BoxLayout extends AbstractGuiComponent
         // their proportion.  We could even alter how we fill
         // to not increase their size at all.  Possible modes
         // for stretching:
-        // NONE, EVEN, PROPORTIONAL
+        // None, Even, Proportional
 
         float axisPrefTotal = 0;
         float axisSizeTotal = 0;
@@ -190,17 +190,17 @@ public class BoxLayout extends AbstractGuiComponent
             }
 
             switch( fill ) {
-                case NONE:
+                case None:
                     axisSize = axisPref;
                     break;
-                case EVEN:
+                case Even:
                     // Even means that they all grow evenly... not
                     // that they are forced to be the same size.  So
                     // we take the total difference and divide it evenly
                     // among the children.
                     axisSize = axisPref + (axisSizeTotal - axisPrefTotal)/children.size();
                     break;
-                case PROPORTIONAL:
+                case Proportional:
                     // All children expand proportional to their relation
                     // to the overall preferred size.  Bigger components get more
                     // share.

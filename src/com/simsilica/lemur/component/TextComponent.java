@@ -55,8 +55,8 @@ public class TextComponent extends AbstractGuiComponent
                            implements ColoredComponent {
     private BitmapText bitmapText;
     private Rectangle textBox;
-    private HAlignment hAlign = HAlignment.LEFT;
-    private VAlignment vAlign = VAlignment.TOP;
+    private HAlignment hAlign = HAlignment.Left;
+    private VAlignment vAlign = VAlignment.Top;
     private Vector3f offset = null;
     private int layer;
 
@@ -267,24 +267,24 @@ public class TextComponent extends AbstractGuiComponent
             return;
 
         switch( hAlign ) {
-            case LEFT:
+            case Left:
                 bitmapText.setAlignment(Align.Left);
                 break;
-            case RIGHT:
+            case Right:
                 bitmapText.setAlignment(Align.Right);
                 break;
-            case CENTER:
+            case Center:
                 bitmapText.setAlignment(Align.Center);
                 break;
         }
         switch( vAlign ) {
-            case TOP:
+            case Top:
                 bitmapText.setVerticalAlignment(VAlign.Top);
                 break;
-            case BOTTOM:
+            case Bottom:
                 bitmapText.setVerticalAlignment(VAlign.Bottom);
                 break;
-            case CENTER:
+            case Center:
                 bitmapText.setVerticalAlignment(VAlign.Center);
                 break;
         }

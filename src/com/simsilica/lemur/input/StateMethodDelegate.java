@@ -41,10 +41,10 @@ import java.lang.reflect.*;
  *  A convenience StateFunctionListener implementation that
  *  can call a method using reflection.  By default, the method
  *  is called on the "release" of a particular function, ie: when
- *  its state returns to OFF.  Methods that take an InputState
+ *  its state returns to Off.  Methods that take an InputState
  *  argument and are called by a StateMethodDelegate with the
  *  "takesArgument" parameter as 'true' will receive all events,
- *  POSTIVE, NEGATIVE, and OFF.
+ *  POSTIVE, Negative, and Off.
  *
  *  @author    Paul Speed
  */
@@ -100,7 +100,7 @@ public class StateMethodDelegate implements StateFunctionListener {
     public void valueChanged( FunctionId func, InputState value, double tpf ) {
         // We only forward on the releases unless the "takesArgument" flag
         // is true and then we deliver everything
-        if( takesArgument || value == InputState.OFF ) {
+        if( takesArgument || value == InputState.Off ) {
             callMethod(value);
         }
     }

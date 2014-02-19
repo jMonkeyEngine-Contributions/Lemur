@@ -234,7 +234,7 @@ public class InputMapper {
     }
 
     public Mapping map( FunctionId function, int mainKeyCode, Object... pressed ) {
-        return map(function, InputState.POSITIVE, mainKeyCode, pressed);
+        return map(function, InputState.Positive, mainKeyCode, pressed);
     }
 
     public Mapping map( FunctionId function, InputState bias, int mainKeyCode, Object... pressed ) {
@@ -392,11 +392,11 @@ public class InputMapper {
 
     protected InputState valueToState( double val ) {
         if( val < -0.01 )
-            return InputState.NEGATIVE;
+            return InputState.Negative;
         else if( val > 0.01 )
-            return InputState.POSITIVE;
+            return InputState.Positive;
         else
-            return InputState.OFF;
+            return InputState.Off;
     }
 
     protected class FunctionListeners {
@@ -524,11 +524,11 @@ public class InputMapper {
         }
 
         public void resetValue() {
-            if( valueToState(lastValue) == InputState.OFF )
+            if( valueToState(lastValue) == InputState.Off )
                 return;
 
             lastValue = 0;
-            lastState = InputState.OFF;
+            lastState = InputState.Off;
 
             // And we need to notify state listeners
             notifyStateChanged(function, lastState);
@@ -585,7 +585,7 @@ public class InputMapper {
         }
 
         public boolean isOn() {
-            return valueToState(lastValue) != InputState.OFF;
+            return valueToState(lastValue) != InputState.Off;
         }
 
         public double getValue() {
@@ -621,7 +621,7 @@ public class InputMapper {
 
         public void refresh() {
             // Only need to activate the first primary... and
-            // then only if the state would not be "OFF"
+            // then only if the state would not be "Off"
             boolean activatePrimary = isOn();
 
             for( StateGroup g : groups ) {

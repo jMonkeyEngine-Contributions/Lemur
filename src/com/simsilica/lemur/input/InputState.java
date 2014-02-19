@@ -37,17 +37,17 @@ package com.simsilica.lemur.input;
 
 /**
  *  Represents a trinary input state (0, 1, -1).
- *  Normal on/off control inputs are mapped to InputState.POSITIVE
- *  and InputState.OFF.  When analog axis inputs are translated
+ *  Normal on/off control inputs are mapped to InputState.Positive
+ *  and InputState.Off.  When analog axis inputs are translated
  *  into states they can be any of the InputState values depending
  *  on if the analog value is positive, negative, or zero.  Also,
- *  on/off inputs can be biased to be InputState.NEGATIVE instead
- *  of InputState.POSITIVE.
+ *  on/off inputs can be biased to be InputState.Negative instead
+ *  of InputState.Positive.
  *
  *  @author    Paul Speed
  */
 public enum InputState {
-    OFF(0), POSITIVE(1), NEGATIVE(-1);
+    Off(0), Positive(1), Negative(-1);
 
     private int val;
 

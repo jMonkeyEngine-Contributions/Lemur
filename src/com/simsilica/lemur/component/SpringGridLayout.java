@@ -29,7 +29,7 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
  * LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
  * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
- * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ * SOFTWARE, Even IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
 package com.simsilica.lemur.component;
@@ -72,7 +72,7 @@ public class SpringGridLayout extends AbstractGuiComponent
     private Vector3f lastPreferredSize = new Vector3f();
 
     public SpringGridLayout() {
-        this(Axis.Y, Axis.X, FillMode.EVEN, FillMode.EVEN);
+        this(Axis.Y, Axis.X, FillMode.Even, FillMode.Even);
     }
 
     public SpringGridLayout( Axis mainAxis, Axis minorAxis, FillMode mainFill, FillMode minorFill ) {
@@ -184,9 +184,9 @@ public class SpringGridLayout extends AbstractGuiComponent
         float maxAlternate = refreshRowColPrefs();
 
         lastPreferredSize.set(0,0,0);
-        if( mainFill == FillMode.FORCED_EVEN ) {
+        if( mainFill == FillMode.ForcedEven ) {
             // Need to calculate the max size and then multiply
-            // by count.  In FORCED_EVEN, all rows will be the
+            // by count.  In ForcedEven, all rows will be the
             // same size so the preferred size means that no one
             // has to shrink.
             float max = 0;
@@ -200,7 +200,7 @@ public class SpringGridLayout extends AbstractGuiComponent
             }
         }
 
-        if( mainFill == FillMode.FORCED_EVEN ) {
+        if( mainFill == FillMode.ForcedEven ) {
             // Need to calculate the max size and then multiply
             // by count
             float max = 0;
@@ -219,31 +219,31 @@ public class SpringGridLayout extends AbstractGuiComponent
 
     protected float weighted(int index, float pref, float totalSize, float totalPref, int count, FillMode fill, Axis axis) {
         switch( fill ) {
-            case NONE:
+            case None:
                 return pref;
-            case FIRST:
+            case First:
                 if( index == 0 ) {
                     return pref + (totalSize - totalPref);
                 } else {
                     return pref;
                 }
-            case LAST:
+            case Last:
                 if( index == count - 1 ) {
                     return pref + (totalSize - totalPref);
                 } else {
                     return pref;
                 }
-            case EVEN:
+            case Even:
                 // Even means that they all grow evenly... not
                 // that they are forced to be the same size.  So
                 // we take the total difference and divide it evenly
                 // among the children.
                 return pref + (totalSize - totalPref)/count;
-            case FORCED_EVEN:
+            case ForcedEven:
                 // ForcedEven means that they are all forced to the
                 // same size
                 return totalSize/count;
-            case PROPORTIONAL:
+            case Proportional:
                 // All children expand proportional to their relation
                 // to the overall preferred size.  Bigger components get more
                 // share.

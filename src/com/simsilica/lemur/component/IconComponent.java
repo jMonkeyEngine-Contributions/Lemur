@@ -66,8 +66,8 @@ public class IconComponent extends AbstractGuiComponent
     private float xMargin = 0;
     private float yMargin = 0;
     private float zOffset = 0.01f;
-    private HAlignment hAlign = HAlignment.LEFT;
-    private VAlignment vAlign = VAlignment.CENTER;
+    private HAlignment hAlign = HAlignment.Left;
+    private VAlignment vAlign = VAlignment.Center;
     private Vector3f offset = null;
     private Vector2f iconScale;
     private boolean overlay = false;
@@ -241,12 +241,12 @@ public class IconComponent extends AbstractGuiComponent
         float height = iconScale.y * image.getImage().getHeight() + yMargin * 2;
 
         switch( vAlign ) {
-            case TOP:
-            case BOTTOM:
+            case Top:
+            case Bottom:
                 // Both of these will add to the existing size
                 size.y += height;
                 break;
-            case CENTER:
+            case Center:
                 // This will only increase the size if it isn't
                 // big enough
                 size.y = Math.max(height, size.y);
@@ -254,12 +254,12 @@ public class IconComponent extends AbstractGuiComponent
         }
 
         switch( hAlign ) {
-            case LEFT:
-            case RIGHT:
+            case Left:
+            case Right:
                 // Both of these will add to the existing size
                 size.x += width;
                 break;
-            case CENTER:
+            case Center:
                 // This will only increase the size if it isn't
                 // big enough
                 size.x = Math.max(width, size.x);
@@ -279,39 +279,39 @@ public class IconComponent extends AbstractGuiComponent
         float cy = 0;
 
         switch( hAlign ) {
-            case LEFT:
+            case Left:
                 cx = pos.x + boxWidth * 0.5f;
                 if( !overlay ) {
                     pos.x += boxWidth;
                     size.x -= boxWidth;
                 }
                 break;
-            case RIGHT:
+            case Right:
                 cx = (pos.x + size.x) - boxWidth * 0.5f;
                 if( !overlay ) {
                     size.x -= boxWidth;
                 }
                 break;
-            case CENTER:
+            case Center:
                 cx = pos.x + size.x * 0.5f;
                 break;
         }
 
         switch( vAlign ) {
-            case TOP:
+            case Top:
                 cy = pos.y - boxHeight * 0.5f;
                 if( !overlay ) {
                     pos.y -= boxHeight;
                     size.y -= boxHeight;
                 }
                 break;
-            case BOTTOM:
+            case Bottom:
                 cy = (pos.y - size.y) + boxWidth * 0.5f;
                 if( !overlay ) {
                     size.y -= boxHeight;
                 }
                 break;
-            case CENTER:
+            case Center:
                 cy = pos.y - size.y * 0.5f;
                 break;
         }

@@ -112,7 +112,7 @@ public class Checkbox extends Button {
         attrs.set("background", new QuadBackgroundComponent( new ColorRGBA(0,0,0,0) ), false);
         attrs.set("onView", on, false);
         attrs.set("offView", off, false);
-        attrs.set("textVAlignment", VAlignment.CENTER, false);
+        attrs.set("textVAlignment", VAlignment.Center, false);
     }
 
     public void setModel( CheckboxModel model ) {

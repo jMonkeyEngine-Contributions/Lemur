@@ -37,11 +37,11 @@ package com.simsilica.lemur;
 
 /**
  *  Vertical alignment of a visual element, either
- *  LEFT, RIGHT, or CENTER.
+ *  Top, Bottom, or Center.
  *
  *  @author    Paul Speed
  */
 public enum VAlignment {
-    TOP, BOTTOM, CENTER
+    Top, Bottom, Center
 }
 
