@@ -218,7 +218,7 @@ public class PickEventSession {
 
         if( this.hitTarget == s )
             return;
-
+            
         CursorMotionEvent event1 = null;
         MouseMotionEvent event2 = null;
 
@@ -308,13 +308,14 @@ public class PickEventSession {
  
             // To properly emulate the old behavior, we need to deliver to both
             // controls.           
+            boolean consumed = false;
             if( capture.getControl(MouseEventControl.class) != null ) {
                 event = new MouseMotionEvent((int)cursor.x, (int)cursor.y, 0, 0, 0, 0);
                 delivered.add(capture);
                 capture.getControl(MouseEventControl.class).mouseMoved(event, capture, capture);
                 if( event.isConsumed() ) {
                     // We're done already
-                    return true;
+                    consumed = true;
                 }
             }
             if( capture.getControl(CursorEventControl.class) != null ) {
@@ -336,9 +337,11 @@ public class PickEventSession {
                 capture.getControl(CursorEventControl.class).cursorMoved(cme, capture, capture);
                 if( cme.isConsumed() ) {
                     // We're done already
-                    return true;
+                    consumed = true;
                 }
-            } 
+            }
+            if( consumed ) 
+                return true; 
         }
 
         // Search each root for hits
@@ -365,6 +368,10 @@ public class PickEventSession {
                     // Only deliver events to each hit once.
                     if( delivered.add(hit) ) {
                         
+                        // To properly emulate the old behavior, we need to deliver to both
+                        // controls.           
+                        boolean consumed = false;
+            
                         if( hit.getControl(MouseEventControl.class) != null ) {
                             // See if this is one that will take our event
                             if( event == null ) {
@@ -375,7 +382,7 @@ public class PickEventSession {
     
                             // If the event is consumed then we're done
                             if( event.isConsumed() ) {
-                                return true;
+                                consumed = true;
                             }
                         }
                         
@@ -385,9 +392,12 @@ public class PickEventSession {
                             
                             // If the event is consumed then we're done
                             if( cme.isConsumed() ) {
-                                return true;
-                            }
-                        } 
+                                consumed = true;
+                            }                            
+                        }
+                        
+                        if( consumed ) 
+                            return true; 
                     }
                 }
             }
