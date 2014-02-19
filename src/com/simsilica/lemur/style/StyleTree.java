@@ -83,7 +83,7 @@ public class StyleTree {
 
     public Attributes getAttributes( ElementId elementId ) {
         Attributes results = new Attributes(styles);
-        
+
         String[] parts = elementId.getParts();
         
         // Recursively descend starting at the tail of the ID
@@ -112,7 +112,7 @@ public class StyleTree {
         }
  
         // So check for an exact match at this level       
-        String key = parts[index];
+        String key = parts[index];       
         Node child = node.getChild(key, false);
         if( child != null ) {
             accumulateAttributes(child, parts, index-1, followWildCards, results);
@@ -125,7 +125,13 @@ public class StyleTree {
             // drop down and do a wild card search.
             // ...if we still have parts left.
             Node wildCard = node.getChild(null, false);
-            if( index > 0 && wildCard != null ) {
+
+            //if( index > 0 && wildCard != null ) {
+            // Here I had index > 0 before but I think that's wrong.  It would
+            // fail to find wild-carded 'parents' at the highest level.
+            // So something like "something.label" with a something * label rule
+            // would fail to resolve            
+            if( wildCard != null ) {
                 // Check each part for a wild card child and apply
                 // each in turn.  Because we start with most current then
                 // we _should_ get most specific first.
