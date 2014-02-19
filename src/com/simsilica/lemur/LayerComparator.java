@@ -69,7 +69,11 @@ public class LayerComparator implements GeometryComparator {
     }
 
     public static void setLayer( Spatial s, int layer ) {
-        s.setUserData(LAYER, layer);
+        if( layer == 0 ) {
+            s.setUserData(LAYER, null);
+        } else {        
+            s.setUserData(LAYER, layer);
+        }
     }
 
     public static void resetLayer( Spatial s, int layer ) {
@@ -102,6 +106,11 @@ public class LayerComparator implements GeometryComparator {
 
         for( Spatial s = g.getParent(); s != null; s = s.getParent() ) {
             Integer i = s.getUserData(LAYER);
+            // I'm not sure skipping a null layer is right but it's 
+            // been this way for a while without obvious issue.  It
+            // seems like skipping it might cause two separate objects
+            // with sparse hierarchies to sort incorrectly.  I'm
+            // leaving it for now.
             if (i == null)
                 continue;
             // Should really base the divisor on the number
