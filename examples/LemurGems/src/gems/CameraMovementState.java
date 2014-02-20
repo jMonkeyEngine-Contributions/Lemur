@@ -57,7 +57,7 @@ public class CameraMovementState extends BaseAppState
 
     private InputMapper inputMapper;
     private Camera camera;
-    private double turnSpeed = 2.5;  // one half complete resolution in 2.5 seconds
+    private double turnSpeed = 2.5;  // one half complete revolution in 2.5 seconds
     private double yaw = FastMath.PI;
     private double pitch;
     private double maxPitch = FastMath.HALF_PI;
@@ -178,6 +178,10 @@ public class CameraMovementState extends BaseAppState
         }
     }
  
+    /**
+     *  Implementation of the StateFunctionListener interface.
+     */
+    @Override
     public void valueChanged( FunctionId func, InputState value, double tpf ) {
  
         // Change the speed based on the current run mode
@@ -195,6 +199,10 @@ public class CameraMovementState extends BaseAppState
         }
     }
 
+    /**
+     *  Implementation of the AnalogFunctionListener interface.
+     */
+    @Override
     public void valueActive( FunctionId func, double value, double tpf ) {
  
         // Setup rotations and movements speeds based on current
