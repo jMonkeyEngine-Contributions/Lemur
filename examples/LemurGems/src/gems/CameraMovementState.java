@@ -68,8 +68,7 @@ public class CameraMovementState extends BaseAppState
     private double elevation;
     private double speed = 3.0;
 
-    public CameraMovementState( boolean enabled ) {
-        setEnabled(enabled);
+    public CameraMovementState() {
     }
 
     public void setPitch( double pitch ) {

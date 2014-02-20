@@ -47,23 +47,31 @@ import com.simsilica.lemur.GuiGlobals;
  *
  * @author pspeed
  */
-public class Main extends SimpleApplication {
+public class CameraDemo extends SimpleApplication {
 
     public static void main(String[] args) {
-        Main app = new Main();
+        CameraDemo app = new CameraDemo();
         app.start();
     }
 
-    public Main() {
-        super(new StatsAppState(), new CameraMovementState(), new CameraToggleState());
+    public CameraDemo() {
+        super(new StatsAppState(), new CameraMovementState());
     }
 
     @Override
     public void simpleInitApp() {
- 
-        // Initialize Lemur subsystems and setup the default
-        // camera controls.   
+    
+        // Let Lemur's GuiGlobals initialize a lot of goodies for us.
+        // This will also setup a static InputMapper that we can reference.
+        // An alternative would have been to create and manage our own
+        // InputMapper instance instead... but later tutorials will rely
+        // on other parts of Lemur so we might as well initialize it now.
         GuiGlobals.initialize(this);
+        
+        // The camera input mappings and the camera input handling have
+        // been separated for clarity but this means that by default
+        // the CameraMovementState won't be provided any input.
+        // We have to map some inputs to its functions:
         CameraMovementFunctions.initializeDefaultMappings(GuiGlobals.getInstance().getInputMapper());
 
         // Now create the normal simple test scene    

@@ -31,59 +31,59 @@
  * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+
 package gems;
 
-import com.jme3.app.SimpleApplication;
-import com.jme3.app.StatsAppState;
-import com.jme3.material.Material;
-import com.jme3.math.ColorRGBA;
-import com.jme3.renderer.RenderManager;
-import com.jme3.scene.Geometry;
-import com.jme3.scene.shape.Box;
+import com.jme3.app.Application;
+import com.jme3.input.KeyInput;
 import com.simsilica.lemur.GuiGlobals;
+import com.simsilica.lemur.event.BaseAppState;
+import com.simsilica.lemur.input.FunctionId;
+import com.simsilica.lemur.input.InputMapper;
+
 
 /**
- *  The main application for demonstrating the Lemur Gems examples. 
- *
- * @author pspeed
+ *  Toggles the CameraMovementState on and off with the space bar
+ *  or other configured key combination.
+ *  
+ *  @author    Paul Speed
  */
-public class Main extends SimpleApplication {
+public class CameraToggleState extends BaseAppState {
 
-    public static void main(String[] args) {
-        Main app = new Main();
-        app.start();
+    public static final FunctionId F_CAMERA_TOGGLE = new FunctionId("Camera Toggle"); 
+
+    private InputMapper inputMapper;
+
+    public CameraToggleState() {
     }
-
-    public Main() {
-        super(new StatsAppState(), new CameraMovementState(), new CameraToggleState());
+    
+    public void toggleCamera() {
+        CameraMovementState state = getState(CameraMovementState.class);
+        state.setEnabled(!state.isEnabled());
     }
 
     @Override
-    public void simpleInitApp() {
+    protected void initialize(Application app) {
+        
+        // Setup the input mappings configured in the constructor
+        inputMapper = GuiGlobals.getInstance().getInputMapper();
  
-        // Initialize Lemur subsystems and setup the default
-        // camera controls.   
-        GuiGlobals.initialize(this);
-        CameraMovementFunctions.initializeDefaultMappings(GuiGlobals.getInstance().getInputMapper());
-
-        // Now create the normal simple test scene    
-        Box b = new Box(1, 1, 1);
-        Geometry geom = new Geometry("Box", b);
-
-        Material mat = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
-        mat.setColor("Color", ColorRGBA.Blue);
-        geom.setMaterial(mat);
-
-        rootNode.attachChild(geom);
+        // Map the space bar to our function
+        inputMapper.map(F_CAMERA_TOGGLE, KeyInput.KEY_SPACE);
     }
 
     @Override
-    public void simpleUpdate(float tpf) {
-        //TODO: add update code
+    protected void cleanup(Application app) {
     }
 
     @Override
-    public void simpleRender(RenderManager rm) {
-        //TODO: add render code
+    protected void enable() {
+        // Register ourselves to be called when the function is triggered
+        inputMapper.addDelegate(F_CAMERA_TOGGLE, this, "toggleCamera");
+    }
+
+    @Override
+    protected void disable() {
+        inputMapper.removeDelegate(F_CAMERA_TOGGLE, this, "toggleCamera");
     }
 }
