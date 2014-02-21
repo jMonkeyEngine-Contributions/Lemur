@@ -49,18 +49,18 @@ import com.simsilica.lemur.event.DefaultMouseListener;
 import com.simsilica.lemur.event.MouseEventControl;
 
 /**
- *  The main application for demonstrating the Lemur Gems examples. 
+ *  The PickDemo application for demonstrating Lemur-based scene picking.
  *
- * @author pspeed
+ *  @author pspeed
  */
-public class Main extends SimpleApplication {
+public class PickDemo extends SimpleApplication {
 
     public static void main(String[] args) {
-        Main app = new Main();
+        PickDemo app = new PickDemo();
         app.start();
     }
 
-    public Main() {
+    public PickDemo() {
         super(new StatsAppState(), new CameraMovementState(), new CameraToggleState());
     }
 
