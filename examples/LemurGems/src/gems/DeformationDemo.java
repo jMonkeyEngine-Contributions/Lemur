@@ -35,7 +35,6 @@ package gems;
 
 import com.jme3.app.SimpleApplication;
 import com.jme3.app.StatsAppState;
-import com.jme3.input.MouseInput;
 import com.jme3.input.event.MouseButtonEvent;
 import com.jme3.input.event.MouseMotionEvent;
 import com.jme3.material.Material;
@@ -57,14 +56,14 @@ import com.simsilica.lemur.geom.MBox;
  *
  * @author pspeed
  */
-public class Main extends SimpleApplication {
+public class DeformationDemo extends SimpleApplication {
 
     public static void main(String[] args) {
-        Main app = new Main();
+        DeformationDemo app = new DeformationDemo();
         app.start();
     }
 
-    public Main() {
+    public DeformationDemo() {
         super(new StatsAppState(), new CameraMovementState(), new CameraToggleState());
     }
 
