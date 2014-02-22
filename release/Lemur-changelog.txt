@@ -2,6 +2,9 @@
 Lemur TBD
 ------------
 
+* Slider now consumes the MouseMotionEvent if dragging is in progress.  This
+    fixes an issue with the spatial highlighting being turned off if the mouse
+    or touch event slides off the spatial during dragging.
 
 Lemur r1375
 ------------
@@ -22,10 +25,10 @@ Lemur r1375
     it's better to bite the bullet now.
 * Fixed the camel-casing on the HAlignment and VAlignment enums.  This
     will break anyone using the old names, see above for reasoning.
-* Fixed the camel-casing on the InputState enum.  This will break anyone 
+* Fixed the camel-casing on the InputState enum.  This will break anyone
     using the old names, see above for reasoning.
     Sorry for the trouble.
-    
+
 
 
 Lemur r1327
@@ -51,9 +54,9 @@ Lemur r1327
 * Add the ability to retrieve the command lists from a button.
 * Added a double-gradient.png standard icon for creating 'glass-like'
     vertical bevels.
-* Added a protected getDragStartLocation() to the default DragHandler 
+* Added a protected getDragStartLocation() to the default DragHandler
     implementation so that subclasses can retrieve it if needed.  Useful
-    for implementations that will indicate "rubber-banding" or similar. 
+    for implementations that will indicate "rubber-banding" or similar.
 * Added a PickEventSession to handle delivery of cursor-based events
     to pickable components.  Useful for non-mouse based event handling
     (ie: joysticks, touch, etc.) or when event locations need to be
@@ -67,10 +70,10 @@ Lemur r1327
     they could better calculate projection.
 * Optimized QuadBackgroundComponent to avoid resizing the quad if its
     size hasn't changed.
-* Added getChildren() and clearChildren() to GuiLayout and its 
-    implementations.        
+* Added getChildren() and clearChildren() to GuiLayout and its
+    implementations.
 * Fixed SpringGridLayout.remove() to recalculate the row and column
-    counts.   
+    counts.
 * Exposed button states isPressed() and isHighlightOn().
 * Added a method to SpringGridLayout to get the node at a specific
     row and column.
@@ -84,7 +87,7 @@ Lemur r1327
 * GuiGlobals updated to automatically include touch support if
     detected.  (Currently if touch is detected then the mouse
     support is disabled.)
-* Updated DragHandler to be a CursorEventListener instead of a 
+* Updated DragHandler to be a CursorEventListener instead of a
     MouseEventListener.  This means it can avoid using the deprecated
     back door methods to getting ViewPort info since it is now part
     of the cursor event itself.
@@ -108,4 +111,4 @@ Lemur r1327
 * Added a removeListenersFromSpatial() method to MouseEventControl (and
     CursorEventControl) that acts just like the addListenersToSpatial()
     in that it will ignore spatials without the MouseEventControl.
-* Perform null checks in addListenersToSpatial() and removeListenersFromSpatial().            
+* Perform null checks in addListenersToSpatial() and removeListenersFromSpatial().
