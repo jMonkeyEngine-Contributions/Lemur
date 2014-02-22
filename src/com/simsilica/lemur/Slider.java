@@ -209,19 +209,19 @@ public class Slider extends Panel {
     public double getDelta() {
         return delta;
     }
-    
+
     public Button getIncrementButton() {
         return increment;
     }
-    
+
     public Button getDecrementButton() {
         return decrement;
     }
-    
+
     public Panel getRangePanel() {
         return range;
     }
-    
+
     public Button getThumbButton() {
         return thumb;
     }
@@ -336,8 +336,8 @@ public class Slider extends Panel {
                     break;
             }
 
-            v1 = event.getRelativeViewCoordinates(range, v1);  
-            v2 = event.getRelativeViewCoordinates(range, v2);  
+            v1 = event.getRelativeViewCoordinates(range, v1);
+            v2 = event.getRelativeViewCoordinates(range, v2);
 
             Vector3f dir = v2.subtract(v1);
             float length = dir.length();
@@ -350,6 +350,8 @@ public class Slider extends Panel {
             // Now, the actual amount is then dot/length
             float percent = dot / length;
             model.setPercent(startPercent + percent);
+
+            event.setConsumed();
         }
     }
 }
