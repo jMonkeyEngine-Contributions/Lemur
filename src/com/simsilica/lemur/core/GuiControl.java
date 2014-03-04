@@ -103,7 +103,7 @@ public class GuiControl extends AbstractNodeControl<GuiControl>
     }
 
     public void focusLost() {
-        if( this.focused ) {
+        if( !this.focused ) {
             return;
         }
         this.focused = false;
