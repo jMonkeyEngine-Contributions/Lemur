@@ -34,6 +34,7 @@
 
 package com.simsilica.lemur.focus;
 
+import java.util.*;
 
 import com.jme3.app.Application;
 import com.jme3.scene.Spatial;
@@ -50,7 +51,7 @@ import com.simsilica.lemur.event.BaseAppState;
 public class FocusManagerState extends BaseAppState {
 
     private Spatial focus;
-    private FocusTarget focusTarget;
+    private List<Spatial> focusHierarchy = Collections.emptyList();
 
     public FocusManagerState() {
         setEnabled(true);
@@ -71,17 +72,10 @@ public class FocusManagerState extends BaseAppState {
     public void setFocus( Spatial focus ) {
         if( this.focus == focus )
             return;
-
-        if( focusTarget != null && isEnabled() ) {
-            // Lose focus from the old one.
-            focusTarget.focusLost();
-        }
+       
         this.focus = focus;
-        focusTarget = getFocusTarget(focus);
-
-        if( focusTarget != null && isEnabled() ) {
-            // Gain focus
-            focusTarget.focusGained();
+        if( isEnabled() ) {
+            updateFocusHierarchy();
         }
     }
 
@@ -97,20 +91,90 @@ public class FocusManagerState extends BaseAppState {
     protected void cleanup( Application app ) {
     }
 
+    protected List<Spatial> getHierarchy( Spatial s ) {
+        if( s == null ) {
+            return Collections.emptyList();
+        }
+        List<Spatial> result = new ArrayList<Spatial>();
+        for( ; s != null; s = s.getParent() ) {
+            result.add(0, s);
+        }
+        return result;
+    }
+
+    protected void updateFocusHierarchy() {
+    
+        // We need to deliver focus lost and focus gained
+        // to any parents that have changed... and we need to do
+        // it in root-first order.  There are one of two ways this
+        // can be done:
+        // 1) find the common ancestor and post-order recurse up
+        //    to the common ancestor for each hierarchy.
+        // 2) collect both hiearchies and step forward until they
+        //    diverge.
+        // Approach 2 ends up creating two new lists every time focus changes
+        // but approach 1 would require similar processing (at least one list)
+        // to even find the common ancestor.
+        // ...and approach 2 is much simpler... and we can cache the old
+        // hierarchy.
+        List<Spatial> oldHierarchy = focusHierarchy;
+        List<Spatial> newHierarchy = getHierarchy(focus);  
+ 
+        // Find the last common spatial... which will be the
+        // 'least common ancestor'
+        int lca = -1;
+        int commonLength = Math.min(oldHierarchy.size(), newHierarchy.size());
+        for( int i = 0; i < commonLength; i++ ) {
+            Spatial s1 = oldHierarchy.get(i);
+            Spatial s2 = newHierarchy.get(i);
+            if( s1 != s2 ) {
+                lca = i - 1;
+                break;
+            }
+        }
+        
+        // Tell the old hiearchy that focus is gone
+        for( int i = lca + 1; i < oldHierarchy.size(); i++ ) {
+            FocusTarget target = getFocusTarget(oldHierarchy.get(i));
+            if( target != null ) {
+                target.focusLost();
+            }
+        }
+        
+        // Tell the new hierarchy that we're here    
+        for( int i = lca + 1; i < newHierarchy.size(); i++ ) {
+            FocusTarget target = getFocusTarget(newHierarchy.get(i));
+            if( target != null ) {
+                target.focusGained();
+            }
+        }
+        
+        // Cache the hiearchy for later
+        focusHierarchy = newHierarchy;
+    }  
+
     @Override
     protected void enable() {
-        if( focusTarget != null ) {
-            // Gain focus
-            focusTarget.focusGained();
-        }
+        // Let the whole existing focus hiearchy know
+        // we're focused
+        for( Spatial s : focusHierarchy ) {
+            FocusTarget target = getFocusTarget(s);
+            if( target != null ) {
+                target.focusGained();
+            }
+        }  
     }
 
     @Override
     protected void disable() {
-        if( focusTarget != null ) {
-            // Lose focus
-            focusTarget.focusLost();
-        }
+        // Let the whole existing focus hiearchy know
+        // we're unfocused. 
+        for( Spatial s : focusHierarchy ) {
+            FocusTarget target = getFocusTarget(s);
+            if( target != null ) {
+                target.focusLost();
+            }
+        }  
     }
 }
 

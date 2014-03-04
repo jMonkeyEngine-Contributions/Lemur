@@ -6,6 +6,9 @@ Lemur TBD
     or touch event slides off the spatial during dragging.
 * Moved FocusTarget and FocusManagerState to a separate 'focus' package.
 * Added isFocused() and isFocusable() to FocusTarget.
+* Modified FocusManagerState to be hierarchy aware when it comes to notifying
+    changes in focus.  This means that parent FocusTargets will also get
+    notified.
     
 
 Lemur r1375
