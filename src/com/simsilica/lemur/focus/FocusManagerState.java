@@ -39,7 +39,6 @@ import com.jme3.app.Application;
 import com.jme3.scene.Spatial;
 import com.jme3.scene.control.Control;
 import com.simsilica.lemur.event.BaseAppState;
-import com.simsilica.lemur.focus.FocusTarget;
 
 
 /**
