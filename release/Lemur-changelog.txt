@@ -1,10 +1,11 @@
 
 Lemur TBD
 ------------
-
 * Slider now consumes the MouseMotionEvent if dragging is in progress.  This
     fixes an issue with the spatial highlighting being turned off if the mouse
     or touch event slides off the spatial during dragging.
+* Moved FocusTarget and FocusManagerState to a separate 'focus' package.
+    
 
 Lemur r1375
 ------------

@@ -48,7 +48,7 @@ import com.jme3.scene.Geometry;
 import com.jme3.scene.Spatial.CullHint;
 import com.jme3.scene.shape.Quad;
 import com.simsilica.lemur.DocumentModel;
-import com.simsilica.lemur.core.FocusTarget;
+import com.simsilica.lemur.focus.FocusTarget;
 import com.simsilica.lemur.core.GuiControl;
 import com.simsilica.lemur.GuiGlobals;
 import com.simsilica.lemur.core.GuiMaterial;

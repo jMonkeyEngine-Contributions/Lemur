@@ -32,13 +32,14 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package com.simsilica.lemur.event;
+package com.simsilica.lemur.focus;
 
 
 import com.jme3.app.Application;
 import com.jme3.scene.Spatial;
 import com.jme3.scene.control.Control;
-import com.simsilica.lemur.core.FocusTarget;
+import com.simsilica.lemur.event.BaseAppState;
+import com.simsilica.lemur.focus.FocusTarget;
 
 
 /**

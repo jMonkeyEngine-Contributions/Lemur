@@ -34,6 +34,7 @@
 
 package com.simsilica.lemur.core;
 
+import com.simsilica.lemur.focus.FocusTarget;
 import java.util.*;
 
 import com.jme3.math.Vector3f;

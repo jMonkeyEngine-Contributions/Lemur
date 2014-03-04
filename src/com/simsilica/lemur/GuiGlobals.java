@@ -43,7 +43,7 @@ import com.simsilica.lemur.style.Styles;
 import com.simsilica.lemur.event.KeyListener;
 import com.simsilica.lemur.event.KeyInterceptState;
 import com.simsilica.lemur.event.MouseAppState;
-import com.simsilica.lemur.event.FocusManagerState;
+import com.simsilica.lemur.focus.FocusManagerState;
 import com.jme3.app.Application;
 import com.jme3.asset.AssetManager;
 import com.jme3.asset.TextureKey;
