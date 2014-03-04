@@ -5,6 +5,7 @@ Lemur TBD
     fixes an issue with the spatial highlighting being turned off if the mouse
     or touch event slides off the spatial during dragging.
 * Moved FocusTarget and FocusManagerState to a separate 'focus' package.
+* Added isFocused() and isFocusable() to FocusTarget.
     
 
 Lemur r1375

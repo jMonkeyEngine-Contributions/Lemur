@@ -41,6 +41,15 @@ package com.simsilica.lemur.focus;
  *  @author    Paul Speed
  */
 public interface FocusTarget {
+    public boolean isFocused();    
     public void focusGained();
     public void focusLost();
+    
+    /**
+     *  Returns true if this target can currently accept 
+     *  focus through a normal transition.  If an attempt
+     *  is made to force the focus to this target then
+     *  focus may actually transition to a different target.
+     */
+    public boolean isFocusable();
 }

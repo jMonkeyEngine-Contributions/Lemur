@@ -56,6 +56,7 @@ public class GuiControl extends AbstractNodeControl<GuiControl>
     private Map<String,GuiComponent> index = new HashMap<String,GuiComponent>();
     private Vector3f preferredSizeOverride = null;
     private Vector3f lastSize = new Vector3f();
+    private boolean focused = false;
 
     public GuiControl( GuiComponent... components ) {
         this.components.addAll(Arrays.asList(components));
@@ -66,7 +67,31 @@ public class GuiControl extends AbstractNodeControl<GuiControl>
         return super.getNode();
     }
 
+    public boolean isFocused() {
+        return focused;
+    }
+
+    public boolean isFocusable() {
+        if( layout instanceof FocusTarget ) {
+            if( ((FocusTarget)layout).isFocusable() ) {
+                return true;
+            }
+        }
+        for( GuiComponent c : components ) {
+            if( c instanceof FocusTarget ) {
+                if( ((FocusTarget)c).isFocusable() ) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
     public void focusGained() {
+        if( this.focused ) {
+            return;
+        }
+        this.focused = true;
         for( GuiComponent c : components ) {
             if( c instanceof FocusTarget ) {
                 ((FocusTarget)c).focusGained();
@@ -78,6 +103,10 @@ public class GuiControl extends AbstractNodeControl<GuiControl>
     }
 
     public void focusLost() {
+        if( this.focused ) {
+            return;
+        }
+        this.focused = false;
         for( GuiComponent c : components ) {
             if( c instanceof FocusTarget ) {
                 ((FocusTarget)c).focusLost();

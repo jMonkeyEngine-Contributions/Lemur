@@ -187,6 +187,14 @@ public class TextEntryComponent extends AbstractGuiComponent
         super.detach(parent);
     }
 
+    public boolean isFocused() {
+        return focused;
+    }
+
+    public boolean isFocusable() {
+        return true; // should return isEnabled() when we have one
+    }
+
     public void focusGained() {
         if( this.focused )
             return;
