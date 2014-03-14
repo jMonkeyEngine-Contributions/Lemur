@@ -13,7 +13,8 @@ Lemur TBD
     wouldn't work if the containing GUI element already had its preferred
     size set.
 * Added a utility method findFocusTarget() to FocusManagerState.  This is
-    a refactoring of a previous protected method.        
+    a refactoring of a previous protected method.
+* Added a ProgressBar GUI element.            
     
 
 Lemur r1375
