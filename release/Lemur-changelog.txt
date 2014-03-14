@@ -1,5 +1,5 @@
 
-Lemur TBD
+Lemur r1430
 ------------
 * Slider now consumes the MouseMotionEvent if dragging is in progress.  This
     fixes an issue with the spatial highlighting being turned off if the mouse
