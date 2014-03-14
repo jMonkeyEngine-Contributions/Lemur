@@ -9,6 +9,9 @@ Lemur TBD
 * Modified FocusManagerState to be hierarchy aware when it comes to notifying
     changes in focus.  This means that parent FocusTargets will also get
     notified.
+* Fixed DynamicInsetsComponent to overcome a previous limitation where it
+    wouldn't work if the containing GUI element already had its preferred
+    size set.    
     
 
 Lemur r1375

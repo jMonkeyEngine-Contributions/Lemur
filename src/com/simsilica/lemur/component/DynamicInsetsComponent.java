@@ -91,7 +91,7 @@ public class DynamicInsetsComponent extends InsetsComponent {
 
     @Override
     public void calculatePreferredSize( Vector3f size ) {
-
+    
         // Keep track of the preferred size of the rest of
         // the stack up to this point.  We don't add any insets
         // here.
@@ -100,17 +100,29 @@ public class DynamicInsetsComponent extends InsetsComponent {
 
     @Override
     public void reshape( Vector3f pos, Vector3f size ) {
-
-        if( lastPreferredSize == null ) {
-            // There is nothing we can do, so we won't do anything
-            return;
+        Vector3f prefSize = lastPreferredSize;
+        if( prefSize == null ) {
+        
+            // Dynamic insets by its nature is going to be the
+            // 'base' component or very close to it.  If we don't have
+            // a lastPreferredSize then it means calculatePreferredSize
+            // was never called.  This can be the result of our parent
+            // already knowing what it's preferred size is.  So if 
+            // we are attached we will assume that our parent knows
+            // best.  We won't cache the value, though, since it implies
+            // that we might be incorrect later.  We'll fetch it every time.
+            if( isAttached() ) {
+                prefSize = getGuiControl().getPreferredSize(); 
+            } else {           
+                // There is nothing we can do, so we won't do anything
+                return;
+            }
         }
 
         // Otherwise, see what the difference is between our
         // desired size and
-        Vector3f delta = size.subtract(lastPreferredSize);
+        Vector3f delta = size.subtract(prefSize);
         Insets3f insets = getInsets();
-
         for( int i = 0; i < 3; i++ ) {
             float d = delta.get(i);
             if( d <= 0 ) {
