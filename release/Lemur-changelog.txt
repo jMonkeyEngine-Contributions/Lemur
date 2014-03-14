@@ -11,7 +11,9 @@ Lemur TBD
     notified.
 * Fixed DynamicInsetsComponent to overcome a previous limitation where it
     wouldn't work if the containing GUI element already had its preferred
-    size set.    
+    size set.
+* Added a utility method findFocusTarget() to FocusManagerState.  This is
+    a refactoring of a previous protected method.        
     
 
 Lemur r1375
