@@ -1,4 +1,17 @@
 
+Lemur TBD
+----------
+* InsetsComponent constructor now calls setInsets() instead of setting the
+    field directly.
+* Updated the border.png image.
+* Added icons that can be used for a glass-style checkbox on/off state.
+    (preparing for someday including 'glass' style by default.)
+* Added a GuiControlListener and abstract base implementation (names subject
+    to change) for receiving GuiControl reshape and focus events.
+* Fixed a bug in Slider where the thumb would get invalid positions when
+    the slider was resized after initial display.        
+
+
 Lemur r1430
 ------------
 * Slider now consumes the MouseMotionEvent if dragging is in progress.  This
