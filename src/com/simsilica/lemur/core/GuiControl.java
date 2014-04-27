@@ -52,6 +52,7 @@ public class GuiControl extends AbstractNodeControl<GuiControl>
                         implements FocusTarget {
     private SafeArrayList<GuiComponent> components = new SafeArrayList<GuiComponent>(GuiComponent.class);
     private GuiComponent layout;
+    private SafeArrayList<GuiControlListener> listeners = new SafeArrayList<GuiControlListener>(GuiControlListener.class);
     private volatile boolean invalid = false;
     private Map<String,GuiComponent> index = new HashMap<String,GuiComponent>();
     private Vector3f preferredSizeOverride = null;
@@ -65,6 +66,14 @@ public class GuiControl extends AbstractNodeControl<GuiControl>
     @Override
     public Node getNode() {
         return super.getNode();
+    }
+
+    public void addListener( GuiControlListener l ) {
+        listeners.add(l);
+    }
+    
+    public void removeListener( GuiControlListener l ) {
+        listeners.remove(l);
     }
 
     public boolean isFocused() {
@@ -100,6 +109,9 @@ public class GuiControl extends AbstractNodeControl<GuiControl>
         if( layout instanceof FocusTarget ) {
             ((FocusTarget)layout).focusGained();
         }
+        for( GuiControlListener l : listeners.getArray() ) {
+            l.focusGained(this);
+        }
     }
 
     public void focusLost() {
@@ -114,6 +126,9 @@ public class GuiControl extends AbstractNodeControl<GuiControl>
         }
         if( layout instanceof FocusTarget ) {
             ((FocusTarget)layout).focusLost();
+        }
+        for( GuiControlListener l : listeners.getArray() ) {
+            l.focusLost(this);
         }
     }
 
@@ -165,6 +180,9 @@ public class GuiControl extends AbstractNodeControl<GuiControl>
         }
         if( layout != null ) {
             layout.reshape(offset, size);
+        }
+        for( GuiControlListener l : listeners.getArray() ) {
+            l.reshape(this, offset, size);
         }
     }
 
@@ -286,7 +304,6 @@ public class GuiControl extends AbstractNodeControl<GuiControl>
         if( layout != null ) {
             layout.attach(this);
         }
-
         revalidate();
     }
 
