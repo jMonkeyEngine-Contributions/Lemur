@@ -56,7 +56,7 @@ public class InsetsComponent extends AbstractGuiComponent
     }
 
     public InsetsComponent( Insets3f insets ) {
-        this.insets = insets;
+        setInsets(insets);
     }
 
     public void setInsets( Insets3f insets ) {
