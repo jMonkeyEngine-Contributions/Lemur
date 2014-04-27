@@ -38,7 +38,6 @@ import com.simsilica.lemur.style.StyleDefaults;
 import com.simsilica.lemur.style.Attributes;
 import com.simsilica.lemur.style.ElementId;
 import com.simsilica.lemur.style.Styles;
-import com.simsilica.lemur.event.MouseEventControl;
 import com.simsilica.lemur.core.VersionedReference;
 import com.simsilica.lemur.core.GuiControl;
 import com.jme3.input.MouseInput;
@@ -47,6 +46,7 @@ import com.jme3.math.Vector3f;
 import com.jme3.scene.Spatial;
 
 import com.simsilica.lemur.component.BorderLayout;
+import com.simsilica.lemur.core.AbstractGuiControlListener;
 import com.simsilica.lemur.event.CursorButtonEvent;
 import com.simsilica.lemur.event.CursorEventControl;
 import com.simsilica.lemur.event.CursorMotionEvent;
@@ -140,6 +140,7 @@ public class Slider extends Panel {
         this.axis = axis;
         this.layout = new BorderLayout();
         getControl(GuiControl.class).setLayout(layout);
+        getControl(GuiControl.class).addListener(new ReshapeListener());
 
         this.model = model;
 
@@ -236,6 +237,7 @@ public class Slider extends Panel {
     }
 
     protected void resetStateView() {
+System.out.println( "resetStateView()" );    
         if( state == null ) {
             state = model.createReference();
         }
@@ -244,7 +246,7 @@ public class Slider extends Panel {
         Vector3f rangeSize = range.getSize();
         Vector3f thumbSize = thumb.getSize();
         Vector3f size = getSize();
-
+System.out.println( "size:" + size );
         double visibleRange;
         double x;
         double y;
@@ -288,6 +290,15 @@ public class Slider extends Panel {
 
         public void execute( Button source ) {
             model.setValue(model.getValue() + delta * scale);
+        }
+    }
+
+    private class ReshapeListener extends AbstractGuiControlListener {
+        @Override
+        public void reshape( GuiControl source, Vector3f pos, Vector3f size ) {
+            // Make sure the thumb is positioned appropriately
+            // for the new size
+            resetStateView();   
         }
     }
 
