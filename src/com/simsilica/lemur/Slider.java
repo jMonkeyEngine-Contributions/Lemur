@@ -237,7 +237,6 @@ public class Slider extends Panel {
     }
 
     protected void resetStateView() {
-System.out.println( "resetStateView()" );    
         if( state == null ) {
             state = model.createReference();
         }
@@ -246,7 +245,7 @@ System.out.println( "resetStateView()" );
         Vector3f rangeSize = range.getSize();
         Vector3f thumbSize = thumb.getSize();
         Vector3f size = getSize();
-System.out.println( "size:" + size );
+
         double visibleRange;
         double x;
         double y;
