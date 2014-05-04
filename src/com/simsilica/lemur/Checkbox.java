@@ -78,6 +78,10 @@ public class Checkbox extends Button {
     public Checkbox( String s, ElementId elementId, String style ) {
         this(s, null, true, elementId, style);
     }
+    
+    public Checkbox( String s, CheckboxModel model, ElementId elementId, String style ) {
+        this(s, model, true, elementId, style);
+    }
 
     public Checkbox( String s, CheckboxModel model ) {
         this(s, model, true, new ElementId(ELEMENT_ID), null);

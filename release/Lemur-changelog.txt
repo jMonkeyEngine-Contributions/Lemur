@@ -9,7 +9,9 @@ Lemur TBD
 * Added a GuiControlListener and abstract base implementation (names subject
     to change) for receiving GuiControl reshape and focus events.
 * Fixed a bug in Slider where the thumb would get invalid positions when
-    the slider was resized after initial display.        
+    the slider was resized after initial display.
+* Added another constructor to Checkbox that takes the string, model,
+    element ID, and style.            
 
 
 Lemur r1430
