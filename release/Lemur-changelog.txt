@@ -14,7 +14,9 @@ Lemur TBD
     element ID, and style.
 * Added a better error message to the StyleLoader when groovy is not
     present.
-* Added some trace logging to the Styles class.                
+* Added some trace logging to the Styles class.
+* Added a TabbedPanel GUI element.
+* Added a RollupPanel GUI element.                
 
 
 Lemur r1430
