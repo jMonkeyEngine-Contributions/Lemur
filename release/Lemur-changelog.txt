@@ -16,7 +16,11 @@ Lemur TBD
     present.
 * Added some trace logging to the Styles class.
 * Added a TabbedPanel GUI element.
-* Added a RollupPanel GUI element.                
+* Added a RollupPanel GUI element.
+* Added a BaseStyles loader for loading built-in styles.
+* Added a built-in "glass" style under resource com/simsilica/lemur/style/base/glass-styles.groovy
+    Projects can define their own file under the same resource path if they
+    want to extend or override parts of the glass style.                
 
 
 Lemur r1430
