@@ -11,7 +11,10 @@ Lemur TBD
 * Fixed a bug in Slider where the thumb would get invalid positions when
     the slider was resized after initial display.
 * Added another constructor to Checkbox that takes the string, model,
-    element ID, and style.            
+    element ID, and style.
+* Added a better error message to the StyleLoader when groovy is not
+    present.
+* Added some trace logging to the Styles class.                
 
 
 Lemur r1430

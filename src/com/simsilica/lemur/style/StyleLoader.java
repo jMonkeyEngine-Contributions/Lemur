@@ -70,6 +70,9 @@ public class StyleLoader {
         this.styles = styles;
         ScriptEngineManager factory = new ScriptEngineManager();
         this.engine = factory.getEngineByName("groovy");
+        if( engine == null ) {
+            throw new RuntimeException("Groovy scripting engine not available.");
+        }
         this.compiler = (Compilable)engine;
         this.bindings = engine.createBindings();
         bindings.put("styles", styles);

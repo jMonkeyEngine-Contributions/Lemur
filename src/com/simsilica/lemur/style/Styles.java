@@ -38,6 +38,8 @@ import java.lang.reflect.*;
 import java.util.*;
 
 import com.simsilica.lemur.core.GuiComponent;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 /**
@@ -118,6 +120,8 @@ import com.simsilica.lemur.core.GuiComponent;
  */
 public class Styles {
 
+    static Logger log = LoggerFactory.getLogger(Styles.class);
+    
     public static final String KEY_DEFAULT = "default";
     public static final String DEFAULT_STYLE = "default";
     public static final ElementId DEFAULT_ELEMENT = new ElementId("default");
@@ -407,6 +411,9 @@ public class Styles {
         Class c = o.getClass();
         initializeStyles(c);
 
+        if( log.isTraceEnabled() ) {
+            log.trace("applyStyles elementId:" + elementId + " style:" + style);
+        }
         Attributes attrs = getAttributes(elementId, style);
 
         for( Method m : getStyleMethods(c) ) {
