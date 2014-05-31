@@ -38,6 +38,7 @@ import java.io.*;
 import java.util.*;
 import javax.script.*;
 import com.simsilica.lemur.GuiGlobals;
+import java.net.URL;
 
 
 /**
@@ -153,6 +154,33 @@ public class StyleLoader {
             }
         } catch( ScriptException e ) {
             throw new RuntimeException("Error running resource:" + s, e);
+        }
+    }
+    
+    public void loadStyle( URL u ) {
+        try {
+            loadStyle(u.toString(), new InputStreamReader(u.openStream()));
+        } catch( IOException e ) {
+            throw new RuntimeException("Error opening stream for:" + u, e);
+        }
+    }
+    
+    public void loadStyle( String name, Reader in ) {
+        if( !initialized ) {
+            initializeApi();
+        }
+
+        try {
+            CompiledScript script = compiler.compile(in);
+
+            int before = bindings.size();
+            Object result = script.eval(bindings);
+
+            if( before != bindings.size() ) {
+                //log.warn( "Binding count increased executing:" + s + "  keys:" + bindings.keySet() );
+            }
+        } catch( ScriptException e ) {
+            throw new RuntimeException("Error running resource:" + name, e);
         }
     }
 }
