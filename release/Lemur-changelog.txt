@@ -1,6 +1,6 @@
 
-Lemur TBD
-----------
+Lemur 1466
+-----------
 * InsetsComponent constructor now calls setInsets() instead of setting the
     field directly.
 * Updated the border.png image.
