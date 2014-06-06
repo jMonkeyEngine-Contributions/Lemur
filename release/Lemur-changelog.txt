@@ -20,7 +20,10 @@ Lemur TBD
 * Added a BaseStyles loader for loading built-in styles.
 * Added a built-in "glass" style under resource com/simsilica/lemur/style/base/glass-styles.groovy
     Projects can define their own file under the same resource path if they
-    want to extend or override parts of the glass style.                
+    want to extend or override parts of the glass style.
+* Fixed an issue in button click handling where the click distance was too
+    sensitive... in fact for buttons there should be no click distance at all
+    as long as you are still over the button.  And that's how it behaves now.                    
 
 
 Lemur r1430

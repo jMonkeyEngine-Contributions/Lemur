@@ -222,14 +222,24 @@ public class Button extends Label {
 
         @Override
         public void mouseButtonEvent( MouseButtonEvent event, Spatial target, Spatial capture ) {
-            super.mouseButtonEvent(event, target, capture);
+        
+            // Buttons always consume their click events
+            event.setConsumed();
+        
+            // Do our own better handling of 'click' now
+            //super.mouseButtonEvent(event, target, capture);
             if( !isEnabled() )
-                return;
+                return;                                            
 
             pressed = event.isPressed();
             if( event.isPressed() ) {
                 commandMap.runCommands(ButtonAction.Down);
             } else {
+                if( target == capture ) {
+                    // Then we are still over the button and we should run the
+                    // click
+                    click(event, target, capture);
+                }
                 commandMap.runCommands(ButtonAction.Up);
             }
         }
