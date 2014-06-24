@@ -148,7 +148,7 @@ public class MouseAppState extends BaseAppState {
         if( time - lastSample < sampleFrequency )
             return;
         lastSample = time;
-
+        
         Vector2f cursor = getApplication().getInputManager().getCursorPosition();
 
         session.cursorMoved((int)cursor.x, (int)cursor.y);
