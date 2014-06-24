@@ -160,6 +160,10 @@ public class GuiGlobals {
         setupGuiComparators(main);
     }
 
+    protected AssetManager getAssetManager() {
+        return assets;
+    }
+
     protected void logBuildInfo() {
         try {
             java.net.URL u = Resources.getResource("lemur.build.date");
