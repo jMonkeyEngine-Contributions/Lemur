@@ -148,13 +148,20 @@ public class PropertyPanel extends Panel
  
             for( PropertyDescriptor pd : info.getPropertyDescriptors() ) {
                 if( pd.getName().equals(propertyName) ) {
+                    if( pd.getReadMethod() == null ) {
+                        throw new RuntimeException("Property has no read method:" + propertyName + " on:" + bean.getClass());
+                    }
+                    if( pd.getWriteMethod() == null ) {
+                        throw new RuntimeException("Property has no write method:" + propertyName + " on:" + bean.getClass());
+                    }
                     return pd;
                 }
             }
+            throw new RuntimeException("No suche property:" + propertyName + " on:" + bean.getClass());
         } catch( IntrospectionException e ) {
             throw new RuntimeException("Error introspecting object", e);
         }
-        return null;        
+        //return null;        
     }
     
     protected Field findField( Object bean, String fieldName ) {
