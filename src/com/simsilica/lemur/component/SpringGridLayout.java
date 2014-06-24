@@ -357,7 +357,7 @@ public class SpringGridLayout extends AbstractGuiComponent
         int col = -1;
         for( Object o : constraints ) {
             if( !(o instanceof Number) )
-                throw new IllegalArgumentException( "Unknown border layout constraint:" + o );
+                throw new IllegalArgumentException( "Unknown SpringGridLayout constraint:" + o );
             Number num = (Number)o;
             if( row == -1 ) {
                 row = num.intValue();
