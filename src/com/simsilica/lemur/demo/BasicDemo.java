@@ -56,7 +56,6 @@ import com.simsilica.lemur.component.TbtQuadBackgroundComponent;
 import com.simsilica.lemur.core.VersionedReference;
 import com.simsilica.lemur.event.CursorEventControl;
 import com.simsilica.lemur.event.DragHandler;
-import com.simsilica.lemur.event.MouseEventControl;
 import com.simsilica.lemur.style.ElementId;
 import com.simsilica.lemur.style.Styles;
 
