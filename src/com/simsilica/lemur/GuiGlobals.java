@@ -163,6 +163,10 @@ public class GuiGlobals {
     protected AssetManager getAssetManager() {
         return assets;
     }
+ 
+    protected String getIconBase() {
+        return iconBase;
+    }
 
     protected void logBuildInfo() {
         try {
