@@ -2,7 +2,10 @@
 Lemur ???
 ----------
 * Fixed an error message in SpringGridLayout to refer to itself properly.
-* Modified GuiGlobals to have a protected getAssetManager() field.  
+* Modified GuiGlobals to have a protected getAssetManager() field.
+* Fixed a bug in PickEventSession when using non-Viewport root pick roots.
+* Added setters/getters for MouseAppState's includeDefaultNodes field that
+    controls if pick roots are automatically added during initialize.  
 
 
 Lemur 1466

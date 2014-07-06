@@ -92,6 +92,23 @@ public class MouseAppState extends BaseAppState {
         app.getInputManager().addRawInputListener(mouseObserver);
     }
 
+    public void setIncludeDefaultCollisionRoots( boolean b ) {
+        this.includeDefaultNodes = b;
+        if( isInitialized() ) {
+            if( b ) {
+                addCollisionRoot( getApplication().getGuiViewPort() );
+                addCollisionRoot( getApplication().getViewPort() );
+            } else {
+                removeCollisionRoot( getApplication().getGuiViewPort() );
+                removeCollisionRoot( getApplication().getViewPort() );
+            }
+        }
+    }
+    
+    public boolean getIncludeDefaultCollisionRoots() {
+        return includeDefaultNodes;
+    }
+
     @Deprecated
     public ViewPort findViewPort( Spatial s ) {
         return session.findViewPort(s);

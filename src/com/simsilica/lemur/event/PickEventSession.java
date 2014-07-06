@@ -123,14 +123,14 @@ public class PickEventSession {
         if( s == null ) {
             return null;
         }
-        Spatial root = s;
-        while( root.getParent() != null ) {
-            root = root.getParent();
+        
+        for( Spatial root = s; root != null; root = root.getParent() ) {
+            RootEntry e = roots.get(root);
+            if( e != null ) {
+                return e.viewport;
+            }
         }
-        RootEntry e = roots.get(root);
-        if( e == null )
-            return null;
-        return e.viewport;
+        return null;
     }
 
     public void addCollisionRoot( ViewPort viewPort ) {
