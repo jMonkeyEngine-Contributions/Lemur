@@ -34,6 +34,8 @@
 
 package com.simsilica.lemur;
 
+import com.jme3.math.Vector3f;
+
 
 /**
  *  Represents one of the X, Y, or Z axes.
@@ -41,15 +43,21 @@ package com.simsilica.lemur;
  *  @author    Paul Speed
  */
 public enum Axis {
-    X(0), Y(1), Z(2);
+    X(0, Vector3f.UNIT_X), Y(1, Vector3f.UNIT_Y), Z(2, Vector3f.UNIT_Z);
 
     private int index;
+    private Vector3f dir;
 
-    private Axis( int index ) {
+    private Axis( int index, Vector3f dir ) {    
         this.index = index;
+        this.dir = dir;
     }
 
     public int index() {
         return index;
+    }
+    
+    public Vector3f getDirection() {
+        return dir;
     }
 }

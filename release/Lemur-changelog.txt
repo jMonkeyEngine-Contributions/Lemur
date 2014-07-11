@@ -9,7 +9,12 @@ Lemur ???
 * Fixed Slider to not add the drag handler to the slider range.  It was a
     leftover from when drag events weren't delivered to the capture properly
     and now left the strange behavior of dragging in the slider range causing
-    the button to move.      
+    the button to move.
+* Added Axis.getDirection() to return one of the constant Vector3f.UNIT_X,
+    UNIT_Y, or UNIT_Z depending on the axis value.
+* Added Slider.getValueForLocation() which can be used to calculate where
+    in the model's range a particular local coordinate represents.  Useful
+    for a variety of range-related listener behavior.               
 
 
 Lemur 1466

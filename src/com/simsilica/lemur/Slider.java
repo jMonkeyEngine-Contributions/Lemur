@@ -225,6 +225,25 @@ public class Slider extends Panel {
     public Button getThumbButton() {
         return thumb;
     }
+    
+    /**
+     *  Returns the slider range value for the specified location
+     *  in the slider's local coordinate system.  (For example,
+     *  for world space location use slider.worldToLocal() first.)
+     */
+    public double getValueForLocation( Vector3f loc ) {
+        Vector3f relative = loc.subtract(range.getLocalTranslation());
+        Vector3f axisDir = axis.getDirection();
+        double projection = relative.dot(axisDir);
+        if( projection < 0 ) {
+            return model.getMinimum();
+        }
+        double rangeLength = range.getSize().dot(axisDir);
+        projection = Math.min(projection, rangeLength);
+        double part = projection / rangeLength;       
+        double rangeSize = model.getMaximum() - model.getMinimum();
+        return model.getMinimum() + rangeSize * part;        
+    }
 
     @Override
     public void updateLogicalState(float tpf) {
