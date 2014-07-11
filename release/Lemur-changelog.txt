@@ -5,7 +5,11 @@ Lemur ???
 * Modified GuiGlobals to have a protected getAssetManager() field.
 * Fixed a bug in PickEventSession when using non-Viewport root pick roots.
 * Added setters/getters for MouseAppState's includeDefaultNodes field that
-    controls if pick roots are automatically added during initialize.  
+    controls if pick roots are automatically added during initialize.
+* Fixed Slider to not add the drag handler to the slider range.  It was a
+    leftover from when drag events weren't delivered to the capture properly
+    and now left the strange behavior of dragging in the slider range causing
+    the button to move.      
 
 
 Lemur 1466

@@ -170,7 +170,6 @@ public class Slider extends Panel {
         thumb = new Button(null, true, elementId.child(THUMB_ID), style);
         ButtonDragger dragger = new ButtonDragger();
         CursorEventControl.addListenersToSpatial(thumb, dragger);
-        CursorEventControl.addListenersToSpatial(range, dragger);
         attachChild(thumb);
 
         // A child that is not managed by the layout will not otherwise lay itself
