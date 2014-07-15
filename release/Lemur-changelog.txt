@@ -14,7 +14,10 @@ Lemur ???
     UNIT_Y, or UNIT_Z depending on the axis value.
 * Added Slider.getValueForLocation() which can be used to calculate where
     in the model's range a particular local coordinate represents.  Useful
-    for a variety of range-related listener behavior.               
+    for a variety of range-related listener behavior.
+* Updated GuiControl.setPreferredSize() to throw an illegal argument exception
+    if the specified size is negative.
+* Fixed GuiControl.setSize() to not mutate the passed in size.                        
 
 
 Lemur 1466

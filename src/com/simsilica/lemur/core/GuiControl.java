@@ -154,6 +154,9 @@ public class GuiControl extends AbstractNodeControl<GuiControl>
     }
 
     public void setPreferredSize( Vector3f pref ) {
+        if( pref != null && (pref.x < 0 || pref.y < 0 || pref.z < 0) ) {
+            throw new IllegalArgumentException("Preferred size cannot be negative:" + pref);
+        }    
         this.preferredSizeOverride = pref;
         invalidate();
     }
@@ -174,6 +177,12 @@ public class GuiControl extends AbstractNodeControl<GuiControl>
 
     public void setSize( Vector3f size ) {
         lastSize.set(size);
+        
+        // The components will take their parts out of size.
+        // The caller may not be expecting their size to change... especially
+        // since it might have been the getPreferredSize() of some other GUI element
+        size = size.clone();
+        
         Vector3f offset = new Vector3f();
         for( GuiComponent c : components ) {
             c.reshape(offset, size);
