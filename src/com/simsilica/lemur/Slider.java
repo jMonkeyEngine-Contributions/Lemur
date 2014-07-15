@@ -232,17 +232,37 @@ public class Slider extends Panel {
      *  for world space location use slider.worldToLocal() first.)
      */
     public double getValueForLocation( Vector3f loc ) {
+
         Vector3f relative = loc.subtract(range.getLocalTranslation());
+        
+        // Components always grow down from their location
+        // so we'll invert y
+        relative.y *= -1;
+                
         Vector3f axisDir = axis.getDirection();
-        double projection = relative.dot(axisDir);
+        double projection = relative.dot(axisDir);        
         if( projection < 0 ) {
-            return model.getMinimum();
+            if( axis == Axis.Y ) {
+                return model.getMaximum();
+            } else {
+                return model.getMinimum();
+            }
         }
-        double rangeLength = range.getSize().dot(axisDir);
+        
+        Vector3f rangeSize = range.getSize().clone();
+         
+        double rangeLength = rangeSize.dot(axisDir);
         projection = Math.min(projection, rangeLength);
         double part = projection / rangeLength;       
-        double rangeSize = model.getMaximum() - model.getMinimum();
-        return model.getMinimum() + rangeSize * part;        
+        double rangeDelta = model.getMaximum() - model.getMinimum();
+        
+        // For the y-axis, the slider is inverted from the direction
+        // that the component's grow... so our part is backwards
+        if( axis == Axis.Y ) {
+            part = 1 - part;
+        }
+        
+        return model.getMinimum() + rangeDelta * part;        
     }
 
     @Override
