@@ -144,7 +144,7 @@ public class BorderLayout extends AbstractGuiComponent
             child.setLocalTranslation(pos);
             pos.y -= pref.y;
             size.y -= pref.y;
-            child.getControl(GuiControl.class).setSize(new Vector3f(size.x, pref.y, 0));
+            child.getControl(GuiControl.class).setSize(new Vector3f(size.x, pref.y, size.z));
         }
 
         // And the south component takes up the entire lower border
@@ -153,24 +153,24 @@ public class BorderLayout extends AbstractGuiComponent
             pref = getPreferredSize(Position.South);
             child.setLocalTranslation(pos.x, pos.y - size.y + pref.y, pos.z);
             size.y -= pref.y;
-            child.getControl(GuiControl.class).setSize(new Vector3f(size.x, pref.y, 0));
+            child.getControl(GuiControl.class).setSize(new Vector3f(size.x, pref.y, size.z));
         }
 
-        // Now the easy and west to hem in the left/right borders
+        // Now the east and west to hem in the left/right borders
         child = children.get(Position.West);
         if( child != null ) {
             pref = getPreferredSize(Position.West);
             child.setLocalTranslation(pos);
             pos.x += pref.x;
             size.x -= pref.x;
-            child.getControl(GuiControl.class).setSize(new Vector3f(pref.x, size.y, 0));
+            child.getControl(GuiControl.class).setSize(new Vector3f(pref.x, size.y, size.z));
         }
         child = children.get(Position.East);
         if( child != null ) {
             pref = getPreferredSize(Position.East);
             child.setLocalTranslation(pos.x + size.x - pref.x, pos.y, pos.z);
             size.x -= pref.x;
-            child.getControl(GuiControl.class).setSize(new Vector3f(pref.x, size.y, 0));
+            child.getControl(GuiControl.class).setSize(new Vector3f(pref.x, size.y, size.z));
         }
 
         // And what's left goes to the center component and it needs to
