@@ -181,15 +181,18 @@ public class GuiControl extends AbstractNodeControl<GuiControl>
         // The components will take their parts out of size.
         // The caller may not be expecting their size to change... especially
         // since it might have been the getPreferredSize() of some other GUI element
-        size = size.clone();
+        Vector3f stackSize = size.clone();
         
         Vector3f offset = new Vector3f();
         for( GuiComponent c : components ) {
-            c.reshape(offset, size);
+            c.reshape(offset, stackSize);
         }
         if( layout != null ) {
-            layout.reshape(offset, size);
+            layout.reshape(offset, stackSize);
         }
+        
+        // Call the listeners with the original size befoe
+        // the components took a whack at it.
         for( GuiControlListener l : listeners.getArray() ) {
             l.reshape(this, offset, size);
         }

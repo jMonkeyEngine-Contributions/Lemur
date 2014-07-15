@@ -17,7 +17,12 @@ Lemur ???
     for a variety of range-related listener behavior.
 * Updated GuiControl.setPreferredSize() to throw an illegal argument exception
     if the specified size is negative.
-* Fixed GuiControl.setSize() to not mutate the passed in size.                        
+* Fixed GuiControl.setSize() to not mutate the passed in size.
+* GuiControl.setSize() passes the original size to GuiControl listeners instead
+    of the child-mutated size.
+* Fixed a small sizing issue in BorderLayout where it was always passing
+    through 0 for the z size when setting the size of children.  Now it passes
+    through the size that was passed to reshape.
 
 
 Lemur 1466
