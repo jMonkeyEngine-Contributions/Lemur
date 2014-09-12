@@ -1,4 +1,11 @@
 
+Revision 1500
+--------------
+-Added getSlider() and getGridPanel() methods to ListBox to
+    support access to the slider model and for manually configured
+    styling.
+
+
 Revision 1498
 --------------
 -Initial release with basic GridPanel and ListBox support.

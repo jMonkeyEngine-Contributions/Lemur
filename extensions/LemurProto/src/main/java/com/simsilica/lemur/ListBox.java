@@ -243,6 +243,14 @@ public class ListBox<T> extends Panel {
     public VersionedList<T> getModel() {
         return model;
     }
+
+    public Slider getSlider() {
+        return slider;
+    }
+    
+    public GridPanel getGridPanel() {
+        return grid;
+    }
  
     public void setSelectionModel( SelectionModel selection ) {
         if( this.selection == selection ) {
