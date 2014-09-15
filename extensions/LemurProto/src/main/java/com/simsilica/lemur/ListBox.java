@@ -74,7 +74,6 @@ public class ListBox<T> extends Panel {
     public static final String SELECTOR_ID = "selector";
 
     private BorderLayout layout;
-    //private ListModel<T> model;
     private VersionedList<T> model;
     private CellRenderer<T> cellRenderer;
     
@@ -329,13 +328,11 @@ public class ListBox<T> extends Panel {
         @Override
         public void cursorButtonEvent( CursorButtonEvent event, Spatial target, Spatial capture ) {
  
-System.out.println( "List button event:" + event + "  target:" + target + "  capture:" + capture );        
             // Find the element we clicked on
             int base = grid.getRow();
             for( int i = 0; i < grid.getVisibleRows(); i++ ) {
                 Panel cell = grid.getCell( base + i, 0 );
                 if( cell == target ) {
-System.out.println( "Clicked on:" + cell );
                     selection.add(base + i);                    
                 }
             }            

@@ -1,3 +1,8 @@
+Revision ???
+-------------
+-Fixed a cols/rows swap in ArrayGridModel.
+-Removed some stdout debug output from ListBox.
+
 
 Revision 1500
 --------------
