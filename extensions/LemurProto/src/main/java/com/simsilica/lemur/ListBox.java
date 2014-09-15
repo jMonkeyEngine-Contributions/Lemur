@@ -222,6 +222,7 @@ public class ListBox<T> extends Panel {
         
         if( this.model != null ) {
             // Clean up the old one
+            detachListeners();
         }
 
         if( model == null ) {
@@ -316,6 +317,19 @@ public class ListBox<T> extends Panel {
             CursorEventControl.removeListenersFromSpatial(existing, clickListener);
         }         
         return cell;
+    }
+
+    /**
+     *  Used when the list model is swapped out.
+     */
+    protected void detachItemListeners() {
+        int base = grid.getRow();
+        for( int i = 0; i < grid.getVisibleRows(); i++ ) {
+            Panel cell = grid.getCell(base + i, 0);
+            if( cell != null ) {
+                CursorEventControl.removeListenersFromSpatial(cell, clickListener);
+            }
+        }
     }
 
     @Override

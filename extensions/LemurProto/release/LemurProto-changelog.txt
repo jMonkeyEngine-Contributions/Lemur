@@ -2,6 +2,8 @@ Revision ???
 -------------
 -Fixed a cols/rows swap in ArrayGridModel.
 -Removed some stdout debug output from ListBox.
+-ListBox now cleans up internal grid item listeners when the
+    list model is swapped out.
 
 
 Revision 1500
