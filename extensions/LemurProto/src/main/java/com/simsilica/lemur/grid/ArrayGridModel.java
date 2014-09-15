@@ -40,6 +40,7 @@ import com.simsilica.lemur.core.VersionedReference;
 
 
 /**
+ *  Wraps an row/column ordered array in a GridModel.
  *
  *  @author    Paul Speed
  */
@@ -51,9 +52,10 @@ public class ArrayGridModel<T> implements GridModel<T> {
     
     public ArrayGridModel( T[][] array ) {
         this.array = array;
-        this.cols = array.length;
-        if( cols > 0 )
-            this.rows = array[0].length;
+        this.rows = array.length;
+        if( rows > 0 ) {
+            this.cols = array[0].length;
+        }
     }
     
     @Override
