@@ -222,7 +222,7 @@ public class ListBox<T> extends Panel {
         
         if( this.model != null ) {
             // Clean up the old one
-            detachListeners();
+            detachItemListeners();
         }
 
         if( model == null ) {
