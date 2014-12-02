@@ -46,6 +46,7 @@ import com.jme3.renderer.Camera;
 import com.jme3.renderer.ViewPort;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Spatial;
+import com.jme3.util.SafeArrayList;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -81,7 +82,7 @@ import java.util.Set;
 public class PickEventSession {
 
     private Map<Collidable, RootEntry> roots = new LinkedHashMap<Collidable, RootEntry>();
-    private List<RootEntry> rootList = new ArrayList<RootEntry>();
+    private SafeArrayList<RootEntry> rootList = new SafeArrayList<RootEntry>(RootEntry.class);
     private Map<Camera, Ray> rayCache = new HashMap<Camera, Ray>();
 
     /**
@@ -134,7 +135,7 @@ public class PickEventSession {
     }
 
     public void addCollisionRoot( ViewPort viewPort ) {
-        for( Spatial s : viewPort.getScenes() ) {
+        for( Spatial s : viewPort.getScenes() ) { 
             addCollisionRoot(s, viewPort);
         }
     }
@@ -255,11 +256,11 @@ public class PickEventSession {
         }
     }
     
-    protected List<RootEntry> getRootList() {
+    protected SafeArrayList<RootEntry> getRootList() {
         if( rootList == null ) {
             // Build the list backwards so we search for picks top
             // to bottom.
-            rootList = new ArrayList<RootEntry>(roots.size());
+            rootList = new SafeArrayList<RootEntry>(RootEntry.class);
             for( RootEntry e : roots.values() ) {
                 rootList.add(0, e);
             }
@@ -345,7 +346,7 @@ public class PickEventSession {
         }
 
         // Search each root for hits
-        for( RootEntry e : getRootList() ) {
+        for( RootEntry e : getRootList().getArray() ) {
             Camera cam = e.viewport.getCamera();
 
             Ray mouseRay = getPickRay(cam, cursor);
