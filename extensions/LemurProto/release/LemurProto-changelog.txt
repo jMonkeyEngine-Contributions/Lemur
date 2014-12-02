@@ -5,7 +5,9 @@ Revision ???
     way of passing around "actions" that can be reused in
     various buttons.  Eventually this gets expanded into
     toolbar buttons, menu buttons, etc.
-    
+-Added an OptionPanel similar to Swing's JOptionPane.  It
+    can be used to present a message or simple set of
+    options to the user.    
 
 
 Revision 1505
