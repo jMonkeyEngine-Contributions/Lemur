@@ -173,7 +173,7 @@ public class OptionPanel extends Panel {
         buttons.clearChildren();
     
         for( Action a : options ) {
-            ActionButton button = new ActionButton(a, getStyle());
+            ActionButton button = new ActionButton(a, getElementId().child("button"), getStyle());
             button.addClickCommands(listener);
             buttons.addChild(button);
         }
