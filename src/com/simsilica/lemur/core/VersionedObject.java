@@ -43,7 +43,7 @@ package com.simsilica.lemur.core;
  *  @author    Paul Speed
  */
 public interface VersionedObject<T> {
-    public long getVersion();
+    public long getVersion(); 
 
     public T getObject();
 
