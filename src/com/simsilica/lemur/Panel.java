@@ -47,6 +47,8 @@ import com.simsilica.lemur.component.QuadBackgroundComponent;
 import com.simsilica.lemur.component.InsetsComponent;
 import com.jme3.math.*;
 import com.jme3.scene.Node;
+import com.jme3.scene.Spatial;
+import com.simsilica.lemur.component.ColoredComponent;
 
 
 
@@ -261,6 +263,67 @@ public class Panel extends Node {
     public InsetsComponent getInsetsComponent() {
         InsetsComponent ic = getControl(GuiControl.class).getComponent(KEY_INSETS);
         return ic;
+    }
+
+    /**
+     *  Sets the alpha multiplier for all ColoredComponents in this 
+     *  panels component stack, including things like QuadBackgroundComponent,
+     *  TextComponent, etc..  This can be used to generally fade a GUI element
+     *  in or out as needed as long as its visuals are ColoredComponent
+     *  compliant.
+     */
+    public void setAlpha( float alpha ) {
+        setAlpha(alpha, true);
+    }
+    
+    /**
+     *  Sets the alpha multiplier for all ColoredComponents in this 
+     *  panels component stack, including things like QuadBackgroundComponent,
+     *  TextComponent, etc..  This can be used to generally fade a GUI element
+     *  in or out as needed as long as its visuals are ColoredComponent
+     *  compliant.  If recursive is true then all child Spatials will also
+     *  be checked and have their alpha set, and their children, and so on.
+     */
+    public void setAlpha( float alpha, boolean recursive ) {
+        for( GuiComponent c : getControl(GuiControl.class).getComponents() ) {
+            if( c instanceof ColoredComponent ) {
+                ((ColoredComponent)c).setAlpha(alpha);
+            }
+        }
+ 
+        if( recursive ) {       
+            // also do any children that are panels
+            for( Spatial s : getChildren() ) {
+                setChildAlpha(s, alpha);
+            }
+        }        
+    }
+    
+    protected void setChildAlpha( Spatial child, float alpha ) {
+        if( child instanceof Panel ) {
+            ((Panel)child).setAlpha(alpha, true);
+        } else if( child instanceof Node ) {
+            // An else branch because the panel is already a node and so
+            // will already set its children.  We want to cover the case
+            // of intermediate nodes.
+            for( Spatial s : ((Node)child).getChildren() ) {
+                setChildAlpha(s, alpha);
+            }            
+        }       
+    }
+
+    /**
+     *  Returns an estimate of the current alpha multiplier for the child
+     *  components.  It scans the component children and returns the first
+     *  alpha value found.
+     */
+    public float getAlpha() {
+        for( GuiComponent c : getControl(GuiControl.class).getComponents() ) {
+            if( c instanceof ColoredComponent ) {
+                return ((ColoredComponent)c).getAlpha();
+            }
+        }
+        return 1;
     }
 
     @Override

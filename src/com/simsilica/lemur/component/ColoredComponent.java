@@ -42,6 +42,26 @@ import com.jme3.math.ColorRGBA;
  *  @author    Paul Speed
  */
 public interface ColoredComponent {
+
+    /**
+     *  Sets the color for this component.
+     */
     public void setColor( ColorRGBA color );
+    
+    /**
+     *  Returns the current color of this component.
+     */
     public ColorRGBA getColor();
+    
+    /**
+     *  Sets an alpha multiplier that will be applied to the
+     *  color when set to the actual visuals.
+     */
+    public void setAlpha( float f );
+    
+    /**
+     *  Returns the current alpha multiplier that is applied
+     *  to the color when set to the actual visuals.
+     */
+    public float getAlpha();
 }

@@ -53,6 +53,7 @@ public class QuadBackgroundComponent extends AbstractGuiComponent
                                      implements Cloneable, ColoredComponent {
     private Geometry background;
     private ColorRGBA color;
+    private float alpha = 1f;
     private Texture texture;
     private GuiMaterial material;
     private float xMargin = 0;
@@ -127,13 +128,38 @@ public class QuadBackgroundComponent extends AbstractGuiComponent
 
     public void setColor( ColorRGBA c ) {
         this.color = c;
-        if( material != null ) {
+        resetColor();
+    }
+    
+    protected void resetColor() {
+        if( material == null ) {
+            return;
+        }
+        if( alpha >= 1 ) {
+            // Just set it directly
             material.setColor(color);
+        } else {
+            // Need to calculate it
+            ColorRGBA adjusted = color.clone();
+            adjusted.a *= alpha;
+            material.setColor(adjusted);
         }
     }
 
     public ColorRGBA getColor() {
         return color;
+    }
+
+    public void setAlpha( float f ) {
+        if( this.alpha == f ) {
+            return;
+        }
+        this.alpha = f;
+        resetColor();
+    }
+    
+    public float getAlpha() {
+        return alpha;
     }
 
     public void setTexture( Texture t ) {

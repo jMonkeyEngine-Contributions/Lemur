@@ -145,7 +145,11 @@ public class TextComponent extends AbstractGuiComponent
         newText.setText(getText());
         newText.setColor(getColor());
         newText.setLocalTranslation(bitmapText.getLocalTranslation());
-        newText.setSize(getFontSize());
+        float currentSize = getFontSize();
+        if( currentSize != bitmapText.getSize() ) {
+            // The caller has overridden the default font size so we'll keep it.
+            newText.setSize(getFontSize());
+        }
         this.bitmapText = newText;
         resetLayer();
 
@@ -174,11 +178,23 @@ public class TextComponent extends AbstractGuiComponent
     }
 
     public void setColor( ColorRGBA color ) {
+        float alpha = bitmapText.getAlpha();
         bitmapText.setColor(color);
+        if( alpha != 1 ) {
+            bitmapText.setAlpha(alpha);
+        }
     }
 
     public ColorRGBA getColor() {
         return bitmapText.getColor();
+    }
+
+    public void setAlpha( float f ) {
+        bitmapText.setAlpha(f);
+    }
+    
+    public float getAlpha() {
+        return bitmapText.getAlpha();
     }
 
     public TextComponent color( ColorRGBA color ) {
