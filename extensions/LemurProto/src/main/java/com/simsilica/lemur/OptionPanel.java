@@ -88,7 +88,7 @@ public class OptionPanel extends Panel {
         getControl(GuiControl.class).setLayout(layout);
 
         if( title != null ) {
-            titleLabel = new Label(title, getElementId().child("title"), style);
+            titleLabel = new Label(title, getElementId().child("title.label"), style);
             layout.addChild(titleLabel, BorderLayout.Position.North);
         }
 
@@ -96,7 +96,7 @@ public class OptionPanel extends Panel {
         layout.addChild(container, BorderLayout.Position.Center);
 
         if( message != null ) {
-            messageLabel = new Label(message, getElementId().child("message"), style);
+            messageLabel = new Label(message, getElementId().child("message.label"), style);
             container.addChild(messageLabel);
         }
  
@@ -115,7 +115,7 @@ public class OptionPanel extends Panel {
      */   
     public void setTitle( String title ) {
         if( titleLabel == null && title != null ) {
-            titleLabel = new Label(title, getElementId().child("title"), getStyle());
+            titleLabel = new Label(title, getElementId().child("title.label"), getStyle());
             layout.addChild(titleLabel, BorderLayout.Position.North);
         } else if( titleLabel != null && title == null ) {
             layout.removeChild(titleLabel);
@@ -135,7 +135,7 @@ public class OptionPanel extends Panel {
      */   
     public void setMessage( String message ) {
         if( messageLabel == null && message != null ) {
-            messageLabel = new Label(message, getElementId().child("message"), getStyle());
+            messageLabel = new Label(message, getElementId().child("message.label"), getStyle());
             container.addChild(messageLabel);
         } else if( messageLabel != null && message == null ) {
             layout.removeChild(messageLabel);
