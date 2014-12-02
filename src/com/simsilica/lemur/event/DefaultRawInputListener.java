@@ -47,7 +47,7 @@ import com.jme3.input.event.TouchEvent;
  *  Convenient base class providing default implementations for
  *  all RawInputListener methods.
  *
- *  @author    Paul Speed
+ *  @author    Paul Speed 
  */
 public class DefaultRawInputListener implements RawInputListener {
 
