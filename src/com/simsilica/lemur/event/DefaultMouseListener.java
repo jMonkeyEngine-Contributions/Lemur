@@ -55,7 +55,7 @@ public class DefaultMouseListener implements MouseListener {
     }
 
     protected void click( MouseButtonEvent event, Spatial target, Spatial capture ) {
-    }
+    } 
 
     public void mouseButtonEvent( MouseButtonEvent event, Spatial target, Spatial capture ) {
         event.setConsumed();
