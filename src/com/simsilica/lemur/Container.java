@@ -108,6 +108,10 @@ public class Container extends Panel {
         getLayout().removeChild(child);
     }
 
+    public void clearChildren() {
+        getLayout().clearChildren();   
+    }
+    
     @StyleAttribute(value="layout", lookupDefault=false)
     public void setLayout( GuiLayout layout ) {
         getControl(GuiControl.class).setLayout(layout);
