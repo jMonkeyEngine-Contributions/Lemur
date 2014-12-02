@@ -182,11 +182,11 @@ public class GuiGlobals {
         RenderQueue rq = view.getQueue();
 
         rq.setGeometryComparator(Bucket.Opaque,
-                                 new LayerComparator(rq.getGeometryComparator(Bucket.Opaque)));
+                                 new LayerComparator(rq.getGeometryComparator(Bucket.Opaque), -1));
         rq.setGeometryComparator(Bucket.Transparent,
                                  new LayerComparator(rq.getGeometryComparator(Bucket.Transparent), -1));
         rq.setGeometryComparator(Bucket.Gui,
-                                 new LayerComparator(rq.getGeometryComparator(Bucket.Gui)));
+                                 new LayerComparator(rq.getGeometryComparator(Bucket.Gui), -1));
     }
 
     protected void setDefaultStyles() {
