@@ -50,6 +50,7 @@ import com.jme3.scene.Spatial;
 
 import com.simsilica.lemur.core.CommandMap;
 import com.simsilica.lemur.component.QuadBackgroundComponent;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -117,6 +118,10 @@ public class Button extends Label {
     public void addClickCommands( Command<? super Button>... commands ) {
         commandMap.addCommands(ButtonAction.Click, commands);
     }
+
+    public void removeClickCommands( Command<? super Button>... commands ) {
+        getClickCommands().removeAll(Arrays.asList(commands));
+    } 
 
     public List<Command<? super Button>> getClickCommands() {
         return commandMap.get(ButtonAction.Click, false);
