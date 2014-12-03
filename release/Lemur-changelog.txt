@@ -34,6 +34,8 @@ Lemur ???
     for fading in/out entire UI hierarchies.
 * Fixed a bug in DefaultRangedValueModel where changes to min and max value weren't
     incrementing the version.        
+* Added some more trace level logging to the Styles class to help users debug
+    style issues.
 
 
 Lemur 1466

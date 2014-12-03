@@ -414,7 +414,11 @@ public class Styles {
         if( log.isTraceEnabled() ) {
             log.trace("applyStyles elementId:" + elementId + " style:" + style);
         }
+        
         Attributes attrs = getAttributes(elementId, style);
+        if( log.isTraceEnabled() ) {
+            log.trace("style attributes:" + attrs);
+        }
 
         for( Method m : getStyleMethods(c) ) {
             StyleAttribute attribute = m.getAnnotation(StyleAttribute.class);
@@ -438,6 +442,9 @@ public class Styles {
 
             // Else call it with the value
             try {
+                if( log.isTraceEnabled() ) {
+                    log.trace("calling " + m.getName() + " with:" + value);
+                }
                 m.invoke(o, value);
             } catch( IllegalAccessException e ) {
                 throw new RuntimeException("Error applying attribute:" + attribute + " to:" + o, e);
