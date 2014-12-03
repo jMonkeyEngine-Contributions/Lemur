@@ -1,0 +1,131 @@
+/*
+ * $Id$
+ * 
+ * Copyright (c) 2014, Simsilica, LLC
+ * All rights reserved.
+ * 
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions 
+ * are met:
+ * 
+ * 1. Redistributions of source code must retain the above copyright 
+ *    notice, this list of conditions and the following disclaimer.
+ * 
+ * 2. Redistributions in binary form must reproduce the above copyright 
+ *    notice, this list of conditions and the following disclaimer in 
+ *    the documentation and/or other materials provided with the 
+ *    distribution.
+ * 
+ * 3. Neither the name of the copyright holder nor the names of its 
+ *    contributors may be used to endorse or promote products derived 
+ *    from this software without specific prior written permission.
+ * 
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS 
+ * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT 
+ * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS 
+ * FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE 
+ * COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, 
+ * INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES 
+ * (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR 
+ * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) 
+ * HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, 
+ * STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) 
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED 
+ * OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+package com.simsilica.lemur.demo;
+
+import com.jme3.app.BasicProfilerState;
+import com.jme3.app.DebugKeysAppState;
+import com.jme3.app.SimpleApplication;
+import com.jme3.app.StatsAppState;
+import com.jme3.app.state.ScreenshotAppState;
+import com.simsilica.lemur.Action;
+import com.simsilica.lemur.ActionButton;
+import com.simsilica.lemur.Axis;
+import com.simsilica.lemur.Button;
+import com.simsilica.lemur.Container;
+import com.simsilica.lemur.FillMode;
+import com.simsilica.lemur.GuiGlobals;
+import com.simsilica.lemur.Insets3f;
+import com.simsilica.lemur.Label;
+import com.simsilica.lemur.ListBox;
+import com.simsilica.lemur.OptionPanelState;
+import com.simsilica.lemur.component.SpringGridLayout;
+import com.simsilica.lemur.core.VersionedList;
+import com.simsilica.lemur.style.BaseStyles;
+import com.simsilica.lemur.style.ElementId;
+
+
+/**
+ *
+ *
+ *  @author    Paul Speed
+ */
+public class ProtoDemo extends SimpleApplication {
+
+    private ListBox listBox;
+    private VersionedList<String> testList = new VersionedList<String>();
+
+    public static void main( String... args ) {
+        ProtoDemo main = new ProtoDemo();
+        main.start();
+    }
+ 
+    public ProtoDemo() {
+        super(new StatsAppState(), new DebugKeysAppState(), new BasicProfilerState(false),
+              new OptionPanelState("glass"),
+              new ScreenshotAppState("", System.currentTimeMillis())); 
+    }
+    
+    @Override
+    public void simpleInitApp() {
+    
+        // Initialize the globals access so that the defualt
+        // components can find what they need.
+        GuiGlobals.initialize(this);
+
+        BaseStyles.loadGlassStyle();
+ 
+        Container window = new Container("glass");
+        window.addChild(new Label("Test List", new ElementId("title"), "glass"));
+
+        // Make some test data for the list. 
+        for( int i = 0; i < 10; i++ ) {
+            testList.add("Item " + (i+1));
+        }
+        
+        listBox = new ListBox(testList, "glass");
+        listBox.setInsets(new Insets3f(5, 5, 5, 5));
+        window.addChild(listBox);          
+ 
+        Action add = new Action("Add") {
+                @Override
+                public void execute( Button b ) {
+                    testList.add("New Item " + (testList.size() + 1));
+                }
+            };
+        Action delete = new Action("Delete") {
+                @Override
+                public void execute( Button b ) {
+                    Integer selected = listBox.getSelectionModel().getSelection();
+                    if( selected != null && selected < testList.size() ) {
+                        testList.remove((int)selected);
+                    }
+                }
+            };
+ 
+        Container buttons = new Container(new SpringGridLayout(Axis.X, Axis.Y, FillMode.Even, FillMode.Even));
+        window.addChild(buttons);       
+        buttons.addChild(new ActionButton(add, "glass"));
+        buttons.addChild(new ActionButton(delete, "glass"));
+        
+        
+        window.setLocalTranslation(300, 600, 0);
+        guiNode.attachChild(window);
+    } 
+}
+
+
+

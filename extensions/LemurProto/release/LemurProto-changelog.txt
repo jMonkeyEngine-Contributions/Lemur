@@ -26,7 +26,9 @@ Revision ???
 -Fixed ListBox to clamp the selection to the end of the list
     if the model changes.
 -Fixed ListBox to keep the list in the same place if items
-    are added after the current visible base.    
+    are added after the current visible base.
+-Added a ProtoDemo to demonstrate (and test) some of the proto
+    elements.        
 
 
 Revision 1505
