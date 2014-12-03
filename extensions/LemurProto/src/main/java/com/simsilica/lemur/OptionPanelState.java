@@ -69,6 +69,10 @@ public class OptionPanelState extends BaseAppState {
     
     public OptionPanelState() {
     }
+
+    public OptionPanelState( String style ) {
+        this.style = style;
+    }
     
     public OptionPanelState( Node guiNode ) {
         this.guiNode = guiNode;
