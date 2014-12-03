@@ -82,6 +82,31 @@ public class SelectionModel extends VersionedSet<Integer>
         return mode;
     }
  
+    /**
+     *  Returns the single selection if there is only one
+     *  selected item or null if there is no selection or
+     *  more than one item is selected.
+     */
+    public Integer getSelection() {
+        if( size() != 1 ) {
+            return null;
+        // The only selection should be the last item added 
+        return lastAdd;
+    }
+ 
+    /**
+     *  Sets the currently selected single value regardless
+     *  of selection mode.  This clears the set before adding
+     *  the selection.  Also, if the specified selection is less
+     *  than 0 then the selection is simply cleared. 
+     */
+    public void setSelection( Integer selection ) {
+        clear();
+        if( selection >= 0 ) {
+            add(selection);
+        }
+    }
+ 
     @Override   
     public boolean add( Integer selection ) {        
         if( mode == SelectionMode.Single ) {
