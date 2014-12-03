@@ -167,7 +167,7 @@ public class ListBox<T> extends Panel {
  
         if( applyStyles ) {
             Styles styles = GuiGlobals.getInstance().getStyles();
-            styles.applyStyles(this, elementId.getId(), style);
+            styles.applyStyles(this, getElementId(), style);
         }
 
         // Need a spacer so that the 'selector' panel doesn't think
