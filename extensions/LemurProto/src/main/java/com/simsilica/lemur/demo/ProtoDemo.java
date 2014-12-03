@@ -97,7 +97,6 @@ public class ProtoDemo extends SimpleApplication {
         }
         
         listBox = new ListBox(testList, "glass");
-        //listBox.setInsets(new Insets3f(5, 5, 5, 5));
         window.addChild(listBox);          
  
         final Action add = new Action("Add") {
