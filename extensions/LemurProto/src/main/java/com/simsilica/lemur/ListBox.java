@@ -44,6 +44,7 @@ import com.jme3.scene.Spatial;
 import com.simsilica.lemur.component.AbstractGuiComponent;
 import com.simsilica.lemur.component.BorderLayout;
 import com.simsilica.lemur.component.QuadBackgroundComponent;
+import com.simsilica.lemur.core.AbstractGuiControlListener;
 import com.simsilica.lemur.core.GuiControl;
 import com.simsilica.lemur.core.VersionedList;
 import com.simsilica.lemur.core.VersionedReference;
@@ -58,6 +59,7 @@ import com.simsilica.lemur.style.Attributes;
 import com.simsilica.lemur.style.ElementId;
 import com.simsilica.lemur.style.StyleDefaults;
 import com.simsilica.lemur.style.Styles;
+import java.util.List;
 import java.util.Set;
 
 
@@ -75,6 +77,7 @@ public class ListBox<T> extends Panel {
 
     private BorderLayout layout;
     private VersionedList<T> model;
+    private VersionedReference<List<T>> modelRef;
     private CellRenderer<T> cellRenderer;
     
     private SelectionModel selection;
@@ -138,6 +141,7 @@ public class ListBox<T> extends Panel {
         grid = new GridPanel(new GridModelDelegate(), elementId.child(ITEMS_ID), style);
         //CursorEventControl.addListenersToSpatial(grid, new GridListener());
         grid.setVisibleColumns(1);
+        grid.getControl(GuiControl.class).addListener(new GridListener());
         layout.addChild(grid, BorderLayout.Position.Center);
  
         // Add a special component to the grid so that we get resize
@@ -192,6 +196,10 @@ public class ListBox<T> extends Panel {
     @Override
     public void updateLogicalState( float tpf ) {
         super.updateLogicalState(tpf);
+ 
+        if( modelRef.update() ) {
+            resetModelRange();
+        }
         
         if( indexRef.update() ) {
             int index = (int)(maxIndex - baseIndex.getValue());
@@ -232,6 +240,7 @@ public class ListBox<T> extends Panel {
         }  
         
         this.model = model;
+        this.modelRef = model.createReference();
         
         grid.setLocation(0,0);
         grid.setModel(new GridModelDelegate());  // need a new one for a new version
@@ -282,6 +291,10 @@ public class ListBox<T> extends Panel {
             // For now just one item... otherwise we have to loop
             // over visible items
             int selected = selection.iterator().next();
+            if( selected >= model.size() ) {
+                selected = model.size() - 1;
+                selection.setSelection(selected);      
+            }
             selectedCell = grid.getCell(selected, 0); 
         }
                 
@@ -291,6 +304,7 @@ public class ListBox<T> extends Panel {
             Vector3f size = selectedCell.getSize().clone();
             Vector3f loc = selectedCell.getLocalTranslation();
             Vector3f pos = selectorAreaOrigin.add(loc.x, loc.y, loc.z + size.z);
+            
             selector.setLocalTranslation(pos);
             selector.setSize(size);
             
@@ -303,8 +317,15 @@ public class ListBox<T> extends Panel {
         int count = model.size();
         int visible = grid.getVisibleRows();
         maxIndex = Math.max(0, count - visible);
+        
+        // Because the slider is upside down, we have to
+        // do some math if we want our base not to move as
+        // items are added to the list after us
+        double val = baseIndex.getMaximum() - baseIndex.getValue();
+        
         baseIndex.setMinimum(0);
-        baseIndex.setMaximum(maxIndex);        
+        baseIndex.setMaximum(maxIndex);
+        baseIndex.setValue(maxIndex - val);        
     }
 
     protected Panel getListCell( int row, int col, Panel existing ) {
@@ -354,6 +375,14 @@ public class ListBox<T> extends Panel {
     
     }
 
+    private class GridListener extends AbstractGuiControlListener {
+        public void reshape( GuiControl source, Vector3f pos, Vector3f size ) {
+            // If the grid was re-laid out then we probably need
+            // to refresh our selector
+            refreshSelector();
+        }
+    }
+    
     protected class GridModelDelegate implements GridModel<Panel> {
         
         @Override

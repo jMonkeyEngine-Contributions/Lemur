@@ -10,6 +10,23 @@ Revision ???
     options to the user.
 -Added an OptionPanelState that can be used to modally
     present OptionPanel's to the user.
+-Added setSelection() and getSelection() to list.SelectionModel
+    for more easily setting/getting a single selection.
+-Fixed GridPanel to update its displayed values if the model    
+    has changed.  Prior to this, add/remove/set on the model
+    was not reflected properly in the grid.
+-Fixed ListBox to reset its slider range when the list model
+    changes.
+-Fixed ListBox to reset the selector element if the grid has
+    been reshaped() (ie: children have been laid out again)
+    This fixes a bug where the selector wasn't resized when
+    the list resized.  It also fixes a bug where the selector
+    disappeared if newly moved to the end of the list because
+    of model changes.
+-Fixed ListBox to clamp the selection to the end of the list
+    if the model changes.
+-Fixed ListBox to keep the list in the same place if items
+    are added after the current visible base.    
 
 
 Revision 1505
