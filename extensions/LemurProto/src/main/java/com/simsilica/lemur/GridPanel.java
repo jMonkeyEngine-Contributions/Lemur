@@ -40,6 +40,7 @@ import com.jme3.scene.Node;
 import com.simsilica.lemur.grid.GridModel;
 import com.simsilica.lemur.component.SpringGridLayout;
 import com.simsilica.lemur.core.GuiControl;
+import com.simsilica.lemur.core.VersionedReference;
 import com.simsilica.lemur.style.Attributes;
 import com.simsilica.lemur.style.ElementId;
 import com.simsilica.lemur.style.StyleDefaults;
@@ -55,6 +56,7 @@ public class GridPanel extends Panel {
     public static final String ELEMENT_ID = "grid";
  
     private GridModel<Panel> model;
+    private VersionedReference<GridModel<Panel>> modelRef;
     private SpringGridLayout layout;
     private int visibleRows = 5;
     private int visibleColumns = 5;
@@ -103,11 +105,13 @@ public class GridPanel extends Panel {
         if( this.model != null ) {
             // Clear the old panel
             getControl(GuiControl.class).getLayout().clearChildren();
+            this.modelRef = null;
         }
         
         this.model = model;
         
         if( this.model != null ) {
+            this.modelRef = model.createReference(); 
             refreshGrid();
         }               
     }
@@ -195,6 +199,15 @@ public class GridPanel extends Panel {
         }    
     }
 
+    @Override
+    public void updateLogicalState( float tpf ) {
+        super.updateLogicalState(tpf);
+ 
+        if( modelRef.update() ) {
+            refreshGrid();
+        }
+    }
+    
     @Override
     public String toString() {
         return getClass().getName() + "[elementId=" + getElementId() + "]";
