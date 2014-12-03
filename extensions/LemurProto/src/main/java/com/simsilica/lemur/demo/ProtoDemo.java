@@ -97,16 +97,16 @@ public class ProtoDemo extends SimpleApplication {
         }
         
         listBox = new ListBox(testList, "glass");
-        listBox.setInsets(new Insets3f(5, 5, 5, 5));
+        //listBox.setInsets(new Insets3f(5, 5, 5, 5));
         window.addChild(listBox);          
  
-        Action add = new Action("Add") {
+        final Action add = new Action("Add") {
                 @Override
                 public void execute( Button b ) {
                     testList.add("New Item " + (testList.size() + 1));
                 }
             };
-        Action delete = new Action("Delete") {
+        final Action delete = new Action("Delete") {
                 @Override
                 public void execute( Button b ) {
                     Integer selected = listBox.getSelectionModel().getSelection();
@@ -115,10 +115,29 @@ public class ProtoDemo extends SimpleApplication {
                     }
                 }
             };
+        final Action cancel = new Action("Cancel") {
+                @Override
+                public void execute( Button b ) {
+                }
+            };
+            
+        final Action safeDelete = new Action("Safe Delete") {
+                @Override
+                public void execute( Button b ) {
+                    Integer selected = listBox.getSelectionModel().getSelection();
+                    if( selected == null || selected >= testList.size() ) {
+                        return;
+                    }
+                    String val = testList.get(selected);
+                    OptionPanelState ops = stateManager.getState(OptionPanelState.class);
+                    ops.show("Delete", "Really delete '" + val + "'?", delete, cancel);                        
+                }
+            };            
  
         Container buttons = new Container(new SpringGridLayout(Axis.X, Axis.Y, FillMode.Even, FillMode.Even));
         window.addChild(buttons);       
         buttons.addChild(new ActionButton(add, "glass"));
+        buttons.addChild(new ActionButton(safeDelete, "glass"));
         buttons.addChild(new ActionButton(delete, "glass"));
         
         

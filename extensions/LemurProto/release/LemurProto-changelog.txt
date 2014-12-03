@@ -30,7 +30,11 @@ Revision ???
 -Added a ProtoDemo to demonstrate (and test) some of the proto
     elements.
 -Fixed ListBox to properly apply its outer style as "list.container"
-    instead of just "list"            
+    instead of just "list"
+-Added a glass-styles.groovy to augment the default glass style
+    with styling for the ListBox and OptionPanel elements.  These
+    styles are automatically loaded when the glass style is 
+    loaded.                
 
 
 Revision 1505
