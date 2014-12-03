@@ -88,6 +88,7 @@ public class ProtoDemo extends SimpleApplication {
 
         BaseStyles.loadGlassStyle();
  
+        // Create a window to hold our demo elements and add a title label
         Container window = new Container("glass");
         window.addChild(new Label("Test List", new ElementId("title"), "glass"));
 
@@ -95,10 +96,12 @@ public class ProtoDemo extends SimpleApplication {
         for( int i = 0; i < 10; i++ ) {
             testList.add("Item " + (i+1));
         }
-        
+
+        // Create a list box for the test data and add it to the window         
         listBox = new ListBox(testList, "glass");
         window.addChild(listBox);          
  
+        // Create some actions
         final Action add = new Action("Add") {
                 @Override
                 public void execute( Button b ) {
@@ -119,7 +122,9 @@ public class ProtoDemo extends SimpleApplication {
                 public void execute( Button b ) {
                 }
             };
-            
+ 
+        // Safe delete is a special action because it will pop open 
+        // the option panel and delegate to the other delete action.           
         final Action safeDelete = new Action("Safe Delete") {
                 @Override
                 public void execute( Button b ) {
@@ -133,13 +138,15 @@ public class ProtoDemo extends SimpleApplication {
                 }
             };            
  
+        // Create the button panel at the bottom of the window
         Container buttons = new Container(new SpringGridLayout(Axis.X, Axis.Y, FillMode.Even, FillMode.Even));
         window.addChild(buttons);       
         buttons.addChild(new ActionButton(add, "glass"));
         buttons.addChild(new ActionButton(safeDelete, "glass"));
         buttons.addChild(new ActionButton(delete, "glass"));
         
-        
+ 
+        // And stick the window somewhere we will see it       
         window.setLocalTranslation(300, 600, 0);
         guiNode.attachChild(window);
     } 
