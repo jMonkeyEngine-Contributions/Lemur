@@ -90,6 +90,7 @@ public class SelectionModel extends VersionedSet<Integer>
     public Integer getSelection() {
         if( size() != 1 ) {
             return null;
+        }
         // The only selection should be the last item added 
         return lastAdd;
     }
