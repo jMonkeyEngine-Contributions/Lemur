@@ -110,6 +110,7 @@ public class DefaultRangedValueModel implements RangedValueModel {
         if( this.max == max ) 
             return;
         this.max = max;
+        version++;
         checkRange();
     }
 
@@ -121,6 +122,7 @@ public class DefaultRangedValueModel implements RangedValueModel {
         if( this.min == min ) 
             return;
         this.min = min;
+        version++;
         checkRange();
     }
 

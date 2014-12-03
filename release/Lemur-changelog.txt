@@ -23,6 +23,17 @@ Lemur ???
 * Fixed a small sizing issue in BorderLayout where it was always passing
     through 0 for the z size when setting the size of children.  Now it passes
     through the size that was passed to reshape.
+* Added Button.removeClickCommands()
+* Added Container.clearChildren()
+* Modified PickEventSession to keep its pick roots in a SafeArrayList for
+    garbage-free iteration.
+* Added setAlpha()/getAlpha() to ColoredComponent and modified all ColoredComponent
+    implementors to have the new methods.
+* Added Panel.setAlpha() and Panel.getAlpha() for setting the alpha of just 
+    the panel and it's components or of all children recursively.  Useful
+    for fading in/out entire UI hierarchies.
+* Fixed a bug in DefaultRangedValueModel where changes to min and max value weren't
+    incrementing the version.        
 
 
 Lemur 1466
