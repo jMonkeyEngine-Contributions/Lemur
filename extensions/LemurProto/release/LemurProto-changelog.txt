@@ -34,7 +34,11 @@ Revision ???
 -Added a glass-styles.groovy to augment the default glass style
     with styling for the ListBox and OptionPanel elements.  These
     styles are automatically loaded when the glass style is 
-    loaded.                
+    loaded.
+-Fixed ListBox to properly pass style through on all constructors
+    that take style as a parameter.
+-Added ListBox.set/getCellRenderer() for changing the cell rendering
+    strategy at runtime.                        
 
 
 Revision 1505

@@ -36,6 +36,7 @@
  
 package com.simsilica.lemur;
 
+import com.google.common.base.Objects;
 import com.jme3.material.RenderState.BlendMode;
 import com.jme3.math.ColorRGBA;
 import com.jme3.math.Vector3f;
@@ -111,24 +112,22 @@ public class ListBox<T> extends Panel {
     }
 
     public ListBox( VersionedList<T> model, String style ) {
-        this(true, model, null, 
-                new SelectionModel(), new ElementId(ELEMENT_ID), style);             
+        this(true, model, null, new SelectionModel(), new ElementId(ELEMENT_ID), style);             
     }
  
     public ListBox( VersionedList<T> model, ElementId elementId, String style ) {
-        this(true, model, null, 
-                new SelectionModel(), elementId, null);             
+        this(true, model, null, new SelectionModel(), elementId, style);             
     }
 
     public ListBox( VersionedList<T> model, CellRenderer<T> renderer, ElementId elementId, String style ) {
-        this(true, model, renderer, new SelectionModel(), elementId, null);             
+        this(true, model, renderer, new SelectionModel(), elementId, style);             
     }
     
     protected ListBox( boolean applyStyles, VersionedList<T> model, CellRenderer<T> cellRenderer, 
                        SelectionModel selection,  
                        ElementId elementId, String style ) {
         super(false, elementId.child(CONTAINER_ID), style);
-        
+ 
         if( cellRenderer == null ) {
             // Create a default one
             cellRenderer = new DefaultCellRenderer(elementId.child("item"), style);
@@ -283,6 +282,18 @@ public class ListBox<T> extends Panel {
     public int getVisibleItems() {
         return grid.getVisibleRows();
     }
+
+    public void setCellRenderer( CellRenderer renderer ) {
+        if( Objects.equal(this.cellRenderer, renderer) ) {
+            return;
+        }
+        this.cellRenderer = renderer;
+        grid.refreshGrid(); // cheating
+    }
+    
+    public CellRenderer getCellRenderer() {
+        return cellRenderer;
+    }    
 
     protected void refreshSelector() {    
         
