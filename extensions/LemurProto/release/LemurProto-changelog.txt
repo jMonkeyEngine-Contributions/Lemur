@@ -38,7 +38,11 @@ Revision ???
 -Fixed ListBox to properly pass style through on all constructors
     that take style as a parameter.
 -Added ListBox.set/getCellRenderer() for changing the cell rendering
-    strategy at runtime.                        
+    strategy at runtime.
+-Modified DefaultCellRenderer to take an optional Function<T, String> for
+    doing the value to string transform.  Also moved the value to String
+    conversion into its own protected method to make it easy for subclasses
+    to do more advanced custom behavior if desired.                            
 
 
 Revision 1505

@@ -36,6 +36,7 @@
 
 package com.simsilica.lemur.list;
 
+import com.google.common.base.Function;
 import com.simsilica.lemur.Button;
 import com.simsilica.lemur.Panel;
 import com.simsilica.lemur.style.ElementId;
@@ -46,30 +47,68 @@ import com.simsilica.lemur.style.Styles;
  *
  *  @author    Paul Speed
  */
-public class DefaultCellRenderer<T> implements CellRenderer<T> {
+public class DefaultCellRenderer<T> implements CellRenderer<T>, Cloneable {
 
     private String style;
     private ElementId elementId;
+    private Function<T, String> transform;
     
     public DefaultCellRenderer() {
-        this(new ElementId(Button.ELEMENT_ID), Styles.DEFAULT_STYLE);
+        this(new ElementId(Button.ELEMENT_ID), Styles.DEFAULT_STYLE, null);
     }
     
     public DefaultCellRenderer( String style ) {
-        this(new ElementId(Button.ELEMENT_ID), style);
+        this(new ElementId(Button.ELEMENT_ID), style, null);
     }
     
     public DefaultCellRenderer( ElementId elementId, String style ) {
+        this(elementId, style, null);
+    }
+    
+    public DefaultCellRenderer( ElementId elementId, String style, Function<T, String> transform ) {
         this.style = style;
         this.elementId = elementId;
+        this.transform = transform;
+    }
+    
+    @Override
+    public DefaultCellRenderer<T> clone() {
+        try {
+            return (DefaultCellRenderer<T>)super.clone();
+        } catch( CloneNotSupportedException e ) {
+            throw new RuntimeException("Error cloning", e);
+        }
+    }
+    
+    public void setTransform( Function<T, String> transform ) {
+        this.transform = transform;
+    }
+    
+    public Function<T, String> getTransform() {
+        return transform;
+    } 
+ 
+    public ElementId getElement() {
+        return elementId;
+    }
+    
+    public String getStyle() {
+        return style;
+    }
+    
+    protected String valueToString( T value ) {
+        if( transform != null ) {
+            return transform.apply(value);
+        }
+        return String.valueOf(value);
     }
 
     @Override
-    public Panel getView( Object value, boolean selected, Panel existing ) {
+    public Panel getView( T value, boolean selected, Panel existing ) {
         if( existing == null ) {
-            existing = new Button(String.valueOf(value), elementId, style);
+            existing = new Button(valueToString(value), elementId, style);
         } else {
-            ((Button)existing).setText(String.valueOf(value));
+            ((Button)existing).setText(valueToString(value));
         }
         return existing;
     }
