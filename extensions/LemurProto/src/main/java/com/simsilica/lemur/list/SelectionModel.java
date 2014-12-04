@@ -102,6 +102,8 @@ public class SelectionModel extends VersionedSet<Integer>
      *  than 0 then the selection is simply cleared. 
      */
     public void setSelection( Integer selection ) {
+        if( selection == lastAdd && size() == 1 )
+            return;
         clear();
         if( selection >= 0 ) {
             add(selection);
