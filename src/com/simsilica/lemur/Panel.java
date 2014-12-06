@@ -182,6 +182,7 @@ public class Panel extends Node {
         return getControl(GuiControl.class).getSize();
     }
 
+    @StyleAttribute(value="preferredSize", lookupDefault=false)
     public void setPreferredSize( Vector3f size ) {
         getControl(GuiControl.class).setPreferredSize(size);
     }
@@ -272,6 +273,7 @@ public class Panel extends Node {
      *  in or out as needed as long as its visuals are ColoredComponent
      *  compliant.
      */
+    @StyleAttribute(value="alpha", lookupDefault=false)
     public void setAlpha( float alpha ) {
         setAlpha(alpha, true);
     }
