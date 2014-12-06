@@ -58,6 +58,7 @@ import com.simsilica.lemur.list.DefaultCellRenderer;
 import com.simsilica.lemur.list.SelectionModel;
 import com.simsilica.lemur.style.Attributes;
 import com.simsilica.lemur.style.ElementId;
+import com.simsilica.lemur.style.StyleAttribute;
 import com.simsilica.lemur.style.StyleDefaults;
 import com.simsilica.lemur.style.Styles;
 import java.util.List;
@@ -223,7 +224,7 @@ public class ListBox<T> extends Panel {
     }
     
     public void setModel( VersionedList<T> model ) {
-        if( this.model == model ) {
+        if( this.model == model && model != null ) {
             return;
         }
         
@@ -272,7 +273,8 @@ public class ListBox<T> extends Panel {
     public SelectionModel getSelectionModel() {
         return selection;
     }
-    
+        
+    @StyleAttribute(value="visibleItems", lookupDefault=false)
     public void setVisibleItems( int count ) {
         grid.setVisibleRows(count);
         resetModelRange();
@@ -283,6 +285,7 @@ public class ListBox<T> extends Panel {
         return grid.getVisibleRows();
     }
 
+    @StyleAttribute(value="cellRenderer", lookupDefault=false)
     public void setCellRenderer( CellRenderer renderer ) {
         if( Objects.equal(this.cellRenderer, renderer) ) {
             return;
@@ -296,7 +299,9 @@ public class ListBox<T> extends Panel {
     }    
 
     protected void refreshSelector() {    
-        
+        if( selectorArea == null ) {
+            return;
+        }
         Panel selectedCell = null;
         if( selection != null && !selection.isEmpty() ) {
             // For now just one item... otherwise we have to loop
@@ -325,7 +330,7 @@ public class ListBox<T> extends Panel {
     }
 
     protected void resetModelRange() {
-        int count = model.size();
+        int count = model == null ? 0 : model.size();
         int visible = grid.getVisibleRows();
         maxIndex = Math.max(0, count - visible);
         

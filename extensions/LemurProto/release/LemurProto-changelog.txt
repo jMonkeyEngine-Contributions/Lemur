@@ -42,7 +42,13 @@ Revision ???
 -Modified DefaultCellRenderer to take an optional Function<T, String> for
     doing the value to string transform.  Also moved the value to String
     conversion into its own protected method to make it easy for subclasses
-    to do more advanced custom behavior if desired.                            
+    to do more advanced custom behavior if desired.
+-Fixed a bug where the initial internal setModel() was failing to set
+    the default empty model when the passed model was null... because null
+    was the same as the existing model.
+-Added style attribute support for ListBox.visibleItems and ListBox.cellRenderer.
+-Fixed some bugs where applying styles was throwing NPEs because there was
+    no model or selector yet.    
 
 
 Revision 1505
