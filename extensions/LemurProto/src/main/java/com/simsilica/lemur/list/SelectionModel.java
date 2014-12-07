@@ -36,6 +36,7 @@
 
 package com.simsilica.lemur.list;
 
+import com.google.common.base.Objects;
 import com.simsilica.lemur.core.VersionedSet;
 
 
@@ -102,7 +103,7 @@ public class SelectionModel extends VersionedSet<Integer>
      *  than 0 then the selection is simply cleared. 
      */
     public void setSelection( Integer selection ) {
-        if( selection == lastAdd && size() == 1 )
+        if( Objects.equal(selection, lastAdd) && size() == 1 )
             return;
         clear();
         if( selection >= 0 ) {
@@ -113,6 +114,8 @@ public class SelectionModel extends VersionedSet<Integer>
     @Override   
     public boolean add( Integer selection ) {        
         if( mode == SelectionMode.Single ) {
+            if( Objects.equal(selection, lastAdd) && size() == 1 )
+                return false; 
             clear();
         }
         lastAdd = selection;

@@ -200,14 +200,14 @@ public class ListBox<T> extends Panel {
         if( modelRef.update() ) {
             resetModelRange();
         }
-        
-        if( indexRef.update() ) {
+ 
+        boolean indexUpdate = indexRef.update();
+        boolean selectionUpdate = selectionRef.update();         
+        if( indexUpdate ) {
             int index = (int)(maxIndex - baseIndex.getValue());
             grid.setRow(index);
-            refreshSelector();
-        }
-        
-        if( selectionRef.update() ) {
+        }         
+        if( selectionUpdate || indexUpdate ) {
             refreshSelector();
         }
     }
@@ -320,9 +320,10 @@ public class ListBox<T> extends Panel {
             Vector3f size = selectedCell.getSize().clone();
             Vector3f loc = selectedCell.getLocalTranslation();
             Vector3f pos = selectorAreaOrigin.add(loc.x, loc.y, loc.z + size.z);
-            
+
             selector.setLocalTranslation(pos);
             selector.setSize(size);
+            selector.setPreferredSize(size);
             
             selectorArea.attachChild(selector);
             selectorArea.setLocalTranslation(grid.getLocalTranslation());            

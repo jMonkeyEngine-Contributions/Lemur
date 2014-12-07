@@ -48,7 +48,11 @@ Revision ???
     was the same as the existing model.
 -Added style attribute support for ListBox.visibleItems and ListBox.cellRenderer.
 -Fixed some bugs where applying styles was throwing NPEs because there was
-    no model or selector yet.    
+    no model or selector yet.
+-Debounced some update churn in SelectionModel when calling add() and fixed
+    the simmilar check in setSelection()
+-Fixed a bug in ListBox where the item selector might start out the wrong size
+    when first displayed.         
 
 
 Revision 1505
