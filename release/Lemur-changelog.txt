@@ -37,7 +37,9 @@ Lemur ???
 * Added some more trace level logging to the Styles class to help users debug
     style issues.
 * Added styling attributes for Panel.alpha and Panel.preferredSize
-* Added vec3() and vec2() functions to the style API    
+* Added vec3() and vec2() functions to the style API
+* Fixed GuiControl to clamp the passed size to min 0,0,0 during reshape.
+* Added a check for negative sizes to GuiControl.setSize().     
 
 
 Lemur 1466

@@ -169,13 +169,22 @@ public class GuiControl extends AbstractNodeControl<GuiControl>
         if( layout != null ) {
             layout.calculatePreferredSize(size);
         }
+        Vector3f lastSize = new Vector3f(size);
         for( int i = components.size() - 1; i >= 0; i-- ) {
             components.get(i).calculatePreferredSize(size);
+            if( size.x < lastSize.x || size.y < lastSize.y || size.z < lastSize.z ) {
+                throw new RuntimeException("Component:" + components.get(i) 
+                                + " shrunk the preferred size. Before:" + lastSize 
+                                + " after:" + size); 
+            }
         }
         return size;
     }
 
     public void setSize( Vector3f size ) {
+        if( size.x < 0 || size.y < 0 || size.z < 0 ) {
+            throw new IllegalArgumentException("Size cannot be negative:" + size);
+        }            
         lastSize.set(size);
         
         // The components will take their parts out of size.
@@ -186,6 +195,9 @@ public class GuiControl extends AbstractNodeControl<GuiControl>
         Vector3f offset = new Vector3f();
         for( GuiComponent c : components ) {
             c.reshape(offset, stackSize);
+            stackSize.x = Math.max(0, stackSize.x);
+            stackSize.y = Math.max(0, stackSize.y);
+            stackSize.z = Math.max(0, stackSize.z);
         }
         if( layout != null ) {
             layout.reshape(offset, stackSize);
