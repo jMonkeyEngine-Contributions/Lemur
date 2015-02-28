@@ -64,7 +64,7 @@ public class Label extends Panel {
 
     private TextComponent text;
     private TextComponent shadow;
-    private Vector3f shadowOffset = new Vector3f(1,-1,1);
+    private Vector3f shadowOffset = new Vector3f(1,-1,-1);
 
     public Label( String s ) {
         this( s, true, new ElementId(ELEMENT_ID), null );

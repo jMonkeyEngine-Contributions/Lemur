@@ -253,10 +253,24 @@ public class TextComponent extends AbstractGuiComponent
             // I need to test some other things before swing back to fix this
             // because I may have already broken things with the component stack
             // refactoring.
-            bitmapText.setLocalTranslation(pos.x + offset.x, pos.y + offset.y, pos.z - offset.z);            
+            // Ok, so upon more reflection, I think offset will work like one
+            // would expect.  Offset will set the position of this text relative
+            // to the passed in position... but that means that negative offsets
+            // are really just 0 and we instead push out the position.
+            // This means that something like shadow text with a -1 z will end up
+            // -1 behind the regular text because the regular text will get pushed
+            // out by 1.
+            // So a negative z offset results in z=0 for this text but pos.z += abs(z).
+            // A positive Z pushes us out and also moves pos.z+= z. 
+            // Because we use offset z for size, this is really the only way it
+            // makes sense.  offset.z will control the thickness and positive or 
+            // negative indicates where in the "box" it falls (back or front)
+            float effectiveZ = Math.max(0, offset.z);           
+            bitmapText.setLocalTranslation(pos.x + offset.x, pos.y + offset.y, pos.z + effectiveZ);
             size.x -= Math.abs(offset.x);
             size.y -= Math.abs(offset.y);
             size.z -= Math.abs(offset.z);
+            pos.z += Math.abs(offset.z);            
         } else {
             bitmapText.setLocalTranslation(pos.x, pos.y, pos.z);
         }

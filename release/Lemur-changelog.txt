@@ -46,7 +46,11 @@ Lemur ???
     The breaking change is for any custom GUI element that relied on the old weird
     component ordering methods as they are now gone.
 * Added setIcon() to label to set an icon-layer component.  (This was made easy
-    by the above refactoring and is long overdue.)     
+    by the above refactoring and is long overdue.)
+* Breaking fix: modified how TextComponent's z offset is used to be more sensible
+    and to properly affect the next layer in the stack.  This directly affects
+    shadowOffset and any styling using shadowOffset probably needs the sign of
+    its z component flipped.  The new default shadow offset is now (1, -1, -1)
 
 
 Lemur 1466
