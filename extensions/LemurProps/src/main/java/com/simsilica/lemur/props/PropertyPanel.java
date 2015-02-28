@@ -72,7 +72,7 @@ import java.util.List;
  *
  *  @author    Paul Speed
  */ 
-public class PropertyPanel extends Panel 
+public class PropertyPanel extends Panel  
                            implements VersionedObject<PropertyPanel> {
                            
     public static final ElementId ELEMENT_ID = new ElementId("properties");                            
