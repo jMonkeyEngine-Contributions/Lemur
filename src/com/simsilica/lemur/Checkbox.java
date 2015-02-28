@@ -60,7 +60,7 @@ public class Checkbox extends Button {
 
     public static final Command<Button> TOGGLE_COMMAND = new ToggleCommand();
 
-    private static final String KEY_STATE_VIEW = "stateView";
+    //private static final String KEY_STATE_VIEW = "stateView";
 
     private CheckboxModel model;
     private VersionedReference<Boolean> state;
@@ -132,6 +132,10 @@ public class Checkbox extends Button {
     }
 
     protected void setStateView( GuiComponent c ) {
+ 
+        setIcon(c);
+        //getControl(GuiControl.class).setComponent(LAYER_ICON, c);   
+        /*
         if( getControl(GuiControl.class).getComponent(KEY_STATE_VIEW) != null ) {
             // Remove the old one
             getControl(GuiControl.class).removeComponent(KEY_STATE_VIEW);
@@ -142,7 +146,7 @@ public class Checkbox extends Button {
             GuiComponent after = gui.getFirstComponent(KEY_BACKGROUND, KEY_INSETS);
             int index = gui.getComponentIndex(after);
             gui.addComponent(index+1, KEY_STATE_VIEW, c);
-        }
+        }*/
     }
 
     protected void resetStateView() {

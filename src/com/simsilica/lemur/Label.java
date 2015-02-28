@@ -45,6 +45,7 @@ import com.jme3.math.Vector3f;
 
 import com.simsilica.lemur.core.GuiControl;
 import com.simsilica.lemur.component.TextComponent;
+import com.simsilica.lemur.core.GuiComponent;
 
 
 /**
@@ -57,8 +58,9 @@ public class Label extends Panel {
 
     public static final String ELEMENT_ID = "label";
 
-    public static final String KEY_TEXT = "text";
-    public static final String KEY_SHADOW_TEXT = "shadowText";
+    public static final String LAYER_ICON = "icon";
+    public static final String LAYER_TEXT = "text";
+    public static final String LAYER_SHADOW_TEXT = "shadowText";
 
     private TextComponent text;
     private TextComponent shadow;
@@ -79,6 +81,14 @@ public class Label extends Panel {
     protected Label( String s, boolean applyStyles, ElementId elementId, String style ) {
         super(false, elementId, style);
 
+        // Set our layers
+        getControl(GuiControl.class).setLayerOrder(LAYER_INSETS, 
+                                                   LAYER_BORDER, 
+                                                   LAYER_BACKGROUND,
+                                                   LAYER_ICON,
+                                                   LAYER_SHADOW_TEXT,
+                                                   LAYER_TEXT);
+
         // Retrieve the font before creation so that if the font is
         // customized by the style then we don't end up creating a
         // BitmapText object just to throw it away when a new font
@@ -89,7 +99,7 @@ public class Label extends Panel {
         this.text = new TextComponent(s, font);
         text.setLayer(3);
 
-        getControl(GuiControl.class).addComponent(KEY_TEXT, text);
+        getControl(GuiControl.class).setComponent(LAYER_TEXT, text);
 
         if( applyStyles ) {
             styles.applyStyles(this, elementId.getId(), style);
@@ -193,7 +203,8 @@ public class Label extends Panel {
             shadow.setFontSize(getFontSize());
             shadow.setHAlignment(text.getHAlignment());
             shadow.setVAlignment(text.getVAlignment());
-            getControl(GuiControl.class).insertComponent(shadow, text);
+            //getControl(GuiControl.class).insertComponent(shadow, text);
+            getControl(GuiControl.class).setComponent(LAYER_SHADOW_TEXT, shadow);
         } else if( color == null ) {
             // Need to remove it
             getControl(GuiControl.class).removeComponent(shadow);
@@ -210,6 +221,15 @@ public class Label extends Panel {
         return shadow.getColor();
     }
 
+    @StyleAttribute(value="icon", lookupDefault=false)
+    public void setIcon( GuiComponent icon ) {        
+        getControl(GuiControl.class).setComponent(LAYER_ICON, icon);
+    }
+
+    public GuiComponent getIcon() {
+        return getControl(GuiControl.class).getComponent(LAYER_ICON);
+    }
+    
     @Override
     public String toString() {
         return getClass().getName() + "[text=" + getText() + ", color=" + getColor() + ", elementId=" + getElementId() + "]";

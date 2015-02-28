@@ -83,8 +83,9 @@ public class Panel extends Node {
 
     public static final String ELEMENT_ID = "panel";
 
-    protected static final String KEY_BACKGROUND = "background";
-    protected static final String KEY_INSETS = "insets";
+    public static final String LAYER_BACKGROUND = "background";
+    public static final String LAYER_INSETS = "insets";
+    public static final String LAYER_BORDER = "border";
 
     private ElementId elementId;
     private String style;
@@ -157,7 +158,7 @@ public class Panel extends Node {
         this.elementId = elementId;
         this.style = style;
 
-        GuiControl gui = new GuiControl();
+        GuiControl gui = new GuiControl(LAYER_INSETS, LAYER_BORDER, LAYER_BACKGROUND);
         addControl(gui);
 
         if( applyStyles ) {
@@ -217,6 +218,9 @@ public class Panel extends Node {
 
     @StyleAttribute(value="background", lookupDefault=false)
     public void setBackground( GuiComponent bg ) {
+        
+        getControl(GuiControl.class).setComponent(LAYER_BACKGROUND, bg);   
+        /*
         if( getControl(GuiControl.class).getComponent(KEY_BACKGROUND) != null ) {
             // Remove the old one
             getControl(GuiControl.class).removeComponent(KEY_BACKGROUND);
@@ -225,11 +229,11 @@ public class Panel extends Node {
         if( bg != null ) {
             int index = getControl(GuiControl.class).getComponentIndex(KEY_INSETS);
             getControl(GuiControl.class).addComponent(index+1, KEY_BACKGROUND, bg);
-        }
+        }*/
     }
 
     public GuiComponent getBackground() {
-        return getControl(GuiControl.class).getComponent(KEY_BACKGROUND);
+        return getControl(GuiControl.class).getComponent(LAYER_BACKGROUND);
     }
 
     @StyleAttribute(value="insets", lookupDefault=false)
@@ -246,23 +250,24 @@ public class Panel extends Node {
     }
 
     public Insets3f getInsets() {
-        InsetsComponent ic = getControl(GuiControl.class).getComponent(KEY_INSETS);
+        InsetsComponent ic = getControl(GuiControl.class).getComponent(LAYER_INSETS);
         return ic == null ? null : ic.getInsets();
     }
 
     @StyleAttribute(value="insetsComponent", lookupDefault=false)
     public void setInsetsComponent( InsetsComponent ic ) {
-        InsetsComponent original = getControl(GuiControl.class).getComponent(KEY_INSETS);
+        getControl(GuiControl.class).setComponent(LAYER_INSETS, ic);
+        /*InsetsComponent original = getControl(GuiControl.class).getComponent(KEY_INSETS);
         if( original != null ) {
             getControl(GuiControl.class).removeComponent(original);
         }
         if( ic != null ) {
             getControl(GuiControl.class).addComponent(0, KEY_INSETS, ic);
-        }
+        }*/
     }
 
     public InsetsComponent getInsetsComponent() {
-        InsetsComponent ic = getControl(GuiControl.class).getComponent(KEY_INSETS);
+        InsetsComponent ic = getControl(GuiControl.class).getComponent(LAYER_INSETS);
         return ic;
     }
 

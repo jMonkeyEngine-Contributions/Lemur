@@ -41,6 +41,7 @@ import com.jme3.material.RenderState.BlendMode;
 import com.jme3.math.ColorRGBA;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Geometry;
+import com.jme3.scene.Spatial;
 import com.jme3.scene.shape.Box;
 import com.simsilica.lemur.Checkbox;
 import com.simsilica.lemur.Container;
@@ -50,11 +51,14 @@ import com.simsilica.lemur.Label;
 import com.simsilica.lemur.LayerComparator;
 import com.simsilica.lemur.Panel;
 import com.simsilica.lemur.Slider;
+import com.simsilica.lemur.TextField;
 import com.simsilica.lemur.component.DynamicInsetsComponent;
 import com.simsilica.lemur.component.QuadBackgroundComponent;
 import com.simsilica.lemur.component.TbtQuadBackgroundComponent;
 import com.simsilica.lemur.core.VersionedReference;
 import com.simsilica.lemur.event.CursorEventControl;
+import com.simsilica.lemur.event.CursorMotionEvent;
+import com.simsilica.lemur.event.DefaultCursorListener;
 import com.simsilica.lemur.event.DragHandler;
 import com.simsilica.lemur.style.ElementId;
 import com.simsilica.lemur.style.Styles;
@@ -77,6 +81,8 @@ public class BasicDemo extends SimpleApplication {
     private VersionedReference<Boolean> showFpsRef;
 
     private ColorRGBA boxColor = ColorRGBA.Blue.clone();
+
+private Panel test;
 
     public static void main(String[] args) {
         BasicDemo app = new BasicDemo();
@@ -109,6 +115,10 @@ public class BasicDemo extends SimpleApplication {
                                 new QuadBackgroundComponent(new ColorRGBA(1, 0.0f, 0.0f, 0.0f)) );
         styles.getSelector( "header", "glass" ).set( "background",
                                 new QuadBackgroundComponent(new ColorRGBA(0, 0.75f, 0.75f, 0.5f)) );
+        styles.getSelector( "header", "glass" ).set( "shadowColor",
+                                                     new ColorRGBA(1, 0f, 0f, 1) );
+/*        styles.getSelector( "header", "glass" ).set( "shadowOffset", 
+                                                     new Vector3f(3, -3, 3) );*/
 
         // Now construct some HUD panels in the "glass" style that
         // we just configured above.
@@ -121,7 +131,7 @@ public class BasicDemo extends SimpleApplication {
         hudPanel.addChild(panel);
 
         panel.setBackground(new QuadBackgroundComponent(new ColorRGBA(0,0.5f,0.5f,0.5f),5,5, 0.02f, false));
-        panel.addChild( new Label( "Stats Settings", new ElementId("header"), "glass" ) );
+test =  panel.addChild( new Label( "Stats Settings", new ElementId("header"), "glass" ) );
         panel.addChild( new Panel( 2, 2, ColorRGBA.Cyan, "glass" ) ).setUserData( LayerComparator.LAYER, 2 );
 
         // Adding components returns the component so we can set other things
@@ -146,17 +156,39 @@ public class BasicDemo extends SimpleApplication {
         panel.addChild( new Label( "Cube Settings", new ElementId("header"), "glass" ) );
         panel.addChild( new Panel( 2, 2, ColorRGBA.Cyan, "glass" ) ).setUserData( LayerComparator.LAYER, 2 );
         panel.addChild( new Label( "Red:" ) );
-        redRef = panel.addChild( new Slider("glass") ).getModel().createReference();
+        final Slider redSlider = new Slider("glass");
+        redSlider.setBackground(new QuadBackgroundComponent(new ColorRGBA(0.5f,0.1f,0.1f,0.5f),5,5, 0.02f, false));
+        redRef = panel.addChild( redSlider ).getModel().createReference();
+        CursorEventControl.addListenersToSpatial(redSlider, new DefaultCursorListener() {
+                @Override
+                public void cursorMoved( CursorMotionEvent event, Spatial target, Spatial capture ) {
+                    System.out.println( "event:" + event );
+                    Vector3f cp = event.getCollision().getContactPoint();
+                    cp = redSlider.worldToLocal(cp, null);
+                    System.out.println( "Range value:" + redSlider.getValueForLocation(cp) );      
+                }
+
+            });
+        
         panel.addChild( new Label( "Green:" ) );
         greenRef = panel.addChild( new Slider("glass") ).getModel().createReference();
         panel.addChild( new Label( "Blue:" ) );
         blueRef = panel.addChild( new Slider(new DefaultRangedValueModel(0,100,100), "glass") ).getModel().createReference();
         panel.addChild( new Label( "Alpha:" ) );
         alphaRef = panel.addChild( new Slider(new DefaultRangedValueModel(0,100,100), "glass") ).getModel().createReference();
-
         hudPanel.addChild(panel);
-        guiNode.attachChild(hudPanel);
 
+        // Custom "spacer" element type
+        hudPanel.addChild( new Panel( 10f, 10f, new ElementId("spacer"), "glass" ) );
+        
+        // Test text entry
+        panel = new Container("glass");
+        panel.addChild( new Label( "Test entry:", "glass" ) );
+        panel.addChild( new TextField("", "glass") );
+        hudPanel.addChild(panel);
+        
+        guiNode.attachChild(hudPanel);
+        
         // Increase the default size of the hud to be a little wider
         // if it would otherwise be smaller.  Height is unaffected.
         Vector3f hudSize = new Vector3f(200,0,0);
@@ -181,6 +213,7 @@ public class BasicDemo extends SimpleApplication {
         testPanel.setBackground( TbtQuadBackgroundComponent.create( "/com/simsilica/lemur/icons/border.png",
                                                                     1, 2, 2, 3, 3, 0, false ) );
         Label test = testPanel.addChild( new Label( "Border Test" ) );
+        test.setShadowColor(ColorRGBA.Red);
 
         // Center the text in the box.
         test.setInsetsComponent(new DynamicInsetsComponent(0.5f, 0.5f, 0.5f, 0.5f));
@@ -190,9 +223,23 @@ public class BasicDemo extends SimpleApplication {
         guiNode.attachChild( testPanel );
     }
 
+    int count = 5;
     @Override
     public void simpleUpdate(float tpf)
     {
+        if( count-- > 0 ) {
+            
+            System.out.println( "Test:" + test );
+            
+            for( Spatial child : test.getChildren() ) {
+                System.out.println( "Child:" + child );
+                System.out.println( "  loc:" + child.getLocalTranslation() );
+                System.out.println( "  layer:" + child.getUserData("layer") );
+                System.out.println( "  effective:" + child.getUserData("effectiveLayer") );
+            }    
+            
+        }
+    
         if( showStatsRef.update() )
             {
             setDisplayStatView( showStatsRef.get() );

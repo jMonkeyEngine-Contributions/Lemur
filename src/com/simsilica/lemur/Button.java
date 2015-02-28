@@ -64,7 +64,7 @@ import java.util.Map;
 public class Button extends Label {
 
     public static final String ELEMENT_ID = "button";
-
+    
     public enum ButtonAction { Down, Up, Click, HighlightOn, HighlightOff };
 
     private boolean enabled = true;

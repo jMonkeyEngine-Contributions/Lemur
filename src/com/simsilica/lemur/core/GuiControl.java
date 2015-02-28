@@ -50,7 +50,9 @@ import com.jme3.util.SafeArrayList;
  */
 public class GuiControl extends AbstractNodeControl<GuiControl>
                         implements FocusTarget {
-    private SafeArrayList<GuiComponent> components = new SafeArrayList<GuiComponent>(GuiComponent.class);
+                        
+    private ComponentStack componentStack;                        
+    //private SafeArrayList<GuiComponent> components = new SafeArrayList<GuiComponent>(GuiComponent.class);
     private GuiComponent layout;
     private SafeArrayList<GuiControlListener> listeners = new SafeArrayList<GuiControlListener>(GuiControlListener.class);
     private volatile boolean invalid = false;
@@ -60,7 +62,15 @@ public class GuiControl extends AbstractNodeControl<GuiControl>
     private boolean focused = false;
 
     public GuiControl( GuiComponent... components ) {
-        this.components.addAll(Arrays.asList(components));
+        //this.components.addAll(Arrays.asList(components));
+        this.componentStack = new ComponentStack();
+        for( GuiComponent c : components ) {
+            this.componentStack.addComponent(c);
+        }
+    }
+
+    public GuiControl( String... layerOrder ) {
+        this.componentStack = new ComponentStack(layerOrder);
     }
 
     @Override
@@ -86,7 +96,14 @@ public class GuiControl extends AbstractNodeControl<GuiControl>
                 return true;
             }
         }
-        for( GuiComponent c : components ) {
+        /*for( GuiComponent c : components ) {
+            if( c instanceof FocusTarget ) {
+                if( ((FocusTarget)c).isFocusable() ) {
+                    return true;
+                }
+            }
+        }*/
+        for( GuiComponent c : componentStack.getArray() ) {
             if( c instanceof FocusTarget ) {
                 if( ((FocusTarget)c).isFocusable() ) {
                     return true;
@@ -101,11 +118,16 @@ public class GuiControl extends AbstractNodeControl<GuiControl>
             return;
         }
         this.focused = true;
-        for( GuiComponent c : components ) {
+        for( GuiComponent c : componentStack.getArray() ) {
             if( c instanceof FocusTarget ) {
                 ((FocusTarget)c).focusGained();
             }
-        }
+        }        
+        /*for( GuiComponent c : components ) {
+            if( c instanceof FocusTarget ) {
+                ((FocusTarget)c).focusGained();
+            }
+        }*/
         if( layout instanceof FocusTarget ) {
             ((FocusTarget)layout).focusGained();
         }
@@ -119,17 +141,26 @@ public class GuiControl extends AbstractNodeControl<GuiControl>
             return;
         }
         this.focused = false;
-        for( GuiComponent c : components ) {
+        for( GuiComponent c : componentStack.getArray() ) {
             if( c instanceof FocusTarget ) {
                 ((FocusTarget)c).focusLost();
             }
         }
+        /*for( GuiComponent c : components ) {
+            if( c instanceof FocusTarget ) {
+                ((FocusTarget)c).focusLost();
+            }
+        }*/
         if( layout instanceof FocusTarget ) {
             ((FocusTarget)layout).focusLost();
         }
         for( GuiControlListener l : listeners.getArray() ) {
             l.focusLost(this);
         }
+    }
+
+    public void setLayerOrder( String... layers ) {
+        componentStack.setLayerOrder(layers);
     }
 
     public void setLayout( GuiLayout l ) {
@@ -170,14 +201,22 @@ public class GuiControl extends AbstractNodeControl<GuiControl>
             layout.calculatePreferredSize(size);
         }
         Vector3f lastSize = new Vector3f(size);
-        for( int i = components.size() - 1; i >= 0; i-- ) {
+        for( int i = componentStack.size() - 1; i >= 0; i-- ) {
+            componentStack.get(i).calculatePreferredSize(size);
+            if( size.x < lastSize.x || size.y < lastSize.y || size.z < lastSize.z ) {
+                throw new RuntimeException("Component:" + componentStack.get(i) 
+                                + " shrunk the preferred size. Before:" + lastSize 
+                                + " after:" + size); 
+            }
+        }
+        /*for( int i = components.size() - 1; i >= 0; i-- ) {
             components.get(i).calculatePreferredSize(size);
             if( size.x < lastSize.x || size.y < lastSize.y || size.z < lastSize.z ) {
                 throw new RuntimeException("Component:" + components.get(i) 
                                 + " shrunk the preferred size. Before:" + lastSize 
                                 + " after:" + size); 
             }
-        }
+        }*/
         return size;
     }
 
@@ -193,12 +232,18 @@ public class GuiControl extends AbstractNodeControl<GuiControl>
         Vector3f stackSize = size.clone();
         
         Vector3f offset = new Vector3f();
-        for( GuiComponent c : components ) {
+        for( GuiComponent c : componentStack.getArray() ) {
             c.reshape(offset, stackSize);
             stackSize.x = Math.max(0, stackSize.x);
             stackSize.y = Math.max(0, stackSize.y);
             stackSize.z = Math.max(0, stackSize.z);
         }
+        /*for( GuiComponent c : components ) {
+            c.reshape(offset, stackSize);
+            stackSize.x = Math.max(0, stackSize.x);
+            stackSize.y = Math.max(0, stackSize.y);
+            stackSize.z = Math.max(0, stackSize.z);
+        }*/
         if( layout != null ) {
             layout.reshape(offset, stackSize);
         }
@@ -215,10 +260,13 @@ public class GuiControl extends AbstractNodeControl<GuiControl>
     }
 
     public List<GuiComponent> getComponents() {
-        return components;
+        return componentStack;
     }
 
     public <T extends GuiComponent> T addComponent( T c ) {
+ 
+        return componentStack.addComponent(c);   
+        /*
         components.add(c);
 
         if( getNode() != null ) {
@@ -226,10 +274,10 @@ public class GuiControl extends AbstractNodeControl<GuiControl>
         }
 
         invalidate();
-        return c;
+        return c;*/
     }
 
-    public <T extends GuiComponent> T addComponent( int i, T c ) {
+    /*public <T extends GuiComponent> T addComponent( int i, T c ) {
         components.add(i, c);
 
         if( getNode() != null ) {
@@ -251,11 +299,14 @@ public class GuiControl extends AbstractNodeControl<GuiControl>
         index.put(key, c);
         return c;
     }
+    */
 
     public int getComponentIndex( GuiComponent c ) {
-        return components.indexOf(c);
+        //return components.indexOf(c);
+        return componentStack.indexOf(c);
     }
 
+    /*
     public int getComponentIndex( String... keys ) {
         for( String key : keys ) {
             GuiComponent c = getComponent(key);
@@ -296,21 +347,34 @@ public class GuiControl extends AbstractNodeControl<GuiControl>
         index.put(key, c);
         return c;
     }
+    */
+
+    /** 
+     *  Sets a new component to the specified layer and returns THAT component,
+     *  not the previous value.  This is so that it works like addComponent()
+     *  in that you can set it and grab it at the same time.
+     */
+    public <T extends GuiComponent> T setComponent( String key, T component ) {
+        return componentStack.setComponent(key, component);
+    }
 
     public <T extends GuiComponent> T getComponent( String key ) {
-        return (T)index.get(key);
+        //return (T)index.get(key);
+        return componentStack.getComponent(key);
     }
 
     public <T extends GuiComponent> T removeComponent( String key ) {
-        T result = getComponent(key);
+        return componentStack.removeComponent(key);   
+        /*T result = getComponent(key);
         if( removeComponent(result) ) {
             return result;
         }
-        return null;
+        return null;*/
     }
 
     public boolean removeComponent( GuiComponent c ) {
-        if( !components.remove(c) )
+        return componentStack.removeComponent(c);   
+        /*if( !components.remove(c) )
             return false;
         index.values().remove(c);
         if( getNode() != null ) {
@@ -318,13 +382,14 @@ public class GuiControl extends AbstractNodeControl<GuiControl>
         }
 
         invalidate();
-        return true;
+        return true;*/
     }
 
     protected void attach() {
-        for( GuiComponent c : components ) {
+        componentStack.attach(this);
+        /*for( GuiComponent c : components ) {
             c.attach(this);
-        }
+        }*/
         if( layout != null ) {
             layout.attach(this);
         }
@@ -384,8 +449,13 @@ public class GuiControl extends AbstractNodeControl<GuiControl>
     }
 
     protected void detach() {
-        for( GuiComponent c : components ) {
-            c.detach(this);
+        if( layout != null ) {
+            layout.detach(this);
         }
+        componentStack.detach(this);
+        
+        /*for( GuiComponent c : components ) {
+            c.detach(this);
+        }*/
     }
 }

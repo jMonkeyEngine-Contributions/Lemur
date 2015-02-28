@@ -246,7 +246,14 @@ public class TextComponent extends AbstractGuiComponent
             // ourselves where we are and then adjusting pos+size for the
             // next guy.
             // I'll fix it later FIXME
-            bitmapText.setLocalTranslation(pos.x + offset.x, pos.y + offset.y, pos.z - offset.z);
+            // Notes as of component stack refactoring... when testing
+            // I discovered that because of the way this is arranged, shadows
+            // are pushed back instead of pushing the layered text forward.
+            // Essentially, text does not at all play nice in layers.
+            // I need to test some other things before swing back to fix this
+            // because I may have already broken things with the component stack
+            // refactoring.
+            bitmapText.setLocalTranslation(pos.x + offset.x, pos.y + offset.y, pos.z - offset.z);            
             size.x -= Math.abs(offset.x);
             size.y -= Math.abs(offset.y);
             size.z -= Math.abs(offset.z);
@@ -258,7 +265,7 @@ public class TextComponent extends AbstractGuiComponent
         resetAlignment();
     }
 
-    public void calculatePreferredSize( Vector3f size ) {
+    public void calculatePreferredSize( Vector3f size ) {    
         // Make sure that the bitmapText reports a reliable
         // preferred size
         bitmapText.setBox(null);

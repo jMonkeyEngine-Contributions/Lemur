@@ -62,7 +62,7 @@ public class TextField extends Panel {
 
     public static final String ELEMENT_ID = "textField";
 
-    public static final String KEY_TEXT = "text";
+    public static final String LAYER_TEXT = "text";
 
     private TextEntryComponent text;
 
@@ -84,11 +84,18 @@ public class TextField extends Panel {
 
     protected TextField( DocumentModel model, boolean applyStyles, ElementId elementId, String style ) {
         super(false, elementId, style);
+ 
+        // Set our layer ordering
+        getControl(GuiControl.class).setLayerOrder(LAYER_INSETS, 
+                                                   LAYER_BORDER, 
+                                                   LAYER_BACKGROUND,
+                                                   LAYER_TEXT);
 
         Styles styles = GuiGlobals.getInstance().getStyles();
         BitmapFont font = styles.getAttributes(elementId.getId(), style).get("font", BitmapFont.class);
         this.text = new TextEntryComponent(model, font);
-        getControl(GuiControl.class).addComponent(KEY_TEXT, text);
+        //getControl(GuiControl.class).addComponent(KEY_TEXT, text);
+        getControl(GuiControl.class).setComponent(LAYER_TEXT, text);
 
         addControl(new MouseEventControl(FocusMouseListener.INSTANCE));
 
