@@ -131,7 +131,7 @@ private Panel test;
         hudPanel.addChild(panel);
 
         panel.setBackground(new QuadBackgroundComponent(new ColorRGBA(0,0.5f,0.5f,0.5f),5,5, 0.02f, false));
-test =  panel.addChild( new Label( "Stats Settings", new ElementId("header"), "glass" ) );
+        panel.addChild( new Label( "Stats Settings", new ElementId("header"), "glass" ) );
         panel.addChild( new Panel( 2, 2, ColorRGBA.Cyan, "glass" ) ).setUserData( LayerComparator.LAYER, 2 );
 
         // Adding components returns the component so we can set other things
@@ -223,31 +223,15 @@ test =  panel.addChild( new Label( "Stats Settings", new ElementId("header"), "g
         guiNode.attachChild( testPanel );
     }
 
-    int count = 5;
     @Override
-    public void simpleUpdate(float tpf)
-    {
-        if( count-- > 0 ) {
-            
-            System.out.println( "Test:" + test );
-            
-            for( Spatial child : test.getChildren() ) {
-                System.out.println( "Child:" + child );
-                System.out.println( "  loc:" + child.getLocalTranslation() );
-                System.out.println( "  layer:" + child.getUserData("layer") );
-                System.out.println( "  effective:" + child.getUserData("effectiveLayer") );
-            }    
-            
-        }
+    public void simpleUpdate(float tpf) {
     
-        if( showStatsRef.update() )
-            {
+        if( showStatsRef.update() ) {
             setDisplayStatView( showStatsRef.get() );
-            }
-        if( showFpsRef.update() )
-            {
+        }
+        if( showFpsRef.update() ) {
             setDisplayFps( showFpsRef.get() );
-            }
+        }
 
         boolean updateColor = false;
         if( redRef.update() )
@@ -258,12 +242,11 @@ test =  panel.addChild( new Label( "Stats Settings", new ElementId("header"), "g
             updateColor = true;
         if( alphaRef.update() )
             updateColor = true;
-        if( updateColor )
-            {
+        if( updateColor ) {
             boxColor.set( (float)(redRef.get()/100.0),
                           (float)(greenRef.get()/100.0),
                           (float)(blueRef.get()/100.0),
                           (float)(alphaRef.get()/100.0) );
-            }
+        }
     }
 }

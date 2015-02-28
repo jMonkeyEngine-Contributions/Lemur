@@ -217,19 +217,8 @@ public class Panel extends Node {
     }
 
     @StyleAttribute(value="background", lookupDefault=false)
-    public void setBackground( GuiComponent bg ) {
-        
+    public void setBackground( GuiComponent bg ) {        
         getControl(GuiControl.class).setComponent(LAYER_BACKGROUND, bg);   
-        /*
-        if( getControl(GuiControl.class).getComponent(KEY_BACKGROUND) != null ) {
-            // Remove the old one
-            getControl(GuiControl.class).removeComponent(KEY_BACKGROUND);
-        }
-
-        if( bg != null ) {
-            int index = getControl(GuiControl.class).getComponentIndex(KEY_INSETS);
-            getControl(GuiControl.class).addComponent(index+1, KEY_BACKGROUND, bg);
-        }*/
     }
 
     public GuiComponent getBackground() {
@@ -257,13 +246,6 @@ public class Panel extends Node {
     @StyleAttribute(value="insetsComponent", lookupDefault=false)
     public void setInsetsComponent( InsetsComponent ic ) {
         getControl(GuiControl.class).setComponent(LAYER_INSETS, ic);
-        /*InsetsComponent original = getControl(GuiControl.class).getComponent(KEY_INSETS);
-        if( original != null ) {
-            getControl(GuiControl.class).removeComponent(original);
-        }
-        if( ic != null ) {
-            getControl(GuiControl.class).addComponent(0, KEY_INSETS, ic);
-        }*/
     }
 
     public InsetsComponent getInsetsComponent() {
