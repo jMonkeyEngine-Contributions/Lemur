@@ -139,26 +139,9 @@ public class ListBox<T> extends Panel {
         getControl(GuiControl.class).setLayout(layout);
  
         grid = new GridPanel(new GridModelDelegate(), elementId.child(ITEMS_ID), style);
-        //CursorEventControl.addListenersToSpatial(grid, new GridListener());
         grid.setVisibleColumns(1);
         grid.getControl(GuiControl.class).addListener(new GridListener());
         layout.addChild(grid, BorderLayout.Position.Center);
- 
-        // Add a special component to the grid so that we get resize
-        // events.  Kind of a hack but I'm not sure I want to create
-        // a whole event framework just for this.  
-        int sizerIndex = grid.getControl(GuiControl.class).getComponentIndex(KEY_INSETS) + 1; 
-        grid.getControl(GuiControl.class).addComponent( sizerIndex, "sizer", 
-                    new AbstractGuiComponent() {                       
-                        @Override
-                        public void calculatePreferredSize(Vector3f size) {
-                        }
-
-                        @Override
-                        public void reshape(Vector3f pos, Vector3f size) {
-                            gridResized(pos, size);
-                        }
-                    });
  
         baseIndex = new DefaultRangedValueModel();
         indexRef = baseIndex.createReference();
@@ -394,6 +377,8 @@ public class ListBox<T> extends Panel {
 
     private class GridListener extends AbstractGuiControlListener {
         public void reshape( GuiControl source, Vector3f pos, Vector3f size ) {
+            gridResized(pos, size);
+            
             // If the grid was re-laid out then we probably need
             // to refresh our selector
             refreshSelector();
