@@ -40,6 +40,8 @@ import java.util.*;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.*;
 import com.jme3.util.SafeArrayList;
+import com.simsilica.lemur.focus.FocusChangeEvent;
+import com.simsilica.lemur.focus.FocusChangeListener;
 
 
 /**
@@ -54,6 +56,7 @@ public class GuiControl extends AbstractNodeControl<GuiControl>
     private ComponentStack componentStack;                        
     private GuiComponent layout;
     private SafeArrayList<GuiControlListener> listeners = new SafeArrayList<GuiControlListener>(GuiControlListener.class);
+    private SafeArrayList<FocusChangeListener> focusListeners = new SafeArrayList<FocusChangeListener>(FocusChangeListener.class);
     private volatile boolean invalid = false;
     private Map<String,GuiComponent> index = new HashMap<String,GuiComponent>();
     private Vector3f preferredSizeOverride = null;
@@ -84,10 +87,20 @@ public class GuiControl extends AbstractNodeControl<GuiControl>
         listeners.remove(l);
     }
 
+    public void addFocusChangeListener( FocusChangeListener l ) {
+        focusListeners.add(l);
+    }
+
+    public void removeFocusChangeListener( FocusChangeListener l ) {
+        focusListeners.remove(l);
+    }
+
+    @Override
     public boolean isFocused() {
         return focused;
     }
 
+    @Override
     public boolean isFocusable() {
         if( layout instanceof FocusTarget ) {
             if( ((FocusTarget)layout).isFocusable() ) {
@@ -104,6 +117,7 @@ public class GuiControl extends AbstractNodeControl<GuiControl>
         return false;
     }
 
+    @Override
     public void focusGained() {
         if( this.focused ) {
             return;
@@ -120,8 +134,15 @@ public class GuiControl extends AbstractNodeControl<GuiControl>
         for( GuiControlListener l : listeners.getArray() ) {
             l.focusGained(this);
         }
+        
+        // Now notify any listeners
+        FocusChangeEvent fce = new FocusChangeEvent(this);
+        for( FocusChangeListener l : focusListeners.getArray() ) {
+            l.focusGained(fce);
+        }
     }
 
+    @Override
     public void focusLost() {
         if( !this.focused ) {
             return;
@@ -137,6 +158,12 @@ public class GuiControl extends AbstractNodeControl<GuiControl>
         }
         for( GuiControlListener l : listeners.getArray() ) {
             l.focusLost(this);
+        }
+        
+        // Now notify any listeners
+        FocusChangeEvent fce = new FocusChangeEvent(this);
+        for( FocusChangeListener l : focusListeners.getArray() ) {
+            l.focusLost(fce);
         }
     }
 
@@ -259,6 +286,7 @@ public class GuiControl extends AbstractNodeControl<GuiControl>
         return componentStack.removeComponent(c);   
     }
 
+    @Override
     protected void attach() {
         componentStack.attach(this);
         if( layout != null ) {
@@ -319,6 +347,7 @@ public class GuiControl extends AbstractNodeControl<GuiControl>
         }
     }
 
+    @Override
     protected void detach() {
         if( layout != null ) {
             layout.detach(this);

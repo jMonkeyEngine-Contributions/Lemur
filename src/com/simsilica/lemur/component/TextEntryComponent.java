@@ -187,14 +187,17 @@ public class TextEntryComponent extends AbstractGuiComponent
         super.detach(parent);
     }
 
+    @Override
     public boolean isFocused() {
         return focused;
     }
 
+    @Override
     public boolean isFocusable() {
         return true; // should return isEnabled() when we have one
     }
 
+    @Override
     public void focusGained() {
         if( this.focused )
             return;
@@ -203,6 +206,7 @@ public class TextEntryComponent extends AbstractGuiComponent
         resetCursorState();
     }
 
+    @Override
     public void focusLost() {
         if( !this.focused )
             return;
@@ -442,6 +446,7 @@ public class TextEntryComponent extends AbstractGuiComponent
         return preferredWidth;
     }
 
+    @Override
     public void reshape(Vector3f pos, Vector3f size) {
         bitmapText.setLocalTranslation(pos.x, pos.y, pos.z);
         textBox = new Rectangle(0, 0, size.x, size.y);
@@ -449,6 +454,7 @@ public class TextEntryComponent extends AbstractGuiComponent
         resetAlignment();
     }
 
+    @Override
     public void calculatePreferredSize( Vector3f size ) {
         if( preferredSize != null ) {
             size.set(preferredSize);
@@ -498,6 +504,7 @@ public class TextEntryComponent extends AbstractGuiComponent
     }
 
     private static class DocumentHome implements KeyActionListener {
+        @Override
         public void keyAction( TextEntryComponent source, KeyAction key ) {
             source.model.home(false);
             source.resetCursorPosition();
@@ -505,6 +512,7 @@ public class TextEntryComponent extends AbstractGuiComponent
     }
 
     private static class LineHome implements KeyActionListener {
+        @Override
         public void keyAction( TextEntryComponent source, KeyAction key ) {
             source.model.home(true);
             source.resetCursorPosition();
@@ -512,6 +520,7 @@ public class TextEntryComponent extends AbstractGuiComponent
     }
 
     private static class DocumentEnd implements KeyActionListener {
+        @Override
         public void keyAction( TextEntryComponent source, KeyAction key ) {
             source.model.end(false);
             source.resetCursorPosition();
@@ -519,6 +528,7 @@ public class TextEntryComponent extends AbstractGuiComponent
     }
 
     private static class LineEnd implements KeyActionListener {
+        @Override
         public void keyAction( TextEntryComponent source, KeyAction key ) {
             source.model.end(true);
             source.resetCursorPosition();
@@ -526,6 +536,7 @@ public class TextEntryComponent extends AbstractGuiComponent
     }
 
     private static class PreviousLine implements KeyActionListener {
+        @Override
         public void keyAction( TextEntryComponent source, KeyAction key ) {
             source.model.up();
             source.resetCursorPosition();
@@ -533,6 +544,7 @@ public class TextEntryComponent extends AbstractGuiComponent
     }
 
     private static class NextLine implements KeyActionListener {
+        @Override
         public void keyAction( TextEntryComponent source, KeyAction key ) {
             source.model.down();
             source.resetCursorPosition();
@@ -540,6 +552,7 @@ public class TextEntryComponent extends AbstractGuiComponent
     }
 
     private static class CaratLeft implements KeyActionListener {
+        @Override
         public void keyAction( TextEntryComponent source, KeyAction key ) {
             source.model.left();
             source.resetCursorPosition();
@@ -547,6 +560,7 @@ public class TextEntryComponent extends AbstractGuiComponent
     }
 
     private static class CaratRight implements KeyActionListener {
+        @Override
         public void keyAction( TextEntryComponent source, KeyAction key ) {
             source.model.right();
             source.resetCursorPosition();
@@ -554,11 +568,13 @@ public class TextEntryComponent extends AbstractGuiComponent
     }
 
     private static class NullAction implements KeyActionListener {
+        @Override
         public void keyAction( TextEntryComponent source, KeyAction key ) {
         }
     }
 
     private static class Backspace implements KeyActionListener {
+        @Override
         public void keyAction( TextEntryComponent source, KeyAction key ) {
             source.model.backspace();
             source.resetText(); // shouldn't have to do this
@@ -566,6 +582,7 @@ public class TextEntryComponent extends AbstractGuiComponent
     }
 
     private static class NewLine implements KeyActionListener {
+        @Override
         public void keyAction( TextEntryComponent source, KeyAction key ) {
             source.model.insertNewLine();
             source.resetText(); // shouldn't have to do this
@@ -573,6 +590,7 @@ public class TextEntryComponent extends AbstractGuiComponent
     }
 
     private static class Delete implements KeyActionListener {
+        @Override
         public void keyAction( TextEntryComponent source, KeyAction key ) {
             source.model.delete();
             source.resetText(); // shouldn't have to do this
@@ -584,6 +602,7 @@ public class TextEntryComponent extends AbstractGuiComponent
         private boolean shift = false;
         private boolean control = false;
 
+        @Override
         public void onKeyEvent( KeyInputEvent evt ) {
             int code = evt.getKeyCode();
             if( code == KeyInput.KEY_LSHIFT || code == KeyInput.KEY_RSHIFT ) {

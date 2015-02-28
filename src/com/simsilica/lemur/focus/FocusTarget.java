@@ -41,8 +41,20 @@ package com.simsilica.lemur.focus;
  *  @author    Paul Speed
  */
 public interface FocusTarget {
-    public boolean isFocused();    
+
+    /**
+     *  Returns true if this focus target currently has the focus.
+     */
+    public boolean isFocused();
+    
+    /**
+     *  Notifies this focus target that is has gained focus.
+     */    
     public void focusGained();
+    
+    /**
+     *  Notifies this focus target that is has lost focus. 
+     */    
     public void focusLost();
     
     /**
