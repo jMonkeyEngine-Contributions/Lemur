@@ -50,7 +50,7 @@ import com.simsilica.lemur.style.ElementId;
  */
 public class ActionButton extends Button {
  
-    private static final String KEY_ICON = "icon";
+    //private static final String KEY_ICON = "icon";
     
     private Action action;
     private VersionedReference<Action> actionRef;
@@ -87,20 +87,6 @@ public class ActionButton extends Button {
     
     public Action getAction() {
         return action;
-    }
- 
-    protected void setIcon( GuiComponent c ) {
-        if( getControl(GuiControl.class).getComponent(KEY_ICON) != null ) {
-            // Remove the old one
-            getControl(GuiControl.class).removeComponent(KEY_ICON);
-        }
-
-        if( c != null ) {
-            GuiControl gui = getControl(GuiControl.class);
-            GuiComponent after = gui.getFirstComponent(KEY_BACKGROUND, KEY_INSETS);
-            int index = gui.getComponentIndex(after);
-            gui.addComponent(index+1, KEY_ICON, c);
-        }
     }
  
     @Override
