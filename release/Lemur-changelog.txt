@@ -39,7 +39,14 @@ Lemur ???
 * Added styling attributes for Panel.alpha and Panel.preferredSize
 * Added vec3() and vec2() functions to the style API
 * Fixed GuiControl to clamp the passed size to min 0,0,0 during reshape.
-* Added a check for negative sizes to GuiControl.setSize().     
+* Added a check for negative sizes to GuiControl.setSize().
+* Refactored how named layer ordering is done in GuiControl by creating a separte
+    ComponentStack class that can enforce a total ordering based on named layers.
+    Soooo much simpler.  All of the other GUI elements were modified to use it.
+    The breaking change is for any custom GUI element that relied on the old weird
+    component ordering methods as they are now gone.
+* Added setIcon() to label to set an icon-layer component.  (This was made easy
+    by the above refactoring and is long overdue.)     
 
 
 Lemur 1466
