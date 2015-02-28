@@ -51,6 +51,9 @@ Lemur ???
     and to properly affect the next layer in the stack.  This directly affects
     shadowOffset and any styling using shadowOffset probably needs the sign of
     its z component flipped.  The new default shadow offset is now (1, -1, -1)
+* Added FocusChangeListener and FocusChangeEvent support.  GuiControl now has
+    add/removeFocusChangeListener() methods for registering listeners that will
+    be notified when the control loses or gains focus.
 
 
 Lemur 1466
