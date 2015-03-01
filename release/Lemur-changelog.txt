@@ -54,6 +54,8 @@ Lemur ???
 * Added FocusChangeListener and FocusChangeEvent support.  GuiControl now has
     add/removeFocusChangeListener() methods for registering listeners that will
     be notified when the control loses or gains focus.
+* Fixed a bug in SpringGridLayout where a minorFill wasn't getting handled 
+    right if major file was set to ForcedEven and minorFill was not.    
 
 
 Lemur 1466

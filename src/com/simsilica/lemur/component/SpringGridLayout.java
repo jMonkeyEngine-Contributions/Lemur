@@ -200,7 +200,7 @@ public class SpringGridLayout extends AbstractGuiComponent
             }
         }
 
-        if( mainFill == FillMode.ForcedEven ) {
+        if( minorFill == FillMode.ForcedEven ) {
             // Need to calculate the max size and then multiply
             // by count
             float max = 0;
