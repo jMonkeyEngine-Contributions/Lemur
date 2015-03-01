@@ -47,11 +47,9 @@ import com.jme3.renderer.ViewPort;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Spatial;
 import com.jme3.util.SafeArrayList;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -323,7 +321,20 @@ public class PickEventSession {
                 // Actually, we do need to find the collision or else we don't
                 // deliver any proper motion activity to things when the button
                 // is down.
-                ViewPort captureView = findViewPort(capture); 
+                ViewPort captureView = findViewPort(capture);
+                 
+                // If the viewport is null, then the captured spatial is no
+                // longer in the scene graph.  This happens when the spatial is
+                // removed from the scene graph before the UP event happens.
+                // In this case, simply return.  The UP event will come later and
+                // release the capture. -epotter
+                if (captureView == null) {
+                    // Since we didn't deliver it, I'm not going to automatically
+                    // mark it as consumed... we'll leave "consumption" up to the
+                    // current state at this point. -pspeed
+                    return consumed;
+                }
+               
                 Ray mouseRay = getPickRay(captureView.getCamera(), cursor);
 
                 // But we don't have to pick the whole hiearchy...

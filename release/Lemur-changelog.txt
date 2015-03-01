@@ -55,7 +55,10 @@ Lemur ???
     add/removeFocusChangeListener() methods for registering listeners that will
     be notified when the control loses or gains focus.
 * Fixed a bug in SpringGridLayout where a minorFill wasn't getting handled 
-    right if major file was set to ForcedEven and minorFill was not.    
+    right if major file was set to ForcedEven and minorFill was not.
+* Fixed a bug in CursorEvent deliver if the captured spatial was removed before
+    the up event was received.  The attempt to deliver move events was throwing
+    NPEs.  Now it just returns the current event consumption state instead.
 
 
 Lemur 1466
