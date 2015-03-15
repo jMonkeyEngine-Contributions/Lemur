@@ -41,14 +41,15 @@ import com.jme3.app.DebugKeysAppState;
 import com.jme3.app.SimpleApplication;
 import com.jme3.app.StatsAppState;
 import com.jme3.app.state.ScreenshotAppState;
+import com.jme3.math.Vector3f;
 import com.simsilica.lemur.Action;
 import com.simsilica.lemur.ActionButton;
 import com.simsilica.lemur.Axis;
 import com.simsilica.lemur.Button;
+import com.simsilica.lemur.ColorChooser;
 import com.simsilica.lemur.Container;
 import com.simsilica.lemur.FillMode;
 import com.simsilica.lemur.GuiGlobals;
-import com.simsilica.lemur.Insets3f;
 import com.simsilica.lemur.Label;
 import com.simsilica.lemur.ListBox;
 import com.simsilica.lemur.OptionPanelState;
@@ -148,6 +149,16 @@ public class ProtoDemo extends SimpleApplication {
  
         // And stick the window somewhere we will see it       
         window.setLocalTranslation(300, 600, 0);
+        guiNode.attachChild(window);
+        
+        
+        window = new Container("glass");
+        window.addChild(new Label("Test Color Chooser", new ElementId("title"), "glass"));
+        ColorChooser colors = window.addChild(new ColorChooser("glass"));
+        colors.setPreferredSize(new Vector3f(300, 90, 0)); 
+        
+        // And stick the window somewhere we will see it       
+        window.setLocalTranslation(100, 400, 0);
         guiNode.attachChild(window);
     } 
 }

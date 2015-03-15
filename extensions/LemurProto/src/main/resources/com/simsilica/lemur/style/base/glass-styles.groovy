@@ -28,7 +28,7 @@ selector( "title.label", "glass" ) {
     color = color(0.8, 0.9, 1, 0.85f)
     highlightColor = color(1, 0.8, 1, 0.85f)
     shadowColor = color(0, 0, 0, 0.75f)
-    shadowOffset = new com.jme3.math.Vector3f(2, -2, 1);
+    shadowOffset = new com.jme3.math.Vector3f(2, -2, -1);
     background = new QuadBackgroundComponent( color(0.5, 0.75, 0.85, 0.5) );
     background.texture = texture( name:"/com/simsilica/lemur/icons/double-gradient-128.png", 
                                   generateMips:false )
@@ -53,3 +53,14 @@ selector( "list.selector", "glass" ) {
     background.material.material.additionalRenderState.blendMode = BlendMode.AlphaAdditive;
 }
 
+selector( "colorChooser.value", "glass" ) {
+    border = gradient.clone()
+    border.setColor(color(0.25, 0.5, 0.5, 0.5))
+    insets = new Insets3f( 2, 2, 2, 2, 2, 2 );
+}
+
+selector( "colorChooser.colors", "glass" ) {
+    border = gradient.clone()
+    border.setColor(color(0.25, 0.5, 0.5, 0.5))
+    insets = new Insets3f( 2, 2, 2, 2, 2, 2 );
+}
