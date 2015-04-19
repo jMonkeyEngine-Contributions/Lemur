@@ -106,13 +106,17 @@ public class ColorChooser extends Panel {
         this(true, null, new ElementId(ELEMENT_ID), style);
     }
  
+    public ColorChooser( ElementId elementId, String style ) {
+        this(true, null, elementId, style);
+    }
+ 
     protected ColorChooser( boolean applyStyles, VersionedObject<ColorRGBA> model,
                             ElementId elementId, String style ) {
         super(false, elementId.child(CONTAINER_ID), style);
 
         this.swatchTexture = defaultTexture;
  
-        BorderLayout layout = new BorderLayout();      
+        SpringGridLayout layout = new SpringGridLayout();      
         getControl(GuiControl.class).setLayout(layout);
  
         colorPanel = new Container(elementId.child(COLORS_ID), style);
@@ -123,16 +127,16 @@ public class ColorChooser extends Panel {
         CursorEventControl.addListenersToSpatial(colors, new SwatchListener()); 
         colors.setBackground(swatchComponent);
         colors.setPreferredSize(new Vector3f(256, 64, 0));
-        layout.addChild(colorPanel, BorderLayout.Position.Center);
+        layout.addChild(colorPanel, 2);
+
+        brightness = new Slider(Axis.Y, elementId.child(BRIGHTNESS_ID), style);
+        layout.addChild(brightness, 1);
+        brightnessRef = brightness.getModel().createReference();
  
         value = new Panel(elementId.child(VALUE_ID), style);
         value.setPreferredSize(new Vector3f(64, 64, 0));
         value.setBackground(valueColor);
-        layout.addChild(value, BorderLayout.Position.West);
- 
-        brightness = new Slider(Axis.Y, elementId.child(BRIGHTNESS_ID), style);
-        layout.addChild(brightness, BorderLayout.Position.East);
-        brightnessRef = brightness.getModel().createReference();
+        layout.addChild(value, 0); 
                
         if( applyStyles ) {
             Styles styles = GuiGlobals.getInstance().getStyles();
@@ -162,12 +166,12 @@ public class ColorChooser extends Panel {
     @Override
     public void updateLogicalState( float tpf ) {
         super.updateLogicalState(tpf);
-        if( brightnessRef.update() ) {
-            updateBrightness();
-        }
         if( modelRef.update() ) {
             updateColorView();
         } 
+        if( brightnessRef.update() ) {
+            updateBrightness();
+        }
     }
  
     protected void updateModelValue( float h, float s, float b ) {
@@ -196,11 +200,16 @@ public class ColorChooser extends Panel {
     
     protected void updateColorView() {
  
-        ColorRGBA c = model.getObject(); 
+        ColorRGBA c = model.getObject();
+         
         int r = (int)Math.round(c.getRed() * 255); 
         int g = (int)Math.round(c.getGreen() * 255); 
         int b = (int)Math.round(c.getBlue() * 255); 
         float[] hsb = Color.RGBtoHSB(r, g, b, null);
+
+        this.hIndex = hsb[0];
+        this.sIndex = hsb[1];
+        this.bIndex = hsb[2];
 
         updateColorView(hsb[0], hsb[1], hsb[2]);
     }
