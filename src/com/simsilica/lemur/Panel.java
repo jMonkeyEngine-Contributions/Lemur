@@ -225,6 +225,15 @@ public class Panel extends Node {
         return getControl(GuiControl.class).getComponent(LAYER_BACKGROUND);
     }
 
+    @StyleAttribute(value="border", lookupDefault=false)
+    public void setBorder( GuiComponent bg ) {        
+        getControl(GuiControl.class).setComponent(LAYER_BORDER, bg);   
+    }
+
+    public GuiComponent getBorder() {
+        return getControl(GuiControl.class).getComponent(LAYER_BORDER);
+    }
+
     @StyleAttribute(value="insets", lookupDefault=false)
     public void setInsets( Insets3f i ) {
         InsetsComponent ic = getInsetsComponent();
