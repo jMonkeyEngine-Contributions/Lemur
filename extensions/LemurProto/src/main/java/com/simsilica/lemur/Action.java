@@ -204,9 +204,19 @@ public abstract class Action implements VersionedObject<Action>, Command<Button>
     public VersionedReference<Action> createReference() {
         return new VersionedReference<Action>(this);
     }
+ 
+    protected void appendFields( StringBuilder sb ) {
+        if( sb.length() > 0 ) {
+            sb.append(", ");
+        }
+        sb.append("properties=");        
+        sb.append(properties);
+    }
     
     @Override   
     public String toString() {
-        return getClass().getName() + "[properties=" + properties + "]";
+        StringBuilder sb = new StringBuilder();
+        appendFields(sb);
+        return getClass().getName() + "[" + sb + "]";
     }
 }
