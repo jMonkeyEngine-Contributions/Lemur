@@ -62,6 +62,7 @@ public class GuiControl extends AbstractNodeControl<GuiControl>
     private Vector3f preferredSizeOverride = null;
     private Vector3f lastSize = new Vector3f();
     private boolean focused = false;
+    private boolean focusable = false;
 
     public GuiControl( GuiComponent... components ) {
         this.componentStack = new ComponentStack();
@@ -100,8 +101,24 @@ public class GuiControl extends AbstractNodeControl<GuiControl>
         return focused;
     }
 
+    /**
+     *  Sets the focusable state to true for this control even
+     *  if none of the child components are focusable.
+     */
+    public void setFocusable( boolean b ) {
+        this.focusable = b;
+    }
+
+    /**
+     *  Returns true if this control is focusable, either
+     *  because one of its child components/layout is focusable
+     *  or because setFocusable(true) was called.
+     */
     @Override
     public boolean isFocusable() {
+        if( focusable ) {
+            return true;
+        }    
         if( layout instanceof FocusTarget ) {
             if( ((FocusTarget)layout).isFocusable() ) {
                 return true;
