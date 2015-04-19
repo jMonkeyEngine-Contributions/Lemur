@@ -338,7 +338,7 @@ public class PickEventSession {
                 Ray mouseRay = getPickRay(captureView.getCamera(), cursor);
 
                 // But we don't have to pick the whole hiearchy...
-                int count = capture.collideWith(mouseRay, results);
+                int count = capture.collideWith(mouseRay, results);                
                 CollisionResult cr = null;
                 if( count > 0 ) {
                     cr = results.getClosestCollision();
@@ -426,7 +426,7 @@ public class PickEventSession {
  
         CursorButtonEvent event1 = null;
         MouseButtonEvent event2 = null;
-        
+
         // Make sure all of the collision state is up to date with this latest
         // cursor location.  We may not have had a chance to process a cursorMoved
         // before this button event comes to us.
