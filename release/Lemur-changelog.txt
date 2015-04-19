@@ -59,6 +59,11 @@ Lemur ???
 * Fixed a bug in CursorEvent deliver if the captured spatial was removed before
     the up event was received.  The attempt to deliver move events was throwing
     NPEs.  Now it just returns the current event consumption state instead.
+* Panel now has a "border" property in addition to "background", so all 
+    regular GUI elements can now have separate borders and backgrounds.
+* GuiControl can now be "focusable" even if none of it's child components are
+    by using the setFocusable() method.
+* Added a Slider constructor that takes Axis, ElementId, and style.
 
 
 Lemur 1466
