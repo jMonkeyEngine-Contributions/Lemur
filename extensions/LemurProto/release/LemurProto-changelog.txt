@@ -56,7 +56,9 @@ Revision ???
 -Added EmptyAction for cases where an action button is desired with no action.
     Useful for stubbing out actions for UIs or passing a null action to the option
     panel for "Ok".
--Added CallMethodAction that delegates to a specified method on some object.         
+-Added CallMethodAction that delegates to a specified method on some object.
+-Added a ColorChooser component that presents an HS selection panel and a separate
+    B slider.         
 
 
 Revision 1505
