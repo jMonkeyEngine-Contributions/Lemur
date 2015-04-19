@@ -111,6 +111,10 @@ public class Slider extends Panel {
         this(new DefaultRangedValueModel(), Axis.X, true, elementId, style);
     }
 
+    public Slider(Axis axis, ElementId elementId, String style) {
+        this(new DefaultRangedValueModel(), axis, true, elementId, style);
+    }
+
     public Slider(Axis axis, String style) {
         this(new DefaultRangedValueModel(), axis, true, new ElementId(ELEMENT_ID), style);
     }
@@ -234,13 +238,13 @@ public class Slider extends Panel {
     public double getValueForLocation( Vector3f loc ) {
 
         Vector3f relative = loc.subtract(range.getLocalTranslation());
-        
+
         // Components always grow down from their location
         // so we'll invert y
         relative.y *= -1;
                 
         Vector3f axisDir = axis.getDirection();
-        double projection = relative.dot(axisDir);        
+        double projection = relative.dot(axisDir);
         if( projection < 0 ) {
             if( axis == Axis.Y ) {
                 return model.getMaximum();
@@ -261,7 +265,7 @@ public class Slider extends Panel {
         if( axis == Axis.Y ) {
             part = 1 - part;
         }
-        
+ 
         return model.getMinimum() + rangeDelta * part;        
     }
 
@@ -383,18 +387,17 @@ public class Slider extends Panel {
                     v2 = v1.add(0, (range.getSize().y - thumb.getSize().y*0.5f), 0);
                     break;
             }
-
+                        
             v1 = event.getRelativeViewCoordinates(range, v1);
             v2 = event.getRelativeViewCoordinates(range, v2);
 
             Vector3f dir = v2.subtract(v1);
             float length = dir.length();
             dir.multLocal(1/length);
-
             Vector3f cursorDir = new Vector3f(event.getX() - drag.x, event.getY() - drag.y, 0);
 
             float dot = cursorDir.dot(dir);
-
+            
             // Now, the actual amount is then dot/length
             float percent = dot / length;
             model.setPercent(startPercent + percent);
