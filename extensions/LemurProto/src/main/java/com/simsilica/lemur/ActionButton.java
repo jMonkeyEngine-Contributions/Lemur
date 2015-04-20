@@ -62,6 +62,10 @@ public class ActionButton extends Button {
     public ActionButton( Action action, String style ) {
         this(action, new ElementId(ELEMENT_ID), style);
     }
+    
+    public ActionButton( Action action, ElementId elementId ) {
+        this(action, elementId, null);
+    }
 
     public ActionButton( Action action, ElementId elementId, String style ) {
         super(action.getName(), elementId, style);
