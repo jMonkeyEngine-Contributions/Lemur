@@ -481,6 +481,12 @@ public class SpringGridLayout extends AbstractGuiComponent
             }
         }
     }
+    
+    @Override
+    public String toString() {
+        return getClass().getName() + "[mainAxis=" + mainAxis + ", minorAxis=" + minorAxis 
+                                    + ", mainFill=" + mainFill + ", minorFill=" + minorFill + "]";  
+    }
 
     protected class Entry {
         int row;
