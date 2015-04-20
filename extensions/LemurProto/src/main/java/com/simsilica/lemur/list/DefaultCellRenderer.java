@@ -54,7 +54,7 @@ public class DefaultCellRenderer<T> implements CellRenderer<T>, Cloneable {
     private Function<T, String> transform;
     
     public DefaultCellRenderer() {
-        this(new ElementId(Button.ELEMENT_ID), Styles.DEFAULT_STYLE, null);
+        this(new ElementId(Button.ELEMENT_ID), Styles.ROOT_STYLE, null);
     }
     
     public DefaultCellRenderer( String style ) {
