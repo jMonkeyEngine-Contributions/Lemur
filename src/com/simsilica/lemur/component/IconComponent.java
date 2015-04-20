@@ -370,6 +370,7 @@ public class IconComponent extends AbstractGuiComponent
             material.getMaterial().getAdditionalRenderState().setBlendMode(BlendMode.Alpha);
             material.getMaterial().getAdditionalRenderState().setAlphaTest(true);
             material.getMaterial().getAdditionalRenderState().setAlphaFallOff(0.01f);
+            material.getMaterial().setFloat("AlphaDiscardThreshold", 0.1f);
         }
 
         icon.setMaterial(material.getMaterial());
