@@ -193,7 +193,7 @@ public class ComponentStack extends AbstractList<GuiComponent> {
         }
         
         // Add the top components
-        components.addAll(topList);   
+        components.addAll(topList);
     }
  
     /**
@@ -218,7 +218,7 @@ public class ComponentStack extends AbstractList<GuiComponent> {
      *  previous value.
      */
     public <T extends GuiComponent> T setComponent( String layer, T c ) {
-        
+ 
         // See if the layer is valid
         if( !hasLayer(layer) ) {
             throw new IllegalArgumentException("Layer name does not exist in layer ordering:" + layer
