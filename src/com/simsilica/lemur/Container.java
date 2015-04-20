@@ -68,6 +68,10 @@ public class Container extends Panel {
         this(null, true, new ElementId(ELEMENT_ID), style);
     }
 
+    public Container( ElementId elementId ) {
+        this(null, true, elementId, null);
+    }
+    
     public Container( ElementId elementId, String style ) {
         this(null, true, elementId, style);
     }

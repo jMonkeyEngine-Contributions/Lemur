@@ -74,6 +74,10 @@ public class Label extends Panel {
         this( s, true, new ElementId(ELEMENT_ID), style );
     }
 
+    public Label( String s, ElementId elementId ) {
+        this( s, true, elementId, null );
+    }
+    
     public Label( String s, ElementId elementId, String style ) {
         this( s, true, elementId, style );
     }
