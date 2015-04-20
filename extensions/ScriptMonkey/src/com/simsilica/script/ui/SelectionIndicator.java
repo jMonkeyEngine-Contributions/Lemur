@@ -81,7 +81,7 @@ public class SelectionIndicator extends AbstractControl {
         // We don't really clone because 1) we are likely to
         // be a control in that hierarchy and that's weird, 2)
         // we don't want to clone the controls, 3) it gives us
-        // a change to give the geometry a better non-lookup-confusing
+        // a chance to give the geometry a better non-lookup-confusing
         // and finally, 4) we only need the mesh anyway.
         Geometry copy = new Geometry( "Indicator:" + geom.getName() );
         copy.setUserData(SelectionState.UD_IGNORE, true);
@@ -104,6 +104,10 @@ public class SelectionIndicator extends AbstractControl {
         indicator.setQueueBucket(Bucket.Translucent);
         root.attachChild(indicator);
         
+        // Just in case the root node has been moved
+        indicator.setLocalTranslation(root.getLocalTranslation().negate());
+        indicator.setLocalRotation(root.getLocalRotation().inverse());
+        
         // Setup the indicator material
         this.material = GuiGlobals.getInstance().createMaterial(color, false).getMaterial();
         material.getAdditionalRenderState().setWireframe(true);
@@ -121,7 +125,7 @@ public class SelectionIndicator extends AbstractControl {
     }
 
     @Override
-    protected void controlUpdate(float f) {
+    protected void controlUpdate(float f) {        
     }
 
     @Override

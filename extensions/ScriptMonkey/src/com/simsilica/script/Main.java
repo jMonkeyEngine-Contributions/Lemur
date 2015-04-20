@@ -46,6 +46,7 @@ import com.jme3.scene.Geometry;
 import com.jme3.scene.shape.Box;
 import com.simsilica.lemur.GuiGlobals;
 import com.simsilica.lemur.input.InputMapper;
+import com.simsilica.lemur.style.BaseStyles;
 import com.simsilica.lemur.style.StyleLoader;
 import com.simsilica.lemur.style.Styles;
 import java.io.File;
@@ -89,7 +90,9 @@ public class Main extends SimpleApplication {
  
         // Load up a custom style for the UI related stuff
         Styles styles = GuiGlobals.getInstance().getStyles();
-        new StyleLoader(styles).loadStyleResource( "/com/simsilica/script/glass-style.groovy" );       
+        //new StyleLoader(styles).loadStyleResource( "/com/simsilica/script/glass-style.groovy" );       
+
+        BaseStyles.loadGlassStyle();
  
         DirectionalLight sun = new DirectionalLight();
         rootNode.addLight(sun);

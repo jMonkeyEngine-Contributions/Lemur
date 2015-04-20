@@ -85,34 +85,79 @@ Button.metaClass {
 // retrieve and manage windows by name
 windowMap = [:]
 
-// Create a simple container-based Window with some nice
-// properties and methods for managing the children
-class Window extends Container {
-    Label title;
-    
-    public Window( String name ) {
-        super(new ElementId("window.container"), "glass");
-        this.name = name;
-        this.title = new Label(name, new ElementId("window.title.label"), "glass");
-        addChild(title);  
+import com.simsilica.lemur.component.*;
+
+// Some stuff to add child elements to any container
+Container.metaClass {
+
+    label { String text ->
+        return label(text, null); 
+    }
+
+    label { String text, Closure config ->
+        def result = new Label(text, "glass");
+        if( config != null ) {
+            result.with(config);
+        } 
+        delegate.addChild(result);
+        return result;
     }
     
-    public Button button( String name, Closure config ) {
+    button { String name, List constraints, Closure config ->
         def result = getChild(name);
         if( result == null ) {
-            result = new Button(name, new ElementId("window.button"), "glass");
+            //result = new Button(name, new ElementId("window.button"), "glass");
+            result = new Button(name, new ElementId("button"), "glass");
             result.setName(name);
-            addChild(result);
+            if( constraints != null ) {
+                addChild(result, constraints.toArray());
+            } else { 
+                addChild(result);
+            }
         }
         if( config != null ) {
             result.with(config);
         }
         return result;
     }
-    
-    public Button button( String name ) {
-        return button(name, null);
+
+    button { String name, Closure config ->
+        return button(name, null, config);
     }
+    
+    button { String name ->
+        return button(name, null, null);
+    }
+ 
+    container { Axis axis ->
+        return container(axis, null);
+    }
+    
+    container { Axis axis, Closure config ->
+        Axis alt = axis == Axis.X ? Axis.Y : Axis.X;
+        def layout = new SpringGridLayout(axis, alt, FillMode.Even, FillMode.Even);
+        def result = new Container(layout, "glass");
+        if( config != null ) {
+            result.with(config);
+        }
+        addChild(result);
+        return result;
+    }
+}
+
+// Create a simple container-based Window with some nice
+// properties and methods for managing the children
+class Window extends Container {
+    Label title;
+    
+    public Window( String name ) {
+        //super(new ElementId("window.container"), "glass");
+        super(new ElementId("container"), "glass");
+        this.name = name;
+        //this.title = new Label(name, new ElementId("window.title.label"), "glass");
+        this.title = new Label(name, new ElementId("title"), "glass");
+        addChild(title);  
+    } 
 }
 
 Container window( String name, Closure config ) {

@@ -31,6 +31,7 @@ selector( "window.title.label", "glass" ) {
     insets = new Insets3f( 2, 2, 2, 2 );
 }
 
+/*
 selector( "window.button", "glass" ) {
     background = gradient.clone()
     color = color(0, 196f/255, 196f/255, 0.75f)
@@ -38,4 +39,4 @@ selector( "window.button", "glass" ) {
     insets = new Insets3f( 2, 2, 2, 2 );
 }
 
-
+*/
