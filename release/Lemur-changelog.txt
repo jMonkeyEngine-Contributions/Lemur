@@ -64,6 +64,23 @@ Lemur ???
 * GuiControl can now be "focusable" even if none of it's child components are
     by using the setFocusable() method.
 * Added a Slider constructor that takes Axis, ElementId, and style.
+* Gave TbtQuadBackgroundComponent a proper toString() method.
+* Gave SpringGridLayout a proper toString() method.
+* Added some style-less constructors for Label and Container.
+* Modified IconComponent and QuadBackgroundComponent to set AlphaDiscardThreshold
+    instead of just alphaTest since alphaTest is a no-op in JME 3.1.  (Note: this
+    is a breaking change for 3.0 because it's Unshaded.j3md doesn't have an
+    AlphaDiscardThreshold.)
+* Styles.DEFAULT_STYLE changed to Styles.ROOT_STYLE to better reflect what it's
+    for... also the constant was changed from "default" to "root".
+* Styles now supports a user-defined default style that will be used for style
+    application when no other style is defined.  Useful for globally setting
+    a UI's look and feel.
+* Modified some Styles trace logging to include more info.
+* GuiGlobals font loading modified to set AlphaDiscardThreshold in addition to
+    alphaTest since alphaTest is a no-op in JME 3.1.  (Note: this
+    is a breaking change for 3.0 because it's Unshaded.j3md doesn't have an
+    AlphaDiscardThreshold.) 
 
 
 Lemur 1466
