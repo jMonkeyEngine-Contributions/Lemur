@@ -122,8 +122,7 @@ public class Styles {
 
     static Logger log = LoggerFactory.getLogger(Styles.class);
     
-    public static final String KEY_DEFAULT = "default";
-    public static final String DEFAULT_STYLE = "default";
+    public static final String ROOT_STYLE = "root";
     public static final ElementId DEFAULT_ELEMENT = new ElementId("default");
 
     private static Map<Class, List<Method>> methodIndex = new HashMap<Class, List<Method>>();
@@ -143,9 +142,17 @@ public class Styles {
      *  hierarchy formed by breaking down the element ID into separate
      *  selectors.
      */
-    private Map<String,Attributes> attributeMap = new HashMap<String,Attributes>();
+    private Map<String, Attributes> attributeMap = new HashMap<String, Attributes>();
 
-    private Map<Class,Object> defaults = new HashMap<Class,Object>();
+    private Map<Class, Object> defaults = new HashMap<Class, Object>();
+    
+    /**
+     *  The default style that is used when no style is specified by a GUI
+     *  element.  This is different than the "root" style which is the style
+     *  that is inherited by all other styles.  The default style is only used
+     *  when looking up attributes for application to components.  
+     */
+    private String defaultStyle = ROOT_STYLE;
 
     public Styles() {
         /*
@@ -163,6 +170,24 @@ public class Styles {
          */
     }
 
+    /**
+     *  Sets the default style that is used by GUI elements when no other
+     *  style is specified.  This is an easy way to provide a common look
+     *  to the entire user interface without having to pass styles to every
+     *  created component.
+     *  Defaults to the root style.
+     */
+    public void setDefaultStyle( String style ) {
+        if( style == null ) {
+            style = ROOT_STYLE;
+        }
+        this.defaultStyle = style;
+    }
+
+    public String getDefaultStyle() {
+        return defaultStyle;
+    }
+    
     public void clearCache() {
         attributeMap.clear();
     }
@@ -181,7 +206,7 @@ public class Styles {
      *  selector rules and attributes setup prior to this call.
      */
     public Attributes getAttributes( ElementId elementId ) {
-        return getAttributes(elementId, DEFAULT_STYLE);
+        return getAttributes(elementId, null);
     }
 
     /**
@@ -192,7 +217,7 @@ public class Styles {
     public Attributes getAttributes( ElementId elementId, String style ) {
         
         if( style == null ) {
-            style = DEFAULT_STYLE;
+            style = defaultStyle;
         }
         // See if we already have a cached version
         String key = styleKey(elementId, style); 
@@ -207,10 +232,10 @@ public class Styles {
                 result = result.merge(getTree(style, true).getAttributes(DEFAULT_ELEMENT));
             }
             
-            // Apply default styles too if necessary            
-            if( !DEFAULT_STYLE.equals(style) ) {                
+            // Apply default styles too if necessary
+            if( !ROOT_STYLE.equals(style) ) {                
                 // Look-up the element ID in the default style
-                Attributes toMerge = getAttributes(elementId, DEFAULT_STYLE);
+                Attributes toMerge = getAttributes(elementId, ROOT_STYLE);
                 result = result.merge(toMerge);
             }
                         
@@ -226,7 +251,7 @@ public class Styles {
      *  selector rules and attributes setup prior to this call.
      */
     public Attributes getAttributes( String elementId ) {
-        return getAttributes(new ElementId(elementId), DEFAULT_STYLE);
+        return getAttributes(new ElementId(elementId), null);
     }
 
     /**
@@ -239,7 +264,7 @@ public class Styles {
     }
 
     protected String styleKey( ElementId elementId, String style ) {
-        if( style == null || style.equals(DEFAULT_STYLE) ) {
+        if( style == null || style.equals(ROOT_STYLE) ) {
             return elementId.getId();
         }
         return style + ":" + elementId.getId(); 
@@ -247,7 +272,7 @@ public class Styles {
 
     protected StyleTree getTree( String style, boolean create ) {
         if( style == null ) {
-            style = DEFAULT_STYLE;
+            style = ROOT_STYLE;
         }
         StyleTree tree = styleTrees.get(style);
         if( tree == null && create ) {
@@ -305,7 +330,7 @@ public class Styles {
         test.getSelector( "button", "foo" ).set( "action", "null" );
         test.getSelector( "foo" ).set( "color", "yellow" );
 
-        Attributes a1 = test.getAttributes( "slider.thumb.button", DEFAULT_STYLE );
+        Attributes a1 = test.getAttributes( "slider.thumb.button", ROOT_STYLE );
         System.out.println( "a1:" + a1 );
 
         Attributes a2 = test.getAttributes( "slider.thumb.button", "foo" );
@@ -392,7 +417,7 @@ public class Styles {
 
     @Deprecated
     public void applyStyles( Object o, String elementId ) {
-        applyStyles(o, new ElementId(elementId), DEFAULT_STYLE); 
+        applyStyles(o, new ElementId(elementId), null); 
     }
 
     @Deprecated
@@ -401,18 +426,16 @@ public class Styles {
     }
     
     public void applyStyles( Object o, ElementId elementId ) {
-        applyStyles(o, elementId, DEFAULT_STYLE);
+        applyStyles(o, elementId, null);
     }
     
     public void applyStyles( Object o, ElementId elementId, String style ) {
-        if( style == null )
-            style = DEFAULT_STYLE;
 
         Class c = o.getClass();
         initializeStyles(c);
 
         if( log.isTraceEnabled() ) {
-            log.trace("applyStyles elementId:" + elementId + " style:" + style);
+            log.trace("applyStyles elementId:" + elementId + " style:" + style + (style==null?"(" + defaultStyle + ")":""));
         }
         
         Attributes attrs = getAttributes(elementId, style);
