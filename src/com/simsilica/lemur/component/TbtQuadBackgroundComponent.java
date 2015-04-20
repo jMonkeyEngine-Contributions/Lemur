@@ -291,4 +291,10 @@ public class TbtQuadBackgroundComponent extends AbstractGuiComponent
         TbtQuad q = (TbtQuad)background.getMesh();
         q.updateSize(size.x, size.y);
     }
+ 
+    @Override   
+    public String toString() {
+        return getClass().getName() + "[texture=" + texture + ", color=" + color + ", alpha=" + alpha
+                                        + ", margin=" + getMargin() + ", zOffset=" + zOffset + "]";
+    }
 }
