@@ -214,6 +214,7 @@ public class GuiGlobals {
             Material m = font.getPage(i);
             m.getAdditionalRenderState().setAlphaTest(true);
             m.getAdditionalRenderState().setAlphaFallOff(0.1f);
+            m.setFloat("AlphaDiscardThreshold", 0.1f);
         }
     }
 
