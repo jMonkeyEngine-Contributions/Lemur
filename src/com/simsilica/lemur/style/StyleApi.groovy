@@ -109,7 +109,7 @@ Vector3f vec3( Number x, Number y, Number z ) {
     return new Vector3f(x.floatValue(), y.floatValue(), z.floatValue());
 }
 
-Vector3f vec2( Number x, Number y ) {
+Vector2f vec2( Number x, Number y ) {
     return new Vector2f(x.floatValue(), y.floatValue());
 }
 

@@ -80,7 +80,9 @@ Lemur ???
 * GuiGlobals font loading modified to set AlphaDiscardThreshold in addition to
     alphaTest since alphaTest is a no-op in JME 3.1.  (Note: this
     is a breaking change for 3.0 because it's Unshaded.j3md doesn't have an
-    AlphaDiscardThreshold.) 
+    AlphaDiscardThreshold.)
+* Added a TextField constructor that takes just text and element ID.
+* Fixed a syntax error in StyleApi.groovy's vec2() helper function.     
 
 
 Lemur 1466
