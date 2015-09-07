@@ -1,5 +1,5 @@
 /*
- * $Id$
+ * $Id: OptionPanelState.java 1536 2014-12-03 05:20:21Z PSpeed42@gmail.com $
  * 
  * Copyright (c) 2014, Simsilica, LLC
  * All rights reserved.
@@ -86,6 +86,35 @@ public class OptionPanelState extends BaseAppState {
     public void show( String title, String message, Action... options ) {
         show(new OptionPanel(title, message, style, options));
     }               
+ 
+    protected String getName( Throwable t ) {
+        String name = t.getClass().getSimpleName();
+        StringBuilder sb = new StringBuilder();
+        boolean last = true;
+        sb.append(Character.toUpperCase(name.charAt(0)));
+        for( int i = 1; i < name.length(); i++ ) {
+            char c = name.charAt(i);
+            boolean upper = Character.isUpperCase(c);
+            if( upper && !last ) {
+                sb.append(" ");
+                last = true;
+            }
+            sb.append(c);
+            last = upper;
+        }
+        return sb.toString();   
+    }
+ 
+    /**
+     *  Creates and displays a model OptionPanel with the specified
+     *  error information.  An attempt is made to construct a useful
+     *  message for the specified Throwable.
+     *  The option panel will be visible until the user
+     *  clicks a response or until close() is called.
+     */
+    public void showError( String title, Throwable t ) {
+        show(title, getName(t) + "\n" + t.getMessage());   
+    }     
  
     /**
      *  Modally shows the specified OptionPanel in the guiNode as defined by
