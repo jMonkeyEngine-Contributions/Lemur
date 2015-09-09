@@ -45,3 +45,7 @@ All of the modules and GUI elements are setup to support fully 3D user interface
 standard 2D user interfaces.  This is not simply projecting flat 'windows' into a 3D world.  This 
 means that any 3D scene graph element can potentially be a user interface element.  Even 
 the layouts are setup to manage fully 3D components.
+
+## Patreon
+
+If you find Lemur useful then please consider supporting me on [Patreon](https//patreon.com/pspeed42)
