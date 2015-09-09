@@ -7,9 +7,9 @@ Lemur is GUI toolkit for making user interfaces in jMonkeyEngine applications.  
 
 ### "I'm sold! How do I use it?!?"
 
-[Getting Started](https://github.com/jMonkeyEngine-Contributions/Lemur/wiki/Getting-Started)
-
-Documentation (under construction)
+Dive right in:
+* [Getting Started](https://github.com/jMonkeyEngine-Contributions/Lemur/wiki/Getting-Started)
+* Documentation (under construction)
 
 ## Features:
 
