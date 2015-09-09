@@ -7,7 +7,7 @@ Lemur is GUI toolkit for making user interfaces in jMonkeyEngine applications.  
 Getting Started (under construction)
 Documentation (under construction)
 
-### Features:
+## Features:
 
 #### Built Using jMonkeyEngine Spatials
 Because all of Lemur's GUI elements are regular JME objects, they can be manipulated like any other scene element.
