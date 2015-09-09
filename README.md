@@ -44,6 +44,8 @@ class set of of GUI elements based on those modules.  This is forms a proper
 UI toolkit in its own right but can also serve as a basis for customization or 
 as an example for using the support modules.
 
+![Module Overview](http://i.imgur.com/Q7OYlBn.png)
+
 All of the modules and GUI elements are setup to support fully 3D user interfaces as well as 
 standard 2D user interfaces.  This is not simply projecting flat 'windows' into a 3D world.  This 
 means that any 3D scene graph element can potentially be a user interface element.  Even 
