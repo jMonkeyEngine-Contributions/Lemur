@@ -2,26 +2,26 @@
 
 Lemur is GUI toolkit for making user interfaces in jMonkeyEngine applications.  It supports standard 2D UIs as well as fully 3D UIs.  The modular design allows an application to use all or some of it as needed or even to build a completely new custom GUI library on top.
 
-## Features:
+### Features:
 
-### Built Using jMonkeyEngine Spatials
+#### Built Using jMonkeyEngine Spatials
 Because all of Lemur's GUI elements are regular JME objects, they can be manipulated like any other scene element.
 
-### 2D and 3D At Its Core
+#### 2D and 3D At Its Core
 This means more than just 2D planes projected in 3D space.   Each GUI element can be a true 3D object.  Also
 due to the modular design, GUI behaviors like mouse/touch event support can be added directly to any existing
 jME Spatial.
 
-### Simple API
+#### Simple API
 The GUI element library is based on a streamlined Swing-like design using lessons learned from over 15 years of Swing development experience.
 
-### Advanced Custom Style Support
+#### Advanced Custom Style Support
 Supports a styling system similar to cascading style sheets in structure.  GUI element attributes can be set through hierarchical style setup either through code or through a custom groovy-based styling language.  The style module also makes it easy to setup new attributes on new custom GUI elements simply by adding an annotation.
 
-### Modular Design
+#### Modular Design
 Underlying modules such as InputMapper, Styles, Touch/Mouse support, etc. can be used 100% independent of the rest of the library.
 
-### Designed for Customization
+#### Designed for Customization
 From the ground up, the core modules were designed for creating custom GUI libraries.  Even the built-in GUI elements are using that same customization support to provide a default GUI library.  This means that even if you decide you don't like the built-in GUI elements or want to extend them in some way that they don't support well, the core modules can give you a huge jump start on writing a custom GUI.
 
 ## Overview
