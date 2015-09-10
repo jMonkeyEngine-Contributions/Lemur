@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <meta charset="UTF-8">
+    <title>Lemur by jMonkeyEngine-Contributions</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" href="stylesheets/normalize.css" media="screen">
+    <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,700' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen">
+    <link rel="stylesheet" type="text/css" href="stylesheets/github-light.css" media="screen">
+  </head>
+  <body>
+    <section class="page-header">
+      <h1 class="project-name">Lemur</h1>
+      <h2 class="project-tagline">A 2D and 3D jMonkeyEngine-based UI toolkit.</h2>
+      <a href="https://github.com/jMonkeyEngine-Contributions/Lemur" class="btn">View on GitHub</a>
+      <a href="https://github.com/jMonkeyEngine-Contributions/Lemur/zipball/master" class="btn">Download .zip</a>
+      <a href="https://github.com/jMonkeyEngine-Contributions/Lemur/tarball/master" class="btn">Download .tar.gz</a>
+    </section>
+
+    <section class="main-content">
+      <h1>
+<a id="" class="anchor" href="#" aria-hidden="true"><span class="octicon octicon-link"></span></a><img src="http://i.imgur.com/2Pur3pG.png" alt="Lemur">
+</h1>
+
+<p>Lemur is GUI toolkit for making user interfaces in jMonkeyEngine applications.  It supports standard 2D UIs as well as fully 3D UIs.  The modular design allows an application to use all or some of it as needed or even to build a completely new custom GUI library on top.</p>
+
+<p><img src="http://i.imgur.com/xlhbDgL.png" alt="Mythruna"> <img src="http://i.imgur.com/5wFF4YY.png" alt="Mythruna"> 
+<img src="http://i.imgur.com/2O0Ivmq.png" alt="Arboreal"> <img src="http://i.imgur.com/zrYgDgI.png" alt="Ethereal"></p>
+
+<h3>
+<a id="im-sold-how-do-i-use-it" class="anchor" href="#im-sold-how-do-i-use-it" aria-hidden="true"><span class="octicon octicon-link"></span></a>"I'm sold! How do I use it?!?"</h3>
+
+<p>Dive right in:</p>
+
+<ul>
+<li><a href="https://github.com/jMonkeyEngine-Contributions/Lemur/wiki/Getting-Started">Getting Started</a></li>
+<li>Documentation (under construction)</li>
+</ul>
+
+<h2>
+<a id="features" class="anchor" href="#features" aria-hidden="true"><span class="octicon octicon-link"></span></a>Features:</h2>
+
+<h4>
+<a id="built-using-jmonkeyengine-spatials" class="anchor" href="#built-using-jmonkeyengine-spatials" aria-hidden="true"><span class="octicon octicon-link"></span></a>Built Using jMonkeyEngine Spatials</h4>
+
+<p>Because all of Lemur's GUI elements are regular JME objects, they can be manipulated like any other scene element.</p>
+
+<h4>
+<a id="2d-and-3d-at-its-core" class="anchor" href="#2d-and-3d-at-its-core" aria-hidden="true"><span class="octicon octicon-link"></span></a>2D and 3D At Its Core</h4>
+
+<p>This means more than just 2D planes projected in 3D space.   Each GUI element can be a true 3D object.  Also
+due to the modular design, GUI behaviors like mouse/touch event support can be added directly to any existing
+jME Spatial.</p>
+
+<h4>
+<a id="simple-api" class="anchor" href="#simple-api" aria-hidden="true"><span class="octicon octicon-link"></span></a>Simple API</h4>
+
+<p>The GUI element library is based on a streamlined Swing-like design using lessons learned from over 15 years of Swing development experience.</p>
+
+<h4>
+<a id="advanced-custom-style-support" class="anchor" href="#advanced-custom-style-support" aria-hidden="true"><span class="octicon octicon-link"></span></a>Advanced Custom Style Support</h4>
+
+<p>Supports a styling system similar to cascading style sheets in structure.  GUI element attributes can be set through hierarchical style setup either through code or through a custom groovy-based styling language.  The style module also makes it easy to setup new attributes on new custom GUI elements simply by adding an annotation.</p>
+
+<h4>
+<a id="modular-design" class="anchor" href="#modular-design" aria-hidden="true"><span class="octicon octicon-link"></span></a>Modular Design</h4>
+
+<p>Underlying modules such as InputMapper, Styles, Touch/Mouse support, etc. can be used 100% independent of the rest of the library.</p>
+
+<h4>
+<a id="designed-for-customization" class="anchor" href="#designed-for-customization" aria-hidden="true"><span class="octicon octicon-link"></span></a>Designed for Customization</h4>
+
+<p>From the ground up, the core modules were designed for creating custom GUI libraries.  Even the built-in GUI elements are using that same customization support to provide a default GUI library.  This means that even if you decide you don't like the built-in GUI elements or want to extend them in some way that they don't support well, the core modules can give you a huge jump start on writing a custom GUI.</p>
+
+<h2>
+<a id="overview" class="anchor" href="#overview" aria-hidden="true"><span class="octicon octicon-link"></span></a>Overview</h2>
+
+<p>On the surface, Lemur is a UI library that works in 2D and 3D and that's what will interest
+most users, at least at first.</p>
+
+<p>Underneath that simple description, it's really a collection of modules that can be used to 
+create GUI libraries.  Each separate module can be used on its own or with its siblings to create 
+custom user interface libraries.  The library also includes its own first 
+class set of of GUI elements based on those modules.  This is forms a proper 
+UI toolkit in its own right but can also serve as a basis for customization or 
+as an example for using the support modules.</p>
+
+<p><img src="http://i.imgur.com/Q7OYlBn.png" alt="Module Overview"></p>
+
+<p>All of the modules and GUI elements are setup to support fully 3D user interfaces as well as 
+standard 2D user interfaces.  This is not simply projecting flat 'windows' into a 3D world.  This 
+means that any 3D scene graph element can potentially be a user interface element.  Even 
+the layouts are setup to manage fully 3D components.</p>
+
+<h2>
+<a id="patreon" class="anchor" href="#patreon" aria-hidden="true"><span class="octicon octicon-link"></span></a>Patreon</h2>
+
+<p>If you find Lemur useful then please consider supporting me on <a href="https://www.patreon.com/pspeed42?ty=h">Patreon</a></p>
+
+      <footer class="site-footer">
+        <span class="site-footer-owner"><a href="https://github.com/jMonkeyEngine-Contributions/Lemur">Lemur</a> is maintained by <a href="https://github.com/jMonkeyEngine-Contributions">jMonkeyEngine-Contributions</a>.</span>
+
+        <span class="site-footer-credits">This page was generated by <a href="https://pages.github.com">GitHub Pages</a> using the <a href="https://github.com/jasonlong/cayman-theme">Cayman theme</a> by <a href="https://twitter.com/jasonlong">Jason Long</a>.</span>
+      </footer>
+
+    </section>
+
+  
+  </body>
+</html>
