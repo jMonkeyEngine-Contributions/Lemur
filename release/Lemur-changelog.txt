@@ -1,4 +1,9 @@
 
+Lemur ???
+----------
+* Added @Documented annotation to StyleAttribute so that it shows up in the
+    javadoc. (oops)
+
 Lemur v1.5.1
 -------------
 * Fixed an error message in SpringGridLayout to refer to itself properly.

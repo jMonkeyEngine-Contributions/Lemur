@@ -48,6 +48,7 @@ import java.lang.annotation.*;
  *  @author    Paul Speed
  */
 @Retention(RetentionPolicy.RUNTIME)
+@Documented
 public @interface StyleAttribute {
     String value();
     boolean lookupDefault() default true;
