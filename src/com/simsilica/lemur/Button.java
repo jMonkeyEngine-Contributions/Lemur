@@ -245,7 +245,15 @@ public class Button extends Label {
                     // click
                     click(event, target, capture);
                 }
-                commandMap.runCommands(ButtonAction.Up);
+                // If we run the up without checking properly then we
+                // potentially get up events with no down event.  This messes
+                // up listeners that are (correctly) expecting an up for every
+                // down and no ups without downs.
+                // So, any time the capture is us then we will run, else not
+                if( capture == Button.this ) {
+System.out.println("target:" + target + "  capture:" + capture);                
+                    commandMap.runCommands(ButtonAction.Up);
+                }
             }
         }
 
