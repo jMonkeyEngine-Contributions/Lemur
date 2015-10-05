@@ -240,6 +240,8 @@ public class Panel extends Node {
         if( i != null ) {
             if( ic == null ) {
                 ic = new InsetsComponent(i);
+            } else {
+                ic.setInsets(i);
             }
         } else {
             ic = null;
