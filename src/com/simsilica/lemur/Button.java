@@ -251,7 +251,6 @@ public class Button extends Label {
                 // down and no ups without downs.
                 // So, any time the capture is us then we will run, else not
                 if( capture == Button.this ) {
-System.out.println("target:" + target + "  capture:" + capture);                
                     commandMap.runCommands(ButtonAction.Up);
                 }
             }
