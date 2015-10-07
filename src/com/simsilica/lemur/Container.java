@@ -76,6 +76,10 @@ public class Container extends Panel {
         this(null, true, elementId, style);
     }
 
+    public Container( GuiLayout layout, ElementId elementId ) {
+        this(layout, true, elementId, null);
+    }
+    
     public Container( GuiLayout layout, String style ) {
         this(layout, true, new ElementId(ELEMENT_ID), style);
     }
