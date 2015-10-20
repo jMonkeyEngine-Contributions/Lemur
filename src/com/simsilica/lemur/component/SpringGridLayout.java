@@ -75,6 +75,10 @@ public class SpringGridLayout extends AbstractGuiComponent
         this(Axis.Y, Axis.X, FillMode.Even, FillMode.Even);
     }
 
+    public SpringGridLayout( Axis mainAxis, Axis minorAxis ) {
+        this(mainAxis, minorAxis, FillMode.Even, FillMode.Even); 
+    }
+    
     public SpringGridLayout( Axis mainAxis, Axis minorAxis, FillMode mainFill, FillMode minorFill ) {
         this.mainAxis = mainAxis;
         this.minorAxis = minorAxis;

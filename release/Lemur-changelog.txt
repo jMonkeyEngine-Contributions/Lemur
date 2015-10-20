@@ -9,7 +9,9 @@ Lemur ???
 * Fixed a bug with up/down event processing in Button.  It was possible to
     receive up events when no down event was received.  Now every down gets
     an up and there are no ups without downs.
-* Added an additional constructor to Container that takes a layout and elementId.     
+* Added an additional constructor to Container that takes a layout and elementId.
+* Added a simplified SpringGridLayout constructor that just takes the axes for
+    axis ordering.     
 
 
 Lemur v1.5.1
