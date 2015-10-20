@@ -42,7 +42,9 @@ import com.jme3.scene.*;
  *  A default implementation mouse listener that provides default
  *  implementations for all MouseListener methods.  In addition,
  *  the mouseButtonEvent() provides basic default click behavior
- *  calling an overridable click() method.
+ *  calling an overridable click() method.  Default click detection
+ *  uses a pixel-based threshold that can be specified on the constructor
+ *  and is implemented with the overridable isClick() method.
  *
  *  @author    Paul Speed
  */
@@ -50,12 +52,26 @@ public class DefaultMouseListener implements MouseListener {
 
     private int xDown;
     private int yDown;
+    private int xClickThreshold;
+    private int yClickThreshold;
 
     public DefaultMouseListener() {
+        this(3, 3);
+    }
+
+    public DefaultMouseListener( int xClickThreshold, int yClickThreshold ) {
+        this.xClickThreshold = xClickThreshold;
+        this.yClickThreshold = yClickThreshold;  
     }
 
     protected void click( MouseButtonEvent event, Spatial target, Spatial capture ) {
     } 
+
+    protected boolean isClick( MouseButtonEvent event, int xDown, int yDown ) {
+        int x = event.getX();
+        int y = event.getY();
+        return Math.abs(x-xDown) < xClickThreshold && Math.abs(y-yDown) < yClickThreshold;
+    }
 
     public void mouseButtonEvent( MouseButtonEvent event, Spatial target, Spatial capture ) {
         event.setConsumed();
@@ -63,12 +79,8 @@ public class DefaultMouseListener implements MouseListener {
         if( event.isPressed() ) {
             xDown = event.getX();
             yDown = event.getY();
-        } else {
-            int x = event.getX();
-            int y = event.getY();
-            if( Math.abs(x-xDown) < 3 && Math.abs(y-yDown) < 3 ) {
-                click(event, target, capture);
-            }
+        } else if( isClick(event, xDown, yDown) ) {
+            click(event, target, capture);
         }
     }
 

@@ -11,7 +11,10 @@ Lemur ???
     an up and there are no ups without downs.
 * Added an additional constructor to Container that takes a layout and elementId.
 * Added a simplified SpringGridLayout constructor that just takes the axes for
-    axis ordering.     
+    axis ordering.
+* Modified DefaultMouseListener to have more configurable click detection.
+    A click threshold can be specified on the constructor instead of being hard-coded
+    to three.  Also, the click detection is done with an easily overridable method.
 
 
 Lemur v1.5.1
