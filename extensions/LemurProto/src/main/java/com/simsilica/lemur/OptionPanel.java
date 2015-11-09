@@ -79,6 +79,14 @@ public class OptionPanel extends Panel {
     public OptionPanel( String title, String message, String style, Action... options ) {
         this(true, title, message, options, new ElementId(ELEMENT_ID), style);
     }
+
+    /**
+     *  Creates a new OptionPanel with the specified title, message, style, and
+     *  actions.
+     */
+    public OptionPanel( String title, String message, ElementId elementId, String style, Action... options ) {
+        this(true, title, message, options, elementId, style);
+    }
     
     protected OptionPanel( boolean applyStyles, String title, String message, Action[] options,
                            ElementId elementId, String style ) {

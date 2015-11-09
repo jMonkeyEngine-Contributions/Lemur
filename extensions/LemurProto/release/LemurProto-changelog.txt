@@ -1,3 +1,9 @@
+Lemur-Proto ???
+----------------
+-Added an additional constructor to OptionPanel to allow specification
+    of the ElementId for the panel.
+
+
 
 Revision v1.4.1
 ----------------
