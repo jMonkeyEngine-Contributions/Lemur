@@ -1,6 +1,6 @@
 
-Lemur ???
-----------
+Lemur v1.5.2
+-------------
 * Added @Documented annotation to StyleAttribute so that it shows up in the
     javadoc. (oops)
 * Fixed bug in Panel where insets were not applied during setInsets() if

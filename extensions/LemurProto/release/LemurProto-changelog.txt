@@ -1,91 +1,91 @@
-Lemur-Proto ???
-----------------
--Added an additional constructor to OptionPanel to allow specification
+Lemur-Proto v1.4.2
+-------------------
+* Added an additional constructor to OptionPanel to allow specification
     of the ElementId for the panel.
--Fixed ListBox to properly set the alpha of the selector.
--Fixed GridPanel to set the alpha of its children when they are added
+* Fixed ListBox to properly set the alpha of the selector.
+* Fixed GridPanel to set the alpha of its children when they are added
     if the panel has an alpha configured.
--Added some additional show() methods to OptionPanelState that allow
+* Added some additional show() methods to OptionPanelState that allow
     the panel's ElementId to be specified.    
 
 
 Revision v1.4.1
 ----------------
--Added Action and ActionButton for having a more general
+* Added Action and ActionButton for having a more general
     way of passing around "actions" that can be reused in
     various buttons.  Eventually this gets expanded into
     toolbar buttons, menu buttons, etc.
--Added an OptionPanel similar to Swing's JOptionPane.  It
+* Added an OptionPanel similar to Swing's JOptionPane.  It
     can be used to present a message or simple set of
     options to the user.
--Added an OptionPanelState that can be used to modally
+* Added an OptionPanelState that can be used to modally
     present OptionPanel's to the user.
--Added setSelection() and getSelection() to list.SelectionModel
+* Added setSelection() and getSelection() to list.SelectionModel
     for more easily setting/getting a single selection.
--Fixed GridPanel to update its displayed values if the model    
+* Fixed GridPanel to update its displayed values if the model    
     has changed.  Prior to this, add/remove/set on the model
     was not reflected properly in the grid.
--Fixed ListBox to reset its slider range when the list model
+* Fixed ListBox to reset its slider range when the list model
     changes.
--Fixed ListBox to reset the selector element if the grid has
+* Fixed ListBox to reset the selector element if the grid has
     been reshaped() (ie: children have been laid out again)
     This fixes a bug where the selector wasn't resized when
     the list resized.  It also fixes a bug where the selector
     disappeared if newly moved to the end of the list because
     of model changes.
--Fixed ListBox to clamp the selection to the end of the list
+* Fixed ListBox to clamp the selection to the end of the list
     if the model changes.
--Fixed ListBox to keep the list in the same place if items
+* Fixed ListBox to keep the list in the same place if items
     are added after the current visible base.
--Added a ProtoDemo to demonstrate (and test) some of the proto
+* Added a ProtoDemo to demonstrate (and test) some of the proto
     elements.
--Fixed ListBox to properly apply its outer style as "list.container"
+* Fixed ListBox to properly apply its outer style as "list.container"
     instead of just "list"
--Added a glass-styles.groovy to augment the default glass style
+* Added a glass-styles.groovy to augment the default glass style
     with styling for the ListBox and OptionPanel elements.  These
     styles are automatically loaded when the glass style is 
     loaded.
--Fixed ListBox to properly pass style through on all constructors
+* Fixed ListBox to properly pass style through on all constructors
     that take style as a parameter.
--Added ListBox.set/getCellRenderer() for changing the cell rendering
+* Added ListBox.set/getCellRenderer() for changing the cell rendering
     strategy at runtime.
--Modified DefaultCellRenderer to take an optional Function<T, String> for
+* Modified DefaultCellRenderer to take an optional Function<T, String> for
     doing the value to string transform.  Also moved the value to String
     conversion into its own protected method to make it easy for subclasses
     to do more advanced custom behavior if desired.
--Fixed a bug where the initial internal setModel() was failing to set
+* Fixed a bug where the initial internal setModel() was failing to set
     the default empty model when the passed model was null... because null
     was the same as the existing model.
--Added style attribute support for ListBox.visibleItems and ListBox.cellRenderer.
--Fixed some bugs where applying styles was throwing NPEs because there was
+* Added style attribute support for ListBox.visibleItems and ListBox.cellRenderer.
+* Fixed some bugs where applying styles was throwing NPEs because there was
     no model or selector yet.
--Debounced some update churn in SelectionModel when calling add() and fixed
+* Debounced some update churn in SelectionModel when calling add() and fixed
     the simmilar check in setSelection()
--Fixed a bug in ListBox where the item selector might start out the wrong size
+* Fixed a bug in ListBox where the item selector might start out the wrong size
     when first displayed.
--Added EmptyAction for cases where an action button is desired with no action.
+* Added EmptyAction for cases where an action button is desired with no action.
     Useful for stubbing out actions for UIs or passing a null action to the option
     panel for "Ok".
--Added CallMethodAction that delegates to a specified method on some object.
--Added a ColorChooser component that presents an HS selection panel and a separate
+* Added CallMethodAction that delegates to a specified method on some object.
+* Added a ColorChooser component that presents an HS selection panel and a separate
     B slider.         
 
 
 Revision 1505
 --------------
--Fixed a cols/rows swap in ArrayGridModel.
--Removed some stdout debug output from ListBox.
--ListBox now cleans up internal grid item listeners when the
+* Fixed a cols/rows swap in ArrayGridModel.
+* Removed some stdout debug output from ListBox.
+* ListBox now cleans up internal grid item listeners when the
     list model is swapped out.
 
 
 Revision 1500
 --------------
--Added getSlider() and getGridPanel() methods to ListBox to
+* Added getSlider() and getGridPanel() methods to ListBox to
     support access to the slider model and for manually configured
     styling.
 
 
 Revision 1498
 --------------
--Initial release with basic GridPanel and ListBox support.
+* Initial release with basic GridPanel and ListBox support.
