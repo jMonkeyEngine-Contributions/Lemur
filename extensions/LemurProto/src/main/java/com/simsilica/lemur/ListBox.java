@@ -281,6 +281,13 @@ public class ListBox<T> extends Panel {
         return cellRenderer;
     }    
 
+    public void setAlpha( float alpha, boolean recursive ) {
+        super.setAlpha(alpha, recursive);
+        
+        // Catch some of our intermediaries
+        setChildAlpha(selector, alpha);
+    }
+
     protected void refreshSelector() {    
         if( selectorArea == null ) {
             return;

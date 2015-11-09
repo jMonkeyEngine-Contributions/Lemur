@@ -62,6 +62,7 @@ public class GridPanel extends Panel {
     private int visibleColumns = 5;
     private int row = 0;
     private int column = 0;
+    private Float alpha; // for setting to new children
        
     public GridPanel( GridModel<Panel> model ) {
         this(true, model, new ElementId(ELEMENT_ID), null);
@@ -177,6 +178,11 @@ public class GridPanel extends Panel {
         return visibleColumns;
     }
 
+    public void setAlpha( float alpha, boolean recursive ) {
+        this.alpha = alpha;
+        super.setAlpha(alpha, recursive);
+    }
+    
     protected void refreshGrid() {
         if( model == null ) {
             getControl(GuiControl.class).getLayout().clearChildren();
@@ -192,6 +198,10 @@ public class GridPanel extends Panel {
                 } else {
                     Panel child = model.getCell(r, c, (Panel)existing);
                     if( child != existing ) {
+                        // Make sure new children pick up the alpha of the container
+                        if( alpha != null && alpha != 1 ) {
+                            child.setAlpha(alpha);
+                        }
                         layout.addChild(child, r-row, c-column);
                     }                    
                 }                

@@ -2,7 +2,9 @@ Lemur-Proto ???
 ----------------
 -Added an additional constructor to OptionPanel to allow specification
     of the ElementId for the panel.
-
+-Fixed ListBox to properly set the alpha of the selector.
+-Fixed GridPanel to set the alpha of its children when they are added
+    if the panel has an alpha configured.
 
 
 Revision v1.4.1
