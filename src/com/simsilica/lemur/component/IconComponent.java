@@ -134,6 +134,7 @@ public class IconComponent extends AbstractGuiComponent
         return image;
     }
 
+    @Override
     public void setColor( ColorRGBA c ) {
         this.color = c;
         resetColor();
@@ -148,16 +149,18 @@ public class IconComponent extends AbstractGuiComponent
             material.setColor(color);
         } else {
             // Need to calculate it
-            ColorRGBA adjusted = color.clone();
+            ColorRGBA adjusted = color != null ? color.clone() : ColorRGBA.White.clone();
             adjusted.a *= alpha;
             material.setColor(adjusted);
         }
     }
 
+    @Override
     public ColorRGBA getColor() {
         return color;
     }
 
+    @Override
     public void setAlpha( float f ) {
         if( this.alpha == f ) {
             return;
@@ -166,6 +169,7 @@ public class IconComponent extends AbstractGuiComponent
         resetColor();
     }
     
+    @Override
     public float getAlpha() {
         return alpha;
     }

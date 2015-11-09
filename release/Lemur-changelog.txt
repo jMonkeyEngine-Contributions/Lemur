@@ -15,6 +15,8 @@ Lemur ???
 * Modified DefaultMouseListener to have more configurable click detection.
     A click threshold can be specified on the constructor instead of being hard-coded
     to three.  Also, the click detection is done with an easily overridable method.
+* Fixed IconComponent to allow setting the alpha value even if a color has not been
+    set.  Color defaults to white in that case.
 
 
 Lemur v1.5.1
