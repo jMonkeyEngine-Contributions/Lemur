@@ -51,6 +51,7 @@ import com.jme3.scene.shape.Quad;
 import com.simsilica.lemur.event.BaseAppState;
 import com.simsilica.lemur.event.ConsumingMouseListener;
 import com.simsilica.lemur.event.MouseEventControl;
+import com.simsilica.lemur.style.ElementId;
 
 
 /**
@@ -66,11 +67,17 @@ public class OptionPanelState extends BaseAppState {
     private Geometry blocker;
     private Node guiNode;
     private String style;
+    private ElementId defaultElementId = new ElementId(OptionPanel.ELEMENT_ID);
     
     public OptionPanelState() {
     }
 
     public OptionPanelState( String style ) {
+        this.style = style;
+    }
+
+    public OptionPanelState( ElementId defaultElementId, String style ) {
+        this.defaultElementId = defaultElementId;
         this.style = style;
     }
     
@@ -84,7 +91,16 @@ public class OptionPanelState extends BaseAppState {
      *  clicks a response or until close() is called.
      */
     public void show( String title, String message, Action... options ) {
-        show(new OptionPanel(title, message, style, options));
+        show(title, message, defaultElementId, options);
+    }               
+ 
+    /** 
+     *  Creates and displays a modal OptionPanel with the specified 
+     *  settings.  The option panel will be visible until the user
+     *  clicks a response or until close() is called.
+     */
+    public void show( String title, String message, ElementId elementId, Action... options ) {
+        show(new OptionPanel(title, message, elementId, style, options));
     }               
  
     protected String getName( Throwable t ) {
@@ -113,7 +129,18 @@ public class OptionPanelState extends BaseAppState {
      *  clicks a response or until close() is called.
      */
     public void showError( String title, Throwable t ) {
-        show(title, getName(t) + "\n" + t.getMessage());   
+        show(title, getName(t) + "\n" + t.getMessage(), defaultElementId);   
+    }     
+ 
+    /**
+     *  Creates and displays a model OptionPanel with the specified
+     *  error information.  An attempt is made to construct a useful
+     *  message for the specified Throwable.
+     *  The option panel will be visible until the user
+     *  clicks a response or until close() is called.
+     */
+    public void showError( String title, Throwable t, ElementId elementId ) {
+        show(title, getName(t) + "\n" + t.getMessage(), elementId);   
     }     
  
     /**
