@@ -1,3 +1,10 @@
+Lemur ???
+----------
+* Fixed an issue in DefaultRangedValueModel where the 'value' field
+    was used directly instead of calling getValue().  This made it harder
+    for subclasses to implement custom behavior.
+* Added a Slider(model, ElementId) constructor.
+
 
 Lemur v1.5.2
 -------------

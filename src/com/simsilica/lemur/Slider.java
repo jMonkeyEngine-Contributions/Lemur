@@ -123,6 +123,10 @@ public class Slider extends Panel {
         this(model, Axis.X, true, new ElementId(ELEMENT_ID), style);
     }
 
+    public Slider( RangedValueModel model, ElementId elementId ) {
+        this(model, Axis.X, true, elementId, null);
+    }
+
     public Slider( RangedValueModel model, Axis axis, String style ) {
         this(model, axis, true, new ElementId(ELEMENT_ID), style);
     }

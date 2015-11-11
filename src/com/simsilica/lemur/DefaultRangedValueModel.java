@@ -68,7 +68,7 @@ public class DefaultRangedValueModel implements RangedValueModel {
     }
 
     public Double getObject() {
-        return value;
+        return getValue();
     }
 
     public VersionedReference<Double> createReference() {
@@ -102,7 +102,7 @@ public class DefaultRangedValueModel implements RangedValueModel {
         double range = max - min;
         if( range == 0 )
             return 0;
-        double part = value - min;
+        double part = getValue() - min;
         return part / range;
     }
 
