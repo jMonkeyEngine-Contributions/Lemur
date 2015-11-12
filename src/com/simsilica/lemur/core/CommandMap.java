@@ -67,6 +67,10 @@ public class CommandMap<S,K> extends HashMap<K, List<Command<? super S>>> {
     }
 
     public void addCommands( K key, Collection<Command<? super S>> commands ) {
+        if( commands == null ) {
+            get(key, true).clear();
+            return;
+        }
         get(key, true).addAll(commands);
     }
 

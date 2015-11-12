@@ -11,7 +11,9 @@ Lemur ???
     other runEffect(), addEffect(), etc. methods related to the new animation
     system.
 * Modified Button to automatically attempt to run effects for the various
-    button events.    
+    button events.
+* Modified CommandMap to support null values in the addCommands() call 
+    that can be used to clear out any previously added values.
 
 
 Lemur v1.5.2
