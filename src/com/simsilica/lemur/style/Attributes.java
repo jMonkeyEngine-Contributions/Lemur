@@ -53,12 +53,37 @@ public class Attributes {
     }
 
     protected void applyNew( Attributes atts ) {
+ 
+        // Note: applyNew is called in highest to lowest priority.
+        //       Things that fill the values map now should override
+        //       later things.
+               
         for( Map.Entry<String,Object> e : atts.values.entrySet() ) {
-            if( values.containsKey(e.getKey()) )
-                continue;
-            values.put(e.getKey(), e.getValue());
+            Object existing = values.get(e.getKey());
+            if( existing instanceof Map && e.getValue() instanceof Map ) {
+                // Need to merge the old and the new
+                values.put(e.getKey(), mergeMap((Map)existing, (Map)e.getValue()));
+            } else if( existing == null && !values.containsKey(e.getKey()) ) {
+                // Null check above is not enough because the map might have a
+                // null value that should override subsequent attempts to 
+                // set the value.
+                values.put(e.getKey(), e.getValue());
+            } 
+            // Else we ignore it
         }
     }
+
+    protected Map mergeMap( Map high, Map low ) {
+        Map result = new HashMap();
+        result.putAll(high);
+        for( Object o : low.entrySet() ) {
+            Map.Entry e = (Map.Entry)o;
+            if( !result.containsKey(e.getKey()) ) {
+                result.put(e.getKey(), e.getValue());
+            }
+        }
+        return result;
+    } 
 
     /**
      *  Like applyNew except that it returns a new Attributes object
@@ -110,6 +135,7 @@ public class Attributes {
         return (T)result;
     }
 
+    @Override
     public String toString() {
         return "Attributes[" + values + "]";
     }
