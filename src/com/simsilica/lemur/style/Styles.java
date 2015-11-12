@@ -474,6 +474,6 @@ public class Styles {
             } catch( InvocationTargetException e ) {
                 throw new RuntimeException("Error applying attribute:" + attribute + " to:" + o, e);
             }
-        }
+        }        
     }
 }

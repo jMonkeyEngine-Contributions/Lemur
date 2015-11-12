@@ -4,6 +4,14 @@ Lemur ???
     was used directly instead of calling getValue().  This made it harder
     for subclasses to implement custom behavior.
 * Added a Slider(model, ElementId) constructor.
+* Modified the style Attributes class to auto-merge Map-based attribute values
+    using the same override logic that the Attributes class itself uses.
+* Added a basic animation system and GUI element stylable effects API.
+* Added a setEffects() method to Panel that is stylable.  Also added a few
+    other runEffect(), addEffect(), etc. methods related to the new animation
+    system.
+* Modified Button to automatically attempt to run effects for the various
+    button events.    
 
 
 Lemur v1.5.2

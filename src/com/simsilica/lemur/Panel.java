@@ -375,6 +375,7 @@ public class Panel extends Node {
     /**
      *  Adds multiple effects at once through a stylable attribute.
      */
+    @StyleAttribute(value="effects", lookupDefault=false)
     public void setEffects( Map<String, Effect<? super Panel>> map ) {
         for( Map.Entry<String, Effect<? super Panel>> e : map.entrySet() ) {
             if( e.getValue() != null ) {
