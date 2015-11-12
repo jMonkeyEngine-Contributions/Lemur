@@ -65,6 +65,12 @@ public class Button extends Label {
 
     public static final String ELEMENT_ID = "button";
     
+    public static final String EFFECT_PRESS = "press";
+    public static final String EFFECT_RELEASE = "release";
+    public static final String EFFECT_CLICK = "click";
+    public static final String EFFECT_ACTIVATE = "activate";
+    public static final String EFFECT_DEACTIVATE = "deactivate";
+    
     public enum ButtonAction { Down, Up, Click, HighlightOn, HighlightOff };
 
     private boolean enabled = true;
@@ -223,6 +229,7 @@ public class Button extends Label {
             if( !isEnabled() )
                 return;
             commandMap.runCommands(ButtonAction.Click);
+            runEffect(EFFECT_CLICK);
         }
 
         @Override
@@ -239,6 +246,7 @@ public class Button extends Label {
             pressed = event.isPressed();
             if( event.isPressed() ) {
                 commandMap.runCommands(ButtonAction.Down);
+                runEffect(EFFECT_PRESS);
             } else {
                 if( target == capture ) {
                     // Then we are still over the button and we should run the
@@ -252,6 +260,7 @@ public class Button extends Label {
                 // So, any time the capture is us then we will run, else not
                 if( capture == Button.this ) {
                     commandMap.runCommands(ButtonAction.Up);
+                    runEffect(EFFECT_RELEASE);
                 }
             }
         }
@@ -263,6 +272,7 @@ public class Button extends Label {
             if( capture == Button.this || (target == Button.this && capture == null) ) {
                 showHighlight(true);
                 commandMap.runCommands(ButtonAction.HighlightOn);
+                runEffect(EFFECT_ACTIVATE);
             }
         }
 
@@ -272,6 +282,7 @@ public class Button extends Label {
                 return;
             showHighlight(false);
             commandMap.runCommands(ButtonAction.HighlightOff);
+            runEffect(EFFECT_DEACTIVATE);
         }
     }
 }
