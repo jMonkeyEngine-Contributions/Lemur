@@ -49,6 +49,10 @@ import com.jme3.math.*;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
 import com.simsilica.lemur.component.ColoredComponent;
+import com.simsilica.lemur.effect.Effect;
+import com.simsilica.lemur.effect.EffectControl;
+import java.util.Collections;
+import java.util.Map;
 
 
 
@@ -324,6 +328,61 @@ public class Panel extends Node {
             }
         }
         return 1;
+    }
+
+    /**
+     *  Runs the specified effect if configured for this GUI element.
+     */
+    public void runEffect( String effectName ) {
+        EffectControl effects = getControl(EffectControl.class);
+        if( effects != null ) {
+            effects.runEffect(effectName);
+        }
+    }
+
+    /**
+     *  Adds the specified effect to this GUI element.  Later calls
+     *  to runEffect() will then be able to execute this effect.
+     */
+    public void addEffect( String effectName, Effect<? super Panel> effect ) {
+        EffectControl effects = getControl(EffectControl.class);
+        if( effects == null ) {
+            effects = new EffectControl();
+            addControl(effects);
+        }
+        effects.addEffect(effectName, effect);
+    }
+   
+    /**
+     *  Removes a previously registered effect if it exists.  Returns
+     *  the removed effect if it existed.
+     */
+    public Effect<? super Panel> removeEffect( String effectName ) {
+        EffectControl effects = getControl(EffectControl.class);
+        if( effects == null ) {
+            return null;
+        }
+        return effects.removeEffect(effectName);
+    }
+
+    /**
+     *  Adds multiple effects at once through a stylable attribute.
+     */
+    public void setEffects( Map<String, Effect<? super Panel>> map ) {
+        for( Map.Entry<String, Effect<? super Panel>> e : map.entrySet() ) {
+            addEffect(e.getKey(), e.getValue());
+        }
+    }     
+
+    /**
+     *  Returns a read-only view of the entire map of effects for this GUI element.
+     */
+    public Map<String, Effect<? super Panel>> getEffects() {
+        EffectControl effects = getControl(EffectControl.class);
+        if( effects == null ) {
+            return Collections.emptyMap();
+        }
+        return Collections.unmodifiableMap(effects.getEffects());
     }
 
     @Override

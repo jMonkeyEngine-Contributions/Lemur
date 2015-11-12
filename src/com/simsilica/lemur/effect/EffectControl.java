@@ -91,7 +91,7 @@ public class EffectControl<T extends Spatial> extends AbstractControl {
         effects.put(name, effect);
     }
  
-    public Effect removeEffect( String name ) {
+    public Effect<? super T> removeEffect( String name ) {
         return effects.remove(name);       
     }
  
