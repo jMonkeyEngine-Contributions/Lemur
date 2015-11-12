@@ -331,7 +331,14 @@ public class Panel extends Node {
     }
 
     /**
-     *  Runs the specified effect if configured for this GUI element.
+     *  Runs the specified effect if configured for this GUI element.  If
+     *  the effect referenced is on a channel that already has a running
+     *  effect then that effect will be canceled and the new effect will
+     *  be fastforwarded proportionally.  This is to help facilitate 
+     *  reciprocal effects like open/close or activate/deactivate the undo
+     *  one another and therefore if the previous effect is still running
+     *  there may be less to do.  This logic only happens if the effect
+     *  has specified a channel.  Otherwise all effects are run independently.
      */
     public void runEffect( String effectName ) {
         EffectControl effects = getControl(EffectControl.class);
