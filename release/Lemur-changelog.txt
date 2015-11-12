@@ -14,6 +14,9 @@ Lemur ???
     button events.
 * Modified CommandMap to support null values in the addCommands() call 
     that can be used to clear out any previously added values.
+* Fixed a bug in Container where children that called removeFromParent()
+    left the layout in an inconsistent state.  Now a regular detachChild()
+    will check the layout first before detaching the child.    
 
 
 Lemur v1.5.2

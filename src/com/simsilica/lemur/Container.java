@@ -42,6 +42,7 @@ import com.simsilica.lemur.style.Styles;
 import com.simsilica.lemur.core.GuiLayout;
 import com.simsilica.lemur.core.GuiControl;
 import com.jme3.scene.Node;
+import com.jme3.scene.Spatial;
 
 import com.simsilica.lemur.component.SpringGridLayout;
 
@@ -118,6 +119,21 @@ public class Container extends Panel {
 
     public void clearChildren() {
         getLayout().clearChildren();   
+    }
+ 
+    @Override
+    public Spatial detachChildAt( int index ) {
+        Spatial child = getChild(index);
+        
+        // See if this child is managed by the layout
+        if( child instanceof Node && getLayout().getChildren().contains((Node)child) ) {
+            removeChild((Node)child);
+            return child;
+        } else {
+            // Just let the superclass do its thing with the 
+            // unmanaged child
+            return super.detachChildAt(index);
+        }        
     }
     
     @StyleAttribute(value="layout", lookupDefault=false)
