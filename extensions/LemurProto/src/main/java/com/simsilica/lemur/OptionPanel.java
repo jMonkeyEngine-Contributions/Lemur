@@ -55,6 +55,9 @@ import com.simsilica.lemur.style.Styles;
 public class OptionPanel extends Panel {
  
     public static final String ELEMENT_ID = "optionPanel";
+
+    public static final String EFFECT_OPEN = "open";
+    public static final String EFFECT_CLOSE = "close";
  
     private BorderLayout layout;
     private Label titleLabel;
@@ -244,11 +247,13 @@ public class OptionPanel extends Panel {
      *  to provide different close behavior.
      */   
     public void close() {
-        if( getParent() instanceof Container ) {
+        if( hasEffect(EFFECT_CLOSE) ) {
+            runEffect(EFFECT_CLOSE);
+        } else if( getParent() instanceof Container ) {
             ((Container)getParent()).removeChild(this);
         } else {
             removeFromParent();
-        }
+        }        
     }
     
     private class OptionListener implements Command<Button> {

@@ -174,9 +174,10 @@ public class OptionPanelState extends BaseAppState {
 
         // Move it forward just a little more to be safe
         pos.z++;
-        
+ 
         panel.setLocalTranslation(pos);
         getGuiNode().attachChild(panel);
+        panel.runEffect(OptionPanel.EFFECT_OPEN);
     }
  
     /**
