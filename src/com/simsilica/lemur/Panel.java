@@ -373,6 +373,18 @@ public class Panel extends Node {
     }
 
     /**
+     *  Returns true if this GUI element has the specified effect 
+     *  configured.
+     */
+    public boolean hasEffect( String effectName ) {
+        EffectControl effects = getControl(EffectControl.class);
+        if( effects == null ) {
+            return false;
+        }
+        return effects.hasEffect(effectName);
+    }
+
+    /**
      *  Adds multiple effects at once through a stylable attribute.
      */
     @StyleAttribute(value="effects", lookupDefault=false)
