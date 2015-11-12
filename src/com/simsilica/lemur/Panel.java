@@ -377,7 +377,11 @@ public class Panel extends Node {
      */
     public void setEffects( Map<String, Effect<? super Panel>> map ) {
         for( Map.Entry<String, Effect<? super Panel>> e : map.entrySet() ) {
-            addEffect(e.getKey(), e.getValue());
+            if( e.getValue() != null ) {
+                addEffect(e.getKey(), e.getValue());
+            } else {
+                removeEffect(e.getKey());
+            }
         }
     }     
 
