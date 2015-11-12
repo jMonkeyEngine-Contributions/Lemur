@@ -398,7 +398,7 @@ public class Styles {
         }
     }
 
-    protected static List<Method> getStyleMethods( Class c ) {
+    protected static List<Method> getStyleAttributeMethods( Class c ) {
         List<Method> results = methodIndex.get(c);
         if( results != null )
             return results;
@@ -443,7 +443,7 @@ public class Styles {
             log.trace("style attributes:" + attrs);
         }
 
-        for( Method m : getStyleMethods(c) ) {
+        for( Method m : getStyleAttributeMethods(c) ) {
             StyleAttribute attribute = m.getAnnotation(StyleAttribute.class);
 
             Class type = m.getParameterTypes()[0];
