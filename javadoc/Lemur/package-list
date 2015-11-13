@@ -1,7 +1,9 @@
 com.simsilica.lemur
+com.simsilica.lemur.anim
 com.simsilica.lemur.component
 com.simsilica.lemur.core
 com.simsilica.lemur.demo
+com.simsilica.lemur.effect
 com.simsilica.lemur.event
 com.simsilica.lemur.focus
 com.simsilica.lemur.geom
