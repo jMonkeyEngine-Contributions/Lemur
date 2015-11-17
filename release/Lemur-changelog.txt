@@ -16,7 +16,10 @@ Lemur ???
     that can be used to clear out any previously added values.
 * Fixed a bug in Container where children that called removeFromParent()
     left the layout in an inconsistent state.  Now a regular detachChild()
-    will check the layout first before detaching the child.    
+    will check the layout first before detaching the child.
+* Added getLastVersion() and getObjectVersion() methods to VersionedReference.
+* Converted some System.out.println() warnings in InputMapper to actual log
+    warns.        
 
 
 Lemur v1.5.2

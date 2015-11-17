@@ -64,6 +64,14 @@ public class VersionedReference<T> {
         this.lastVersion = object.getVersion();
     }
 
+    public long getLastVersion() {
+        return lastVersion;
+    }
+    
+    public long getObjectVersion() {
+        return object.getVersion();
+    }
+
     public boolean needsUpdate() {
         return lastVersion != object.getVersion();
     }

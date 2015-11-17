@@ -702,7 +702,7 @@ public class InputMapper {
 
             Axis axis = joystickAxisMap.get(a);
             if( axis == null ) {
-                System.out.println( "WARN: no axis mapping for:" + a );
+                log.warn("No axis mapping for:" + a );
                 return;
             }
 
@@ -715,7 +715,7 @@ public class InputMapper {
         public void onJoyButtonEvent( JoyButtonEvent evt ) {
             Button b = joystickButtonMap.get(evt.getButton());
             if( b == null ) {
-                System.out.println( "WARN: no button mapping for:" + evt.getButton() );
+                log.warn("No button mapping for:" + evt.getButton() );
                 return;
             }
 
