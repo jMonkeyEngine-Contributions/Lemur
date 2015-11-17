@@ -425,6 +425,8 @@ public class SpringGridLayout extends AbstractGuiComponent
             // Have to make a copy to avoid concurrent mod exceptions
             // now that the containers are smart enough to call remove
             // when detachChild() is called.  A small side-effect.
+            // Possibly a better way to do this?  Disable loop-back removal
+            // somehow?
             Collection<Entry> entries = new ArrayList<Entry>(lookup.values());    
             for( Entry e : entries ) {
                 e.detach();
@@ -483,11 +485,21 @@ public class SpringGridLayout extends AbstractGuiComponent
     @Override
     public void detach( GuiControl parent ) {
         this.parent = null;
+        // Have to make a copy to avoid concurrent mod exceptions
+        // now that the containers are smart enough to call remove
+        // when detachChild() is called.  A small side-effect.
+        // Possibly a better way to do this?  Disable loop-back removal
+        // somehow?
+        Collection<Entry> copy = new ArrayList<Entry>(lookup.values());    
+        for( Entry e : copy ) {
+            e.detach();
+        }
+        /*
         for( Map<Integer, Entry> r : children.values() ) {
             for( Entry e : r.values() ) {
                 e.detach();
             }
-        }
+        }*/
     }
     
     @Override

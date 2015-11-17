@@ -272,7 +272,13 @@ public class BoxLayout extends AbstractGuiComponent
     @Override
     public void detach( GuiControl parent ) {
         this.parent = null;
-        for( Node n : children ) {
+        // Have to make a copy to avoid concurrent mod exceptions
+        // now that the containers are smart enough to call remove
+        // when detachChild() is called.  A small side-effect.
+        // Possibly a better way to do this?  Disable loop-back removal
+        // somehow?
+        Collection<Node> copy = new ArrayList<Node>(children);    
+        for( Node n : copy ) {
             n.removeFromParent();
         }
     }
@@ -286,6 +292,8 @@ public class BoxLayout extends AbstractGuiComponent
             // Have to make a copy to avoid concurrent mod exceptions
             // now that the containers are smart enough to call remove
             // when detachChild() is called.  A small side-effect.
+            // Possibly a better way to do this?  Disable loop-back removal
+            // somehow?
             Collection<Node> copy = new ArrayList<Node>(children);    
             for( Node n : copy ) {
                 parent.getNode().detachChild(n);
