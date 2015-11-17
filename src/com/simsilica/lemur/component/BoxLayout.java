@@ -283,7 +283,11 @@ public class BoxLayout extends AbstractGuiComponent
 
     public void clearChildren() {
         if( parent != null ) {
-            for( Node n : children ) {
+            // Have to make a copy to avoid concurrent mod exceptions
+            // now that the containers are smart enough to call remove
+            // when detachChild() is called.  A small side-effect.
+            Collection<Node> copy = new ArrayList<Node>(children);    
+            for( Node n : copy ) {
                 parent.getNode().detachChild(n);
             }
         }

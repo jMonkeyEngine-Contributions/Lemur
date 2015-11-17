@@ -234,7 +234,11 @@ public class BorderLayout extends AbstractGuiComponent
     public void clearChildren() {
         if( parent != null ) {
             // Need to detach any children    
-            for( Node n : children.values() ) {
+            // Have to make a copy to avoid concurrent mod exceptions
+            // now that the containers are smart enough to call remove
+            // when detachChild() is called.  A small side-effect.
+            Collection<Node> copy = new ArrayList<Node>(children.values());    
+            for( Node n : copy ) {
                 // Detaching from the parent we know prevents
                 // accidentally detaching a node that has been
                 // reparented without our knowledge

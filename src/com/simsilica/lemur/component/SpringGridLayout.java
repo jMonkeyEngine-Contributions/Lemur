@@ -421,8 +421,12 @@ public class SpringGridLayout extends AbstractGuiComponent
     public void clearChildren() {
  
         if( parent != null ) {
-            // Need to detach any children    
-            for( Entry e : lookup.values() ) {
+            // Need to detach any children
+            // Have to make a copy to avoid concurrent mod exceptions
+            // now that the containers are smart enough to call remove
+            // when detachChild() is called.  A small side-effect.
+            Collection<Entry> entries = new ArrayList<Entry>(lookup.values());    
+            for( Entry e : entries ) {
                 e.detach();
             }
         }
