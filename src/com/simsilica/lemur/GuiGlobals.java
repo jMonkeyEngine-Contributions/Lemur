@@ -58,6 +58,7 @@ import com.jme3.renderer.queue.RenderQueue;
 import com.jme3.renderer.queue.RenderQueue.Bucket;
 import com.jme3.scene.Spatial;
 import com.jme3.texture.Texture;
+import com.simsilica.lemur.anim.AnimationState;
 import com.simsilica.lemur.event.TouchAppState;
 import com.simsilica.lemur.input.InputMapper;
 import org.slf4j.Logger;
@@ -105,6 +106,7 @@ public class GuiGlobals {
     private MouseAppState mouseState;
     private TouchAppState touchState;
     private FocusManagerState focusState;
+    private AnimationState animationState;
     private String iconBase;
 
     private Styles styles;
@@ -140,6 +142,8 @@ public class GuiGlobals {
         
         this.inputMapper = new InputMapper(app.getInputManager());
         this.focusState = new FocusManagerState();
+        this.animationState = new AnimationState();
+        
         app.getStateManager().attach(keyInterceptor);
         
         if( mouseState != null ) {
@@ -150,6 +154,7 @@ public class GuiGlobals {
         }
         
         app.getStateManager().attach(focusState);
+        app.getStateManager().attach(animationState);
 
         styles = new Styles();
         setDefaultStyles();
@@ -203,6 +208,10 @@ public class GuiGlobals {
 
     public InputMapper getInputMapper() {
         return inputMapper;
+    }
+
+    public AnimationState getAnimationState() {
+        return animationState;
     }
 
     /**

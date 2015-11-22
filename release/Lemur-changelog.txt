@@ -20,6 +20,7 @@ Lemur ???
 * Added getLastVersion() and getObjectVersion() methods to VersionedReference.
 * Converted some System.out.println() warnings in InputMapper to actual log
     warns.        
+* Added AnimationState to the default states setup in GuiGlobals.    
 
 
 Lemur v1.5.2
