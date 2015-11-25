@@ -697,8 +697,10 @@ public class InputMapper {
             float val = evt.getValue();
 
             // Below a certain threshold, call the value 0
-            if( Math.abs(val) < 0.01 )
+            float aVal = Math.abs(val);
+            if( aVal <= 0.01 || aVal <= a.getDeadZone() ) {
                 val = 0;
+            }
 
             Axis axis = joystickAxisMap.get(a);
             if( axis == null ) {

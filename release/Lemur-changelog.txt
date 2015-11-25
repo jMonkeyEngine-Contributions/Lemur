@@ -21,6 +21,8 @@ Lemur ???
 * Converted some System.out.println() warnings in InputMapper to actual log
     warns.        
 * Added AnimationState to the default states setup in GuiGlobals.    
+* Fixed joystick axis event processing to pay attention to the reported dead
+    zone of the axis.
 
 
 Lemur v1.5.2
