@@ -505,7 +505,7 @@ public class InputMapper {
             if( log.isTraceEnabled() )
                 log.trace( "Value changed for:" + function + " scale:" + scale );
 
-            InputState state = valueToState(value);
+            InputState state = valueToState(adjusted);
             updateState(state);
         }
 
@@ -679,7 +679,7 @@ public class InputMapper {
                 // I can't think of a use-case for it at the moment.
                 val = val * g.getScale();
                 InputState state = valueToState(val);
-
+                
                 notifyStateChanged(g.getFunction(), state);
                 notifyValueActive(g.getFunction(), val);
                 break;  // first one found wins
