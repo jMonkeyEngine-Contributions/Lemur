@@ -126,6 +126,7 @@ public class QuadBackgroundComponent extends AbstractGuiComponent
         super.detach(parent);
     }
 
+    @Override
     public void setColor( ColorRGBA c ) {
         this.color = c;
         resetColor();
@@ -140,16 +141,18 @@ public class QuadBackgroundComponent extends AbstractGuiComponent
             material.setColor(color);
         } else {
             // Need to calculate it
-            ColorRGBA adjusted = color.clone();
+            ColorRGBA adjusted = color != null ? color.clone() : ColorRGBA.White.clone();
             adjusted.a *= alpha;
             material.setColor(adjusted);
         }
     }
 
+    @Override
     public ColorRGBA getColor() {
         return color;
     }
 
+    @Override
     public void setAlpha( float f ) {
         if( this.alpha == f ) {
             return;
@@ -158,6 +161,7 @@ public class QuadBackgroundComponent extends AbstractGuiComponent
         resetColor();
     }
     
+    @Override
     public float getAlpha() {
         return alpha;
     }

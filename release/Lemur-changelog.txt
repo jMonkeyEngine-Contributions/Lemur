@@ -25,6 +25,9 @@ Lemur ???
     zone of the axis.
 * Fixed a bug in InputMapper where key mappings that had negative scale
     weren't triggering negative state in state listeners.
+* Fixed QuadBackgroundComponent and TbtQuadBackgroundComponent to allow setting
+    the alpha even if the color has not been set.  Color defaults to white in that
+    case.    
 
 
 Lemur v1.5.2
