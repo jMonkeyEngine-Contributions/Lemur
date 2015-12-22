@@ -68,7 +68,7 @@ import com.simsilica.lemur.VAlignment;
  *  @author    Paul Speed
  */
 public class TextEntryComponent extends AbstractGuiComponent
-                                implements FocusTarget {
+                                implements FocusTarget, ColoredComponent {
 
     public static final KeyActionListener DOC_HOME = new DocumentHome();
     public static final KeyActionListener DOC_END = new DocumentEnd();
@@ -108,6 +108,7 @@ public class TextEntryComponent extends AbstractGuiComponent
     private VAlignment vAlign = VAlignment.Top;
     private Vector3f preferredSize;
     private float preferredWidth;
+    private int preferredLineCount;
     private KeyHandler keyHandler = new KeyHandler();
     private Quad cursorQuad;
     private Geometry cursor;
@@ -284,6 +285,44 @@ public class TextEntryComponent extends AbstractGuiComponent
         return bitmapText.getSize();
     }
 
+    protected void resetCursorColor() {
+        float alpha = bitmapText.getAlpha();
+        ColorRGBA color = bitmapText.getColor();
+        if( alpha == 1 ) {
+            cursor.getMaterial().setColor("Color", color);
+        } else {
+            ColorRGBA cursorColor = color != null ? color.clone() : ColorRGBA.White.clone();
+            cursorColor.a = alpha;
+            cursor.getMaterial().setColor("Color", cursorColor);
+        }
+    }
+
+    @Override
+    public void setColor( ColorRGBA color ) {
+        float alpha = bitmapText.getAlpha();
+        bitmapText.setColor(color);
+        if( alpha != 1 ) {
+            bitmapText.setAlpha(alpha);
+        }
+        resetCursorColor();
+    }
+
+    @Override
+    public ColorRGBA getColor() {
+        return bitmapText.getColor();
+    }
+
+    @Override
+    public void setAlpha( float f ) {
+        bitmapText.setAlpha(f);
+        resetCursorColor();
+    }
+    
+    @Override
+    public float getAlpha() {
+        return bitmapText.getAlpha();
+    }
+
     protected void resetText() {
         String text = model.getText();
         if( textOffset != 0 ) {
@@ -419,15 +458,6 @@ public class TextEntryComponent extends AbstractGuiComponent
         return vAlign;
     }
 
-    public void setColor( ColorRGBA color ) {
-        bitmapText.setColor(color);
-        cursor.getMaterial().setColor("Color", color);
-    }
-
-    public ColorRGBA getColor() {
-        return bitmapText.getColor();
-    }
-
     public void setPreferredSize( Vector3f v ) {
         this.preferredSize = v;
         invalidate();
@@ -444,6 +474,15 @@ public class TextEntryComponent extends AbstractGuiComponent
 
     public float getPreferredWidth() {
         return preferredWidth;
+    }
+
+    public void setPreferredLineCount( int i ) {
+        this.preferredLineCount = i;
+        invalidate();
+    }
+
+    public float getPreferredLineCount() {
+        return preferredLineCount;
     }
 
     @Override
@@ -465,11 +504,16 @@ public class TextEntryComponent extends AbstractGuiComponent
         // preferred size
         bitmapText.setBox(null);
 
-        if( preferredWidth == 0 )
+        if( preferredWidth == 0 ) {
             size.x = bitmapText.getLineWidth();
-        else
+        } else {
             size.x = preferredWidth;
-        size.y = bitmapText.getHeight();
+        }
+        if( preferredLineCount == 0 ) {
+            size.y = bitmapText.getHeight();
+        } else {
+            size.y = bitmapText.getLineHeight() * preferredLineCount;
+        }
 
         // Reset any text box we already had
         bitmapText.setBox(textBox);

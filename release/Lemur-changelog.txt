@@ -27,7 +27,12 @@ Lemur ???
     weren't triggering negative state in state listeners.
 * Fixed QuadBackgroundComponent and TbtQuadBackgroundComponent to allow setting
     the alpha even if the color has not been set.  Color defaults to white in that
-    case.    
+    case.
+* Updated TextField and TextEntryComponent to support a 'preferred line count'
+    property which helps set the preferred height of a text field based on the
+    current font and a line count.
+* Modified TextEntryComponent to properly implement ColoredComponent and support
+    alpha.
 
 
 Lemur v1.5.2

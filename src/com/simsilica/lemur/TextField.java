@@ -193,6 +193,15 @@ public class TextField extends Panel {
         return text.getPreferredWidth();
     }
 
+    @StyleAttribute("preferredLineCount")
+    public void setPreferredLineCount( int i ) {
+        text.setPreferredLineCount(i);
+    }
+
+    public float getPreferredLineCount() {
+        return text.getPreferredLineCount();
+    }
+
     @Override
     public String toString() {
         return getClass().getName() + "[text=" + getText() + ", color=" + getColor() + ", elementId=" + getElementId() + "]";
