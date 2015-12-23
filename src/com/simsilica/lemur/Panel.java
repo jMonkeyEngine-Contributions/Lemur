@@ -339,12 +339,16 @@ public class Panel extends Node {
      *  one another and therefore if the previous effect is still running
      *  there may be less to do.  This logic only happens if the effect
      *  has specified a channel.  Otherwise all effects are run independently.
+     *
+     *  @return True if the effect existed and was run.  False if no effect
+     *          was found.
      */
-    public void runEffect( String effectName ) {
+    public boolean runEffect( String effectName ) {
         EffectControl effects = getControl(EffectControl.class);
         if( effects != null ) {
-            effects.runEffect(effectName);
+            return effects.runEffect(effectName) != null;
         }
+        return false;
     }
 
     /**
