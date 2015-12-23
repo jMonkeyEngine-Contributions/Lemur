@@ -326,6 +326,7 @@ public class TextEntryComponent extends AbstractGuiComponent
     protected void resetText() {
         String text = model.getText();
         if( textOffset != 0 ) {
+            textOffset = Math.min(textOffset, text.length());
             text = text.substring(textOffset);
 
             if( textBox != null ) {

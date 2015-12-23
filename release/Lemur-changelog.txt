@@ -33,6 +33,7 @@ Lemur ???
     current font and a line count.
 * Modified TextEntryComponent to properly implement ColoredComponent and support
     alpha.
+* Fixed an IndexOutOfBoundsException in TextEntryComponent when setting text to "".    
 
 
 Lemur v1.5.2
