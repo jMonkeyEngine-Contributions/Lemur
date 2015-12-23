@@ -2,6 +2,8 @@ Lemur-Proto ????
 -----------------
 * Modified OptionPanel and OptionPanelState to run effects on  
     open or close.
+* Added a VersionedReferenceList that can be used to watch several
+    VersionedReferences for changes.    
     
 
 Lemur-Proto v1.4.2
