@@ -22,7 +22,8 @@ Lemur ???
     warns.        
 * Added AnimationState to the default states setup in GuiGlobals.    
 * Fixed joystick axis event processing to pay attention to the reported dead
-    zone of the axis.
+    zone of the axis.  It will take the max of the specific axis' dead zone and the global
+    InputManager.getAxisDeadZone().
 * Fixed a bug in InputMapper where key mappings that had negative scale
     weren't triggering negative state in state listeners.
 * Fixed QuadBackgroundComponent and TbtQuadBackgroundComponent to allow setting

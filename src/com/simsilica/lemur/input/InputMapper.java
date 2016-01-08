@@ -698,7 +698,7 @@ public class InputMapper {
 
             // Below a certain threshold, call the value 0
             float aVal = Math.abs(val);
-            if( aVal <= 0.01 || aVal <= a.getDeadZone() ) {
+            if( aVal <= 0.01 || aVal <= Math.max(a.getDeadZone(), inputManager.getAxisDeadZone()) ) {
                 val = 0;
             }
 
