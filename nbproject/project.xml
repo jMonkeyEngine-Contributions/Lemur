@@ -14,7 +14,7 @@
             <name>Lemur</name>
             <explicit-platform explicit-source-supported="true"/>
             <source-roots>
-                <root id="src.dir"/>
+                <root id="src.java.dir"/>
             </source-roots>
             <test-roots/>
         </data>
