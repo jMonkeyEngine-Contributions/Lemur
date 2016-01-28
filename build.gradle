@@ -1,0 +1,66 @@
+apply plugin: 'java'
+
+version='1.6.1-SNAPSHOT'
+
+repositories {
+    jcenter()
+}
+
+dependencies {
+    compile "org.jmonkeyengine:jme3-core:3.1.+"
+    
+    compile 'com.google.guava:guava:19.0'
+    compile 'org.slf4j:slf4j-api:1.7.13'
+}
+
+
+
+// Common configuration for the root and all 'real' children.
+// The plan is to just keep maven-repo publishing related stuff
+// here so that the other build files can look as close to
+// regular java builds as possible.
+configure(allprojects.findAll {it.name != 'extensions'}) {
+
+    println "Project:" + project
+    println "Delegate:" + delegate
+    println "it:" + it
+
+    apply plugin: 'maven' // for installing to maven local
+
+    // Common group ID for all projects here
+    group='com.simsilica'
+
+
+    // One non-maven thing in this block to keep us honest with respect to
+    // imports
+    configurations.all {
+        transitive = false
+    }
+    
+    // Centralizing this bintray reference here so it's easier to
+    // remove when JME is in jcenter().
+    repositories {
+        // Temporary until JME jars are in jcenter()   
+        maven { url "http://dl.bintray.com/jmonkeyengine/org.jmonkeyengine" }    
+    }
+
+    /*
+    // Configuration to produce maven-repo style -sources and -javadoc jars
+    task sourcesJar(type: Jar) {
+        classifier = 'sources'
+        from sourceSets.main.allSource
+    }
+
+    task javadocJar(type: Jar, dependsOn: javadoc) {
+        classifier = 'javadoc'
+        from javadoc.destinationDir
+    }
+ 
+    artifacts {
+        archives sourcesJar
+        archives javadocJar
+    }
+    */
+    
+}
+
