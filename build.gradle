@@ -14,16 +14,11 @@ dependencies {
 }
 
 
-
 // Common configuration for the root and all 'real' children.
 // The plan is to just keep maven-repo publishing related stuff
 // here so that the other build files can look as close to
 // regular java builds as possible.
 configure(allprojects.findAll {it.name != 'extensions'}) {
-
-    println "Project:" + project
-    println "Delegate:" + delegate
-    println "it:" + it
 
     apply plugin: 'maven' // for installing to maven local
 
@@ -63,4 +58,25 @@ configure(allprojects.findAll {it.name != 'extensions'}) {
     */
     
 }
+
+// *** For some reason, this can't be injected from the root project
+//     or it picks up the root project sources instead of the subproject
+//     and doesn't even produce main jars.
+// Configuration to produce maven-repo style -sources and -javadoc jars
+task sourcesJar(type: Jar) {
+    classifier = 'sources'
+    from sourceSets.main.allSource
+    exclude '**/.backups' 
+}
+
+task javadocJar(type: Jar, dependsOn: javadoc) {
+    classifier = 'javadoc'
+    from javadoc.destinationDir
+}
+
+artifacts {
+    archives sourcesJar
+    archives javadocJar
+}
+
 
