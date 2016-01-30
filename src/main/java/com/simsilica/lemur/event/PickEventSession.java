@@ -44,6 +44,7 @@ import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
 import com.jme3.renderer.Camera;
 import com.jme3.renderer.ViewPort;
+import com.jme3.renderer.queue.RenderQueue.Bucket;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Spatial;
 import com.jme3.util.SafeArrayList;
@@ -52,7 +53,7 @@ import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
-
+import org.slf4j.*;
 
 /**
  *  Encapsulates the state necessary to deliver events to targets,
@@ -78,6 +79,8 @@ import java.util.Set;
  *  @author    Paul Speed 
  */
 public class PickEventSession {
+
+    static Logger log = LoggerFactory.getLogger(PickEventSession.class);
 
     private Map<Collidable, RootEntry> roots = new LinkedHashMap<Collidable, RootEntry>();
     private SafeArrayList<RootEntry> rootList = new SafeArrayList<RootEntry>(RootEntry.class);
@@ -127,6 +130,20 @@ public class PickEventSession {
             RootEntry e = roots.get(root);
             if( e != null ) {
                 return e.viewport;
+            }
+        }
+        return null;
+    }
+
+    protected RootEntry findRootEntry( Spatial s ) {
+        if( s == null ) {
+            return null;
+        }
+        
+        for( Spatial root = s; root != null; root = root.getParent() ) {
+            RootEntry e = roots.get(root);
+            if( e != null ) {
+                return e;
             }
         }
         return null;
@@ -229,7 +246,7 @@ public class PickEventSession {
             }
             if( this.hitTarget.getControl(CursorEventControl.class) != null ) {
                 // Exiting
-                event1 = new CursorMotionEvent(viewport, hitTarget, cursor.x, cursor.y, null);
+                event1 = new CursorMotionEvent(viewport, hitTarget, cursor.x, cursor.y, cr);
                 this.hitTarget.getControl(CursorEventControl.class).cursorExited(event1, hitTarget, capture);
             } 
         }
@@ -246,7 +263,7 @@ public class PickEventSession {
             if( this.hitTarget.getControl(CursorEventControl.class) != null ) {
                 // Entering
                 if( event1 == null ) {
-                    event1 = new CursorMotionEvent(viewport, hitTarget, cursor.x, cursor.y, null);
+                    event1 = new CursorMotionEvent(viewport, hitTarget, cursor.x, cursor.y, cr);
                 }
                 
                 this.hitTarget.getControl(CursorEventControl.class).cursorEntered(event1, hitTarget, capture);
@@ -266,22 +283,51 @@ public class PickEventSession {
         return rootList;
     }
 
-    protected Ray getPickRay( Camera cam, Vector2f cursor ) {
+    protected boolean viewContains( Camera cam, Vector2f cursor ) {
+        float x1 = cam.getViewPortLeft();
+        float x2 = cam.getViewPortRight();
+        float y1 = cam.getViewPortBottom();
+        float y2 = cam.getViewPortTop();
+        if( x1 == 0 && x2 == 1 && y1 == 0 && y2 == 1 ) {
+            // No need to clip
+            return true;
+        }
+        
+        // Else clip it against the viewport 
+        float x = cursor.x / cam.getWidth();
+        float y = cursor.y / cam.getHeight();
+        return !(x < x1 || x > x2 || y < y1 || y > y2);
+    }
+
+    //protected Ray getPickRay( Camera cam, Vector2f cursor ) {
+    protected Ray getPickRay( RootEntry rootEntry, Vector2f cursor ) {
+        Camera cam = rootEntry.viewport.getCamera();
+        
         Ray result = rayCache.get(cam);
         if( result != null )
             return result;
 
-        if( cam.isParallelProjection() ) {
-            // Treat it like a screen viewport
+        if( rootEntry.root instanceof Spatial && ((Spatial)rootEntry.root).getQueueBucket() == Bucket.Gui ) {
+            // Special case for Gui Bucket nodes since they are always in screen space
             result = new Ray(new Vector3f(cursor.x, cursor.y, 1000), new Vector3f(0, 0, -1));
         } else {
-            // It's perspective...
-            Vector3f clickFar  = cam.getWorldCoordinates(cursor, 1);
-            Vector3f clickNear = cam.getWorldCoordinates(cursor, 0);
-            result = new Ray(clickNear, clickFar.subtractLocal(clickNear).normalizeLocal());
-        }
+            
+            // Ortho and perspective can be handled the same exact way it turns out.
+            // It's only the Gui bucket that is special because it overrides the normal
+            // camera and viewport setup.
+             
+            if( viewContains(cam, cursor) ) {
+                // Turns out these can be calculated the same as perspective... and
+                // we should technically clip perspective also.            
+                Vector3f clickFar  = cam.getWorldCoordinates(cursor, 1);
+                Vector3f clickNear = cam.getWorldCoordinates(cursor, 0);
+                result = new Ray(clickNear, clickFar.subtractLocal(clickNear).normalizeLocal());
+            } else {
+                result = null;
+            }
+        } 
 
-        rayCache.put( cam, result );
+        rayCache.put(cam, result);
         return result;
     }
 
@@ -321,35 +367,40 @@ public class PickEventSession {
                 // Actually, we do need to find the collision or else we don't
                 // deliver any proper motion activity to things when the button
                 // is down.
-                ViewPort captureView = findViewPort(capture);
+                //ViewPort captureView = findViewPort(capture);
+                RootEntry captureRoot = findRootEntry(capture);
                  
                 // If the viewport is null, then the captured spatial is no
                 // longer in the scene graph.  This happens when the spatial is
                 // removed from the scene graph before the UP event happens.
                 // In this case, simply return.  The UP event will come later and
                 // release the capture. -epotter
-                if (captureView == null) {
+                //if (captureView == null) {
+                if( captureRoot == null ) {
                     // Since we didn't deliver it, I'm not going to automatically
                     // mark it as consumed... we'll leave "consumption" up to the
                     // current state at this point. -pspeed
                     return consumed;
                 }
                
-                Ray mouseRay = getPickRay(captureView.getCamera(), cursor);
-
-                // But we don't have to pick the whole hiearchy...
-                int count = capture.collideWith(mouseRay, results);                
-                CollisionResult cr = null;
-                if( count > 0 ) {
-                    cr = results.getClosestCollision();
-                    results.clear();
-                }
-                CursorMotionEvent cme = new CursorMotionEvent(captureView, capture, cursor.x, cursor.y, cr);
-                delivered.add(capture);
-                capture.getControl(CursorEventControl.class).cursorMoved(cme, capture, capture);
-                if( cme.isConsumed() ) {
-                    // We're done already
-                    consumed = true;
+                //Ray mouseRay = getPickRay(captureView.getCamera(), cursor);
+                Ray mouseRay = getPickRay(captureRoot, cursor);
+                if( mouseRay != null ) {
+                
+                    // But we don't have to pick the whole hiearchy...
+                    int count = capture.collideWith(mouseRay, results);                
+                    CollisionResult cr = null;
+                    if( count > 0 ) {
+                        cr = results.getClosestCollision();
+                        results.clear();
+                    }
+                    CursorMotionEvent cme = new CursorMotionEvent(captureRoot.viewport, capture, cursor.x, cursor.y, cr);
+                    delivered.add(capture);
+                    capture.getControl(CursorEventControl.class).cursorMoved(cme, capture, capture);
+                    if( cme.isConsumed() ) {
+                        // We're done already
+                        consumed = true;
+                    }
                 }
             }
             if( consumed ) 
@@ -360,7 +411,14 @@ public class PickEventSession {
         for( RootEntry e : getRootList().getArray() ) {
             Camera cam = e.viewport.getCamera();
 
-            Ray mouseRay = getPickRay(cam, cursor);
+            //Ray mouseRay = getPickRay(cam, cursor);
+            Ray mouseRay = getPickRay(e, cursor);            
+            if( log.isTraceEnabled() ) {
+                log.trace("Picking against:" + e + " with:" + mouseRay);
+            }
+            if( mouseRay == null ) {
+                continue;
+            }
 
             // Rather than process every root, we will stop when
             // we find one that is ready to consume our event
@@ -368,7 +426,13 @@ public class PickEventSession {
             if( count > 0 ) {
                 for( CollisionResult cr : results ) {
                     Geometry geom = cr.getGeometry();
+                    if( log.isTraceEnabled() ) {
+                        log.trace("Collision geometry:" + geom);
+                    }                    
                     Spatial hit = findHitTarget(geom);                    
+                    if( log.isTraceEnabled() ) {
+                        log.trace("Hit:" + hit);
+                    }
                     if( hit == null )
                         continue;
 

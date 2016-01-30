@@ -35,7 +35,10 @@ Lemur ???
 * Modified TextEntryComponent to properly implement ColoredComponent and support
     alpha.
 * Fixed an IndexOutOfBoundsException in TextEntryComponent when setting text to "".
-* Added Button constructor that takes just text and ElementId.    
+* Added Button constructor that takes just text and ElementId.
+* Modified scene picking to deal with ortho cameras correctly.  Now it's only
+    the Gui bucket that is special case.
+* Modified scene picking to adhere to camera viewport limits.    
 
 
 Lemur v1.5.2
