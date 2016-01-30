@@ -91,6 +91,10 @@ public class Button extends Label {
         this(s, true, new ElementId(ELEMENT_ID), style);
     }
 
+    public Button( String s, ElementId elementId ) {
+        this(s, true, elementId, null);
+    }
+    
     public Button( String s, ElementId elementId, String style ) {
         this(s, true, elementId, style);
     }
