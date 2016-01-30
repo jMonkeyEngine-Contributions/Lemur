@@ -299,7 +299,6 @@ public class PickEventSession {
         return !(x < x1 || x > x2 || y < y1 || y > y2);
     }
 
-    //protected Ray getPickRay( Camera cam, Vector2f cursor ) {
     protected Ray getPickRay( RootEntry rootEntry, Vector2f cursor ) {
         Camera cam = rootEntry.viewport.getCamera();
         
@@ -367,7 +366,6 @@ public class PickEventSession {
                 // Actually, we do need to find the collision or else we don't
                 // deliver any proper motion activity to things when the button
                 // is down.
-                //ViewPort captureView = findViewPort(capture);
                 RootEntry captureRoot = findRootEntry(capture);
                  
                 // If the viewport is null, then the captured spatial is no
@@ -375,7 +373,6 @@ public class PickEventSession {
                 // removed from the scene graph before the UP event happens.
                 // In this case, simply return.  The UP event will come later and
                 // release the capture. -epotter
-                //if (captureView == null) {
                 if( captureRoot == null ) {
                     // Since we didn't deliver it, I'm not going to automatically
                     // mark it as consumed... we'll leave "consumption" up to the
@@ -383,7 +380,6 @@ public class PickEventSession {
                     return consumed;
                 }
                
-                //Ray mouseRay = getPickRay(captureView.getCamera(), cursor);
                 Ray mouseRay = getPickRay(captureRoot, cursor);
                 if( mouseRay != null ) {
                 
@@ -411,7 +407,6 @@ public class PickEventSession {
         for( RootEntry e : getRootList().getArray() ) {
             Camera cam = e.viewport.getCamera();
 
-            //Ray mouseRay = getPickRay(cam, cursor);
             Ray mouseRay = getPickRay(e, cursor);            
             if( log.isTraceEnabled() ) {
                 log.trace("Picking against:" + e + " with:" + mouseRay);
