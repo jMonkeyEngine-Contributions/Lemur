@@ -13,6 +13,11 @@ dependencies {
     compile 'org.slf4j:slf4j-api:1.7.13'
 }
 
+compileJava.doLast {
+    def buildDate = new Date().format('yyyyMMdd') 
+    println "Writing lemur.build.date:" + buildDate
+    new File(destinationDir, 'lemur.build.date').text = buildDate 
+}
 
 // Common configuration for the root and all 'real' children.
 // The plan is to just keep maven-repo publishing related stuff
@@ -28,8 +33,8 @@ configure(allprojects.findAll {it.name != 'extensions'}) {
 
     // One non-maven thing in this block to keep us honest with respect to
     // imports
-    configurations.compile {
-        transitive = false
+    configurations {
+        compile.transitive = false
     }
     
     // Centralizing this bintray reference here so it's easier to
