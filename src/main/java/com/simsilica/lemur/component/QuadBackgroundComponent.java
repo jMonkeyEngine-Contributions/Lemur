@@ -55,11 +55,16 @@ public class QuadBackgroundComponent extends AbstractGuiComponent
     private ColorRGBA color;
     private float alpha = 1f;
     private Texture texture;
+    private Vector2f textureCoordinateScale;
     private GuiMaterial material;
     private float xMargin = 0;
     private float yMargin = 0;
     private float zOffset = 0.01f;
     private boolean lit = false;
+
+    // Keep track of any scale we've already applied to the quad
+    // so that we know how to apply scale changes.
+    private Vector2f appliedTextureScale = new Vector2f(1, 1);
 
     public QuadBackgroundComponent() {
         this(ColorRGBA.Gray, 0, 0, 0.01f, false);
@@ -179,6 +184,14 @@ public class QuadBackgroundComponent extends AbstractGuiComponent
         return texture;
     }
 
+    public void setTextureCoordinateScale( Vector2f scale ) {
+        this.textureCoordinateScale = scale;
+    }
+
+    public Vector2f getTextureCoordinateScale() {
+        return textureCoordinateScale;
+    }
+
     public void setMargin( float x, float y ) {
         this.xMargin = x;
         this.yMargin = y;
@@ -262,6 +275,26 @@ public class QuadBackgroundComponent extends AbstractGuiComponent
             if( size.x != q.getWidth() || size.y != q.getHeight() ) {               
                 q.updateGeometry(size.x, size.y);
             }
+        }
+        
+        Vector2f effectiveScale = textureCoordinateScale == null ? Vector2f.UNIT_XY : textureCoordinateScale;
+        if( !appliedTextureScale.equals(effectiveScale) ) {
+            
+            // Need to apply new texture coordinate scaling
+            Mesh m = background.getMesh();
+            
+            // Unscale what we already scaled
+            m.scaleTextureCoordinates(new Vector2f(1/appliedTextureScale.x, 1/appliedTextureScale.y));
+            
+            appliedTextureScale.set(effectiveScale);
+ 
+            // And now apply the latest coordinate scaling.           
+            m.scaleTextureCoordinates(appliedTextureScale);
+            
+            // Note: it's probably safer to have just applied the scale value directly to
+            // the quad's texture coordinate values instead of multiplying.  The above may
+            // accumulate errors.  Still, I thought this would be more future proof and
+            // transferable to other things since it works with any mesh and not just quads.
         }
     }
 }
