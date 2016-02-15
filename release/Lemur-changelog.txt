@@ -38,7 +38,8 @@ Lemur ???
 * Added Button constructor that takes just text and ElementId.
 * Modified scene picking to deal with ortho cameras correctly.  Now it's only
     the Gui bucket that is special case.
-* Modified scene picking to adhere to camera viewport limits.    
+* Modified scene picking to adhere to camera viewport limits.
+* Fixed DragHandler to allow external z-value changes in 2D dragging.    
 
 
 Lemur v1.5.2

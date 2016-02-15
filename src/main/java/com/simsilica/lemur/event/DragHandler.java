@@ -112,6 +112,10 @@ public class DragHandler extends DefaultCursorListener {
         if( cam.isParallelProjection() || capture.getQueueBucket() == Bucket.Gui ) {
             Vector2f current = new Vector2f(event.getX(), event.getY());
             Vector2f delta = current.subtract(drag);
+            
+            // Make sure if Z has changed that it is applied to base
+            basePosition.z = capture.getLocalTranslation().z;
+            
             capture.setLocalTranslation(basePosition.add(delta.x, delta.y, 0));
             return;
         }
