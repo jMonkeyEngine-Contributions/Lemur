@@ -1,6 +1,14 @@
 apply plugin: 'java'
 
-version='1.5.1-SNAPSHOT'
+version='1.5.1'
+
+ext.jmeVersion='[3.1,)'
+
+ext {
+    bintrayLabels = ['jMonkeyEngine', 'gamedev', 'GUI']
+    releaseDescription = "Lemur Proto ${project.version}"    
+    releaseVcsTag = "${project.name}-v${project.version}"    
+}
 
 repositories {
     jcenter()
@@ -8,7 +16,7 @@ repositories {
 
 dependencies {
     compile rootProject
-    compile "org.jmonkeyengine:jme3-core:3.1.+"
+    compile "org.jmonkeyengine:jme3-core:$jmeVersion"
     
     compile 'com.google.guava:guava:19.0'
     compile 'org.slf4j:slf4j-api:1.7.13'
@@ -33,4 +41,15 @@ artifacts {
     archives sourcesJar
     archives javadocJar
 }
+
+
+
+// Put this at the end or it won't pick up the project.version and stuff
+// ...thus it also can't be injected.  But that means we can also be selective
+// about the sub-projects that we release.
+if( project.hasProperty('releaseUser') ) {
+    apply plugin: 'com.jfrog.bintray'
+    apply from: 'https://raw.githubusercontent.com/Simsilica/gradle-plugins/master/simtools-release.gradle'
+}
+
 

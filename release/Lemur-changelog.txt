@@ -1,5 +1,5 @@
-Lemur ???
-----------
+Lemur 1.6.1
+------------
 * Fixed an issue in DefaultRangedValueModel where the 'value' field
     was used directly instead of calling getValue().  This made it harder
     for subclasses to implement custom behavior.
