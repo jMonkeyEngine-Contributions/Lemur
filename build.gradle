@@ -13,7 +13,7 @@ buildscript {
 
 apply plugin: 'java'
 
-version='1.6.1'
+version='1.7.1-SNAPSHOT'
 
 ext.jmeVersion='[3.1,)'
 
