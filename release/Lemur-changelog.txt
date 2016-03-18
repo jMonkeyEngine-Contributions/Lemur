@@ -1,3 +1,14 @@
+Lemur 1.7.1
+------------
+* Added InputMapper.hasMappings() method to return true if a FunctionId
+    has inputs associated with it.
+* Added InputMapper.getMappings(FunctionId) to return all of the input
+    mappings currently associated with a particular function.
+* Added InputMapper.getFunctionIds() to return all FunctionIds that
+    are registered with the InputMapper, either associated with inputs
+    or with function listeners.  (Useful for displaying configuration screens.)
+
+
 Lemur 1.6.1
 ------------
 * Fixed an issue in DefaultRangedValueModel where the 'value' field

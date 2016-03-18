@@ -38,7 +38,6 @@ import java.util.*;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import com.google.common.base.Objects;
 
 import com.jme3.input.*;
 import com.jme3.input.event.*;
@@ -265,6 +264,51 @@ public class InputMapper {
         return findMapping(function, primary, modifiers);
     }
 
+    /**
+     *  Returns true if the specified function has any input mappings.
+     */
+    public boolean hasMappings( FunctionId function ) {
+        // No quick way to do this... must be thorough
+        for( StateGroupIndex index : stateIndex.values() ) {
+            for( StateGroup group : index.groups ) {
+                if( Objects.equals(function, group.function) ) {
+                    return true;
+                }
+            }       
+        }
+        return false;
+    }
+
+    /**
+     *  Returns a list of all FunctionIds that have listeners registered or
+     *  inputs mapped.
+     */
+    public Set<FunctionId> getFunctionIds() {
+        Set<FunctionId> results = new HashSet<>();
+        results.addAll(listenerMap.keySet());
+        for( StateGroupIndex index : stateIndex.values() ) {
+            for( StateGroup group : index.groups ) {
+                results.add(group.function);
+            }
+        }            
+        return results;       
+    }     
+
+    /**
+     *  Returns all of the different input mappings for a particular function ID.
+     */
+    public Set<Mapping> getMappings( FunctionId function ) {
+        Set<Mapping> results = new LinkedHashSet<>();
+        for( StateGroupIndex index : stateIndex.values() ) {
+            for( StateGroup group : index.groups ) {
+                if( Objects.equals(function, group.function) ) {
+                    results.add(group);
+                }
+            }
+        }
+        return results;        
+    }     
+
     public void addStateListener( StateFunctionListener l, FunctionId... functions ) {
         if( functions == null || functions.length == 0 )
             throw new RuntimeException( "No function IDs specified." );
@@ -427,6 +471,17 @@ public class InputMapper {
         public void setScale( double scale );
         public double getScale();
 
+        /**
+         *  Returns the primary inputs that activates this mapping.
+         */
+        public Object getPrimaryActivator();
+        
+        /**
+         *  Returns the additional modifier inputs that must be present for
+         *  this mapping to be activated. 
+         */
+        public List<Object> getModifiers();
+
         // Note to self, this probably needs to be a wrapper class so
         // that a) we don't potentially expose StateGroup methods directly
         // and b) we could support runtime remapping like for a UI configuration
@@ -452,6 +507,14 @@ public class InputMapper {
             resetValue();
         }
 
+        public Object getPrimaryActivator() {
+            return primaryState;
+        }
+        
+        public List<Object> getModifiers() {
+            return Collections.unmodifiableList(Arrays.asList(modifiers));
+        }
+
         public void setScale( double scale ) {
             if( scale == 0 ) {
                 throw new IllegalArgumentException("Scale cannot be 0.");
@@ -469,7 +532,7 @@ public class InputMapper {
             }
 
             for( int i = 0; i < modifiers.length; i++ ) {
-                if( !Objects.equal(mods[i], modifiers[i]) )
+                if( !Objects.equals(mods[i], modifiers[i]) )
                     return false;
             }
 
@@ -541,7 +604,7 @@ public class InputMapper {
         public boolean isPrimary( Object state ) {
             if( state == primaryState )
                 return true;
-            return Objects.equal(state, primaryState);
+            return Objects.equals(state, primaryState);
         }
 
         public boolean isTrue() {
@@ -684,6 +747,11 @@ public class InputMapper {
                 notifyValueActive(g.getFunction(), val);
                 break;  // first one found wins
             }
+        }
+        
+        @Override
+        public String toString() {
+            return "StateGroupIndex[" + localState + "]";
         }
     }
 
