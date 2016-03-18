@@ -73,7 +73,7 @@ public class TouchAppState extends BaseAppState {
 
     /**
      * Storage class for the session and last location of the touch events
-     *  for a single pointer (finger for touch). </br>
+     *  for a single pointer (finger for touch). <br>
      * Not using a Vector2f to minimize garbage collection since the
      *  touch event from jME provides 2 floats for x and y.
      */
@@ -161,7 +161,7 @@ public class TouchAppState extends BaseAppState {
     }
 
     /**
-     * Dispatches the last touch locations to the active PickEventSessions. </br>
+     * Dispatches the last touch locations to the active PickEventSessions. <br>
      * When touch motion events occur, the touch location is stored and then
      * dispatched at the frequency defined to avoid sending more motions
      * than necessary.
@@ -205,7 +205,7 @@ public class TouchAppState extends BaseAppState {
 
     /**
      * Returns (or creates) the PointerData object with the appropriate
-     * PickEventSession and X/Y coordinates for the provided pointerId. </br>
+     * PickEventSession and X/Y coordinates for the provided pointerId. <br>
      * The provided X and Y locations are stored in the PointerData object for
      * created PointerData objects and updated if the PointerData object already exists.
      * @param pointerId  Touch pointer id

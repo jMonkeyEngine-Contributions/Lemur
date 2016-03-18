@@ -42,7 +42,7 @@ import com.simsilica.lemur.Command;
 
 /**
  *  A MouseListener implementation that will track the hover
- *  state over entered and exited objects and Command<Spatial>
+ *  state over entered and exited objects and Command&lt;Spatial&gt;
  *  when a 'hover' state exists over a particular Spatial that
  *  has this listener registered.
  *
