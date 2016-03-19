@@ -7,6 +7,13 @@ Lemur 1.7.1
 * Added InputMapper.getFunctionIds() to return all FunctionIds that
     are registered with the InputMapper, either associated with inputs
     or with function listeners.  (Useful for displaying configuration screens.)
+* Added Label.setMaxWidth() which is a stylable attribute that constrains
+    the width of the lable, forcing text to wrap and grow vertically if it
+    exceeds that width.  This helps with setting up layouts that include
+    Labels that might wrap anyway because of other layout constraints. 
+    Because of the single-shot nature of preferred size calculation, it
+    can't deal with components that change height because their width
+    was constrained later.    
 
 
 Lemur 1.6.1

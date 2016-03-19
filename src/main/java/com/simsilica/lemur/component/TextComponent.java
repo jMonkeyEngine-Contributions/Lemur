@@ -59,6 +59,7 @@ public class TextComponent extends AbstractGuiComponent
     private VAlignment vAlign = VAlignment.Top;
     private Vector3f offset = null;
     private int layer;
+    private float maxWidth;
 
     public TextComponent( String text, BitmapFont font ) {
         this.bitmapText = new BitmapText(font);
@@ -129,6 +130,19 @@ public class TextComponent extends AbstractGuiComponent
 
     public VAlignment getVAlignment() {
         return vAlign;
+    }
+
+    /**
+     *  For values greater than 0, this will constrain the maximum
+     *  width of the text box.  Wrapping text will cause the text box
+     *  to grow vertically.
+     */
+    public void setMaxWidth( float f ) {
+        this.maxWidth = f;
+    }
+    
+    public float getMaxWidth() {
+        return maxWidth;
     }
 
     public void setFont( BitmapFont font ) {
@@ -283,6 +297,11 @@ public class TextComponent extends AbstractGuiComponent
         // Make sure that the bitmapText reports a reliable
         // preferred size
         bitmapText.setBox(null);
+
+        if( maxWidth > 0 ) {
+            // Give the text a box that constrains the width
+            bitmapText.setBox(new Rectangle(0, 0, maxWidth, 0));
+        }
 
         size.x = bitmapText.getLineWidth();
         size.y = bitmapText.getHeight();

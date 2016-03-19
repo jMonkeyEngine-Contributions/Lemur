@@ -150,6 +150,21 @@ public class Label extends Panel {
         return text.getHAlignment();
     }
 
+    /**
+     *  Sets the maximum width of the label.  If the text is longer
+     *  than this width then it will be wrapped and the label will
+     *  grow vertically (in a way that the layout's can use for proper
+     *  positioning).
+     */
+    @StyleAttribute(value="maxWidth", lookupDefault=false)
+    public void setMaxWidth( float f ) {
+        text.setMaxWidth(f);
+    }
+    
+    public float getMaxWidth() {
+        return text.getMaxWidth();
+    }
+
     public void setFont( BitmapFont font ) {
         text.setFont(font);
         if( shadow != null ) {
