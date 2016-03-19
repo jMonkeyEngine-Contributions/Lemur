@@ -35,6 +35,7 @@
 package com.simsilica.lemur.input;
 
 import java.util.*;
+import java.util.concurrent.*;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -96,6 +97,8 @@ public class InputMapper {
 
     private InputManager inputManager;
     private InputObserver listener;
+
+    private List<InputConfigListener> configListeners = new CopyOnWriteArrayList<>(); 
 
     private Set<String> activeGroups = new HashSet<String>();
 
@@ -248,6 +251,7 @@ public class InputMapper {
         for( Object o : modifiers ) {
             getIndex(o, true).addGroup(g);
         }
+        fireMappingAdded(g);
         return g;
     }
 
@@ -262,6 +266,24 @@ public class InputMapper {
     public Mapping getMapping( FunctionId function, Object primary,
                                Object... modifiers ) {
         return findMapping(function, primary, modifiers);
+    }
+
+    public void removeMapping( FunctionId function, Object primary,
+                               Object... modifiers ) {
+        removeMapping(findMapping(function, primary, modifiers));                               
+    }
+
+    public void removeMapping( Mapping mapping ) {
+        StateGroup group = (StateGroup)mapping;
+        boolean removed = false;
+        for( StateGroupIndex index : stateIndex.values() ) {
+            if( index.removeGroup(group) ) {
+                removed = true;
+            }
+        }
+        if( removed ) {        
+            fireMappingRemoved(mapping);
+        }
     }
 
     /**
@@ -443,6 +465,39 @@ public class InputMapper {
             return InputState.Off;
     }
 
+    /**
+     *  Adds a listener that will be notified when input mappings are
+     *  added, changed, or removed.
+     */
+    public void addInputConfigListener( InputConfigListener l ) {
+        configListeners.add(l);
+    }
+
+    /** 
+     *  Removes a previously registered input config listener.
+     */
+    public void removeInputConfigListener( InputConfigListener l ) {
+        configListeners.remove(l);
+    }
+
+    protected void fireMappingAdded( Mapping m ) {
+        for( InputConfigListener l : configListeners ) {
+            l.mappingAdded(m);
+        }
+    }
+
+    protected void fireMappingRemoved( Mapping m ) {
+        for( InputConfigListener l : configListeners ) {
+            l.mappingRemoved(m);
+        }
+    }
+
+    protected void fireMappingChanged( Mapping m ) {
+        for( InputConfigListener l : configListeners ) {
+            l.mappingChanged(m);
+        }
+    }
+
     protected class FunctionListeners {
 
         SafeArrayList<StateFunctionListener> stateListeners
@@ -520,6 +575,7 @@ public class InputMapper {
                 throw new IllegalArgumentException("Scale cannot be 0.");
             }
             this.scale = scale;
+            fireMappingChanged(this);
         }
 
         public double getScale() {
@@ -680,6 +736,14 @@ public class InputMapper {
             // Else just add it
             groups.add( g );
             return g;
+        }
+        
+        public boolean removeGroup( StateGroup g ) {
+            if( groups.remove(g) ) {            
+                refresh();
+                return true;
+            }
+            return false;
         }
 
         public void refresh() {
