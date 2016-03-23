@@ -18,6 +18,13 @@ Lemur 1.7.1
     was constrained later.
 * Refactored MouseAppState and TouchAppState to share a common base class
     that contains the duplicate code.
+* Added a PickState interface that can be used to grab either the MouseAppState
+    or TouchAppState depending on which is being used.  This insulates applications
+    from having to care.
+* Modified the pick states and pick session to support a 'pick layers' concept to
+    provide better control over the order in which the layers are checked for collisions.
+    By default, the GUI layer is checked and then the SCENE layer but the applications
+    can now add their own layers by changing this ordering with PickState.setPickLayerOrder()
 
 
 Lemur 1.6.1

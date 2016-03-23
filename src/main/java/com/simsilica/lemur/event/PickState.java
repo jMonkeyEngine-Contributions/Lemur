@@ -51,10 +51,17 @@ import com.jme3.scene.Spatial;
  */
 public interface PickState extends AppState {
 
+    public static final String PICK_LAYER_SCENE = "scene";
+    public static final String PICK_LAYER_GUI = "gui";
+
     public void setIncludeDefaultCollisionRoots( boolean b );
     public boolean getIncludeDefaultCollisionRoots();
     public void addCollisionRoot( ViewPort viewPort );
+    public void addCollisionRoot( ViewPort viewPort, String layer );
     public void addCollisionRoot( Spatial root, ViewPort viewPort );
+    public void addCollisionRoot( Spatial root, ViewPort viewPort, String layer );
     public void removeCollisionRoot( ViewPort viewPort );
     public void removeCollisionRoot( Spatial root );
+    public void setPickLayerOrder( String... layers );
+    public String[] getPickLayerOrder();
 }

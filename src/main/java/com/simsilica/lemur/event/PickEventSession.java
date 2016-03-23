@@ -48,10 +48,12 @@ import com.jme3.renderer.queue.RenderQueue.Bucket;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Spatial;
 import com.jme3.util.SafeArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import org.slf4j.*;
 
@@ -85,6 +87,12 @@ public class PickEventSession {
     private Map<Collidable, RootEntry> roots = new LinkedHashMap<Collidable, RootEntry>();
     private SafeArrayList<RootEntry> rootList = new SafeArrayList<RootEntry>(RootEntry.class);
     private Map<Camera, Ray> rayCache = new HashMap<Camera, Ray>();
+
+    /**
+     *  The order that the root entries annoted with layer markers
+     *  will be sorted.
+     */
+    private String[] layerOrder = new String[] { PickState.PICK_LAYER_GUI, PickState.PICK_LAYER_SCENE };
 
     /**
      *  The spatial that currently has the mouse over it.
@@ -150,13 +158,21 @@ public class PickEventSession {
     }
 
     public void addCollisionRoot( ViewPort viewPort ) {
+        addCollisionRoot(viewPort, null);
+    }
+
+    public void addCollisionRoot( ViewPort viewPort, String layer ) {
         for( Spatial s : viewPort.getScenes() ) {
-            addCollisionRoot(s, viewPort);
+            addCollisionRoot(s, viewPort, layer);
         }
     }
 
     public void addCollisionRoot( Spatial root, ViewPort viewPort ) {
-        roots.put(root, new RootEntry(root, viewPort));
+        addCollisionRoot(root, viewPort, null);
+    }
+
+    public void addCollisionRoot( Spatial root, ViewPort viewPort, String layer ) {
+        roots.put(root, new RootEntry(root, viewPort, layer));
         rootList = null;
     }
 
@@ -169,6 +185,17 @@ public class PickEventSession {
     public void removeCollisionRoot( Spatial root ) {
         RootEntry e = roots.remove(root);
         rootList = null;
+    }
+
+    public void setPickLayerOrder( String... layers ) {
+        if( layers == null || layers.length == 0 ) {
+            layers = new String[] { PickState.PICK_LAYER_SCENE, PickState.PICK_LAYER_GUI };
+        }
+        this.layerOrder = layers;
+    }
+
+    public String[] getPickLayerOrder() {
+        return layerOrder;
     }
 
     /**
@@ -273,11 +300,31 @@ public class PickEventSession {
 
     protected SafeArrayList<RootEntry> getRootList() {
         if( rootList == null ) {
-            // Build the list backwards so we search for picks top
-            // to bottom.
+            // We build the root list in layer order but within each
+            // layer we insert each next one ahead of the others.  In
+            // this way the last one added goes first as if they were
+            // stacked from bottom to top.
+
+            // This list rarely gets rebuilt so it's ok to do it a bit
+            // less efficiently than we might.  There are only ever going
+            // to be a handful of entries anyway.
             rootList = new SafeArrayList<RootEntry>(RootEntry.class);
+            for( String s : layerOrder ) {
+                int insert = rootList.size();
+                for( RootEntry e : roots.values() ) {
+                    if( Objects.equals(e.layer, s) ) {
+                        rootList.add(insert, e);
+                    }
+                }
+            }
+
+            // And finally any that weren't specifically in the layer list
+            Set<String> layers = new HashSet<>(Arrays.asList(layerOrder));
+            int insert = rootList.size();
             for( RootEntry e : roots.values() ) {
-                rootList.add(0, e);
+                if( !layers.contains(e.layer) ) {
+                    rootList.add(insert, e);
+                }
             }
         }
         return rootList;
@@ -572,15 +619,17 @@ public class PickEventSession {
 
         public ViewPort viewport;
         public Collidable root;
+        public String layer;
 
-        public RootEntry( Collidable root, ViewPort viewport ) {
+        public RootEntry( Collidable root, ViewPort viewport, String layer ) {
             this.viewport = viewport;
             this.root = root;
+            this.layer = layer;
         }
 
         @Override
         public String toString() {
-            return "RootEntry[viewport=" + viewport + ", root=" + root + "]";
+            return "RootEntry[viewport=" + viewport + ", root=" + root + ", layer=" + layer + "]";
         }
     }
 }

@@ -77,11 +77,11 @@ public abstract class BasePickState extends BaseAppState
         this.includeDefaultNodes = b;
         if( isInitialized() ) {
             if( b ) {
-                addCollisionRoot( getApplication().getGuiViewPort() );
-                addCollisionRoot( getApplication().getViewPort() );
+                addCollisionRoot(getApplication().getGuiViewPort(), PICK_LAYER_GUI);
+                addCollisionRoot(getApplication().getViewPort(), PICK_LAYER_SCENE);
             } else {
-                removeCollisionRoot( getApplication().getGuiViewPort() );
-                removeCollisionRoot( getApplication().getViewPort() );
+                removeCollisionRoot(getApplication().getGuiViewPort());
+                removeCollisionRoot(getApplication().getViewPort());
             }
         }
     }
@@ -99,8 +99,16 @@ public abstract class BasePickState extends BaseAppState
         session.addCollisionRoot(viewPort);
     }
 
+    public void addCollisionRoot( ViewPort viewPort, String layer ) {
+        session.addCollisionRoot(viewPort, layer);
+    }
+
     public void addCollisionRoot( Spatial root, ViewPort viewPort ) {
         session.addCollisionRoot(root, viewPort);
+    }
+
+    public void addCollisionRoot( Spatial root, ViewPort viewPort, String layer ) {
+        session.addCollisionRoot(root, viewPort, layer);
     }
 
     public void removeCollisionRoot( ViewPort viewPort ) {
@@ -111,19 +119,31 @@ public abstract class BasePickState extends BaseAppState
         session.removeCollisionRoot(root);
     }
 
+    /**
+     *  Sets the order in which the pick layers will be checked for collisions.
+     *  The default ordering is PICK_LAYER_GUI then PICK_LAYER_SCENE.
+     */
+    public void setPickLayerOrder( String... layers ) {
+        session.setPickLayerOrder(layers);
+    }
+
+    public String[] getPickLayerOrder() {
+        return session.getPickLayerOrder();
+    }
+
     @Override
     protected void initialize( Application app ) {
         if( includeDefaultNodes ) {
-            addCollisionRoot( app.getGuiViewPort() );
-            addCollisionRoot( app.getViewPort() );
+            addCollisionRoot(getApplication().getGuiViewPort(), PICK_LAYER_GUI);
+            addCollisionRoot(getApplication().getViewPort(), PICK_LAYER_SCENE);
         }
     }
 
     @Override
     protected void cleanup( Application app ) {
         if( includeDefaultNodes ) {
-            removeCollisionRoot( app.getGuiViewPort() );
-            removeCollisionRoot( app.getViewPort() );
+            removeCollisionRoot(app.getGuiViewPort());
+            removeCollisionRoot(app.getViewPort());
         }
     }
 
