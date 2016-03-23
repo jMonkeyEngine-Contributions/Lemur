@@ -53,7 +53,8 @@ import java.util.Map.Entry;
  *
  *  @author    Paul Speed
  */
-public abstract class BasePickState extends BaseAppState {
+public abstract class BasePickState extends BaseAppState
+                                    implements PickState {
     private boolean includeDefaultNodes = true;
 
     private long sampleFrequency = 1000000000 / 60; // 60 fps

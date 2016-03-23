@@ -8,14 +8,16 @@ Lemur 1.7.1
     are registered with the InputMapper, either associated with inputs
     or with function listeners.  (Useful for displaying configuration screens.)
 * Added InputMapper support for InputConfigListener so that applications can
-    choose to be notified about changes to input mappings.    
+    choose to be notified about changes to input mappings.
 * Added Label.setMaxWidth() which is a stylable attribute that constrains
     the width of the lable, forcing text to wrap and grow vertically if it
     exceeds that width.  This helps with setting up layouts that include
-    Labels that might wrap anyway because of other layout constraints. 
+    Labels that might wrap anyway because of other layout constraints.
     Because of the single-shot nature of preferred size calculation, it
     can't deal with components that change height because their width
-    was constrained later.        
+    was constrained later.
+* Refactored MouseAppState and TouchAppState to share a common base class
+    that contains the duplicate code.
 
 
 Lemur 1.6.1
@@ -32,15 +34,15 @@ Lemur 1.6.1
     system.
 * Modified Button to automatically attempt to run effects for the various
     button events.
-* Modified CommandMap to support null values in the addCommands() call 
+* Modified CommandMap to support null values in the addCommands() call
     that can be used to clear out any previously added values.
 * Fixed a bug in Container where children that called removeFromParent()
     left the layout in an inconsistent state.  Now a regular detachChild()
     will check the layout first before detaching the child.
 * Added getLastVersion() and getObjectVersion() methods to VersionedReference.
 * Converted some System.out.println() warnings in InputMapper to actual log
-    warns.        
-* Added AnimationState to the default states setup in GuiGlobals.    
+    warns.
+* Added AnimationState to the default states setup in GuiGlobals.
 * Fixed joystick axis event processing to pay attention to the reported dead
     zone of the axis.  It will take the max of the specific axis' dead zone and the global
     InputManager.getAxisDeadZone().
@@ -60,7 +62,7 @@ Lemur 1.6.1
     the Gui bucket that is special case.
 * Modified scene picking to adhere to camera viewport limits.
 * Fixed DragHandler to allow external z-value changes in 2D dragging.
-* Added textureCoordinateScale property to QuadBackgroundComponent.    
+* Added textureCoordinateScale property to QuadBackgroundComponent.
 
 
 Lemur v1.5.2
@@ -113,11 +115,11 @@ Lemur v1.5.1
     garbage-free iteration.
 * Added setAlpha()/getAlpha() to ColoredComponent and modified all ColoredComponent
     implementors to have the new methods.
-* Added Panel.setAlpha() and Panel.getAlpha() for setting the alpha of just 
+* Added Panel.setAlpha() and Panel.getAlpha() for setting the alpha of just
     the panel and it's components or of all children recursively.  Useful
     for fading in/out entire UI hierarchies.
 * Fixed a bug in DefaultRangedValueModel where changes to min and max value weren't
-    incrementing the version.        
+    incrementing the version.
 * Added some more trace level logging to the Styles class to help users debug
     style issues.
 * Added styling attributes for Panel.alpha and Panel.preferredSize
@@ -138,12 +140,12 @@ Lemur v1.5.1
 * Added FocusChangeListener and FocusChangeEvent support.  GuiControl now has
     add/removeFocusChangeListener() methods for registering listeners that will
     be notified when the control loses or gains focus.
-* Fixed a bug in SpringGridLayout where a minorFill wasn't getting handled 
+* Fixed a bug in SpringGridLayout where a minorFill wasn't getting handled
     right if major file was set to ForcedEven and minorFill was not.
 * Fixed a bug in CursorEvent deliver if the captured spatial was removed before
     the up event was received.  The attempt to deliver move events was throwing
     NPEs.  Now it just returns the current event consumption state instead.
-* Panel now has a "border" property in addition to "background", so all 
+* Panel now has a "border" property in addition to "background", so all
     regular GUI elements can now have separate borders and backgrounds.
 * GuiControl can now be "focusable" even if none of it's child components are
     by using the setFocusable() method.
@@ -166,7 +168,7 @@ Lemur v1.5.1
     is a breaking change for 3.0 because it's Unshaded.j3md doesn't have an
     AlphaDiscardThreshold.)
 * Added a TextField constructor that takes just text and element ID.
-* Fixed a syntax error in StyleApi.groovy's vec2() helper function.     
+* Fixed a syntax error in StyleApi.groovy's vec2() helper function.
 
 
 Lemur 1466
@@ -193,7 +195,7 @@ Lemur 1466
     want to extend or override parts of the glass style.
 * Fixed an issue in button click handling where the click distance was too
     sensitive... in fact for buttons there should be no click distance at all
-    as long as you are still over the button.  And that's how it behaves now.                    
+    as long as you are still over the button.  And that's how it behaves now.
 
 
 Lemur r1430
@@ -211,8 +213,8 @@ Lemur r1430
     size set.
 * Added a utility method findFocusTarget() to FocusManagerState.  This is
     a refactoring of a previous protected method.
-* Added a ProgressBar GUI element.            
-    
+* Added a ProgressBar GUI element.
+
 
 Lemur r1375
 ------------
