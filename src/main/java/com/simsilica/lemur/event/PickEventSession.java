@@ -74,9 +74,9 @@ import org.slf4j.*;
  *  <p>If a button down event happens over a target then it is considered
  *  'captured'.  This spatial will be provided to subsequent events
  *  in addition to the normal target.  Furthermore, any new motion
- *  events are always delivered to the captured spatial first.<p>   
+ *  events are always delivered to the captured spatial first.<p>
  *
- *  @author    Paul Speed 
+ *  @author    Paul Speed
  */
 public class PickEventSession {
 
@@ -106,16 +106,16 @@ public class PickEventSession {
 
     public PickEventSession() {
     }
-    
+
     protected PickEventSession( Map<Collidable, RootEntry> roots ) {
         this.roots.putAll(roots);
         this.rootList = null;
-    } 
- 
+    }
+
     /**
      *  Creates a new PickEventSession with the same roots that his pick event
      *  session has at the time of cloning.
-     */   
+     */
     @Override
     public PickEventSession clone() {
         return new PickEventSession(roots);
@@ -125,7 +125,7 @@ public class PickEventSession {
         if( s == null ) {
             return null;
         }
-        
+
         for( Spatial root = s; root != null; root = root.getParent() ) {
             RootEntry e = roots.get(root);
             if( e != null ) {
@@ -139,7 +139,7 @@ public class PickEventSession {
         if( s == null ) {
             return null;
         }
-        
+
         for( Spatial root = s; root != null; root = root.getParent() ) {
             RootEntry e = roots.get(root);
             if( e != null ) {
@@ -150,7 +150,7 @@ public class PickEventSession {
     }
 
     public void addCollisionRoot( ViewPort viewPort ) {
-        for( Spatial s : viewPort.getScenes() ) { 
+        for( Spatial s : viewPort.getScenes() ) {
             addCollisionRoot(s, viewPort);
         }
     }
@@ -181,9 +181,9 @@ public class PickEventSession {
         if( hitTarget == null ) {
             return;
         }
-        setCurrentHitTarget(null, null, new Vector2f(-1,-1), null);        
+        setCurrentHitTarget(null, null, new Vector2f(-1,-1), null);
     }
- 
+
     /**
      *  Clears the current capture even if a 'button released' is not received.
      *  This is useful for cases where nested pick event sessions need to be
@@ -196,18 +196,18 @@ public class PickEventSession {
     public void clearCapture() {
         capture = null;
     }*/
- 
+
     /**
      *  Clears the hit target and clears all internal data including collision roots.
-     */   
+     */
     public void close() {
         clearHitTarget();
         capture = null;
-        
+
         // Just in case
         rayCache.clear();
         delivered.clear();
-        
+
         roots.clear();
         rootList = null;
     }
@@ -234,7 +234,7 @@ public class PickEventSession {
 
         if( this.hitTarget == s )
             return;
-            
+
         CursorMotionEvent event1 = null;
         MouseMotionEvent event2 = null;
 
@@ -248,7 +248,7 @@ public class PickEventSession {
                 // Exiting
                 event1 = new CursorMotionEvent(viewport, hitTarget, cursor.x, cursor.y, cr);
                 this.hitTarget.getControl(CursorEventControl.class).cursorExited(event1, hitTarget, capture);
-            } 
+            }
         }
         this.hitTarget = s;
         if( this.hitTarget != null ) {
@@ -265,12 +265,12 @@ public class PickEventSession {
                 if( event1 == null ) {
                     event1 = new CursorMotionEvent(viewport, hitTarget, cursor.x, cursor.y, cr);
                 }
-                
+
                 this.hitTarget.getControl(CursorEventControl.class).cursorEntered(event1, hitTarget, capture);
-            } 
+            }
         }
     }
-    
+
     protected SafeArrayList<RootEntry> getRootList() {
         if( rootList == null ) {
             // Build the list backwards so we search for picks top
@@ -292,8 +292,8 @@ public class PickEventSession {
             // No need to clip
             return true;
         }
-        
-        // Else clip it against the viewport 
+
+        // Else clip it against the viewport
         float x = cursor.x / cam.getWidth();
         float y = cursor.y / cam.getHeight();
         return !(x < x1 || x > x2 || y < y1 || y > y2);
@@ -301,7 +301,7 @@ public class PickEventSession {
 
     protected Ray getPickRay( RootEntry rootEntry, Vector2f cursor ) {
         Camera cam = rootEntry.viewport.getCamera();
-        
+
         Ray result = rayCache.get(cam);
         if( result != null )
             return result;
@@ -310,30 +310,30 @@ public class PickEventSession {
             // Special case for Gui Bucket nodes since they are always in screen space
             result = new Ray(new Vector3f(cursor.x, cursor.y, 1000), new Vector3f(0, 0, -1));
         } else {
-            
+
             // Ortho and perspective can be handled the same exact way it turns out.
             // It's only the Gui bucket that is special because it overrides the normal
             // camera and viewport setup.
-             
+
             if( viewContains(cam, cursor) ) {
                 // Turns out these can be calculated the same as perspective... and
-                // we should technically clip perspective also.            
+                // we should technically clip perspective also.
                 Vector3f clickFar  = cam.getWorldCoordinates(cursor, 1);
                 Vector3f clickNear = cam.getWorldCoordinates(cursor, 0);
                 result = new Ray(clickNear, clickFar.subtractLocal(clickNear).normalizeLocal());
             } else {
                 result = null;
             }
-        } 
+        }
 
         rayCache.put(cam, result);
         return result;
     }
 
     public boolean cursorMoved( int x, int y ) {
- 
+
         Vector2f cursor = new Vector2f(x,y);
-    
+
         // Note: roots are processed in the order that they
         // were added... so guiNodes, etc. always come first.
         CollisionResults results = new CollisionResults();
@@ -349,9 +349,9 @@ public class PickEventSession {
         // event to it... and do it first.  a) it's more consistent
         // and b) if it consumes the event then we can stop already.
         if( capture != null ) {
- 
+
             // To properly emulate the old behavior, we need to deliver to both
-            // controls.           
+            // controls.
             boolean consumed = false;
             if( capture.getControl(MouseEventControl.class) != null ) {
                 event = new MouseMotionEvent((int)cursor.x, (int)cursor.y, 0, 0, 0, 0);
@@ -367,7 +367,7 @@ public class PickEventSession {
                 // deliver any proper motion activity to things when the button
                 // is down.
                 RootEntry captureRoot = findRootEntry(capture);
-                 
+
                 // If the viewport is null, then the captured spatial is no
                 // longer in the scene graph.  This happens when the spatial is
                 // removed from the scene graph before the UP event happens.
@@ -379,12 +379,12 @@ public class PickEventSession {
                     // current state at this point. -pspeed
                     return consumed;
                 }
-               
+
                 Ray mouseRay = getPickRay(captureRoot, cursor);
                 if( mouseRay != null ) {
-                
+
                     // But we don't have to pick the whole hiearchy...
-                    int count = capture.collideWith(mouseRay, results);                
+                    int count = capture.collideWith(mouseRay, results);
                     CollisionResult cr = null;
                     if( count > 0 ) {
                         cr = results.getClosestCollision();
@@ -399,15 +399,15 @@ public class PickEventSession {
                     }
                 }
             }
-            if( consumed ) 
-                return true; 
+            if( consumed )
+                return true;
         }
 
         // Search each root for hits
         for( RootEntry e : getRootList().getArray() ) {
             Camera cam = e.viewport.getCamera();
 
-            Ray mouseRay = getPickRay(e, cursor);            
+            Ray mouseRay = getPickRay(e, cursor);
             if( log.isTraceEnabled() ) {
                 log.trace("Picking against:" + e + " with:" + mouseRay);
             }
@@ -423,8 +423,8 @@ public class PickEventSession {
                     Geometry geom = cr.getGeometry();
                     if( log.isTraceEnabled() ) {
                         log.trace("Collision geometry:" + geom);
-                    }                    
-                    Spatial hit = findHitTarget(geom);                    
+                    }
+                    Spatial hit = findHitTarget(geom);
                     if( log.isTraceEnabled() ) {
                         log.trace("Hit:" + hit);
                     }
@@ -438,11 +438,11 @@ public class PickEventSession {
 
                     // Only deliver events to each hit once.
                     if( delivered.add(hit) ) {
-                        
+
                         // To properly emulate the old behavior, we need to deliver to both
-                        // controls.           
+                        // controls.
                         boolean consumed = false;
-            
+
                         if( hit.getControl(MouseEventControl.class) != null ) {
                             // See if this is one that will take our event
                             if( event == null ) {
@@ -450,25 +450,25 @@ public class PickEventSession {
                             }
 
                             hit.getControl(MouseEventControl.class).mouseMoved(event, hit, capture);
-    
+
                             // If the event is consumed then we're done
                             if( event.isConsumed() ) {
                                 consumed = true;
                             }
                         }
-                        
+
                         if( hit.getControl(CursorEventControl.class) != null ) {
                             CursorMotionEvent cme = new CursorMotionEvent(e.viewport, hit, cursor.x, cursor.y, cr);
                             hit.getControl(CursorEventControl.class).cursorMoved(cme, hit, capture);
-                            
+
                             // If the event is consumed then we're done
                             if( cme.isConsumed() ) {
                                 consumed = true;
-                            }                            
+                            }
                         }
-                        
-                        if( consumed ) 
-                            return true; 
+
+                        if( consumed )
+                            return true;
                     }
                 }
             }
@@ -482,52 +482,52 @@ public class PickEventSession {
     }
 
     public boolean buttonEvent( int buttonIndex, int x, int y, boolean pressed ) {
- 
+
         CursorButtonEvent event1 = null;
         MouseButtonEvent event2 = null;
 
         // Make sure all of the collision state is up to date with this latest
         // cursor location.  We may not have had a chance to process a cursorMoved
         // before this button event comes to us.
-        cursorMoved(x,y); 
-        
+        cursorMoved(x,y);
+
         if( pressed ) {
             capture = hitTarget;
         } else if( capture != null ) {
             // Try to deliver it to capture first
- 
+
             Spatial tempCapture = capture;
             // The button was released so we can clear the capture
-            capture = null;            
+            capture = null;
             boolean consumed = false;
-            
+
             if( tempCapture.getControl(MouseEventControl.class) != null ) {
                 event2 = new MouseButtonEvent(buttonIndex, pressed, x, y);
-                tempCapture.getControl(MouseEventControl.class).mouseButtonEvent(event2, hitTarget, tempCapture);            
-            
+                tempCapture.getControl(MouseEventControl.class).mouseButtonEvent(event2, hitTarget, tempCapture);
+
                 // If the event was consumed then we're done
                 if( event2.isConsumed() )
                     consumed = true;
             }
-            
+
             if( tempCapture.getControl(CursorEventControl.class) != null ) {
                 event1 = new CursorButtonEvent(buttonIndex, pressed, findViewPort(hitTarget), hitTarget, x, y, null);
-                tempCapture.getControl(CursorEventControl.class).cursorButtonEvent(event1, hitTarget, tempCapture); 
-            
+                tempCapture.getControl(CursorEventControl.class).cursorButtonEvent(event1, hitTarget, tempCapture);
+
                 // If the event was consumed then we're done
                 if( event1.isConsumed() )
                     consumed = true;
-            } 
-            if( consumed ) 
+            }
+            if( consumed )
                 return true;
-                
+
             // Also if the hitTarget is the same as the capture then
             // we've already delivered the event... don't do it again.
             if( tempCapture == hitTarget ) {
                 return false;
-            }                
+            }
         }
- 
+
         if( hitTarget == null  ) {
             // We aren't intersecting anything anymore
             return false;
@@ -535,16 +535,16 @@ public class PickEventSession {
 
         boolean consumed = false;
         if( hitTarget.getControl(MouseEventControl.class) != null ) {
-            if( event2 == null ) {           
+            if( event2 == null ) {
                 event2 = new MouseButtonEvent(buttonIndex, pressed, x, y);
             }
-        
-            hitTarget.getControl(MouseEventControl.class).mouseButtonEvent(event2, hitTarget, capture);                           
+
+            hitTarget.getControl(MouseEventControl.class).mouseButtonEvent(event2, hitTarget, capture);
             if( event2.isConsumed() ) {
                 consumed = true;
             }
         }
-        
+
         // It's kind of a bug but when delivering to a single MouseEventControl, the
         // 'consumed' state is ignored.  To emulate the behavior of both of these listener
         // sets being together, I'll ignore the consumed flag here also.
@@ -553,21 +553,21 @@ public class PickEventSession {
         // drag still saw the mouse button events even though the Button itself is consuming
         // them first.
         // In reality, we probably want some way to add the drag listener to the beginning
-        // of the list. 
-         
+        // of the list.
+
         if( hitTarget.getControl(CursorEventControl.class) != null ) {
             if( event1 == null ) {
                 event1 = new CursorButtonEvent(buttonIndex, pressed, findViewPort(hitTarget), hitTarget, x, y, null);
             }
-            
-            hitTarget.getControl(CursorEventControl.class).cursorButtonEvent(event1, hitTarget, capture);                           
+
+            hitTarget.getControl(CursorEventControl.class).cursorButtonEvent(event1, hitTarget, capture);
             if( event1.isConsumed() ) {
                 consumed = true;
             }
-        }   
+        }
         return consumed;
     }
-    
+
     public static class RootEntry {
 
         public ViewPort viewport;
@@ -577,7 +577,7 @@ public class PickEventSession {
             this.viewport = viewport;
             this.root = root;
         }
-        
+
         @Override
         public String toString() {
             return "RootEntry[viewport=" + viewport + ", root=" + root + "]";
