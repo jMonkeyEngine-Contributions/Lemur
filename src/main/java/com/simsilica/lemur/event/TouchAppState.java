@@ -55,20 +55,11 @@ import java.util.logging.Logger;
  *
  *  @author    iwgeric
  */
-public class TouchAppState extends BaseAppState {
+public class TouchAppState extends BasePickState {
     private static final Logger logger = Logger.getLogger(TouchAppState.class.getName());
 
-    private boolean includeDefaultNodes = true;
     private TouchObserver touchObserver = new TouchObserver();
 
-    private long sampleFrequency = 1000000000 / 60; // 60 fps
-    private long lastSample = 0;
-
-    /**
-     *  The session that tracks the state of pick events from one
-     *  event frame to the next.
-     */
-    private PickEventSession session = new PickEventSession();
     protected Map<Integer, PointerData> pointerDataMap = new HashMap<Integer, PointerData>();
 
     /**
@@ -99,65 +90,10 @@ public class TouchAppState extends BaseAppState {
         app.getInputManager().addRawInputListener(touchObserver);
     }
 
-    @Deprecated
-    public ViewPort findViewPort( Spatial s ) {
-        return session.findViewPort(s);
-    }
-
-    public void addCollisionRoot( ViewPort viewPort ) {
-        session.addCollisionRoot(viewPort);
-    }
-
-    public void addCollisionRoot( Spatial root, ViewPort viewPort ) {
-        session.addCollisionRoot(root, viewPort);
-    }
-
-    public void removeCollisionRoot( ViewPort viewPort ) {
-        session.removeCollisionRoot(viewPort);
-    }
-
-    public void removeCollisionRoot( Spatial root ) {
-        session.removeCollisionRoot(root);
-    }
-
-    @Override
-    protected void initialize( Application app ) {
-        if( includeDefaultNodes ) {
-            addCollisionRoot( app.getGuiViewPort() );
-            addCollisionRoot( app.getViewPort() );
-        }
-    }
-
     @Override
     protected void cleanup( Application app ) {
         app.getInputManager().removeRawInputListener(touchObserver);
-        if( includeDefaultNodes ) {
-            removeCollisionRoot( app.getGuiViewPort() );
-            removeCollisionRoot( app.getViewPort() );
-        }
         pointerDataMap.clear();
-    }
-
-    @Override
-    protected void enable() {
-        getApplication().getInputManager().setCursorVisible(true);
-    }
-
-    @Override
-    protected void disable() {
-        getApplication().getInputManager().setCursorVisible(false);
-    }
-
-    @Override
-    public void update( float tpf ) {
-        super.update(tpf);
-
-        long time = System.nanoTime();
-        if( time - lastSample < sampleFrequency )
-            return;
-        lastSample = time;
-
-        dispatchMotion();
     }
 
     /**
@@ -168,6 +104,7 @@ public class TouchAppState extends BaseAppState {
      * An early out is provided if no PickEventSessions are active (ie. no touch
      * pointers are active).
      */
+    @Override
     protected void dispatchMotion() {
         if (pointerDataMap.isEmpty()) {
             return;
@@ -217,9 +154,9 @@ public class TouchAppState extends BaseAppState {
     protected PointerData getPointerData(int pointerId, int x, int y) {
         PointerData pointerData;
         if (pointerDataMap.isEmpty()) {
-            pointerData = new PointerData(pointerId, session, x, y);
+            pointerData = new PointerData(pointerId, getSession(), x, y);
         } else if (!pointerDataMap.containsKey(pointerId)) {
-            pointerData = new PointerData(pointerId, session.clone(), x, y);
+            pointerData = new PointerData(pointerId, getSession().clone(), x, y);
         } else {
             pointerData = pointerDataMap.get(pointerId);
             pointerData.lastX = x;
