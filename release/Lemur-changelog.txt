@@ -25,6 +25,7 @@ Lemur 1.7.1
     provide better control over the order in which the layers are checked for collisions.
     By default, the GUI layer is checked and then the SCENE layer but the applications
     can now add their own layers by changing this ordering with PickState.setPickLayerOrder()
+* Pegged the JME dependency at alpha3 since the next version will be alpha4+ specific.
 
 
 Lemur 1.6.1
