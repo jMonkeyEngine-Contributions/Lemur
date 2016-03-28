@@ -3,7 +3,7 @@ buildscript {
         jcenter()
     }
     dependencies {
-        // This sucks down a lot of stuff that 'normal' users wouldn't 
+        // This sucks down a lot of stuff that 'normal' users wouldn't
         // have and won't need anyway.
         if( project.hasProperty('releaseUser') ) {
             classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.6'
@@ -13,31 +13,34 @@ buildscript {
 
 apply plugin: 'java'
 
-version='1.7.1-SNAPSHOT'
+version='1.7.1'
 
-ext.jmeVersion='[3.1,)'
+ext.jmeVersion='3.1.0-alpha3'
+//ext.jmeVersion='[3.1,)'
+//ext.jmeVersion='unknown'
 
 ext {
     bintrayLabels = ['jMonkeyEngine', 'gamedev', 'GUI']
-    releaseDescription = "Lemur ${project.version}"    
-    releaseVcsTag = "v${project.version}"    
+    releaseDescription = "Lemur ${project.version}"
+    releaseVcsTag = "v${project.version}"
 }
 
 repositories {
+    mavenLocal()
     jcenter()
 }
 
 dependencies {
     compile "org.jmonkeyengine:jme3-core:$jmeVersion"
-    
+
     compile 'com.google.guava:guava:19.0'
     compile 'org.slf4j:slf4j-api:1.7.13'
 }
 
 compileJava.doLast {
-    def buildDate = new Date().format('yyyyMMdd') 
+    def buildDate = new Date().format('yyyyMMdd')
     println "Writing lemur.build.date:" + buildDate
-    new File(destinationDir, 'lemur.build.date').text = buildDate 
+    new File(destinationDir, 'lemur.build.date').text = buildDate
 }
 
 // Common configuration for the root and all 'real' children.
@@ -64,12 +67,13 @@ configure(allprojects.findAll {it.name != 'extensions'}) {
     configurations {
         compile.transitive = false
     }
-    
+
     // Centralizing this bintray reference here so it's easier to
     // remove when JME is in jcenter().
     repositories {
-        // Temporary until JME jars are in jcenter()   
-        maven { url "http://dl.bintray.com/jmonkeyengine/org.jmonkeyengine" }    
+        // Temporary until JME jars are in jcenter()
+        //maven { url "http://dl.bintray.com/jmonkeyengine/org.jmonkeyengine" }
+        jcenter()
     }
 
     /*
@@ -83,13 +87,13 @@ configure(allprojects.findAll {it.name != 'extensions'}) {
         classifier = 'javadoc'
         from javadoc.destinationDir
     }
- 
+
     artifacts {
         archives sourcesJar
         archives javadocJar
     }
     */
-    
+
 }
 
 // *** For some reason, this can't be injected from the root project
@@ -99,7 +103,7 @@ configure(allprojects.findAll {it.name != 'extensions'}) {
 task sourcesJar(type: Jar) {
     classifier = 'sources'
     from sourceSets.main.allSource
-    exclude '**/.backups' 
+    exclude '**/.backups'
 }
 
 task javadocJar(type: Jar, dependsOn: javadoc) {
