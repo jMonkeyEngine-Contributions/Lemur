@@ -13,10 +13,9 @@ buildscript {
 
 apply plugin: 'java'
 
-version='1.7.1'
+version='1.8.1'
 
-ext.jmeVersion='3.1.0-alpha3'
-//ext.jmeVersion='[3.1,)'
+ext.jmeVersion='[3.1,)' // but must be alpha4 or better
 //ext.jmeVersion='unknown'
 
 ext {
