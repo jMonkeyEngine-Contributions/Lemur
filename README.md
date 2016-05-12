@@ -55,3 +55,6 @@ the layouts are setup to manage fully 3D components.
 ## Patreon
 
 If you find Lemur useful then please consider supporting me on [Patreon](https://www.patreon.com/pspeed42?ty=h)
+
+## License
+Lemur is under the same license as JMonkeyEngine. Please see the LICENSE file for details.
