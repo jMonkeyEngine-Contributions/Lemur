@@ -103,7 +103,7 @@ Vector3f.metaClass {
 }
 
 
-Vector2f vec3( Number x, Number y ) {
+Vector2f vec2( Number x, Number y ) {
     return new Vector2f(x.floatValue(), y.floatValue());
 }
 
