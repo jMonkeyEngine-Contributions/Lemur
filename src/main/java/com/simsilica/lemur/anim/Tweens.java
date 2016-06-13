@@ -42,7 +42,7 @@ import java.util.Arrays;
 import java.util.Objects;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
+import com.google.common.primitives.Primitives;
 
 /**
  *  Static utility methods for creating common generic Tween objects.
@@ -437,7 +437,8 @@ public class Tweens {
                 }
                 int matches = 0;
                 for( int i = 0; i < args.length; i++ ) {
-                    if( paramTypes[i].isInstance(args[i]) ) {
+                    if( paramTypes[i].isInstance(args[i]) 
+                        || Primitives.wrap(paramTypes[i]).isInstance(args[i]) ) {
                         matches++;
                     }    
                 }
