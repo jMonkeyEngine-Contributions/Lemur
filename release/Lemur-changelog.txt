@@ -1,3 +1,13 @@
+Lemur 1.8.2
+------------
+* Fixed a typo in the MathApi used by the style loader language.
+    Now properly supports vec2().
+* Fixed a bug in Button where the highlight off state wasn't triggered
+    if the button was disabled but highlight was on.
+* Fixed a bug in Tweens to support primitive arguments in the callMethods()
+    tween.
+
+
 Lemur 1.8.1
 ------------
 * Recompiled against JME 3.1.0-alpha4, otherwise equivalent to 1.7.1
