@@ -282,8 +282,13 @@ public class Button extends Label {
 
         @Override
         public void mouseExited( MouseMotionEvent event, Spatial target, Spatial capture ) {
-            if( !isEnabled() )
-                return;
+            //if( !isEnabled() )
+            //    return;
+            if( !isHighlightOn() ) {
+                // If the highlight is on then we need to run through
+                // the events regardless of enabled state... and if it's 
+                // not on then there is no reason to run events. 
+            }
             showHighlight(false);
             commandMap.runCommands(ButtonAction.HighlightOff);
             runEffect(EFFECT_DEACTIVATE);
