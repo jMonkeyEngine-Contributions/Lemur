@@ -85,7 +85,7 @@ public class DefaultMouseListener implements MouseListener {
         }
     }
 
-    public void mousePressed( MouseMotionEvent event, Spatial target, Spatial capture ) {
+    public void mousePressed( MouseButtonEvent event, Spatial target, Spatial capture ) {
     }
     
     public void mouseEntered( MouseMotionEvent event, Spatial target, Spatial capture ) {
