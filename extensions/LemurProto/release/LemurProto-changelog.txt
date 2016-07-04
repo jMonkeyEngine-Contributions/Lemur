@@ -1,3 +1,15 @@
+Lemur-Proto 1.7.1
+------------------
+* Added ListAction command support to ListBox along with default effect
+    triggering.  Currently includes actions similar to for buttons:
+    Down, Up, Click, Entered, Exited
+    
+
+Lemur-Proto 1.6.1
+------------------
+* Same as 1.5.1 except compiled against the newer JME 3.1 alpha4 or better.
+
+
 Lemur-Proto 1.5.1
 ------------------
 * Modified OptionPanel and OptionPanelState to run effects on  

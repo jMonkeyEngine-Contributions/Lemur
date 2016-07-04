@@ -36,33 +36,20 @@
  
 package com.simsilica.lemur;
 
+import java.util.*;
+
 import com.google.common.base.Objects;
+
 import com.jme3.material.RenderState.BlendMode;
-import com.jme3.math.ColorRGBA;
-import com.jme3.math.Vector3f;
-import com.jme3.scene.Node;
-import com.jme3.scene.Spatial;
-import com.simsilica.lemur.component.AbstractGuiComponent;
-import com.simsilica.lemur.component.BorderLayout;
-import com.simsilica.lemur.component.QuadBackgroundComponent;
-import com.simsilica.lemur.core.AbstractGuiControlListener;
-import com.simsilica.lemur.core.GuiControl;
-import com.simsilica.lemur.core.VersionedList;
-import com.simsilica.lemur.core.VersionedReference;
-import com.simsilica.lemur.event.CursorButtonEvent;
-import com.simsilica.lemur.event.CursorEventControl;
-import com.simsilica.lemur.event.DefaultCursorListener;
+import com.jme3.math.*;
+import com.jme3.scene.*;
+
+import com.simsilica.lemur.component.*;
+import com.simsilica.lemur.core.*;
+import com.simsilica.lemur.event.*;
 import com.simsilica.lemur.grid.GridModel;
-import com.simsilica.lemur.list.CellRenderer;
-import com.simsilica.lemur.list.DefaultCellRenderer;
-import com.simsilica.lemur.list.SelectionModel;
-import com.simsilica.lemur.style.Attributes;
-import com.simsilica.lemur.style.ElementId;
-import com.simsilica.lemur.style.StyleAttribute;
-import com.simsilica.lemur.style.StyleDefaults;
-import com.simsilica.lemur.style.Styles;
-import java.util.List;
-import java.util.Set;
+import com.simsilica.lemur.list.*;
+import com.simsilica.lemur.style.*;
 
 
 /**
@@ -77,6 +64,15 @@ public class ListBox<T> extends Panel {
     public static final String SLIDER_ID = "slider";
     public static final String SELECTOR_ID = "selector";
 
+    public static final String EFFECT_PRESS = "press";
+    public static final String EFFECT_RELEASE = "release";
+    public static final String EFFECT_CLICK = "click";
+    public static final String EFFECT_ACTIVATE = "activate";
+    public static final String EFFECT_DEACTIVATE = "deactivate";
+    
+    public enum ListAction { Down, Up, Click, Entered, Exited };
+
+
     private BorderLayout layout;
     private VersionedList<T> model;
     private VersionedReference<List<T>> modelRef;
@@ -86,7 +82,9 @@ public class ListBox<T> extends Panel {
     private VersionedReference<Set<Integer>> selectionRef;
     
     private ClickListener clickListener = new ClickListener();
-    
+    private CommandMap<ListBox, ListAction> commandMap
+                                    = new CommandMap<ListBox, ListAction>(this);
+
     private GridPanel grid;
     private Slider slider;
     private Node selectorArea;
@@ -256,6 +254,36 @@ public class ListBox<T> extends Panel {
     public SelectionModel getSelectionModel() {
         return selection;
     }
+ 
+    public void addCommands( ListAction a, Command<? super ListBox>... commands ) {
+        commandMap.addCommands(a, commands);
+    }
+
+    public List<Command<? super ListBox>> getCommands( ListAction a ) {
+        return commandMap.get(a, false);
+    }
+
+    public void addClickCommands( Command<? super ListBox>... commands ) {
+        commandMap.addCommands(ListAction.Click, commands);
+    }
+
+    public void removeClickCommands( Command<? super ListBox>... commands ) {
+        getClickCommands().removeAll(Arrays.asList(commands));
+    } 
+
+    public List<Command<? super ListBox>> getClickCommands() {
+        return commandMap.get(ListAction.Click, false);
+    }
+
+    @StyleAttribute("listCommands")
+    public void setListCommands( Map<ListAction, List<Command<? super ListBox>>> map ) {
+        commandMap.clear();
+        // We don't use putAll() because (right now) it would potentially
+        // put the wrong list implementations into the command map.
+        for( Map.Entry<ListAction, List<Command<? super ListBox>>> e : map.entrySet() ) {
+            commandMap.addCommands(e.getKey(), e.getValue());
+        }
+    } 
         
     @StyleAttribute(value="visibleItems", lookupDefault=false)
     public void setVisibleItems( int count ) {
@@ -366,6 +394,20 @@ public class ListBox<T> extends Panel {
     }
     
     private class ClickListener extends DefaultCursorListener {
+ 
+        // tracks whether we've sent entered events or not
+        private boolean entered = false;
+        
+        // Tracks whether we've sent pressed events or not
+        private boolean pressed = false;
+ 
+        @Override
+        protected void click( CursorButtonEvent event, Spatial target, Spatial capture ) {
+            //if( !isEnabled() )
+            //    return;
+            commandMap.runCommands(ListAction.Click);
+            runEffect(EFFECT_CLICK);
+        }
     
         @Override
         public void cursorButtonEvent( CursorButtonEvent event, Spatial target, Spatial capture ) {
@@ -377,9 +419,54 @@ public class ListBox<T> extends Panel {
                 if( cell == target ) {
                     selection.add(base + i);                    
                 }
-            }            
+            }
+            
+            // List boxes always consume their click events
+            event.setConsumed();
+        
+            // Do our own better handling of 'click' now
+            //if( !isEnabled() )
+            //    return;                                            
+
+            pressed = event.isPressed();
+            if( event.isPressed() ) {
+                commandMap.runCommands(ListAction.Down);
+                runEffect(EFFECT_PRESS);
+            } else {
+                if( target == capture ) {
+                    // Then we are still over the list box and we should run the
+                    // click
+                    click(event, target, capture);
+                }
+                // If we run the up without checking properly then we
+                // potentially get up events with no down event.  This messes
+                // up listeners that are (correctly) expecting an up for every
+                // down and no ups without downs.
+                // So, any time the capture is us then we will run, else not
+                if( capture == ListBox.this ) {
+                    commandMap.runCommands(ListAction.Up);
+                    runEffect(EFFECT_RELEASE);
+                }
+            }
         }
     
+        @Override
+        public void cursorEntered( CursorMotionEvent event, Spatial target, Spatial capture ) {
+            if( capture == ListBox.this || (target == ListBox.this && capture == null) ) {
+                entered = true;
+                commandMap.runCommands(ListAction.Entered);
+                runEffect(EFFECT_ACTIVATE);
+            }
+        }
+
+        @Override
+        public void cursorExited( CursorMotionEvent event, Spatial target, Spatial capture ) {
+            if( entered ) {
+                commandMap.runCommands(ListAction.Exited);
+                runEffect(EFFECT_DEACTIVATE);
+                entered = false;
+            }
+        }
     }
 
     private class GridListener extends AbstractGuiControlListener {
