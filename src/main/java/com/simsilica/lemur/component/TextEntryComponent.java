@@ -287,7 +287,11 @@ public class TextEntryComponent extends AbstractGuiComponent
 
     protected void resetCursorColor() {
         float alpha = bitmapText.getAlpha();
+        if( alpha == -1 ) {
+            alpha = 1;
+        }
         ColorRGBA color = bitmapText.getColor();
+        
         if( alpha == 1 ) {
             cursor.getMaterial().setColor("Color", color);
         } else {

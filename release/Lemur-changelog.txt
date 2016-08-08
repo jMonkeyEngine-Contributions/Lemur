@@ -6,6 +6,8 @@ Lemur 1.8.2
     if the button was disabled but highlight was on.
 * Fixed a bug in Tweens to support primitive arguments in the callMethods()
     tween.
+* Fixed a bug where the cursor of a text field would be invisible if the
+    alpha value had never been set.    
 
 
 Lemur 1.8.1
