@@ -106,7 +106,12 @@ public class CallMethodAction extends Action {
         // It's not a straight lookup because we support
         // protected methods and methods that take some arguments
         // like the action or the button.
-        Class type = object.getClass();        
+        Class type = object.getClass();
+        findMethod(type);
+    }        
+        
+    protected void findMethod( Class type ) {
+        log.trace("Finding method:" + methodName + " on:" + type);        
         for( Method m : type.getDeclaredMethods() ) {
             log.trace("Checking method:" + m); 
             if( !methodName.equals(m.getName()) ) {
@@ -132,9 +137,12 @@ public class CallMethodAction extends Action {
             
             break;
         }
+        if( method == null && type != Object.class ) {
+            findMethod(type.getSuperclass());
+        } 
         log.trace("Found:" + method);        
         if( this.method == null ) {
-            throw new RuntimeException("Method not found for:" + methodName + " on type:" + object);
+            throw new RuntimeException("Method not found for:" + methodName + " on type:" + type);
         }        
     }    
     

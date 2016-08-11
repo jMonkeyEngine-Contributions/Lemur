@@ -3,7 +3,9 @@ Lemur-Proto 1.7.1
 * Added ListAction command support to ListBox along with default effect
     triggering.  Currently includes actions similar to for buttons:
     Down, Up, Click, Entered, Exited
-    
+* Fixed a bug in CallMethodAction where it wasn't searching for methods
+    in the superclasses.  Also added another trace() logging call.
+        
 
 Lemur-Proto 1.6.1
 ------------------
