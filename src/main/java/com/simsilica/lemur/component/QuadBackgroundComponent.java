@@ -274,6 +274,7 @@ public class QuadBackgroundComponent extends AbstractGuiComponent
             Quad q = (Quad)background.getMesh();
             if( size.x != q.getWidth() || size.y != q.getHeight() ) {               
                 q.updateGeometry(size.x, size.y);
+                q.clearCollisionData(); 
             }
         }
         

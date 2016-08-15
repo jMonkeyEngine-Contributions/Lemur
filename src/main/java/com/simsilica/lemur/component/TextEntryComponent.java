@@ -371,6 +371,7 @@ public class TextEntryComponent extends AbstractGuiComponent
 
     protected void resizeCursor() {
         cursorQuad.updateGeometry(bitmapText.getLineHeight()/16f, bitmapText.getLineHeight());
+        cursorQuad.clearCollisionData(); 
     }
 
     protected void resetCursorState() {

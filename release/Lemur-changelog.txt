@@ -8,6 +8,9 @@ Lemur 1.8.2
     tween.
 * Fixed a bug where the cursor of a text field would be invisible if the
     alpha value had never been set.    
+* Fixed a bug in QuadBackgroundComponent and TbtQuadBackgroundComponent
+    where the cached collision data wasn't being cleared on resize causing
+    mouse picking to fail if the objects increased in size.     
 
 
 Lemur 1.8.1

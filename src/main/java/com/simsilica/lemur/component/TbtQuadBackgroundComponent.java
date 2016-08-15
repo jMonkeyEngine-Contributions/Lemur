@@ -294,6 +294,7 @@ public class TbtQuadBackgroundComponent extends AbstractGuiComponent
         // a totally different size.
         TbtQuad q = (TbtQuad)background.getMesh();
         q.updateSize(size.x, size.y);
+        q.clearCollisionData(); 
     }
  
     @Override   
