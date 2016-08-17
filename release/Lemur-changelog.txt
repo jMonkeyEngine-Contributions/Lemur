@@ -1,3 +1,9 @@
+Lemur <undetermined>
+------------
+* Fixed a bug in RollupPanel.setContents(null) where removing the existing
+    contents was causing problems if the rollup panel was closed.
+
+
 Lemur 1.8.2
 ------------
 * Fixed a typo in the MathApi used by the style loader language.
@@ -7,10 +13,10 @@ Lemur 1.8.2
 * Fixed a bug in Tweens to support primitive arguments in the callMethods()
     tween.
 * Fixed a bug where the cursor of a text field would be invisible if the
-    alpha value had never been set.    
+    alpha value had never been set.
 * Fixed a bug in QuadBackgroundComponent and TbtQuadBackgroundComponent
     where the cached collision data wasn't being cleared on resize causing
-    mouse picking to fail if the objects increased in size.     
+    mouse picking to fail if the objects increased in size.
 
 
 Lemur 1.8.1
