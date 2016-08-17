@@ -1,3 +1,8 @@
+Lemur-Proto <undetermined>
+------------------
+* Fixed a missing body of the default constructor for ColorChooser.
+
+
 Lemur-Proto 1.7.1
 ------------------
 * Added ListAction command support to ListBox along with default effect
@@ -5,7 +10,7 @@ Lemur-Proto 1.7.1
     Down, Up, Click, Entered, Exited
 * Fixed a bug in CallMethodAction where it wasn't searching for methods
     in the superclasses.  Also added another trace() logging call.
-        
+
 
 Lemur-Proto 1.6.1
 ------------------
@@ -14,11 +19,11 @@ Lemur-Proto 1.6.1
 
 Lemur-Proto 1.5.1
 ------------------
-* Modified OptionPanel and OptionPanelState to run effects on  
+* Modified OptionPanel and OptionPanelState to run effects on
     open or close.
 * Added a VersionedReferenceList that can be used to watch several
-    VersionedReferences for changes.    
-    
+    VersionedReferences for changes.
+
 
 Lemur-Proto v1.4.2
 -------------------
@@ -28,7 +33,7 @@ Lemur-Proto v1.4.2
 * Fixed GridPanel to set the alpha of its children when they are added
     if the panel has an alpha configured.
 * Added some additional show() methods to OptionPanelState that allow
-    the panel's ElementId to be specified.    
+    the panel's ElementId to be specified.
 
 
 Revision v1.4.1
@@ -44,7 +49,7 @@ Revision v1.4.1
     present OptionPanel's to the user.
 * Added setSelection() and getSelection() to list.SelectionModel
     for more easily setting/getting a single selection.
-* Fixed GridPanel to update its displayed values if the model    
+* Fixed GridPanel to update its displayed values if the model
     has changed.  Prior to this, add/remove/set on the model
     was not reflected properly in the grid.
 * Fixed ListBox to reset its slider range when the list model
@@ -65,7 +70,7 @@ Revision v1.4.1
     instead of just "list"
 * Added a glass-styles.groovy to augment the default glass style
     with styling for the ListBox and OptionPanel elements.  These
-    styles are automatically loaded when the glass style is 
+    styles are automatically loaded when the glass style is
     loaded.
 * Fixed ListBox to properly pass style through on all constructors
     that take style as a parameter.
@@ -90,7 +95,7 @@ Revision v1.4.1
     panel for "Ok".
 * Added CallMethodAction that delegates to a specified method on some object.
 * Added a ColorChooser component that presents an HS selection panel and a separate
-    B slider.         
+    B slider.
 
 
 Revision 1505
