@@ -133,7 +133,7 @@ public class FocusManagerState extends BaseAppState {
             }
         }
         
-        // Tell the old hiearchy that focus is gone
+        // Tell the old hierarchy that focus is gone
         for( int i = lca + 1; i < oldHierarchy.size(); i++ ) {
             FocusTarget target = findFocusTarget(oldHierarchy.get(i));
             if( target != null ) {
@@ -149,7 +149,7 @@ public class FocusManagerState extends BaseAppState {
             }
         }
         
-        // Cache the hiearchy for later
+        // Cache the hierarchy for later
         focusHierarchy = newHierarchy;
     }  
 
@@ -167,7 +167,7 @@ public class FocusManagerState extends BaseAppState {
 
     @Override
     protected void disable() {
-        // Let the whole existing focus hiearchy know
+        // Let the whole existing focus hierarchy know
         // we're unfocused. 
         for( Spatial s : focusHierarchy ) {
             FocusTarget target = findFocusTarget(s);
