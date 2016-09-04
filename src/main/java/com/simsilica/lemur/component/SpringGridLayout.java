@@ -67,7 +67,7 @@ public class SpringGridLayout extends AbstractGuiComponent
     private float[] colPrefs;
 
     private Map<Integer,Map<Integer,Entry>> children = new HashMap<Integer, Map<Integer,Entry>>();
-    private Map<Node, Entry> lookup = new HashMap<Node, Entry>();
+    private Map<Node, Entry> lookup = new LinkedHashMap<Node, Entry>();
 
     private Vector3f lastPreferredSize = new Vector3f();
 
