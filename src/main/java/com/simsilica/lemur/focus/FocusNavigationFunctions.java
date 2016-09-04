@@ -51,13 +51,23 @@ import com.simsilica.lemur.input.InputState;
 public class FocusNavigationFunctions {
 
     public static final String UI_NAV = "UI Navigation";
-    
+ 
+    public static final FunctionId F_NEXT = new FunctionId(UI_NAV, "Next");   
+    public static final FunctionId F_PREV = new FunctionId(UI_NAV, "Previous");   
     public static final FunctionId F_X_AXIS = new FunctionId(UI_NAV, "X Axis");    
     public static final FunctionId F_Y_AXIS = new FunctionId(UI_NAV, "Y Axis");    
     public static final FunctionId F_ACTIVATE = new FunctionId(UI_NAV, "Activate");           
     
     public static void initializeDefaultMappings( InputMapper inputMapper ) {
  
+        if( !inputMapper.hasMappings(F_NEXT) ) {
+            inputMapper.map(F_NEXT, KeyInput.KEY_TAB);
+        }
+        if( !inputMapper.hasMappings(F_PREV) ) {
+            inputMapper.map(F_PREV, KeyInput.KEY_TAB, KeyInput.KEY_LSHIFT);
+            inputMapper.map(F_PREV, KeyInput.KEY_TAB, KeyInput.KEY_RSHIFT);
+        }
+           
         if( !inputMapper.hasMappings(F_X_AXIS) ) {   
             inputMapper.map(F_X_AXIS, KeyInput.KEY_RIGHT);
             inputMapper.map(F_X_AXIS, InputState.Negative, KeyInput.KEY_LEFT);

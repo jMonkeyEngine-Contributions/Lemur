@@ -88,7 +88,7 @@ public class FocusManagerState extends BaseAppState {
     
         if( this.focus == focus )
             return;
-       
+
         this.focus = focus;
         if( isEnabled() ) {
             updateFocusHierarchy();

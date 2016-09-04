@@ -108,6 +108,8 @@ public class FocusNavigationState extends BaseAppState {
         FocusNavigationFunctions.initializeDefaultMappings(inputMapper);
            
         inputMapper.addStateListener(inputHandler, 
+                                     FocusNavigationFunctions.F_NEXT,
+                                     FocusNavigationFunctions.F_PREV,
                                      FocusNavigationFunctions.F_X_AXIS,
                                      FocusNavigationFunctions.F_Y_AXIS,
                                      FocusNavigationFunctions.F_ACTIVATE
@@ -117,6 +119,8 @@ public class FocusNavigationState extends BaseAppState {
     @Override
     protected void cleanup( Application app ) {
         inputMapper.removeStateListener(inputHandler, 
+                                        FocusNavigationFunctions.F_NEXT,
+                                        FocusNavigationFunctions.F_PREV,
                                         FocusNavigationFunctions.F_X_AXIS,
                                         FocusNavigationFunctions.F_Y_AXIS,
                                         FocusNavigationFunctions.F_ACTIVATE
@@ -183,6 +187,14 @@ public class FocusNavigationState extends BaseAppState {
         return null;        
     }
  
+    protected void navigate( TraversalDirection dir ) {
+        Spatial current = getCurrentFocus();
+        if( current == null ) {
+            return;
+        }
+        requestChangeFocus(current, dir);
+    }
+ 
     protected void navigateLeft() {
         Spatial current = getCurrentFocus();
         if( current == null ) {
@@ -224,7 +236,15 @@ public class FocusNavigationState extends BaseAppState {
             if( value == InputState.Off ) {
                 return;
             }
-            
+ 
+            if( func == FocusNavigationFunctions.F_NEXT ) {
+                navigate(TraversalDirection.Next);
+            }
+                        
+            if( func == FocusNavigationFunctions.F_PREV ) {
+                navigate(TraversalDirection.Previous);
+            }
+                        
             if( func == FocusNavigationFunctions.F_X_AXIS ) {
                 if( value == InputState.Positive ) {
                     navigateRight();

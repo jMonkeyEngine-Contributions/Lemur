@@ -18,6 +18,10 @@ Lemur <undetermined>
 * Added a KeyModifiers class and moved the key modifier bit constants to it.
 * Modified SpringGridLayout to keep its children in a LinkedHashMap so that the
     initial ordering is still available.
+* Made buttons "focusable" so that they can participate in focus navigation.
+* Added a focusColor and focusShadowColor to Button to indicate focus.
+* Added support for ButtonAction.FocusGained and ButtonAction.FocusLost button actions.
+* Added Button.EFFECT_FOCUS, Button.EFFECT_UNFOCUS effect triggers.    
     
 
 Lemur 1.8.2
