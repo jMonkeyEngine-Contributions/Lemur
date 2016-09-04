@@ -108,10 +108,8 @@ public class FocusNavigationState extends BaseAppState {
         FocusNavigationFunctions.initializeDefaultMappings(inputMapper);
            
         inputMapper.addStateListener(inputHandler, 
-                                     FocusNavigationFunctions.F_LEFT,
-                                     FocusNavigationFunctions.F_RIGHT,
-                                     FocusNavigationFunctions.F_UP,
-                                     FocusNavigationFunctions.F_DOWN,
+                                     FocusNavigationFunctions.F_X_AXIS,
+                                     FocusNavigationFunctions.F_Y_AXIS,
                                      FocusNavigationFunctions.F_ACTIVATE
                                      );
     }
@@ -119,10 +117,8 @@ public class FocusNavigationState extends BaseAppState {
     @Override
     protected void cleanup( Application app ) {
         inputMapper.removeStateListener(inputHandler, 
-                                        FocusNavigationFunctions.F_LEFT,
-                                        FocusNavigationFunctions.F_RIGHT,
-                                        FocusNavigationFunctions.F_UP,
-                                        FocusNavigationFunctions.F_DOWN,
+                                        FocusNavigationFunctions.F_X_AXIS,
+                                        FocusNavigationFunctions.F_Y_AXIS,
                                         FocusNavigationFunctions.F_ACTIVATE
                                         );
     }
@@ -200,7 +196,7 @@ public class FocusNavigationState extends BaseAppState {
         if( current == null ) {
             return;
         }
-        requestChangeFocus(current, TraversalDirection.Left);
+        requestChangeFocus(current, TraversalDirection.Right);
     }
 
     protected void navigateUp() {
@@ -208,7 +204,7 @@ public class FocusNavigationState extends BaseAppState {
         if( current == null ) {
             return;
         }
-        requestChangeFocus(current, TraversalDirection.Left);
+        requestChangeFocus(current, TraversalDirection.Up);
     }
 
     protected void navigateDown() {
@@ -216,7 +212,7 @@ public class FocusNavigationState extends BaseAppState {
         if( current == null ) {
             return;
         }
-        requestChangeFocus(current, TraversalDirection.Left);
+        requestChangeFocus(current, TraversalDirection.Down);
     }
     
     private class InputHandler implements StateFunctionListener {
@@ -229,18 +225,20 @@ public class FocusNavigationState extends BaseAppState {
                 return;
             }
             
-            if( func == FocusNavigationFunctions.F_LEFT ) {
-                navigateLeft();
+            if( func == FocusNavigationFunctions.F_X_AXIS ) {
+                if( value == InputState.Positive ) {
+                    navigateRight();
+                } else { 
+                    navigateLeft();
+                }
             }
-            if( func == FocusNavigationFunctions.F_RIGHT ) {
-                navigateRight();
+            if( func == FocusNavigationFunctions.F_Y_AXIS ) {
+                if( value == InputState.Positive ) {
+                    navigateUp();
+                } else { 
+                    navigateDown();
+                }
             }
-            if( func == FocusNavigationFunctions.F_UP ) {
-                navigateUp();
-            }
-            if( func == FocusNavigationFunctions.F_DOWN ) {
-                navigateDown();
-            }            
         }
     }
 }

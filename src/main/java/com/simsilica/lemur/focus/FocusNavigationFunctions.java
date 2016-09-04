@@ -37,8 +37,10 @@
 package com.simsilica.lemur.focus;
 
 import com.jme3.input.KeyInput;
+import com.simsilica.lemur.input.Axis;
 import com.simsilica.lemur.input.FunctionId;
 import com.simsilica.lemur.input.InputMapper;
+import com.simsilica.lemur.input.InputState;
 
 /**
  *  Defines the standard functions and default mappings
@@ -50,25 +52,26 @@ public class FocusNavigationFunctions {
 
     public static final String UI_NAV = "UI Navigation";
     
-    public static final FunctionId F_LEFT = new FunctionId(UI_NAV, "Left");    
-    public static final FunctionId F_RIGHT = new FunctionId(UI_NAV, "Right");    
-    public static final FunctionId F_UP = new FunctionId(UI_NAV, "Up");    
-    public static final FunctionId F_DOWN = new FunctionId(UI_NAV, "Down");
+    public static final FunctionId F_X_AXIS = new FunctionId(UI_NAV, "X Axis");    
+    public static final FunctionId F_Y_AXIS = new FunctionId(UI_NAV, "Y Axis");    
     public static final FunctionId F_ACTIVATE = new FunctionId(UI_NAV, "Activate");           
     
     public static void initializeDefaultMappings( InputMapper inputMapper ) {
  
-        if( !inputMapper.hasMappings(F_LEFT) ) {   
-            inputMapper.map(F_LEFT, KeyInput.KEY_LEFT);
+        if( !inputMapper.hasMappings(F_X_AXIS) ) {   
+            inputMapper.map(F_X_AXIS, KeyInput.KEY_RIGHT);
+            inputMapper.map(F_X_AXIS, InputState.Negative, KeyInput.KEY_LEFT);
+            inputMapper.map(F_X_AXIS, Axis.JOYSTICK_LEFT_X); 
+            inputMapper.map(F_X_AXIS, Axis.JOYSTICK_HAT_X); 
         }
-        if( !inputMapper.hasMappings(F_RIGHT) ) {   
-            inputMapper.map(F_RIGHT, KeyInput.KEY_RIGHT);
-        }
-        if( !inputMapper.hasMappings(F_UP) ) {   
-            inputMapper.map(F_UP, KeyInput.KEY_UP);
-        }
-        if( !inputMapper.hasMappings(F_DOWN) ) {   
-            inputMapper.map(F_DOWN, KeyInput.KEY_DOWN);
+        
+        if( !inputMapper.hasMappings(F_Y_AXIS) ) {   
+            inputMapper.map(F_Y_AXIS, KeyInput.KEY_UP);
+            inputMapper.map(F_Y_AXIS, InputState.Negative, KeyInput.KEY_DOWN);
+            
+            // y is inverted on my joysticks
+            inputMapper.map(F_Y_AXIS, InputState.Negative, Axis.JOYSTICK_LEFT_Y); 
+            inputMapper.map(F_Y_AXIS, Axis.JOYSTICK_HAT_Y); 
         }
 
         if( !inputMapper.hasMappings(F_ACTIVATE) ) {   
