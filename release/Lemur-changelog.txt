@@ -2,7 +2,23 @@ Lemur <undetermined>
 ------------
 * Fixed a bug in RollupPanel.setContents(null) where removing the existing
     contents was causing problems if the rollup panel was closed.
-
+* Fixed a code-spotted bug where setting a null layout would have caused an
+    NPE.
+* Added basic focus navigation support including simple default implementations
+    in the standard GUI elements.
+* Modified KeyAction to support SHIFT_DOWN in addition to CONTROL_DOWN.
+* Upated TextEntryComponent to hook up some standard keys to focus actions for
+    single line text fields.    
+    Tab = Next, Shift+Tab = Previous, Enter = Next, Up = Up, Down = Down.
+* Added a ModifiedKeyInputEvent that extends JME's normal KeyInputEvent to
+    provide modifier flags for alt, ctrl, shift, etc..  Modified the KeyInterceptorState
+    to wrap KeyInputEvents in this event for delivery to the listeners.  Listeners
+    that want the modifiers (unfortunately) must cast to the more specific
+    event class.  
+* Added a KeyModifiers class and moved the key modifier bit constants to it.
+* Modified SpringGridLayout to keep its children in a LinkedHashMap so that the
+    initial ordering is still available.
+    
 
 Lemur 1.8.2
 ------------
