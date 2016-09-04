@@ -45,10 +45,14 @@ import com.jme3.input.event.KeyInputEvent;
 import com.jme3.material.RenderState.BlendMode;
 import com.jme3.math.*;
 import com.jme3.scene.Geometry;
+import com.jme3.scene.Spatial;
 import com.jme3.scene.Spatial.CullHint;
 import com.jme3.scene.shape.Quad;
+
 import com.simsilica.lemur.DocumentModel;
 import com.simsilica.lemur.focus.FocusTarget;
+import com.simsilica.lemur.focus.FocusNavigationState;
+import com.simsilica.lemur.focus.FocusTraversal.TraversalDirection;
 import com.simsilica.lemur.core.GuiControl;
 import com.simsilica.lemur.GuiGlobals;
 import com.simsilica.lemur.core.GuiMaterial;
@@ -56,6 +60,8 @@ import com.simsilica.lemur.HAlignment;
 import com.simsilica.lemur.event.KeyAction;
 import com.simsilica.lemur.event.KeyActionListener;
 import com.simsilica.lemur.event.KeyListener;
+import com.simsilica.lemur.event.KeyModifiers;
+import com.simsilica.lemur.event.ModifiedKeyInputEvent;
 import com.simsilica.lemur.VAlignment;
 
 
@@ -83,12 +89,17 @@ public class TextEntryComponent extends AbstractGuiComponent
     public static final KeyActionListener NEW_LINE = new NewLine();
     public static final KeyActionListener DELETE = new Delete();
 
+    public static final KeyActionListener FOCUS_NEXT = new FocusChange(TraversalDirection.Next);
+    public static final KeyActionListener FOCUS_PREVIOUS = new FocusChange(TraversalDirection.Previous);
+    public static final KeyActionListener FOCUS_DOWN = new FocusChange(TraversalDirection.Down);
+    public static final KeyActionListener FOCUS_UP = new FocusChange(TraversalDirection.Up);
+
     private static final Map<KeyAction,KeyActionListener> standardActions = new HashMap<KeyAction,KeyActionListener>();
     static {
         standardActions.put(new KeyAction(KeyInput.KEY_HOME), LINE_HOME);
         standardActions.put(new KeyAction(KeyInput.KEY_END), LINE_END);
-        standardActions.put(new KeyAction(KeyInput.KEY_HOME, KeyAction.CONTROL_DOWN), DOC_HOME);
-        standardActions.put(new KeyAction(KeyInput.KEY_END, KeyAction.CONTROL_DOWN), DOC_END);
+        standardActions.put(new KeyAction(KeyInput.KEY_HOME, KeyModifiers.CONTROL_DOWN), DOC_HOME);
+        standardActions.put(new KeyAction(KeyInput.KEY_END, KeyModifiers.CONTROL_DOWN), DOC_END);
 
         standardActions.put(new KeyAction(KeyInput.KEY_UP), PREV_LINE);
         standardActions.put(new KeyAction(KeyInput.KEY_DOWN), NEXT_LINE);
@@ -227,11 +238,23 @@ public class TextEntryComponent extends AbstractGuiComponent
     public void setSingleLine( boolean f ) {
         this.singleLine = f;
         if( singleLine ) {
-            actionMap.remove(new KeyAction(KeyInput.KEY_RETURN));
-            actionMap.remove(new KeyAction(KeyInput.KEY_NUMPADENTER));
+            actionMap.put(new KeyAction(KeyInput.KEY_RETURN), FOCUS_NEXT);
+            actionMap.put(new KeyAction(KeyInput.KEY_NUMPADENTER), FOCUS_NEXT);
+            actionMap.put(new KeyAction(KeyInput.KEY_TAB), FOCUS_NEXT);
+            actionMap.put(new KeyAction(KeyInput.KEY_TAB, KeyModifiers.SHIFT_DOWN), FOCUS_PREVIOUS);
+            actionMap.put(new KeyAction(KeyInput.KEY_UP), FOCUS_UP);
+            actionMap.put(new KeyAction(KeyInput.KEY_DOWN), FOCUS_DOWN);
         } else {
             actionMap.put(new KeyAction(KeyInput.KEY_RETURN), NEW_LINE);
             actionMap.put(new KeyAction(KeyInput.KEY_NUMPADENTER), NEW_LINE);
+            
+            // We may choose to do something different with tab someday... but 
+            // the user can also just remove the action if they like.
+            actionMap.put(new KeyAction(KeyInput.KEY_TAB), FOCUS_NEXT);
+            actionMap.put(new KeyAction(KeyInput.KEY_TAB, KeyModifiers.SHIFT_DOWN), FOCUS_PREVIOUS);
+            
+            actionMap.put(new KeyAction(KeyInput.KEY_UP), PREV_LINE);
+            actionMap.put(new KeyAction(KeyInput.KEY_DOWN), NEXT_LINE);
         }
     }
 
@@ -646,6 +669,24 @@ public class TextEntryComponent extends AbstractGuiComponent
             source.resetText(); // shouldn't have to do this
         }
     }
+    
+    private static class FocusChange implements KeyActionListener {
+        private TraversalDirection dir;
+        
+        public FocusChange( TraversalDirection dir ) {
+            this.dir = dir;
+        }
+    
+        @Override
+        public void keyAction( TextEntryComponent source, KeyAction key ) {
+            FocusNavigationState nav = GuiGlobals.getInstance().getFocusNavigationState();
+            if( nav == null ) {
+                return;
+            }
+            Spatial current = GuiGlobals.getInstance().getCurrentFocus();
+            nav.requestChangeFocus(current, dir);    
+        } 
+    }
 
 
     private class KeyHandler implements KeyListener {
@@ -654,18 +695,9 @@ public class TextEntryComponent extends AbstractGuiComponent
 
         @Override
         public void onKeyEvent( KeyInputEvent evt ) {
-            int code = evt.getKeyCode();
-            if( code == KeyInput.KEY_LSHIFT || code == KeyInput.KEY_RSHIFT ) {
-                shift = evt.isPressed();
-                return;
-            }
-            if( code == KeyInput.KEY_LCONTROL || code == KeyInput.KEY_RCONTROL ) {
-                control = evt.isPressed();
-                return;
-            }
-
-            if( evt.isPressed() ) {
-                KeyAction key = new KeyAction( code, (control?KeyAction.CONTROL_DOWN:0) );
+            ModifiedKeyInputEvent mEvt = (ModifiedKeyInputEvent)evt;                    
+            if( mEvt.isPressed() ) {
+                KeyAction key = mEvt.toKeyAction(); //new KeyAction(code, (control?KeyAction.CONTROL_DOWN:0), (shift?KeyAction.SHIFT_DOWN:0) );
                 KeyActionListener handler = actionMap.get(key);
                 if( handler != null ) {
                     handler.keyAction(TextEntryComponent.this, key);

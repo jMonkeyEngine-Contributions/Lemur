@@ -44,7 +44,11 @@ import com.jme3.input.KeyNames;
  */
 public class KeyAction {
 
-    public static final int CONTROL_DOWN = 0x1;
+    /**
+     *  @deprecated Use KeyModifiers.CONTROL_DOWN instead.
+     */
+    @Deprecated
+    public static final int CONTROL_DOWN = KeyModifiers.CONTROL_DOWN;
     private static final KeyNames names = new KeyNames();
 
     private int keyCode;
@@ -94,8 +98,11 @@ public class KeyAction {
     public String toString() {
         String name = names.getName(keyCode);
         StringBuilder sb = new StringBuilder("KeyAction[");
-        if( hasModifier(CONTROL_DOWN) ) {
+        if( hasModifier(KeyModifiers.CONTROL_DOWN) ) {
             sb.append( "Control " );
+        }
+        if( hasModifier(KeyModifiers.SHIFT_DOWN) ) {
+            sb.append( "Shift " );
         }
         sb.append(name);
         return sb.toString();

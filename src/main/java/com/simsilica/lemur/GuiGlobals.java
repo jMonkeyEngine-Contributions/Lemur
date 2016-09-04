@@ -44,6 +44,7 @@ import com.simsilica.lemur.event.KeyListener;
 import com.simsilica.lemur.event.KeyInterceptState;
 import com.simsilica.lemur.event.MouseAppState;
 import com.simsilica.lemur.focus.FocusManagerState;
+import com.simsilica.lemur.focus.FocusNavigationState;
 import com.jme3.app.Application;
 import com.jme3.asset.AssetManager;
 import com.jme3.asset.TextureKey;
@@ -106,6 +107,7 @@ public class GuiGlobals {
     private MouseAppState mouseState;
     private TouchAppState touchState;
     private FocusManagerState focusState;
+    private FocusNavigationState focusNavState;
     private AnimationState animationState;
     private String iconBase;
 
@@ -142,7 +144,16 @@ public class GuiGlobals {
         
         this.inputMapper = new InputMapper(app.getInputManager());
         this.focusState = new FocusManagerState();
+        this.focusNavState = new FocusNavigationState(inputMapper, focusState);
         this.animationState = new AnimationState();
+
+        // Write the app state dependencies directly so that:
+        // a) they are there before initialization
+        // b) so that the states don't have to rely on GuiGlobals to find
+        //    them.
+        // c) so that we might disable them properly even at runtime
+        //    if the user kills or replaces the nav state
+        focusState.setFocusNavigationState(focusNavState);
         
         app.getStateManager().attach(keyInterceptor);
         
@@ -154,6 +165,7 @@ public class GuiGlobals {
         }
         
         app.getStateManager().attach(focusState);
+        app.getStateManager().attach(focusNavState);
         app.getStateManager().attach(animationState);
 
         styles = new Styles();
@@ -212,6 +224,14 @@ public class GuiGlobals {
 
     public AnimationState getAnimationState() {
         return animationState;
+    }
+    
+    public FocusManagerState getFocusManagerState() {
+        return focusState;
+    }
+
+    public FocusNavigationState getFocusNavigationState() {
+        return focusNavState;
     }
 
     /**
@@ -298,6 +318,10 @@ public class GuiGlobals {
         focusState.setFocus(s);
     }
 
+    public Spatial getCurrentFocus() {
+        return focusState.getFocus();
+    }
+
     public void addKeyListener( KeyListener l ) {
         keyInterceptor.addKeyListener(l);
     }
@@ -331,6 +355,9 @@ public class GuiGlobals {
         }
         if( touchState != null ) {
             touchState.setEnabled(f);
+        }
+        if( focusNavState != null ) {
+            focusNavState.setEnabled(f);
         }
     }
 

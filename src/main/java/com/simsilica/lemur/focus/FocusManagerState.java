@@ -51,6 +51,7 @@ import com.simsilica.lemur.event.BaseAppState;
 public class FocusManagerState extends BaseAppState {
 
     private Spatial focus;
+    private FocusNavigationState focusNavigationState;
     private List<Spatial> focusHierarchy = Collections.emptyList();
 
     public FocusManagerState() {
@@ -69,7 +70,22 @@ public class FocusManagerState extends BaseAppState {
         return null;
     }
 
+    public void setFocusNavigationState( FocusNavigationState focusNavigationState ) {
+        this.focusNavigationState = focusNavigationState;
+    } 
+
+    public FocusNavigationState getFocusNavigationState() {
+        return focusNavigationState;
+    }
+
     public void setFocus( Spatial focus ) {
+
+        if( getFocusNavigationState() != null ) {
+            // See if the specified spatial is really a container and if we should
+            // instead drill into its default child
+            focus = getFocusNavigationState().getDefaultFocus(focus);
+        }
+    
         if( this.focus == focus )
             return;
        

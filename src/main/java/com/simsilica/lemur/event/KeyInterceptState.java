@@ -34,8 +34,8 @@
 
 package com.simsilica.lemur.event;
 
-
 import com.jme3.app.Application;
+import com.jme3.input.KeyInput;
 import com.jme3.input.event.KeyInputEvent;
 import com.jme3.util.SafeArrayList;
 
@@ -50,6 +50,7 @@ import com.jme3.util.SafeArrayList;
 public class KeyInterceptState extends BaseAppState {
 
     private KeyObserver keyObserver = new KeyObserver();
+    private int modifiers;
 
     private SafeArrayList<KeyListener> keyListeners
                             = new SafeArrayList<KeyListener>(KeyListener.class);
@@ -88,11 +89,37 @@ public class KeyInterceptState extends BaseAppState {
     protected void disable() {
     }
 
+    protected void setModifier( int mask, boolean on ) {
+        if( on ) {
+            modifiers = modifiers | mask;
+        } else {
+            modifiers = modifiers & ~mask; 
+        }
+    }
+
     protected void dispatch(KeyInputEvent evt) {
         if( !isEnabled() )
             return;
+            
+        // Intercept for key modifiers
+        int code = evt.getKeyCode();
+        if( code == KeyInput.KEY_LSHIFT || code == KeyInput.KEY_RSHIFT ) {
+            setModifier(KeyModifiers.SHIFT_DOWN, evt.isPressed());
+        }
+        if( code == KeyInput.KEY_LCONTROL || code == KeyInput.KEY_RCONTROL ) {
+            setModifier(KeyModifiers.CONTROL_DOWN, evt.isPressed());
+        }        
+        if( code == KeyInput.KEY_LMENU || code == KeyInput.KEY_RMENU ) {
+            setModifier(KeyModifiers.ALT_DOWN, evt.isPressed());
+        }        
+            
+        ModifiedKeyInputEvent wrapper = null;
         for( KeyListener l : keyListeners.getArray() ) {
-            l.onKeyEvent(evt);
+            // Only wrap if we will actually deliver
+            if( wrapper == null ) {
+                wrapper = new ModifiedKeyInputEvent(evt, modifiers);
+            }
+            l.onKeyEvent(wrapper);
         }
     }
 
@@ -103,4 +130,5 @@ public class KeyInterceptState extends BaseAppState {
             dispatch(evt);
         }
     }
+    
 }

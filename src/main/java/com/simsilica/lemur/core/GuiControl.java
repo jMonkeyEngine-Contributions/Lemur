@@ -34,7 +34,6 @@
 
 package com.simsilica.lemur.core;
 
-import com.simsilica.lemur.focus.FocusTarget;
 import java.util.*;
 
 import com.jme3.math.Vector3f;
@@ -42,6 +41,8 @@ import com.jme3.scene.*;
 import com.jme3.util.SafeArrayList;
 import com.simsilica.lemur.focus.FocusChangeEvent;
 import com.simsilica.lemur.focus.FocusChangeListener;
+import com.simsilica.lemur.focus.FocusTarget;
+import com.simsilica.lemur.focus.FocusTraversal;
 
 
 /**
@@ -51,10 +52,11 @@ import com.simsilica.lemur.focus.FocusChangeListener;
  *  @author    Paul Speed
  */
 public class GuiControl extends AbstractNodeControl<GuiControl>
-                        implements FocusTarget {
+                        implements FocusTarget, FocusTraversal {
                         
     private ComponentStack componentStack;                        
-    private GuiComponent layout;
+    private GuiLayout layout;
+    private FocusTraversal focusTraversal;
     private SafeArrayList<GuiControlListener> listeners = new SafeArrayList<GuiControlListener>(GuiControlListener.class);
     private SafeArrayList<FocusChangeListener> focusListeners = new SafeArrayList<FocusChangeListener>(FocusChangeListener.class);
     private volatile boolean invalid = false;
@@ -184,6 +186,21 @@ public class GuiControl extends AbstractNodeControl<GuiControl>
         }
     }
 
+    @Override
+    public Spatial getDefaultFocus() {
+        return focusTraversal == null ? null : focusTraversal.getDefaultFocus();
+    }
+
+    @Override
+    public Spatial getRelativeFocus( Spatial from, TraversalDirection direction ) {
+        return focusTraversal == null ? null : focusTraversal.getRelativeFocus(from, direction);
+    }
+    
+    @Override
+    public boolean isFocusRoot() {
+        return focusTraversal == null ? false : focusTraversal.isFocusRoot();
+    }
+
     public void setLayerOrder( String... layers ) {
         componentStack.setLayerOrder(layers);
     }
@@ -198,9 +215,14 @@ public class GuiControl extends AbstractNodeControl<GuiControl>
             }
         }
         this.layout = l;
-        if( getNode() != null ) {
+        if( this.layout != null && getNode() != null ) {
             // We are attached so attach the layout too
             layout.attach(this);
+        }
+        if( this.layout instanceof FocusTraversal ) {
+            this.focusTraversal = (FocusTraversal)layout;
+        } else if( this.layout != null ) {
+            this.focusTraversal = new FocusTraversalAdapter(layout);
         }
         invalidate();
     }
