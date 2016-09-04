@@ -21,7 +21,9 @@ Lemur <undetermined>
 * Made buttons "focusable" so that they can participate in focus navigation.
 * Added a focusColor and focusShadowColor to Button to indicate focus.
 * Added support for ButtonAction.FocusGained and ButtonAction.FocusLost button actions.
-* Added Button.EFFECT_FOCUS, Button.EFFECT_UNFOCUS effect triggers.    
+* Added Button.EFFECT_FOCUS, Button.EFFECT_UNFOCUS effect triggers.
+* Fixed Button to update the active highlight color if it changes while the button
+    has highlighting on.    
     
 
 Lemur 1.8.2

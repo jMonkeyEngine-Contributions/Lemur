@@ -186,6 +186,9 @@ public class Button extends Label {
     @StyleAttribute(value="highlightColor", lookupDefault=false)
     public void setHighlightColor( ColorRGBA color ) {
         this.highlightColor = color;
+        if( isHighlightOn() ) {
+            resetColors();
+        }
     }
 
     public ColorRGBA getHighlightColor() {
@@ -195,6 +198,9 @@ public class Button extends Label {
     @StyleAttribute(value="highlightShadowColor", lookupDefault=false)
     public void setHighlightShadowColor( ColorRGBA color ) {
         this.highlightShadowColor = color;
+        if( isHighlightOn() ) {
+            resetColors();
+        }
     }
 
     public ColorRGBA getHighlightShadowColor() {
@@ -204,6 +210,9 @@ public class Button extends Label {
     @StyleAttribute(value="focusColor", lookupDefault=false)
     public void setFocusColor( ColorRGBA color ) {
         this.focusColor = color;
+        if( isFocusHighlightOn() ) {
+            resetColors();
+        }
     }
 
     public ColorRGBA getFocusColor() {
@@ -213,6 +222,9 @@ public class Button extends Label {
     @StyleAttribute(value="focusShadowColor", lookupDefault=false)
     public void setFocusShadowColor( ColorRGBA color ) {
         this.focusShadowColor = color;
+        if( isFocusHighlightOn() ) {
+            resetColors();
+        }
     }
 
     public ColorRGBA getFocusShadowColor() {
@@ -249,15 +261,6 @@ public class Button extends Label {
     protected void showHighlight( boolean f ) {
         highlightOn = f;
         resetColors();
-        /*if( f ) {
-            if( getHighlightColor() != null )
-                super.setColor(getHighlightColor());
-            if( getHighlightShadowColor() != null )
-                super.setShadowColor(getHighlightShadowColor());
-        } else {
-            super.setColor(getColor());
-            super.setShadowColor(getShadowColor());
-        }*/
     }
 
     protected void showFocus( boolean f ) {
@@ -313,12 +316,19 @@ public class Button extends Label {
 
     protected class FocusObserver implements FocusChangeListener {    
         public void focusGained( FocusChangeEvent event ) {
+            if( !isEnabled() ) {
+                return;
+            }
             showFocus(true);
             commandMap.runCommands(ButtonAction.FocusGained);
             runEffect(EFFECT_FOCUS);
         }
         
         public void focusLost( FocusChangeEvent event ) {
+            if( !isFocusHighlightOn() ) {
+                // No reason to run the 'off' effects if we were never on.
+                return;
+            }
             showFocus(false);
             commandMap.runCommands(ButtonAction.FocusLost);
             runEffect(EFFECT_UNFOCUS);
