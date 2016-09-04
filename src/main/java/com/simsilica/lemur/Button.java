@@ -48,6 +48,10 @@ import com.simsilica.lemur.core.GuiControl;
 import com.simsilica.lemur.component.QuadBackgroundComponent;
 import com.simsilica.lemur.focus.FocusChangeEvent;
 import com.simsilica.lemur.focus.FocusChangeListener;
+import com.simsilica.lemur.focus.FocusNavigationFunctions;
+import com.simsilica.lemur.input.FunctionId;
+import com.simsilica.lemur.input.InputState;
+import com.simsilica.lemur.input.StateFunctionListener;
 import com.simsilica.lemur.style.StyleDefaults;
 import com.simsilica.lemur.style.Attributes;
 import com.simsilica.lemur.style.ElementId;
@@ -309,12 +313,34 @@ public class Button extends Label {
         }
     }
 
+    protected void setPressed( boolean f ) {
+        if( pressed == f ) {
+            return;
+        }
+        this.pressed = f;
+        if( pressed ) {
+            commandMap.runCommands(ButtonAction.Down);
+            runEffect(EFFECT_PRESS);
+        } else {
+            commandMap.runCommands(ButtonAction.Up);
+            runEffect(EFFECT_RELEASE);
+        }
+    }
+
+    protected void click() {
+        if( !isEnabled() )
+            return;
+        commandMap.runCommands(ButtonAction.Click);
+        runEffect(EFFECT_CLICK);
+    }
+
     @Override
     public String toString() {
         return getClass().getName() + "[text=" + getText() + ", color=" + getColor() + ", elementId=" + getElementId() + "]";
     }
 
-    protected class FocusObserver implements FocusChangeListener {    
+    protected class FocusObserver implements FocusChangeListener, StateFunctionListener {
+        
         public void focusGained( FocusChangeEvent event ) {
             if( !isEnabled() ) {
                 return;
@@ -322,6 +348,8 @@ public class Button extends Label {
             showFocus(true);
             commandMap.runCommands(ButtonAction.FocusGained);
             runEffect(EFFECT_FOCUS);
+            
+            GuiGlobals.getInstance().getInputMapper().addStateListener(this, FocusNavigationFunctions.F_ACTIVATE);
         }
         
         public void focusLost( FocusChangeEvent event ) {
@@ -329,20 +357,27 @@ public class Button extends Label {
                 // No reason to run the 'off' effects if we were never on.
                 return;
             }
+            GuiGlobals.getInstance().getInputMapper().removeStateListener(this, FocusNavigationFunctions.F_ACTIVATE);
             showFocus(false);
             commandMap.runCommands(ButtonAction.FocusLost);
             runEffect(EFFECT_UNFOCUS);
-        }        
+        }
+        
+        public void valueChanged( FunctionId func, InputState value, double tpf ) {
+            if( pressed && value == InputState.Off ) {
+                // Do click processing... the mouse does click processing before
+                // up processing so we will too
+                click();
+            }
+            // Only mapped to one function so no need to distinguish
+            setPressed(isEnabled() && value == InputState.Positive);
+        }
     }
 
     protected class ButtonMouseHandler extends DefaultMouseListener {
 
         @Override
         protected void click( MouseButtonEvent event, Spatial target, Spatial capture ) {
-            if( !isEnabled() )
-                return;
-            commandMap.runCommands(ButtonAction.Click);
-            runEffect(EFFECT_CLICK);
         }
 
         @Override
@@ -356,15 +391,17 @@ public class Button extends Label {
             if( !isEnabled() )
                 return;                                            
 
-            pressed = event.isPressed();
             if( event.isPressed() ) {
-                commandMap.runCommands(ButtonAction.Down);
-                runEffect(EFFECT_PRESS);
-            } else {
+                setPressed(event.isPressed());
+            } else if( isPressed() ) {
+                // Only run the up processing if we were already pressed
+                // This also handles the case where we weren't enabled before
+                // but are now, etc.
+                
                 if( target == capture ) {
                     // Then we are still over the button and we should run the
                     // click
-                    click(event, target, capture);
+                    click();
                 }
                 // If we run the up without checking properly then we
                 // potentially get up events with no down event.  This messes
@@ -372,8 +409,7 @@ public class Button extends Label {
                 // down and no ups without downs.
                 // So, any time the capture is us then we will run, else not
                 if( capture == Button.this ) {
-                    commandMap.runCommands(ButtonAction.Up);
-                    runEffect(EFFECT_RELEASE);
+                    setPressed(false);
                 }
             }
         }
