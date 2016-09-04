@@ -358,6 +358,12 @@ public class Button extends Label {
                 return;
             }
             GuiGlobals.getInstance().getInputMapper().removeStateListener(this, FocusNavigationFunctions.F_ACTIVATE);
+            
+            // If the button is pressed then unpress it
+            if( isPressed() ) {
+                setPressed(false);
+            }
+            
             showFocus(false);
             commandMap.runCommands(ButtonAction.FocusLost);
             runEffect(EFFECT_UNFOCUS);
