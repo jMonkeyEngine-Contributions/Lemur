@@ -824,6 +824,11 @@ public class InputMapper {
     protected class InputObserver implements RawInputListener {
 
         public void onJoyAxisEvent( JoyAxisEvent evt ) {
+            if( log.isTraceEnabled() ) {
+                log.trace("onJoyAxisEvent(axis:" + evt.getAxis()
+                                        + ", val:" + evt.getValue() + ")");
+            }
+        
             JoystickAxis a = evt.getAxis();
             Joystick j = a.getJoystick();
             float val = evt.getValue();
@@ -847,6 +852,10 @@ public class InputMapper {
         }
 
         public void onJoyButtonEvent( JoyButtonEvent evt ) {
+            if( log.isTraceEnabled() ) {
+                log.trace("onJoyButtonEvent(button:" + evt.getButton() + ", pressed:" + evt.isPressed() + ")");
+            }
+            
             Button b = joystickButtonMap.get(evt.getButton());
             if( b == null ) {
                 log.warn("No button mapping for:" + evt.getButton() );
@@ -880,6 +889,10 @@ public class InputMapper {
         }
 
         public void onMouseMotionEvent( MouseMotionEvent evt ) {
+            if( log.isTraceEnabled() ) {
+                log.trace("onMouseMotionEvent(" + evt + ")");
+            }
+            
             // All axes could be different so we can't really
             // consolidate.
 
@@ -908,6 +921,10 @@ public class InputMapper {
         }
 
         public void onMouseButtonEvent( MouseButtonEvent evt ) {
+            if( log.isTraceEnabled() ) {
+                log.trace("onMouseButtonEvent(" + evt + ")");
+            }
+            
             Button b;
             switch( evt.getButtonIndex() ) {
                 case 0:
@@ -934,6 +951,9 @@ public class InputMapper {
         }
 
         public void onKeyEvent( KeyInputEvent evt ) {
+            if( log.isTraceEnabled() ) {
+                log.trace("onKeyEvent(" + evt + ")");
+            }
             if( evt.isRepeating() )
                 return;
                 
