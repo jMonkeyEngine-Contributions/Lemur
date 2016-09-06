@@ -861,6 +861,9 @@ public class InputMapper {
                 log.warn("No button mapping for:" + evt.getButton() );
                 return;
             }
+            if( log.isTraceEnabled() ) {
+                log.trace("Forwarding events to button mapping:" + b);               
+            }
 
             StateGroupIndex index = getIndex(b, false);
             if( index == null )

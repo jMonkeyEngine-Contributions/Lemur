@@ -26,6 +26,7 @@ Lemur <undetermined>
     has highlighting on.
 * Consolidated pressed/released/click handling into the main Button class and
     hooked up the focus activation event to pressed/released/click handling.
+* Added trace logging to InputMapper that logs the raw events received from JME.    
     
 
 Lemur 1.8.2
