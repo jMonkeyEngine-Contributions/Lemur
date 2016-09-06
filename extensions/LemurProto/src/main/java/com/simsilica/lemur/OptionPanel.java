@@ -217,7 +217,7 @@ public class OptionPanel extends Panel {
     /**
      *  Returns the label element that holds the message text.
      */   
-    public Label getMessageabel() {
+    public Label getMessageLabel() {
         return messageLabel;
     }
     
