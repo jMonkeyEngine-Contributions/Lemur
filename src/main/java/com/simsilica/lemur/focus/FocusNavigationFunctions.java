@@ -38,6 +38,7 @@ package com.simsilica.lemur.focus;
 
 import com.jme3.input.KeyInput;
 import com.simsilica.lemur.input.Axis;
+import com.simsilica.lemur.input.Button;
 import com.simsilica.lemur.input.FunctionId;
 import com.simsilica.lemur.input.InputMapper;
 import com.simsilica.lemur.input.InputState;
@@ -88,6 +89,10 @@ public class FocusNavigationFunctions {
             inputMapper.map(F_ACTIVATE, KeyInput.KEY_SPACE);
             inputMapper.map(F_ACTIVATE, KeyInput.KEY_RETURN);
             inputMapper.map(F_ACTIVATE, KeyInput.KEY_NUMPADENTER);
+ 
+            // For a standard mapping, this should be the buttom button
+            // where the PS 'X' button would normally be.           
+            inputMapper.map(F_ACTIVATE, Button.JOYSTICK_BUTTON3);
         }
     }
 }
