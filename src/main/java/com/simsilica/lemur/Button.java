@@ -407,7 +407,7 @@ public class Button extends Label {
                 if( target == capture ) {
                     // Then we are still over the button and we should run the
                     // click
-                    click();
+                    Button.this.click();
                 }
                 // If we run the up without checking properly then we
                 // potentially get up events with no down event.  This messes
