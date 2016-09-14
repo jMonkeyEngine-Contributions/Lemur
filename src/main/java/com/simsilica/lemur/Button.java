@@ -327,7 +327,7 @@ public class Button extends Label {
         }
     }
 
-    protected void click() {
+    protected void runClick() {
         if( !isEnabled() )
             return;
         commandMap.runCommands(ButtonAction.Click);
@@ -373,7 +373,7 @@ public class Button extends Label {
             if( pressed && value == InputState.Off ) {
                 // Do click processing... the mouse does click processing before
                 // up processing so we will too
-                click();
+                runClick();
             }
             // Only mapped to one function so no need to distinguish
             setPressed(isEnabled() && value == InputState.Positive);
@@ -407,7 +407,7 @@ public class Button extends Label {
                 if( target == capture ) {
                     // Then we are still over the button and we should run the
                     // click
-                    click();
+                    runClick();
                 }
                 // If we run the up without checking properly then we
                 // potentially get up events with no down event.  This messes
