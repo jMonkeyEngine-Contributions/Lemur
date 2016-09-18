@@ -88,6 +88,15 @@ public class CallMethodAction extends Action {
         return Button.class.isAssignableFrom(type)
                || Action.class.isAssignableFrom(type);
     }
+    
+    protected boolean isValidArgumentList( Class[] types ) {
+        for( Class c : types ) {
+            if( !isValidArgument(c) ) {
+                return false;
+            }
+        }
+        return true;
+    }
 
     protected Object toParm( Button source, Class type ) {
         if( Button.class.isAssignableFrom(type) ) {
@@ -97,7 +106,7 @@ public class CallMethodAction extends Action {
             return this;
         }
         return null;
-    }
+    }    
 
     protected void findMethod() {
         if( object == null || methodName == null ) {
@@ -121,10 +130,8 @@ public class CallMethodAction extends Action {
             if( parms.length > 2 ) {
                 continue;
             }
-            for( Class c : parms ) {
-                if( !isValidArgument(c) ) {
-                    continue;
-                }
+            if( !isValidArgumentList(parms) ) {
+                continue;
             }
  
             // Else it matches           

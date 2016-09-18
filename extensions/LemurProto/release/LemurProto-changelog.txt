@@ -4,6 +4,9 @@ Lemur-Proto <undetermined>
 * OptionPanelState now requests focus for the option panel when shown.
 * Added additional information to the exception rethrown when CallMethodAction
     catches an IllegalArgumentException.
+* Fixed a bug in CallMethodAction where the wrong method could be selected if 
+    it had the same name but invalid argument types.
+        
 
 Lemur-Proto 1.7.1
 ------------------
