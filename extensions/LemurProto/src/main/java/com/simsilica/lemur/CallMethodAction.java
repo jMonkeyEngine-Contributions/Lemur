@@ -176,7 +176,18 @@ public class CallMethodAction extends Action {
         }
         try {
             method.invoke(object, args);
-        } catch( IllegalAccessException | IllegalArgumentException | InvocationTargetException e ) {
+        } catch( IllegalArgumentException e ) {
+            // The JDK gives basically no info so it's up to us.
+            StringBuilder sb = new StringBuilder();
+            for( int i = 0; i < args.length; i++ ) {
+                if( sb.length() > 0 ) {
+                    sb.append(", ");
+                }
+                sb.append("(" + parmTypes[i] + ")");
+                sb.append(args[i]);
+            }
+            throw new RuntimeException("Error calling:" + method + " with parameters [" + sb + "]", e); 
+        } catch( IllegalAccessException | InvocationTargetException e ) {
             throw new RuntimeException("Error invoking action method:" + methodName, e);
         }
     }
