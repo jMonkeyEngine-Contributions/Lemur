@@ -38,13 +38,28 @@ package com.simsilica.lemur.dnd;
 
 
 /**
- *
+ *  Represents the status of a current drag operation with respect
+ *  to whether the item can be dropped successfully or not.
  *
  *  @author    Paul Speed
  */
 public enum DragStatus {
+ 
+    /**
+     *  The Draggable is currently not over any target.
+     */   
     NoTarget,
+    
+    /**
+     *  The Draggable is over a target container but it has indicated
+     *  that the current target or location is invalid. 
+     */
     InvalidTarget,
+    
+    /**
+     *  The draggable is over a target container that has indicated
+     *  that the target and location is valid for dropping the item.
+     */
     ValidTarget
 }
 

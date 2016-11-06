@@ -39,7 +39,10 @@ package com.simsilica.lemur.dnd;
 import com.jme3.math.Vector2f;
 
 /**
- *
+ *  Implemented to provide a visual indicator of the dragged object.
+ *  This may be an icon, text, or a 3D object, essentially whatever
+ *  the application wishes as long as its location and status can
+ *  be indicated to the user in some way.
  *
  *  @author    Paul Speed
  */

@@ -94,11 +94,8 @@ public class DefaultDraggable implements Draggable {
         this.xAxis = xWorld.subtractLocal(origin);
         this.yAxis = yWorld.subtractLocal(origin);
         this.currentLocation = start.clone();
-          
-        //return new DefaultDraggable(start, spatial, 
-        //                            origin, xWorld.subtractLocal(origin), yWorld.subtractLocal(origin));
     }
- 
+    
     public Spatial getSpatial() {
         return spatial;
     }

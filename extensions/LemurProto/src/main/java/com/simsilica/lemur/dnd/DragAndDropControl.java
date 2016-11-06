@@ -244,7 +244,6 @@ public class DragAndDropControl extends AbstractControl {
         if( !draggingActive ) {
             return;
         }
-System.out.println("dragStopped(" + event + ", " + lastMotion + ")");
         if( log.isTraceEnabled() ) {
             log.trace("dragStopped(" + event + ", " + target + ", " + capture + ")");
         }

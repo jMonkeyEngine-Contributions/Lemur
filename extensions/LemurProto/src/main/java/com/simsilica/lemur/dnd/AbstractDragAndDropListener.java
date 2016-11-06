@@ -36,62 +36,40 @@
 
 package com.simsilica.lemur.dnd;
 
-import com.jme3.collision.CollisionResult;
-import com.jme3.math.Vector2f;
-import com.jme3.scene.Spatial;
 
 /**
- *  Provides information about an active drag and drop session.
- *  A DragSession is initiated when the drag is first detected.
+ *  Base class that DragAndDropListeners can extend to provide
+ *  default implementations for some methods.  Implementors must
+ *  provide onDragDetected(), onDragOver(), onDrop(), onDragDone() at a minimum.
  *
  *  @author    Paul Speed
  */
-public interface DragSession {
-    
-    /**
-     *  Called by drop event handlers to indicate that a drop
-     *  target and location are valid or invalid.  If there is no
-     *  current drop target than the drag status is DragStatus.NoTarget.
-     */
-    public void setDragStatus( DragStatus status );
- 
-    /**
-     *  Return the drop status of this drag session.  If there is no
-     *  current drop target then the drag status is DragStatus.NoTarget.   
-     *  DragStatus.InvalidTarget indicates that the drag is over a drop
-     *  target but either the container or the location in the container
-     *  is not valid.
-     */
-    public DragStatus getDragStatus();
- 
-    /**
-     *  Returns the container Spatial upon which the drag operation was
-     *  initiated.
-     */   
-    public Spatial getDragSource();
-    
-    /**
-     *  Returns the current drop target or null if the drag is not
-     *  currently over a drop target.
-     */
-    public Spatial getDropTarget();
+public abstract class AbstractDragAndDropListener implements DragAndDropListener {
 
-    /**
-     *  Returns the current 'drop' collision information or null if
-     *  there is no current drop target.
-     */
-    public CollisionResult getDropCollision();
+    @Override
+    public abstract Draggable onDragDetected( DragEvent event ); 
  
     /**
-     *  Returns the application-provided "Draggable" that is used to
-     *  display the current drag location.
-     */   
-    public Draggable getDraggable();
-    
-    /**
-     *  Returns the current drag location in 'cursor space', ie: the 2D
-     *  coordinate of the screen or viewport that indicates the drag location.
+     *  Default implementation does nothing.
      */
-    public Vector2f getDragLocation();
+    @Override
+    public void onDragEnter( DragEvent event ) {
+    }
+      
+    /**
+     *  Default implementation does nothing.
+     */
+    @Override
+    public void onDragExit( DragEvent event ) {
+    }
+    
+    @Override
+    public abstract void onDragOver( DragEvent event );  
+ 
+    @Override
+    public abstract void onDrop( DragEvent event );
+ 
+    @Override
+    public abstract void onDragDone( DragEvent event );
+
 }
-
