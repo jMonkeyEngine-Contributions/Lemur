@@ -6,7 +6,8 @@ Lemur-Proto <undetermined>
     catches an IllegalArgumentException.
 * Fixed a bug in CallMethodAction where the wrong method could be selected if 
     it had the same name but invalid argument types.
-        
+* Added additional trace logging to CallMethodAction
+
 
 Lemur-Proto 1.7.1
 ------------------

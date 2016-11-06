@@ -90,9 +90,19 @@ public class CallMethodAction extends Action {
     }
     
     protected boolean isValidArgumentList( Class[] types ) {
+        if( log.isTraceEnabled() ) {
+            log.trace("isValidArgumentList(" + java.util.Arrays.asList(types) + ")");
+        }
         for( Class c : types ) {
             if( !isValidArgument(c) ) {
+                if( log.isTraceEnabled() ) {
+                    log.trace("isValidArgument(" + c + ") = false");
+                }
                 return false;
+            } else {
+                if( log.isTraceEnabled() ) {
+                    log.trace("isValidArgument(" + c + ") = true");
+                }
             }
         }
         return true;
