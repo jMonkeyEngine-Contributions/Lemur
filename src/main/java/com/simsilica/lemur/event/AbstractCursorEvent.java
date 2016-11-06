@@ -35,6 +35,7 @@
 package com.simsilica.lemur.event;
 
 import com.jme3.collision.CollisionResult;
+import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
 import com.jme3.renderer.Camera;
 import com.jme3.renderer.ViewPort;
@@ -80,6 +81,10 @@ public abstract class AbstractCursorEvent {
     
     public float getY() {
         return y;
+    }
+ 
+    public Vector2f getLocation() {
+        return new Vector2f(x, y);
     }
     
     public CollisionResult getCollision() {
