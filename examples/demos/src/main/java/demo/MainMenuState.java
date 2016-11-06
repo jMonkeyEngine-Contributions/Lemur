@@ -60,7 +60,9 @@ public class MainMenuState extends BaseAppState {
     static Logger log = LoggerFactory.getLogger(MainMenuState.class);
 
     public static Class[] DEMOS = {
-        OptionPanelDemoState.class
+        OptionPanelDemoState.class,
+        PopupPanelDemoState.class,
+        DragAndDropDemoState.class
     };
 
     private Container mainWindow;
@@ -98,10 +100,6 @@ public class MainMenuState extends BaseAppState {
         Label title = mainWindow.addChild(new Label("Lemur Demos"));
         title.setFontSize(32);
         title.setInsets(new Insets3f(10, 10, 0, 10));
-        /*Label subtitle = mainWindow.addChild(new Label("Select a Demo"));
-        subtitle.setInsets(new Insets3f(0, 10, 0, 10));
-        subtitle.setTextHAlignment(HAlignment.Left);
-        subtitle.setColor(new ColorRGBA(166/255f, 107/255f, 255/255f, 0.85f));*/        
         
         Container actions = mainWindow.addChild(new Container());
         actions.setInsets(new Insets3f(10, 10, 0, 10));
@@ -109,7 +107,9 @@ public class MainMenuState extends BaseAppState {
         for( Class demo : DEMOS ) {
             ToggleChild toggle = new ToggleChild(demo);
             toggles.add(toggle);
-            actions.addChild(new Checkbox(demo.getSimpleName())).addClickCommands(toggle);
+            Checkbox cb = actions.addChild(new Checkbox(toggle.getName()));
+            cb.addClickCommands(toggle);
+            cb.setInsets(new Insets3f(2, 2, 2, 2));
         }
                
  
@@ -146,14 +146,42 @@ public class MainMenuState extends BaseAppState {
     protected void onDisable() {
         mainWindow.removeFromParent();
     }
+ 
+    private static String classToName( Class type ) {
+        String n = type.getSimpleName();
+        if( n.endsWith("DemoState") ) {
+            n = n.substring(0, n.length() - "DemoState".length());
+        } else if( n.endsWith("State") ) {
+            n = n.substring(0, n.length() - "State".length());
+        }
+         
+        boolean lastLower = false;
+        StringBuilder sb = new StringBuilder();
+        for( int i = 0; i < n.length(); i++ ) {
+            char c = n.charAt(i);
+            if( lastLower && Character.isUpperCase(c) ) {
+                sb.append(" ");
+            } else if( Character.isLowerCase(c) ) {
+                lastLower = true;
+            }
+            sb.append(c); 
+        }
+        return sb.toString();
+    }
     
     private class ToggleChild implements Command<Button> {
+        private String name;
         private Checkbox check;
         private Class type; 
         private AppState child;
     
         public ToggleChild( Class type ) {
             this.type = type;
+            this.name = classToName(type);
+        }
+        
+        public String getName() {
+            return name;
         }
         
         public void execute( Button button ) {

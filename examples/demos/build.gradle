@@ -46,7 +46,8 @@ dependencies {
     compile 'com.google.guava:guava:19.0'
     compile 'org.slf4j:slf4j-api:1.7.13'
     runtime 'org.apache.logging.log4j:log4j-slf4j-impl:2.5'
-    
+    runtime 'org.apache.logging.log4j:log4j-core:2.5'
+        
     runtime project(':assets')    
 }
 
