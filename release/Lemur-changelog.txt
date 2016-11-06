@@ -26,7 +26,15 @@ Lemur <undetermined>
     has highlighting on.
 * Consolidated pressed/released/click handling into the main Button class and
     hooked up the focus activation event to pressed/released/click handling.
-* Added trace logging to InputMapper that logs the raw events received from JME.    
+* Added trace logging to InputMapper that logs the raw events received from JME.
+* Fixed a bug where Label's shadow text component wasn't picking up the max width
+    if set.    
+* Added method an AbstractCursorEvent.getLocation() convenience method for getting
+    the event location as a Vector2f.
+* Added a general PopupState for managing modal and non-modal popups that can be
+    closed by simply clicking outside of the popped up panel (or optionally block
+    those events).
+* Added PopupState as a built-in state in GuiGlobals.
     
 
 Lemur 1.8.2

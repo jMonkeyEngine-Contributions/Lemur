@@ -43,6 +43,7 @@ import com.simsilica.lemur.style.Styles;
 import com.simsilica.lemur.event.KeyListener;
 import com.simsilica.lemur.event.KeyInterceptState;
 import com.simsilica.lemur.event.MouseAppState;
+import com.simsilica.lemur.event.PopupState;
 import com.simsilica.lemur.focus.FocusManagerState;
 import com.simsilica.lemur.focus.FocusNavigationState;
 import com.jme3.app.Application;
@@ -109,6 +110,7 @@ public class GuiGlobals {
     private FocusManagerState focusState;
     private FocusNavigationState focusNavState;
     private AnimationState animationState;
+    private PopupState popupState;
     private String iconBase;
 
     private Styles styles;
@@ -146,6 +148,7 @@ public class GuiGlobals {
         this.focusState = new FocusManagerState();
         this.focusNavState = new FocusNavigationState(inputMapper, focusState);
         this.animationState = new AnimationState();
+        this.popupState = new PopupState();
 
         // Write the app state dependencies directly so that:
         // a) they are there before initialization
@@ -167,6 +170,7 @@ public class GuiGlobals {
         app.getStateManager().attach(focusState);
         app.getStateManager().attach(focusNavState);
         app.getStateManager().attach(animationState);
+        app.getStateManager().attach(popupState);
 
         styles = new Styles();
         setDefaultStyles();
@@ -224,6 +228,10 @@ public class GuiGlobals {
 
     public AnimationState getAnimationState() {
         return animationState;
+    }
+    
+    public PopupState getPopupState() {
+        return popupState;
     }
     
     public FocusManagerState getFocusManagerState() {
