@@ -159,6 +159,9 @@ public class Label extends Panel {
     @StyleAttribute(value="maxWidth", lookupDefault=false)
     public void setMaxWidth( float f ) {
         text.setMaxWidth(f);
+        if( shadow != null ) {
+            shadow.setMaxWidth(f);
+        }
     }
     
     public float getMaxWidth() {
@@ -222,6 +225,7 @@ public class Label extends Panel {
             shadow.setFontSize(getFontSize());
             shadow.setHAlignment(text.getHAlignment());
             shadow.setVAlignment(text.getVAlignment());
+            shadow.setMaxWidth(text.getMaxWidth());
             getControl(GuiControl.class).setComponent(LAYER_SHADOW_TEXT, shadow);
         } else if( color == null ) {
             // Need to remove it
