@@ -105,7 +105,7 @@ public class PopupPanelDemoState extends BaseAppState {
         float b = (float)(Math.random() * 0.75 + 0.25);
         ColorRGBA c = new ColorRGBA(r, g, b, 0.5f);
         
-        getState(PopupState.class).showPopup(popup, PopupState.ClickMode.Consume, closeCommand, c);       
+        getState(PopupState.class).showPopup(popup, PopupState.ClickMode.Consume, closeCommand, c);
     }
  
     protected void randomizeLocation( Panel p ) {
