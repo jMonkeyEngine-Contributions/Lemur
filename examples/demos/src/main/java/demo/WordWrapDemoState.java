@@ -41,6 +41,7 @@ import com.jme3.app.state.BaseAppState;
 
 import com.simsilica.lemur.*;
 import com.simsilica.lemur.event.PopupState;
+import com.simsilica.lemur.style.ElementId;
 
 
 /**
@@ -74,25 +75,37 @@ public class WordWrapDemoState extends BaseAppState {
  
     @Override   
     protected void onEnable() {
-    
+ 
+        // We'll wrap the text in a window to make sure the layout is working
+        Container window = new Container();
+        window.addChild(new Label("Word Wrapped Text", new ElementId("window.title.label")));
+ 
+        // Create a label with some really long text   
         String s = "This is an example of long text that should be word-wrapped if it"
                    + " exceeds a certain maximum width.  Once it exceeds that width then"
                    + " it should grow down and the layout should function appropriately."
                    + " If it's working correctly, that is.";
-        Label label = new Label(s);
+        Label label = window.addChild(new Label(s));
         label.setMaxWidth(400);
-        label.setLocalTranslation(400, 400, 100);
-         
-        getState(PopupState.class).showPopup(label, closeCommand);    
+ 
+        // Add a close button to both show that the layout is working and
+        // also because it's better UX... even if the popup will close if
+        // you click outside of it.
+        window.addChild(new ActionButton(new CallMethodAction("Close", 
+                                                              window, "removeFromParent")));
+ 
+        // Position the window and pop it up                                                             
+        window.setLocalTranslation(400, 400, 100);                 
+        getState(PopupState.class).showPopup(window, closeCommand);    
     }
     
     @Override   
     protected void onDisable() {
     }
     
-    private class CloseCommand implements Command<PopupState> {
+    private class CloseCommand implements Command<Object> {
         
-        public void execute( PopupState state ) {
+        public void execute( Object src ) {
             getState(MainMenuState.class).closeChild(WordWrapDemoState.this);
         }
     }
