@@ -36,6 +36,8 @@
 
 package com.simsilica.lemur.dnd;
 
+import java.util.*;
+
 import com.jme3.collision.CollisionResult;
 import com.jme3.math.Vector2f;
 import com.jme3.scene.Spatial;
@@ -47,8 +49,9 @@ import com.jme3.scene.Spatial;
  *  @author    Paul Speed
  */
 public class DefaultDragSession implements DragSession {
-    
+       
     private Spatial source;
+    private Map<String, Object> attributes;
     private Draggable draggable;
     private DragStatus status;
     private Spatial dropTarget;
@@ -60,6 +63,34 @@ public class DefaultDragSession implements DragSession {
         this.dragLocation = dragLocation;
     }
  
+    @Override
+    public void set( String name, Object attribute ) {
+        if( attributes == null ) {
+            if( attribute == null ) {
+                return;
+            }
+            this.attributes = new LinkedHashMap<>();
+        }
+        attributes.put(name, attribute);
+    }
+    
+    @Override
+    public <T> T get( String name, T defaultValue ) {
+        if( attributes == null ) {
+            return defaultValue;
+        }
+        T result = (T)attributes.get(name);
+        return result != null ? result : defaultValue;
+    }
+ 
+    @Override
+    public boolean hasAttribute( String name ) {
+        if( attributes == null ) {
+            return false;
+        }
+        return attributes.containsKey(name);
+    }
+
     @Override   
     public Spatial getDragSource() {
         return source;

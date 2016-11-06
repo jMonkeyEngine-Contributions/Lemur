@@ -47,6 +47,31 @@ import com.jme3.scene.Spatial;
  *  @author    Paul Speed
  */
 public interface DragSession {
+ 
+    public static final String ITEM = "item";
+ 
+    /**
+     *  Sets an application-specific session attribute that lives as
+     *  long as this specific drag session.  Applications can use this
+     *  to store their payload or attributes relating to the drag payload
+     *  or advanced status not provided by the DragSession's normal
+     *  book-keeping.  Most often this is used to store a reference to
+     *  the dragged item.  For standardization, the callers can use the
+     *  ITEM constant for a default location for dragged items.
+     *  Setting an attribute to null will remove it from the session.
+     */
+    public void set( String name, Object attribute );
+    
+    /**
+     *  Returns an attribute previously stored in this session or the
+     *  default value if no such attribute exists.
+     */
+    public <T> T get( String name, T defaultValue );
+ 
+    /**
+     *  Returns true if the session has the specified attribute defined.
+     */
+    public boolean hasAttribute( String name );
     
     /**
      *  Called by drop event handlers to indicate that a drop
