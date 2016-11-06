@@ -231,15 +231,23 @@ public class DragAndDropControl extends AbstractControl {
         DragEvent dragEvent = new DragEvent(session, event);
         if( event.getCollision() == null ) {
             session.setDropTarget(null, dragEvent);
+            session.setDropCollision(null);
         } else {
             session.setDropTarget(target, dragEvent);
+            session.setDropCollision(dragEvent.getCollision());
             fireDragOver(dragEvent);
         }        
     }  
     
     protected void dragStopped( CursorButtonEvent event, CursorMotionEvent lastMotion, 
                                 Spatial target, Spatial capture ) {
-        System.out.println("dragStopped(" + event + ", " + target + ", " + capture + ")");
+        if( !draggingActive ) {
+            return;
+        }
+System.out.println("dragStopped(" + event + ", " + lastMotion + ")");
+        if( log.isTraceEnabled() ) {
+            log.trace("dragStopped(" + event + ", " + target + ", " + capture + ")");
+        }
         draggingActive = false;
         DefaultDragSession session = clearSession(event);
         if( session == null ) {
@@ -250,7 +258,7 @@ public class DragAndDropControl extends AbstractControl {
             return;
         }
         
-        session.close(new DragEvent(session, lastMotion));
+        session.close(new DragEvent(session, lastMotion, session.getDropCollision()));
     }
  
     protected void dragExit( CursorMotionEvent event, Spatial target, Spatial capture ) {
@@ -312,6 +320,7 @@ public class DragAndDropControl extends AbstractControl {
         private CursorButtonEvent downEvent = null;
         private Spatial downTarget;
         private Spatial downCapture;
+        private boolean dragDisabled;
  
         protected boolean isDownEvent( CursorButtonEvent event, Spatial target, Spatial capture ) {
             return event.isPressed();
@@ -338,6 +347,7 @@ public class DragAndDropControl extends AbstractControl {
             } else {
                 dragStopped(event, lastEvent, target, capture);
                 downEvent = null;
+                dragDisabled = false;
             }        
         }
 
@@ -359,11 +369,13 @@ public class DragAndDropControl extends AbstractControl {
  
             if( draggingActive ) {
                 dragging(event, target, capture);
-            } else if( isDragging(event, target, capture) ) {
+            } else if( !dragDisabled && isDragging(event, target, capture) ) {
                 // Then we start dragging                
                 if( dragStarted(downEvent, lastEvent != null ? lastEvent.getCollision() : null, 
                                 downTarget, downCapture) ) {
                     dragging(event, target, capture);
+                } else {
+                    dragDisabled = true;
                 }
             } 
             // Because (right now) CursorButtonEvents don't include collision

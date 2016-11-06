@@ -36,6 +36,7 @@
 
 package com.simsilica.lemur.dnd;
 
+import com.jme3.collision.CollisionResult;
 import com.jme3.math.Vector2f;
 import com.jme3.scene.Spatial;
 
@@ -74,6 +75,11 @@ public interface DragSession {
      *  currently over a drop target.
      */
     public Spatial getDropTarget();
+
+    /**
+     *  Returns the current 'drop' collision information.
+     */
+    public CollisionResult getDropCollision();
  
     /**
      *  Returns the application-provided "Draggable" that is used to

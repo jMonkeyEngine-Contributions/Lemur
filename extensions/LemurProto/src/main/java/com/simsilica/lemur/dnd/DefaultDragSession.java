@@ -36,6 +36,7 @@
 
 package com.simsilica.lemur.dnd;
 
+import com.jme3.collision.CollisionResult;
 import com.jme3.math.Vector2f;
 import com.jme3.scene.Spatial;
 
@@ -52,6 +53,7 @@ public class DefaultDragSession implements DragSession {
     private DragStatus status;
     private Spatial dropTarget;
     private Vector2f dragLocation;
+    private CollisionResult collision;
 
     public DefaultDragSession( Spatial source, Vector2f dragLocation ) {
         this.source = source;
@@ -142,4 +144,13 @@ public class DefaultDragSession implements DragSession {
     public Vector2f getDragLocation() {
         return dragLocation;
     }
+ 
+    protected void setDropCollision( CollisionResult collision ) {
+        this.collision = collision;
+    } 
+    
+    @Override   
+    public CollisionResult getDropCollision() {
+        return collision;
+    }   
 }

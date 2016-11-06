@@ -84,7 +84,7 @@ public class DragEvent {
     }
       
     public CollisionResult getCollision() {
-        return cursorEvent.getCollision();
+        return collision;
     }
     
     public ViewPort getViewPort() {
