@@ -45,7 +45,9 @@ import com.simsilica.lemur.style.ElementId;
 
 
 /**
- *
+ *  A demo of a Label that has a maximum width set so that long strings
+ *  will word wrap after a certain width.  The label is wrapped in a popup
+ *  window to illustrate that layouts and sizing work as expected.
  *
  *  @author    Paul Speed
  */
@@ -59,12 +61,7 @@ public class WordWrapDemoState extends BaseAppState {
     
     public WordWrapDemoState() {
     }
- 
-    protected void close() {
-        getState(MainMenuState.class).closeChild(this);
-        // ...which will also detach us            
-    }
-    
+     
     @Override   
     protected void initialize( Application app ) {
     }
