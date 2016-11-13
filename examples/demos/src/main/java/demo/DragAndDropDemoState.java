@@ -218,21 +218,24 @@ System.out.println("GridControl added.");
  
         @Override       
         public void setSpatial( Spatial s ) {
-System.out.println(getClass().getSimpleName() + ".setSpatial(" + s + ")");
             super.setSpatial(s);
             this.node = (ContainerNode)s;
             updateLayout();
         }
     
         public void addChild( Spatial child ) {
-System.out.println("Stack addChild(" + child + ")");        
             model.add(child);
+            node.attachChild(child);
+            updateLayout();
+        }
+
+        public void addChild( int slot, Spatial child ) {
+            model.add(slot, child);
             node.attachChild(child);
             updateLayout();
         }
         
         public void removeChild( Spatial child ) {
-System.out.println("Stack removeChild(" + child + ")");        
             model.remove(child);
             if( child.getParent() == node ) {
                 node.detachChild(child);
@@ -246,14 +249,7 @@ System.out.println("Stack removeChild(" + child + ")");
             return result;
         }
  
-        protected void reset( Spatial child ) {
-System.out.println("Stack reset(" + child + ")");        
-            node.attachChild(child);
-            updateLayout();
-        }
- 
         protected void updateLayout() {
-System.out.println("Stack updateLayout()");        
             int count = Math.max(1, model.size());
             node.setSize(1, count, 1);
             float yStart = -(count - 1);
@@ -285,7 +281,6 @@ System.out.println("Stack updateLayout()");
     
         @Override       
         public void setSpatial( Spatial s ) {
-System.out.println(getClass().getSimpleName() + ".setSpatial(" + s + ")");
             super.setSpatial(s);
             this.node = (ContainerNode)s;
             updateLayout();
@@ -296,7 +291,6 @@ System.out.println(getClass().getSimpleName() + ".setSpatial(" + s + ")");
         }
         
         public void setCell( int x, int y, Spatial child ) {
-System.out.println("Grid setCell(" + x + ", " + y + ", " + child + ")");        
             if( grid[x][y] != null ) {
                 grid[x][y].removeFromParent();
             }
@@ -333,13 +327,10 @@ System.out.println("Grid setCell(" + x + ", " + y + ", " + child + ")");
         }
         
         public void removeChild( Spatial child ) {
-System.out.println("Grid removeChild(" + child + ")");        
             for( int x = 0; x < gridSize; x++ ) {
                 for( int y = 0; y < gridSize; y++ ) {
                     if( child == grid[x][y] ) {
-System.out.println("  found child:" + grid[x][y]);                    
                         if( child.getParent() == node ) {
-System.out.println("  removing child:" + child + "  from parent:" + child.getParent());                        
                             child.removeFromParent();
                         }
                         grid[x][y] = null;
@@ -350,7 +341,6 @@ System.out.println("  removing child:" + child + "  from parent:" + child.getPar
         }
 
         protected void updateLayout() {
-System.out.println(getClass().getSimpleName() + ".updateLayout() node:" + node);        
             node.setSize(gridSize, gridSize, 1);
             for( int x = 0; x < gridSize; x++ ) {
                 for( int y = 0; y < gridSize; y++ ) {
@@ -360,13 +350,7 @@ System.out.println(getClass().getSimpleName() + ".updateLayout() node:" + node);
                     }
                 }
             }
-        }
-    
-        protected void reset( Spatial child ) {
-System.out.println("Grid reset(" + child + ")");        
-            node.attachChild(child);
-            updateLayout();
-        }
+        }    
         
         @Override
         protected void controlUpdate( float tpf ) {
@@ -409,13 +393,21 @@ System.out.println("Grid reset(" + child + ")");
             this.container = container;            
         }
 
+        /**
+         *  Returns the container 'model' (in the MVC sense) for this
+         *  container listener.
+         */
+        public StackControl getModel() {
+            return container.getControl(StackControl.class); 
+        }
+
         private int getIndex( Vector3f world ) {
             world = container.worldToLocal(world, null);
             
             System.out.println("Stack Hit:" + world);
             
             // Calculate the index
-            float y = (container.getControl(StackControl.class).model.size() + world.y) / 2;
+            float y = (getModel().model.size() + world.y) / 2;
             
             System.out.println("Index:" + y);
             return (int)y;
@@ -426,7 +418,7 @@ System.out.println("Grid reset(" + child + ")");
             System.out.println("Stack.onDragDetected(" + event + ")");
  
             // Find the child we collided with
-            StackControl control = container.getControl(StackControl.class);
+            StackControl control = getModel();
             
             // For now just use the first one
             if( control.model.isEmpty() ) {
@@ -490,15 +482,13 @@ System.out.println("Grid reset(" + child + ")");
             draggable.updateDragStatus(DragStatus.ValidTarget);
  
             // Add the item to this stack
-            container.getControl(StackControl.class).addChild(draggedItem);
+            getModel().addChild(draggedItem);
         }
     
         // Source specific  
         public void onDragDone( DragEvent event ) {
             System.out.println("Stack.onDragDone(" + event + ")");            
             
-System.out.println("Us:" + container + "  drop target:" + event.getSession().getDropTarget());
- 
             // Check to see if drop target was null as this indicates
             // that the drag operation didn't finish and we need to 
             // put the item back.           
@@ -516,8 +506,7 @@ System.out.println("Us:" + container + "  drop target:" + event.getSession().get
                 // during drag start just for this case.                
                 int slot = event.getSession().get("stackIndex", 0);
                 
-                StackControl control = container.getControl(StackControl.class);
-                control.addChild(draggedItem);
+                getModel().addChild(slot, draggedItem);
             } 
         }
     }  
@@ -528,6 +517,14 @@ System.out.println("Us:" + container + "  drop target:" + event.getSession().get
 
         public GridContainerListener( Spatial container ) {
             this.container = container;            
+        }
+
+        /**
+         *  Returns the container 'model' (in the MVC sense) for this
+         *  container listener.
+         */
+        public GridControl getModel() {
+            return container.getControl(GridControl.class); 
         }
 
         private Vector2f getCellLocation( Vector3f world ) {
@@ -556,7 +553,7 @@ System.out.println("Us:" + container + "  drop target:" + event.getSession().get
             System.out.println("Grid.onDragDetected(" + event + ")");
  
             // Find the child we collided with
-            GridControl control = container.getControl(GridControl.class);
+            GridControl control = getModel();
  
             // See where we hit
             Vector2f hit = getCellLocation(event.getCollision().getContactPoint());
@@ -595,10 +592,9 @@ System.out.println("Us:" + container + "  drop target:" + event.getSession().get
         
         public void onDragOver( DragEvent event ) {
             System.out.println("Grid.onDragOver(" + event + ")");
-            GridControl control = container.getControl(GridControl.class);
             
             Vector2f hit = getCellLocation(event.getCollision().getContactPoint()); 
-            Spatial item = control.getCell((int)hit.x, (int)hit.y);
+            Spatial item = getModel().getCell((int)hit.x, (int)hit.y);
             if( item == null ) {
                 // An empty cell is a valid target
                 event.getSession().setDragStatus(DragStatus.ValidTarget);
@@ -613,15 +609,14 @@ System.out.println("Us:" + container + "  drop target:" + event.getSession().get
             System.out.println("Grid.onDrop(" + event + ")");
             
             Spatial draggedItem = event.getSession().get(DragSession.ITEM, null);                        
-            GridControl control = container.getControl(GridControl.class);           
 
             Vector2f hit = getCellLocation(event.getCollision().getContactPoint());
             
             // One last check to see if the drop location is available 
-            Spatial item = control.getCell((int)hit.x, (int)hit.y);
+            Spatial item = getModel().getCell((int)hit.x, (int)hit.y);
             if( item == null ) {
                 // Then we can stick the new child right in
-                control.setCell((int)hit.x, (int)hit.y, draggedItem);
+                getModel().setCell((int)hit.x, (int)hit.y, draggedItem);
             } else {
                 // It wasn't really a valid drop
                 event.getSession().setDragStatus(DragStatus.InvalidTarget);   
@@ -633,7 +628,6 @@ System.out.println("Us:" + container + "  drop target:" + event.getSession().get
             System.out.println("Grid.onDragDone(" + event + ")");
             
             DragSession session = event.getSession();
-            GridControl control = container.getControl(GridControl.class);           
             
             // Check to see if drop target was null as this indicates
             // that the drag operation didn't finish and we need to 
@@ -651,12 +645,12 @@ System.out.println("Us:" + container + "  drop target:" + event.getSession().get
                 // during drag start just for this case.                
                 Vector2f slot = session.get("gridLocation", null);
                 if( slot != null ) {
-                    control.setCell((int)slot.x, (int)slot.y, draggedItem);
+                    getModel().setCell((int)slot.x, (int)slot.y, draggedItem);
                 } else {
                     System.out.println("Error, missing gridLocation for dragged item");
                     // This should not ever happen but if it does we'll at least
                     // try to deal with it
-                    control.addChild(draggedItem);
+                    getModel().addChild(draggedItem);
                 }  
             } 
         }
