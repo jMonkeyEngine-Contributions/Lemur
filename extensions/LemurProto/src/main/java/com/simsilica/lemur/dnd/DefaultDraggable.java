@@ -122,5 +122,9 @@ public class DefaultDraggable implements Draggable {
  
     public void updateDragStatus( DragStatus status ) {
     }
+    
+    public void release() {
+        spatial.removeFromParent();
+    }
 }
 

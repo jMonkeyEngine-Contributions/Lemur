@@ -63,5 +63,11 @@ public interface Draggable {
      *  Called by the drag session to update the drag status.
      */   
     public void updateDragStatus( DragStatus status );
+    
+    /**
+     *  Called when the drag session is done and the Draggable can
+     *  clean up any of its internal stuff.
+     */
+    public void release();
 }
 

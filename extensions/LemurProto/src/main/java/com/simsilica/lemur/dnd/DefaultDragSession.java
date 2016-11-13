@@ -145,6 +145,9 @@ public class DefaultDragSession implements DragSession {
         if( source != null ) {
             source.getControl(DragAndDropControl.class).fireDone(event);
         }
+        
+        // And finally cleanup the draggable
+        draggable.release();
     } 
  
     protected void setDropTarget( Spatial dropTarget, DragEvent event ) {
