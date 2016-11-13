@@ -239,6 +239,12 @@ System.out.println("Stack removeChild(" + child + ")");
             }            
             updateLayout();
         }
+
+        public Spatial removeChild( int index ) {
+            Spatial result = model.remove(index);
+            updateLayout();
+            return result;
+        }
  
         protected void reset( Spatial child ) {
 System.out.println("Stack reset(" + child + ")");        
@@ -299,6 +305,31 @@ System.out.println("Grid setCell(" + x + ", " + y + ", " + child + ")");
                 node.attachChild(child);
             }
             updateLayout();
+        }
+ 
+        public Spatial removeCell( int x, int y ) {
+            Spatial result = grid[x][y];
+            grid[x][y] = null;
+            if( result != null ) {
+                updateLayout();
+            }
+            return result;
+        }
+        
+        public void addChild( Spatial child ) {
+            // Find the first valid cell
+            for( int x = 0; x < gridSize; x++ ) {
+                for( int y = 0; y < gridSize; y++ ) {
+                    // just in case the child is already in the grid 
+                    if( grid[x][y] == child ) {
+                        return; 
+                    }
+                    if( grid[x][y] == null ) {
+                        setCell(x, y, child);
+                        return;
+                    }
+                }
+            }            
         }
         
         public void removeChild( Spatial child ) {
@@ -403,9 +434,22 @@ System.out.println("Grid reset(" + child + ")");
             }
             
             int index = getIndex(event.getCollision().getContactPoint());
+ 
+            // The item is being dragged out of the container so remove it.
+            Spatial item = control.removeChild(index);
             
-            Spatial item = control.model.get(index);
+            // Note: the item is still a child to the container so that we
+            // can get its world translation and such below.  One of the slightly
+            // strange things about using Spatials instead of some game object
+            // as our container items.
+            
+            // We'll trust that the drag session won't lose it if we need
+            // to put it back.                       
             event.getSession().set(DragSession.ITEM, item);
+            
+            // We'll keep track of the slot we took it from so we can stick
+            // it back again if the drag is canceled. 
+            event.getSession().set("stackIndex", index);
         
             // Since we are reusing the item for our draggable, we need to
             // switch it to the root node
@@ -445,39 +489,36 @@ System.out.println("Grid reset(" + child + ")");
             ColoredDraggable draggable = (ColoredDraggable)event.getSession().getDraggable();            
             draggable.updateDragStatus(DragStatus.ValidTarget);
  
-            if( event.getSession().getDragSource() != container ) {                                  
-                // Add the item to this stack
-                container.getControl(StackControl.class).addChild(draggedItem);
-            } else {
-                // Just reset it... we don't want to add it because we won't
-                // be removing it.
-                container.getControl(StackControl.class).reset(draggedItem);
-            }            
+            // Add the item to this stack
+            container.getControl(StackControl.class).addChild(draggedItem);
         }
     
         // Source specific  
         public void onDragDone( DragEvent event ) {
-            System.out.println("Stack.onDragDone(" + event + ")");
-
-            // Grab the payload we stored during drag start
-            Spatial draggedItem = event.getSession().get(DragSession.ITEM, null);
+            System.out.println("Stack.onDragDone(" + event + ")");            
             
 System.out.println("Us:" + container + "  drop target:" + event.getSession().getDropTarget());
-            
-            if( event.getSession().getDropTarget() == null ) {               
-                // Then the drag failed and we need to suck the item back
+ 
+            // Check to see if drop target was null as this indicates
+            // that the drag operation didn't finish and we need to 
+            // put the item back.           
+            if( event.getSession().getDropTarget() == null ) {
+                                           
                 // Back door reset the color since we know we're going to
                 // stick it back in our model properly
-                ColoredDraggable draggable = (ColoredDraggable)event.getSession().getDraggable();
+                ColoredDraggable draggable = (ColoredDraggable)event.getSession().getDraggable();                                
                 draggable.updateDragStatus(DragStatus.ValidTarget);
-                container.getControl(StackControl.class).reset(draggedItem);
-            } else if( event.getSession().getDropTarget() != container ) {           
-                // Then we need to remove the item from ourselves
-                container.getControl(StackControl.class).removeChild(draggedItem);            
-            } else {
-                // If the target is ourselves then we don't need to
-                // do anything as the drop already did it.
-            }
+                
+                // Grab the payload we stored during drag start
+                Spatial draggedItem = event.getSession().get(DragSession.ITEM, null);
+            
+                // Grab the original slot of the item.  We tucked this away
+                // during drag start just for this case.                
+                int slot = event.getSession().get("stackIndex", 0);
+                
+                StackControl control = container.getControl(StackControl.class);
+                control.addChild(draggedItem);
+            } 
         }
     }  
     
@@ -520,9 +561,16 @@ System.out.println("Us:" + container + "  drop target:" + event.getSession().get
             // See where we hit
             Vector2f hit = getCellLocation(event.getCollision().getContactPoint());
  
-            Spatial item = control.getCell((int)hit.x, (int)hit.y);
+            // Remove the item from the grid if it exists.
+            Spatial item = control.removeCell((int)hit.x, (int)hit.y);
             if( item != null ) {
+                // Save the item in the session so the other containers (and ourselves)
+                // know what we are dragging.
                 event.getSession().set(DragSession.ITEM, item);
+                
+                // We'll keep track of the grid cell in case the drag is
+                // canceled and we have to put it back. 
+                event.getSession().set("gridLocation", hit);
                 
                 // Since we are reusing the item for our draggable, we need to
                 // switch it to the root node
@@ -549,18 +597,10 @@ System.out.println("Us:" + container + "  drop target:" + event.getSession().get
             System.out.println("Grid.onDragOver(" + event + ")");
             GridControl control = container.getControl(GridControl.class);
             
-            // Grab the payload we stored during drag start
-            Spatial draggedItem = event.getSession().get(DragSession.ITEM, null);
-
-            //ColoredDraggable draggable = (ColoredDraggable)event.getSession().getDraggable();
-            
             Vector2f hit = getCellLocation(event.getCollision().getContactPoint()); 
             Spatial item = control.getCell((int)hit.x, (int)hit.y);
             if( item == null ) {
                 // An empty cell is a valid target
-                event.getSession().setDragStatus(DragStatus.ValidTarget);
-            } else if( item == draggedItem ) {
-                // Our old slot is also a valid target
                 event.getSession().setDragStatus(DragStatus.ValidTarget);
             } else {
                 // A filled slot is not
@@ -572,16 +612,15 @@ System.out.println("Us:" + container + "  drop target:" + event.getSession().get
         public void onDrop( DragEvent event ) {
             System.out.println("Grid.onDrop(" + event + ")");
             
-            Spatial draggedItem = event.getSession().get(DragSession.ITEM, null);
+            Spatial draggedItem = event.getSession().get(DragSession.ITEM, null);                        
             GridControl control = container.getControl(GridControl.class);           
-            //ColoredDraggable draggable = (ColoredDraggable)event.getSession().getDraggable();
 
-            Vector2f hit = getCellLocation(event.getCollision().getContactPoint()); 
+            Vector2f hit = getCellLocation(event.getCollision().getContactPoint());
+            
+            // One last check to see if the drop location is available 
             Spatial item = control.getCell((int)hit.x, (int)hit.y);
-            if( item == null || item == draggedItem ) {
+            if( item == null ) {
                 // Then we can stick the new child right in
-                // Remove it from ourselves first just to clear it from old locations
-                control.removeChild(draggedItem);
                 control.setCell((int)hit.x, (int)hit.y, draggedItem);
             } else {
                 // It wasn't really a valid drop
@@ -594,18 +633,31 @@ System.out.println("Us:" + container + "  drop target:" + event.getSession().get
             System.out.println("Grid.onDragDone(" + event + ")");
             
             DragSession session = event.getSession();
-            Spatial draggedItem = session.get(DragSession.ITEM, null);
+            GridControl control = container.getControl(GridControl.class);           
             
-            if( session.getDropTarget() == container ) {
-                // It's us... so we don't have to do anything
-            } else if( session.getDropTarget() != null ) {
-                // Then remove the item from our children
-                container.getControl(GridControl.class).removeChild(draggedItem);
-            } else {
-                // We need to snap it back to where it was
+            // Check to see if drop target was null as this indicates
+            // that the drag operation didn't finish and we need to 
+            // put the item back.                       
+            if( session.getDropTarget() == null ) {
+                // Back door reset the color since we know we're going to
+                // stick it back in our model properly
                 ColoredDraggable draggable = (ColoredDraggable)session.getDraggable();
                 draggable.updateDragStatus(DragStatus.ValidTarget);
-                container.getControl(GridControl.class).reset(draggedItem);
+            
+                // Grab the payload we stored during drag start
+                Spatial draggedItem = session.get(DragSession.ITEM, null);
+                
+                // Grab the original slot of the item.  We tucked this away
+                // during drag start just for this case.                
+                Vector2f slot = session.get("gridLocation", null);
+                if( slot != null ) {
+                    control.setCell((int)slot.x, (int)slot.y, draggedItem);
+                } else {
+                    System.out.println("Error, missing gridLocation for dragged item");
+                    // This should not ever happen but if it does we'll at least
+                    // try to deal with it
+                    control.addChild(draggedItem);
+                }  
             } 
         }
     }  
