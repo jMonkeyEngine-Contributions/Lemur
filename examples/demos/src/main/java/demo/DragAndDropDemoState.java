@@ -136,6 +136,7 @@ System.out.println("GridControl added.");
         //container1.attachChild(geom);
         container1.getControl(StackControl.class).addChild(createItem());
         container1.getControl(StackControl.class).addChild(createItem());
+        container1.getControl(StackControl.class).addChild(createItem());
         
         container2.getControl(GridControl.class).setCell(0, 0, createItem());  
         container2.getControl(GridControl.class).setCell(2, 1, createItem());  
@@ -144,9 +145,16 @@ System.out.println("GridControl added.");
     private Spatial createItem() {
         Sphere sphere = new Sphere(12, 24, 1);
         Geometry geom = new Geometry("item", sphere);
-        Material mat = GuiGlobals.getInstance().createMaterial(ColorRGBA.Blue, true).getMaterial();
+        
+        // Create a random color
+        float r = (float)(Math.random() * 0.4 + 0.2);
+        float g = (float)(Math.random() * 0.6 + 0.2);
+        float b = (float)(Math.random() * 0.6 + 0.2);
+        ColorRGBA color = new ColorRGBA(r, g, b, 1);
+        
+        Material mat = GuiGlobals.getInstance().createMaterial(color, true).getMaterial();
         //mat.getAdditionalRenderState().setWireframe(true);
-        mat.setColor("Ambient", ColorRGBA.Blue);
+        mat.setColor("Ambient", color);
         geom.setMaterial(mat);
         return geom;
     }
@@ -652,20 +660,26 @@ System.out.println("GridControl added.");
     
     private class ColoredDraggable extends DefaultDraggable {
  
+        private Material originalMaterial;
         private ColorRGBA color = ColorRGBA.Blue; 
         private ColorRGBA none = ColorRGBA.Gray;
         private ColorRGBA invalid = ColorRGBA.Red;
+        
+        private Geometry geom;
         private Material mat;
     
         public ColoredDraggable( ViewPort view, Spatial spatial, Vector2f start ) {
             super(view, spatial, start);
  
-            this.mat = ((Geometry)spatial).getMaterial();
+            this.geom = (Geometry)spatial;
+            this.originalMaterial = geom.getMaterial(); 
+            this.mat = originalMaterial.clone();
         }
  
         protected void setColor( ColorRGBA color ) {
             mat.setColor("Diffuse", color);
             mat.setColor("Ambient", color);
+            geom.setMaterial(mat);
         }
  
         @Override       
@@ -675,11 +689,12 @@ System.out.println("GridControl added.");
                     setColor(invalid);
                     break;
                 case ValidTarget:
-                    setColor(color);
+                    //setColor(color);
+                    geom.setMaterial(originalMaterial);
                     break;  
                 case NoTarget:
                 default:
-                    setColor(none);
+                    setColor(none);                    
                     break;
             }
         }        
