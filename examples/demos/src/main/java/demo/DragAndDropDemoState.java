@@ -442,16 +442,20 @@ System.out.println("GridControl added.");
             // We'll keep track of the slot we took it from so we can stick
             // it back again if the drag is canceled. 
             event.getSession().set("stackIndex", index);
-        
-            // Since we are reusing the item for our draggable, we need to
-            // switch it to the root node
-            Vector3f world = item.getWorldTranslation();
-            Quaternion rot = item.getWorldRotation();
-            getRoot().attachChild(item);
-            item.setLocalTranslation(world);
-            item.setLocalRotation(rot);
-        
-            return new ColoredDraggable(event.getViewPort(), item, event.getLocation());
+ 
+            // Clone the dragged item to use in our draggable and stick the
+            // clone in the root at the same world location.
+            Spatial drag = item.clone();
+            drag.setLocalTranslation(item.getWorldTranslation());
+            drag.setLocalRotation(item.getWorldRotation());
+            getRoot().attachChild(drag);
+                   
+            // Now that we've got the world location of the item we can remove
+            // it from the parent spatial since it is not really a child anymore.
+            // We only left it so we could easily get its world location/rotation.
+            item.removeFromParent();
+             
+            return new ColoredDraggable(event.getViewPort(), drag, event.getLocation());
         } 
     
         public void onDragEnter( DragEvent event ) {
@@ -476,11 +480,6 @@ System.out.println("GridControl added.");
             // Grab the payload we stored during drag start
             Spatial draggedItem = event.getSession().get(DragSession.ITEM, null);
  
-            // Back door reset the color just in case.  We wouldn't have
-            // to do this if we cloned the item for dragging.
-            ColoredDraggable draggable = (ColoredDraggable)event.getSession().getDraggable();            
-            draggable.updateDragStatus(DragStatus.ValidTarget);
- 
             // Add the item to this stack
             getModel().addChild(draggedItem);
         }
@@ -494,11 +493,6 @@ System.out.println("GridControl added.");
             // put the item back.           
             if( event.getSession().getDropTarget() == null ) {
                                            
-                // Back door reset the color since we know we're going to
-                // stick it back in our model properly
-                ColoredDraggable draggable = (ColoredDraggable)event.getSession().getDraggable();                                
-                draggable.updateDragStatus(DragStatus.ValidTarget);
-                
                 // Grab the payload we stored during drag start
                 Spatial draggedItem = event.getSession().get(DragSession.ITEM, null);
             
@@ -569,15 +563,19 @@ System.out.println("GridControl added.");
                 // canceled and we have to put it back. 
                 event.getSession().set("gridLocation", hit);
                 
-                // Since we are reusing the item for our draggable, we need to
-                // switch it to the root node
-                Vector3f world = item.getWorldTranslation();
-                Quaternion rot = item.getWorldRotation();
-                getRoot().attachChild(item);
-                item.setLocalTranslation(world);
-                item.setLocalRotation(rot);
+                // Clone the dragged item to use in our draggable and stick the
+                // clone in the root at the same world location.
+                Spatial drag = item.clone();
+                drag.setLocalTranslation(item.getWorldTranslation());
+                drag.setLocalRotation(item.getWorldRotation());
+                getRoot().attachChild(drag);
                 
-                return new ColoredDraggable(event.getViewPort(), item, event.getLocation());
+                // Now that we've got the world location of the item we can remove
+                // it from the parent spatial since it is not really a child anymore.
+                // We only left it so we could easily get its world location/rotation.
+                item.removeFromParent(); 
+                
+                return new ColoredDraggable(event.getViewPort(), drag, event.getLocation());
             }       
             return null;
         } 
@@ -633,10 +631,6 @@ System.out.println("GridControl added.");
             // that the drag operation didn't finish and we need to 
             // put the item back.                       
             if( session.getDropTarget() == null ) {
-                // Back door reset the color since we know we're going to
-                // stick it back in our model properly
-                ColoredDraggable draggable = (ColoredDraggable)session.getDraggable();
-                draggable.updateDragStatus(DragStatus.ValidTarget);
             
                 // Grab the payload we stored during drag start
                 Spatial draggedItem = session.get(DragSession.ITEM, null);
@@ -676,7 +670,6 @@ System.out.println("GridControl added.");
  
         @Override       
         public void updateDragStatus( DragStatus status ) {
-System.out.println("updateDragStatus(" + status + ")");        
             switch( status ) {
                 case InvalidTarget:
                     setColor(invalid);
