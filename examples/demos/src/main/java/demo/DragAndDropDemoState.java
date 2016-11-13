@@ -91,35 +91,21 @@ public class DragAndDropDemoState extends BaseAppState {
         dndRoot.addLight(sun);
         
         AmbientLight ambient = new AmbientLight(ColorRGBA.Gray);
-        dndRoot.addLight(ambient);
-            
-        //WireBox box = new WireBox(1, 1, 1);
-        /*Box box = new Box(1, 1, 1);
-        container1 = new Geometry("container1", box);
-        GuiMaterial mat = GuiGlobals.getInstance().createMaterial(containerColor, true);
-        mat.getMaterial().getAdditionalRenderState().setBlendMode(BlendMode.Alpha); 
-        mat.getMaterial().getAdditionalRenderState().setFaceCullMode(FaceCullMode.Front);
-        mat.getMaterial().setColor("Ambient", containerColor);
-        container1.setMaterial(mat.getMaterial());
-        container1.setLocalTranslation(-3, 0, 0);
-        //container1.rotate(0, 0.5f, 0);
-        container1.setQueueBucket(Bucket.Transparent);
-        MouseEventControl.addListenersToSpatial(container1, new HighlightListener(mat, containerHighlight, containerColor));
-        
-        dndRoot.attachChild(container1);*/
-        
+        dndRoot.addLight(ambient);            
+ 
+        // Setup a stack-based container       
         container1 = new ContainerNode("container1", containerColor);
-        container1.setLocalTranslation(-3, 0, -4); //-2.5f, 0);
-System.out.println("Adding stack control...");        
+        container1.setLocalTranslation(-3, 0, -4); 
+        
         container1.addControl(new DragAndDropControl(new StackContainerListener(container1)));
-        container1.addControl(new StackControl());
-System.out.println("Stack control added.");        
+        container1.addControl(new StackControl());        
         MouseEventControl.addListenersToSpatial(container1, 
                                                 new HighlightListener(container1.material, 
                                                                       containerHighlight, 
                                                                       containerColor));
         dndRoot.attachChild(container1);
-        
+ 
+        // Setup a grid based container       
         container2 = new ContainerNode("container2", containerColor);
         container2.setSize(3, 3, 1);
         container2.setLocalTranslation(2f, -0.5f, -4);
@@ -127,17 +113,16 @@ System.out.println("Stack control added.");
                                                 new HighlightListener(container2.material, 
                                                                       containerHighlight, 
                                                                       containerColor));
-System.out.println("Adding grid control...");                                                                      
         container2.addControl(new GridControl(3));
-System.out.println("GridControl added.");        
         container2.addControl(new DragAndDropControl(new GridContainerListener(container2)));
         dndRoot.attachChild(container2);
         
-        //container1.attachChild(geom);
+        // Add some random items to our MVC stack 'model' control
         container1.getControl(StackControl.class).addChild(createItem());
         container1.getControl(StackControl.class).addChild(createItem());
         container1.getControl(StackControl.class).addChild(createItem());
         
+        // Add some random items to our MVC grid 'model' control
         container2.getControl(GridControl.class).setCell(0, 0, createItem());  
         container2.getControl(GridControl.class).setCell(2, 1, createItem());  
     }
@@ -410,14 +395,11 @@ System.out.println("GridControl added.");
         }
 
         private int getIndex( Vector3f world ) {
-            world = container.worldToLocal(world, null);
+            Vector3f local = container.worldToLocal(world, null);
             
-            System.out.println("Stack Hit:" + world);
+            // Calculate the index for that location
+            float y = (getModel().model.size() + local.y) / 2;
             
-            // Calculate the index
-            float y = (getModel().model.size() + world.y) / 2;
-            
-            System.out.println("Index:" + y);
             return (int)y;
         }
         
@@ -530,13 +512,11 @@ System.out.println("GridControl added.");
         }
 
         private Vector2f getCellLocation( Vector3f world ) {
-            world = container.worldToLocal(world, null);
-            
-            System.out.println("Hit:" + world);
+            Vector3f local = container.worldToLocal(world, null);
             
             // Calculate the cell location
-            float x = (3 + world.x) / 2;
-            float y = (3 - world.y) / 2;
+            float x = (3 + local.x) / 2;
+            float y = (3 - local.y) / 2;
             
             // This will look a little off to the user towards the right edge because
             // clicking on the surface of the box in the center cell will actually project
@@ -546,7 +526,6 @@ System.out.println("GridControl added.");
             int xCell = (int)x;
             int yCell = (int)y; 
  
-            System.out.println("Cell:" + x + ", " + y);
             return new Vector2f(xCell, yCell);
         }
 
