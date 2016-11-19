@@ -350,7 +350,7 @@ public class PopupState extends BaseAppState {
         }
     }
     
-    private class BlockerListener implements MouseListener, PassiveListener {
+    private class BlockerListener implements MouseListener {
 
         private PopupEntry entry;
         
