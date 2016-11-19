@@ -514,8 +514,9 @@ public class PickEventSession {
                             }
                         }
 
-                        if( consumed )
+                        if( consumed ) {
                             return true;
+                        }
                     }
                 }
             }
