@@ -1,4 +1,4 @@
-Lemur-Proto 1.7.2
+Lemur-Proto 1.8.1
 ------------------
 * Fixed a missing body of the default constructor for ColorChooser.
 * OptionPanelState now requests focus for the option panel when shown.
@@ -7,6 +7,7 @@ Lemur-Proto 1.7.2
 * Fixed a bug in CallMethodAction where the wrong method could be selected if 
     it had the same name but invalid argument types.
 * Added additional trace logging to CallMethodAction
+* Initial drag-and-drop support.  See the new com.simsilica.lemur.dnd package.
 
 
 Lemur-Proto 1.7.1
