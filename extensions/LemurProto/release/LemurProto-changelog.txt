@@ -1,4 +1,4 @@
-Lemur-Proto <undetermined>
+Lemur-Proto 1.7.2
 ------------------
 * Fixed a missing body of the default constructor for ColorChooser.
 * OptionPanelState now requests focus for the option panel when shown.

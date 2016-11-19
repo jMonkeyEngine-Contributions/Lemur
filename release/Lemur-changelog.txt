@@ -1,4 +1,4 @@
-Lemur <undetermined>
+Lemur 1.9.1
 ------------
 * Fixed a bug in RollupPanel.setContents(null) where removing the existing
     contents was causing problems if the rollup panel was closed.
