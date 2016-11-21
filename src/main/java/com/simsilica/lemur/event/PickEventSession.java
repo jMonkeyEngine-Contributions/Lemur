@@ -112,12 +112,46 @@ public class PickEventSession {
      */
     private Set<Spatial> delivered = new HashSet<Spatial>();
 
+    /**
+     *  An instance-based debug value that will turn on logging for a particular
+     *  instance... useful for debugging specific viewport pick sessions, etc..
+     */
+    private boolean debug;
+    
     public PickEventSession() {
     }
 
     protected PickEventSession( Map<Collidable, RootEntry> roots ) {
         this.roots.putAll(roots);
         this.rootList = null;
+    }
+
+    /**
+     *  Turns on extra debug logging.  This will cause all of the logging
+     *  that would normally be at trace level for any instance to be at debug
+     *  level just for _this_ instance.
+     */
+    public void setDebugOn( boolean f ) {
+        this.debug = f;
+    }
+ 
+    /**
+     *  Returns true if extra debug logging has been turned on.
+     */   
+    public boolean isDebugOn() {
+        return debug;
+    }
+
+    protected boolean isTraceEnabled() {
+        return debug || log.isTraceEnabled();
+    }
+    
+    protected void trace( String msg ) {
+        if( debug ) {
+            log.debug(msg);
+        } else if( log.isTraceEnabled() ) {
+            log.trace(msg);
+        }
     }
 
     /**
@@ -347,6 +381,11 @@ public class PickEventSession {
     }
 
     protected Ray getPickRay( RootEntry rootEntry, Vector2f cursor ) {
+    
+        if( isTraceEnabled() ) {
+            trace("getPickRay(" + rootEntry + ", " + cursor + ")");
+        }
+    
         Camera cam = rootEntry.viewport.getCamera();
 
         Ray result = rayCache.get(cam);
@@ -354,6 +393,7 @@ public class PickEventSession {
             return result;
 
         if( rootEntry.root instanceof Spatial && ((Spatial)rootEntry.root).getQueueBucket() == Bucket.Gui ) {
+            trace("Creating GuiBucket ray.");
             // Special case for Gui Bucket nodes since they are always in screen space
             result = new Ray(new Vector3f(cursor.x, cursor.y, 1000), new Vector3f(0, 0, -1));
         } else {
@@ -367,6 +407,9 @@ public class PickEventSession {
                 // we should technically clip perspective also.
                 Vector3f clickFar  = cam.getWorldCoordinates(cursor, 1);
                 Vector3f clickNear = cam.getWorldCoordinates(cursor, 0);
+                if( isTraceEnabled() ) {                
+                    trace("Creating Viewport ray, clickNear:" + clickNear + " clickFar:" + clickFar);
+                }
                 result = new Ray(clickNear, clickFar.subtractLocal(clickNear).normalizeLocal());
             } else {
                 result = null;
@@ -378,6 +421,10 @@ public class PickEventSession {
     }
 
     public boolean cursorMoved( int x, int y ) {
+
+        if( isTraceEnabled() ) {
+            trace("cursorMoved(" + x + ", " + y + ") capture:" + capture);
+        }
 
         Vector2f cursor = new Vector2f(x,y);
 
@@ -455,8 +502,8 @@ public class PickEventSession {
             Camera cam = e.viewport.getCamera();
 
             Ray mouseRay = getPickRay(e, cursor);
-            if( log.isTraceEnabled() ) {
-                log.trace("Picking against:" + e + " with:" + mouseRay);
+            if( isTraceEnabled() ) {
+                trace("Picking against:" + e + " with:" + mouseRay);
             }
             if( mouseRay == null ) {
                 continue;
@@ -468,12 +515,12 @@ public class PickEventSession {
             if( count > 0 ) {
                 for( CollisionResult cr : results ) {
                     Geometry geom = cr.getGeometry();
-                    if( log.isTraceEnabled() ) {
-                        log.trace("Collision geometry:" + geom);
+                    if( isTraceEnabled() ) {
+                        trace("Collision geometry:" + geom);
                     }
                     Spatial hit = findHitTarget(geom);
-                    if( log.isTraceEnabled() ) {
-                        log.trace("Hit:" + hit);
+                    if( isTraceEnabled() ) {
+                        trace("Hit:" + hit);
                     }
                     if( hit == null )
                         continue;
@@ -519,6 +566,8 @@ public class PickEventSession {
                         }
                     }
                 }
+            } else {
+                trace("No collisions.");
             }
             results.clear();
         }
