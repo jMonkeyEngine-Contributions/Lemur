@@ -1,3 +1,10 @@
+Lemur <undetermined>
+------------
+* Added a proper toString() method to the LayerComparator.
+* Added a 'debug mode' to the PickEventSession which lets a caller selectively
+    raise the logging level for a particular instance.
+    
+
 Lemur 1.9.1
 ------------
 * Fixed a bug in RollupPanel.setContents(null) where removing the existing
