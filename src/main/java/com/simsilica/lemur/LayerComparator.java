@@ -141,4 +141,9 @@ public class LayerComparator implements GeometryComparator {
             return 1 * bias;
         return delegate.compare(g1, g2);
     }
+    
+    @Override       
+    public String toString() {
+        return getClass().getName() + "[delegate=" + delegate + ", bias=" + bias + "]";
+    }    
 }
