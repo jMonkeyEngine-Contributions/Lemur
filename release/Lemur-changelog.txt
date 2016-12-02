@@ -3,6 +3,11 @@ Lemur <undetermined>
 * Added a proper toString() method to the LayerComparator.
 * Added a 'debug mode' to the PickEventSession which lets a caller selectively
     raise the logging level for a particular instance.
+* Removed a leftover unused 'index' field in GuiControl.
+* Added support for GuiUpdateListeners to GuiControl so that things like
+    child GuiComponents can hook into the controlUpdate() without having
+    to create another full control themselves.
+* Modified GuiControl to lazily instantiate its listener lists.    
     
 
 Lemur 1.9.1
