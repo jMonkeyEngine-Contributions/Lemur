@@ -50,19 +50,21 @@ import com.jme3.scene.Spatial.CullHint;
 import com.jme3.scene.shape.Quad;
 
 import com.simsilica.lemur.DocumentModel;
-import com.simsilica.lemur.focus.FocusTarget;
-import com.simsilica.lemur.focus.FocusNavigationState;
-import com.simsilica.lemur.focus.FocusTraversal.TraversalDirection;
-import com.simsilica.lemur.core.GuiControl;
 import com.simsilica.lemur.GuiGlobals;
-import com.simsilica.lemur.core.GuiMaterial;
 import com.simsilica.lemur.HAlignment;
+import com.simsilica.lemur.VAlignment;
+import com.simsilica.lemur.core.GuiControl;
+import com.simsilica.lemur.core.GuiMaterial;
+import com.simsilica.lemur.core.GuiUpdateListener;
+import com.simsilica.lemur.core.VersionedReference;
 import com.simsilica.lemur.event.KeyAction;
 import com.simsilica.lemur.event.KeyActionListener;
 import com.simsilica.lemur.event.KeyListener;
 import com.simsilica.lemur.event.KeyModifiers;
 import com.simsilica.lemur.event.ModifiedKeyInputEvent;
-import com.simsilica.lemur.VAlignment;
+import com.simsilica.lemur.focus.FocusTarget;
+import com.simsilica.lemur.focus.FocusNavigationState;
+import com.simsilica.lemur.focus.FocusTraversal.TraversalDirection;
 
 
 /**
@@ -128,6 +130,10 @@ public class TextEntryComponent extends AbstractGuiComponent
     private boolean focused;
     private boolean cursorVisible = true;
 
+    private VersionedReference<DocumentModel> modelRef;
+    private VersionedReference<Integer> caratRef;
+    private GuiUpdateListener updateListener = new ModelChecker();
+
     // This really only works properly in single-line mode.
     private int textOffset = 0;
 
@@ -145,6 +151,10 @@ public class TextEntryComponent extends AbstractGuiComponent
         // bucket it will actually end up in Gui or regular.
         //bitmapText.setQueueBucket( Bucket.Transparent );
         this.model = model;
+        
+        // Create a versioned reference for watching for updates, external or otherwise
+        this.modelRef = model.createReference();
+        this.caratRef = model.createCaratReference();
 
         cursorQuad = new Quad(bitmapText.getLineHeight()/16f, bitmapText.getLineHeight());
         cursor = new Geometry( "cursor", cursorQuad );
@@ -182,6 +192,7 @@ public class TextEntryComponent extends AbstractGuiComponent
     @Override
     public void attach( GuiControl parent ) {
         super.attach(parent);
+        parent.addUpdateListener(updateListener);
         getNode().attachChild(bitmapText);
         resetCursorPosition();
         resetCursorState();
@@ -196,6 +207,7 @@ public class TextEntryComponent extends AbstractGuiComponent
         GuiGlobals.getInstance().removeKeyListener(keyHandler);
 
         getNode().detachChild(bitmapText);
+        parent.removeUpdateListener(updateListener);
         super.detach(parent);
     }
 
@@ -458,7 +470,7 @@ public class TextEntryComponent extends AbstractGuiComponent
             return;
 
         model.setText(text);
-        resetText();
+        //resetText();  ...should be automatic now
     }
 
     public String getText() {
@@ -580,7 +592,7 @@ public class TextEntryComponent extends AbstractGuiComponent
         @Override
         public void keyAction( TextEntryComponent source, KeyAction key ) {
             source.model.home(false);
-            source.resetCursorPosition();
+            //source.resetCursorPosition(); should be automatic now
         }
     }
 
@@ -588,7 +600,7 @@ public class TextEntryComponent extends AbstractGuiComponent
         @Override
         public void keyAction( TextEntryComponent source, KeyAction key ) {
             source.model.home(true);
-            source.resetCursorPosition();
+            //source.resetCursorPosition(); should be automatic now
         }
     }
 
@@ -596,7 +608,7 @@ public class TextEntryComponent extends AbstractGuiComponent
         @Override
         public void keyAction( TextEntryComponent source, KeyAction key ) {
             source.model.end(false);
-            source.resetCursorPosition();
+            //source.resetCursorPosition(); should be automatic now
         }
     }
 
@@ -604,7 +616,7 @@ public class TextEntryComponent extends AbstractGuiComponent
         @Override
         public void keyAction( TextEntryComponent source, KeyAction key ) {
             source.model.end(true);
-            source.resetCursorPosition();
+            //source.resetCursorPosition(); should be automatic now
         }
     }
 
@@ -612,7 +624,7 @@ public class TextEntryComponent extends AbstractGuiComponent
         @Override
         public void keyAction( TextEntryComponent source, KeyAction key ) {
             source.model.up();
-            source.resetCursorPosition();
+            //source.resetCursorPosition(); should be automatic now
         }
     }
 
@@ -620,7 +632,7 @@ public class TextEntryComponent extends AbstractGuiComponent
         @Override
         public void keyAction( TextEntryComponent source, KeyAction key ) {
             source.model.down();
-            source.resetCursorPosition();
+            //source.resetCursorPosition(); should be automatic now
         }
     }
 
@@ -628,7 +640,7 @@ public class TextEntryComponent extends AbstractGuiComponent
         @Override
         public void keyAction( TextEntryComponent source, KeyAction key ) {
             source.model.left();
-            source.resetCursorPosition();
+            //source.resetCursorPosition(); should be automatic now
         }
     }
 
@@ -636,7 +648,7 @@ public class TextEntryComponent extends AbstractGuiComponent
         @Override
         public void keyAction( TextEntryComponent source, KeyAction key ) {
             source.model.right();
-            source.resetCursorPosition();
+            //source.resetCursorPosition(); should be automatic now
         }
     }
 
@@ -650,7 +662,7 @@ public class TextEntryComponent extends AbstractGuiComponent
         @Override
         public void keyAction( TextEntryComponent source, KeyAction key ) {
             source.model.backspace();
-            source.resetText(); // shouldn't have to do this
+            //source.resetText(); // should be automic now
         }
     }
 
@@ -658,7 +670,7 @@ public class TextEntryComponent extends AbstractGuiComponent
         @Override
         public void keyAction( TextEntryComponent source, KeyAction key ) {
             source.model.insertNewLine();
-            source.resetText(); // shouldn't have to do this
+            //source.resetText(); // should be automic now
         }
     }
 
@@ -666,7 +678,7 @@ public class TextEntryComponent extends AbstractGuiComponent
         @Override
         public void keyAction( TextEntryComponent source, KeyAction key ) {
             source.model.delete();
-            source.resetText(); // shouldn't have to do this
+            //source.resetText(); // should be automic now
         }
     }
     
@@ -711,8 +723,25 @@ public class TextEntryComponent extends AbstractGuiComponent
                 if( evt.getKeyChar() >= 32 ) {
                     model.insert(evt.getKeyChar());
                     evt.setConsumed();
-                    resetText();
+                    //resetText(); ...should be automatic now
                 }
+            }
+        }
+    }
+ 
+    /**
+     *  Checks for changes in the model and updates the text display
+     *  or cursor position as necessary.
+     */   
+    private class ModelChecker implements GuiUpdateListener {
+    
+        @Override       
+        public void guiUpdate( GuiControl source, float tpf ) {
+            if( modelRef.update() ) {
+                resetText();
+            }
+            if( caratRef.update() ) {
+                resetCursorPosition();   
             }
         }
     }

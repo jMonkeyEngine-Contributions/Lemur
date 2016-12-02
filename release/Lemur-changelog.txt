@@ -9,6 +9,10 @@ Lemur <undetermined>
     to create another full control themselves.
 * Modified GuiControl to lazily instantiate its listener lists.
 * Added a TextField(DocumentModel) convenience constructor.    
+* Added a DocumentModel.createCaratReference() method that returns a versioned
+    reference for the carat position. 
+* Fixed TextEntryComponent to be more reactive to external DocumentModel changes
+    and it now uses that even for its own internal changes to the document.
     
 
 Lemur 1.9.1

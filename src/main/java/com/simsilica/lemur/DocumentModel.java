@@ -52,7 +52,8 @@ public class DocumentModel implements VersionedObject<DocumentModel> {
     private long version;
     private List<StringBuilder> lines = new ArrayList<StringBuilder>();
     private String composite = null;
-    private int carat = 0;
+    //private int carat = 0;
+    private Carat carat = new Carat();
     private int line = 0;
     private int column = 0;
 
@@ -83,7 +84,7 @@ public class DocumentModel implements VersionedObject<DocumentModel> {
     }
 
     public int getCarat() {
-        return carat;
+        return carat.get();
     }
 
     public int getCaratLine() {
@@ -108,87 +109,100 @@ public class DocumentModel implements VersionedObject<DocumentModel> {
 
     public int home( boolean currentLine ) {
         if( currentLine ) {
-            carat -= column;
+            //carat -= column;
+            carat.move(-column);
             column = 0;
         } else {
-            carat = 0;
+            //carat = 0;
+            carat.set(0);
             column = 0;
             line = 0;
         }
-        return carat;
+        return carat.get();
     }
 
     public int end( boolean currentLine ) {
         if( currentLine ) {
             StringBuilder row = lines.get(line);
-            carat += row.length() - column;
+            //carat += row.length() - column;
+            carat.move(row.length() - column);
             column = row.length();
         } else {
             // Find the end of the document
-            carat = 0;
+            //carat = 0;
+            carat.set(0);
             column = 0;
             line = 0;
             for( int i = 0; i < lines.size(); i++ ) {
                 if( i > 0 ) {
-                    carat++;
+                    //carat++;
+                    carat.increment();
                 }
                 StringBuilder row = lines.get(i);
-                carat += row.length();
+                //carat += row.length();
+                carat.move(row.length());
                 column = row.length();
             }
             line = lines.size() - 1;
         }
-        return carat;
+        return carat.get();
     }
 
     public int up() {
         if( line == 0 )
-            return carat;
+            return carat.get();
 
         // Carat needs to lose the beginning of this line
         // Take it home
-        carat -= column;
+        //carat -= column;
+        carat.move(-column);
 
         // Take it to the end of the previous line
         line--;
-        carat--;
+        //carat--;
+        carat.decrement();
 
         if( column <= lines.get(line).length() ) {
             // Then we need to move the carat by the
             // rest of this line, too
-            carat -= lines.get(line).length() - column;
+            //carat -= lines.get(line).length() - column;
+            carat.move(-(lines.get(line).length() - column));
         } else {
             // Don't need to adjust the carat because it is already in the
             // right place.
             column = lines.get(line).length();
         }
 
-        return carat;
+        return carat.get();
     }
 
     public int down() {
         if( line == lines.size() - 1 )
-            return carat;
+            return carat.get();
 
         // Take the carat to the end of this line
         int restOfLine = lines.get(line).length() - column;
-        carat += restOfLine;
+        //carat += restOfLine;
+        carat.move(restOfLine);
 
         // Take it to the beginning of the next line
         line++;
-        carat++;
+        //carat++;
+        carat.increment();
 
         // Then move it out as much as we can to fit the previous column
         column = Math.min(column, lines.get(line).length());
-        carat += column;
+        //carat += column;
+        carat.move(column);
 
-        return carat;
+        return carat.get();
     }
 
     public int left() {
-        if( carat == 0 )
+        if( carat.get() == 0 )
             return 0;
-        carat--;
+        //carat--;
+        carat.decrement();
         column--;
         if( column < 0 ) {
             line--;
@@ -199,22 +213,24 @@ public class DocumentModel implements VersionedObject<DocumentModel> {
 
             column = lines.get(line).length();
         }
-        return carat;
+        return carat.get();
     }
 
     public int right() {
         column++;
-        carat++;
+        //carat++;
+        carat.increment();
         if( column > lines.get(line).length() ) {
             if( line < lines.size() - 1 ) {
                 line++;
                 column = 0;
             } else {
                 column--;
-                carat--;
+                //carat--;
+                carat.decrement();
             }
         }
-        return carat;
+        return carat.get();
     }
 
     public void insertNewLine() {
@@ -230,7 +246,8 @@ public class DocumentModel implements VersionedObject<DocumentModel> {
 
         line++;
         column=0;
-        carat++;  // A new line is still a "character"
+        //carat++;  // A new line is still a "character"
+        carat.increment();  // A new line is still a "character"
 
         composite = null;
         version++;
@@ -238,10 +255,10 @@ public class DocumentModel implements VersionedObject<DocumentModel> {
 
     public void deleteCharAt( int pos ) {
         // Some optimized paths
-        if( pos == carat - 1 ) {
+        if( pos == carat.get() - 1 ) {
             backspace();
             return;
-        } else if( pos == carat ) {
+        } else if( pos == carat.get() ) {
             delete();
             return;
         }
@@ -270,9 +287,10 @@ public class DocumentModel implements VersionedObject<DocumentModel> {
 
         // If the carat is after the delete position then
         // we need to adjust it... and the current line and column.
-        if( carat <= pos ) {
-            carat--;
-            findPosition(carat, location);
+        if( carat.get() <= pos ) {
+            //carat--;
+            carat.decrement();
+            findPosition(carat.get(), location);
             line = location[0];
             column = location[1];
         }
@@ -282,7 +300,7 @@ public class DocumentModel implements VersionedObject<DocumentModel> {
     }
 
     public void backspace() {
-        if( carat == 0 )
+        if( carat.get() == 0 )
             return;
 
         if( column == 0 ) {
@@ -290,7 +308,8 @@ public class DocumentModel implements VersionedObject<DocumentModel> {
                 // Need to merge this line with the previous
                 column = lines.get(line-1).length();
                 lines.get(line-1).append(lines.remove(line));
-                carat--;
+                //carat--;
+                carat.decrement();
                 line--;
             } else {
                 // Nothing to do
@@ -300,7 +319,8 @@ public class DocumentModel implements VersionedObject<DocumentModel> {
             StringBuilder row = lines.get(line);
             row.deleteCharAt(column - 1);
             column--;
-            carat--;
+            //carat--;
+            carat.decrement();
         }
         composite = null;
         version++;
@@ -351,7 +371,8 @@ public class DocumentModel implements VersionedObject<DocumentModel> {
             default:
                 // For now
                 lines.get(line).insert(column, c);
-                carat++;
+                //carat++;
+                carat.increment();
                 column++;
                 break;
         }
@@ -370,6 +391,10 @@ public class DocumentModel implements VersionedObject<DocumentModel> {
 
     public VersionedReference<DocumentModel> createReference() {
         return new VersionedReference<DocumentModel>(this);
+    }
+
+    public VersionedReference<Integer> createCaratReference() {
+        return carat.createReference();
     }
 
     protected void parseText( String text ) {
@@ -404,5 +429,64 @@ public class DocumentModel implements VersionedObject<DocumentModel> {
     @Override
     public String toString() {
         return "DocumentModel[]";
+    }
+    
+    private class Carat implements VersionedObject<Integer> {
+        private int value;
+        private long version;
+        
+        public Carat() {
+        }
+ 
+        public final int get() {
+            return value;
+        }
+ 
+        public final int set( int value ) {
+            if( this.value == value ) {
+                return value;
+            }
+            this.value = value;
+            version++;
+            return value;
+        }
+        
+        public final int move( int amount ) {
+            value += amount;
+            version++;
+            return value;
+        }
+        
+        public final int increment() {
+            value++;
+            version++;
+            return value;
+        }
+        
+        public final int decrement() {
+            value--;
+            version++;
+            return value;
+        }
+
+        @Override       
+        public final long getVersion() {
+            return version;
+        } 
+
+        @Override       
+        public final Integer getObject() {
+            return value;
+        }
+
+        @Override       
+        public final VersionedReference<Integer> createReference() {
+            return new VersionedReference<Integer>(this);
+        }
+ 
+        @Override       
+        public final String toString() {
+            return "Carat[" + value + "]";
+        }
     }
 }
