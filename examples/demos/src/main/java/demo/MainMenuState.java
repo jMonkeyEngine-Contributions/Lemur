@@ -63,7 +63,8 @@ public class MainMenuState extends BaseAppState {
         OptionPanelDemoState.class,
         PopupPanelDemoState.class,
         DragAndDropDemoState.class,
-        WordWrapDemoState.class
+        WordWrapDemoState.class,
+        TextEntryDemoState.class
     };
 
     private Container mainWindow;
