@@ -70,6 +70,10 @@ public class TextField extends Panel {
         this(new DocumentModel(text), true, new ElementId(ELEMENT_ID), null);
     }
 
+    public TextField( DocumentModel model ) {
+        this(model, true, new ElementId(ELEMENT_ID), null);
+    }
+
     public TextField( String text, String style ) {
         this(new DocumentModel(text), true, new ElementId(ELEMENT_ID), style);
     }
