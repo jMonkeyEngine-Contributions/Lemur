@@ -43,6 +43,7 @@ import com.simsilica.lemur.*;
 import com.simsilica.lemur.component.SpringGridLayout;
 import com.simsilica.lemur.event.PopupState;
 import com.simsilica.lemur.style.ElementId;
+import com.simsilica.lemur.text.DocumentModel;
 
 /**
  *  A demo of a Textfield that allows direct entry as well as provides
@@ -59,7 +60,7 @@ public class TextEntryDemoState extends BaseAppState {
     private CloseCommand closeCommand = new CloseCommand();
  
     private TextField textField;
-    private DocumentModel document = new DocumentModel("Initial text.");
+    private DocumentModel document;
     
     public TextEntryDemoState() {
     }
@@ -80,8 +81,9 @@ public class TextEntryDemoState extends BaseAppState {
         window.addChild(new Label("Word Wrapped Text", new ElementId("window.title.label")));
  
         // Create a multiline text field with our document model
-        textField = window.addChild(new TextField(document));
+        textField = window.addChild(new TextField("Initial text."));
         textField.setSingleLine(false);
+        document = textField.getDocumentModel();
         
         // Setup some preferred sizing since this will be the primary
         // element in our GUI

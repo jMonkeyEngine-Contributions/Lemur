@@ -34,23 +34,26 @@
 
 package com.simsilica.lemur;
 
-import com.simsilica.lemur.style.StyleDefaults;
-import com.simsilica.lemur.style.Attributes;
-import com.simsilica.lemur.style.ElementId;
-import com.simsilica.lemur.style.StyleAttribute;
-import com.simsilica.lemur.style.Styles;
-import com.simsilica.lemur.event.KeyActionListener;
-import com.simsilica.lemur.event.KeyAction;
-import com.simsilica.lemur.event.FocusMouseListener;
-import com.simsilica.lemur.event.MouseEventControl;
-import com.simsilica.lemur.component.QuadBackgroundComponent;
-import com.simsilica.lemur.component.TextEntryComponent;
 import java.util.Map;
 
 import com.jme3.font.BitmapFont;
 import com.jme3.math.ColorRGBA;
 
+import com.simsilica.lemur.component.QuadBackgroundComponent;
+import com.simsilica.lemur.component.TextEntryComponent;
 import com.simsilica.lemur.core.GuiControl;
+import com.simsilica.lemur.event.KeyActionListener;
+import com.simsilica.lemur.event.KeyAction;
+import com.simsilica.lemur.event.FocusMouseListener;
+import com.simsilica.lemur.event.MouseEventControl;
+import com.simsilica.lemur.style.StyleDefaults;
+import com.simsilica.lemur.style.Attributes;
+import com.simsilica.lemur.style.ElementId;
+import com.simsilica.lemur.style.StyleAttribute;
+import com.simsilica.lemur.style.Styles;
+import com.simsilica.lemur.text.DefaultDocumentModel;
+import com.simsilica.lemur.text.DocumentModel;
+
 
 
 /**
@@ -67,7 +70,7 @@ public class TextField extends Panel {
     private TextEntryComponent text;
 
     public TextField( String text ) {
-        this(new DocumentModel(text), true, new ElementId(ELEMENT_ID), null);
+        this(new DefaultDocumentModel(text), true, new ElementId(ELEMENT_ID), null);
     }
 
     public TextField( DocumentModel model ) {
@@ -75,15 +78,15 @@ public class TextField extends Panel {
     }
 
     public TextField( String text, String style ) {
-        this(new DocumentModel(text), true, new ElementId(ELEMENT_ID), style);
+        this(new DefaultDocumentModel(text), true, new ElementId(ELEMENT_ID), style);
     }
 
     public TextField( String text, ElementId elementId ) {
-        this(new DocumentModel(text), true, elementId, null);
+        this(new DefaultDocumentModel(text), true, elementId, null);
     }
     
     public TextField( String text, ElementId elementId, String style ) {
-        this(new DocumentModel(text), true, elementId, style);
+        this(new DefaultDocumentModel(text), true, elementId, style);
     }
 
     public TextField( DocumentModel model, String style ) {

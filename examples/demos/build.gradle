@@ -34,7 +34,7 @@ dependencies {
     compile "org.jmonkeyengine:jme3-desktop:$jmeVersion"
     compile "org.jmonkeyengine:jme3-lwjgl:$jmeVersion"
  
-    compile "com.simsilica:lemur:1.9.2-SNAPSHOT"
+    compile "com.simsilica:lemur:1.10.1-SNAPSHOT"
     compile "com.simsilica:lemur-proto:1.8.1"
     
     // needed for the style language

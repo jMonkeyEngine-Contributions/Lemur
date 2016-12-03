@@ -49,7 +49,6 @@ import com.jme3.scene.Spatial;
 import com.jme3.scene.Spatial.CullHint;
 import com.jme3.scene.shape.Quad;
 
-import com.simsilica.lemur.DocumentModel;
 import com.simsilica.lemur.GuiGlobals;
 import com.simsilica.lemur.HAlignment;
 import com.simsilica.lemur.VAlignment;
@@ -65,6 +64,8 @@ import com.simsilica.lemur.event.ModifiedKeyInputEvent;
 import com.simsilica.lemur.focus.FocusTarget;
 import com.simsilica.lemur.focus.FocusNavigationState;
 import com.simsilica.lemur.focus.FocusTraversal.TraversalDirection;
+import com.simsilica.lemur.text.DocumentModel;
+import com.simsilica.lemur.text.DefaultDocumentModel;
 
 
 /**
@@ -140,7 +141,7 @@ public class TextEntryComponent extends AbstractGuiComponent
     private Map<KeyAction,KeyActionListener> actionMap = new HashMap<KeyAction,KeyActionListener>(standardActions);
 
     public TextEntryComponent( BitmapFont font ) {
-        this( new DocumentModel(), font );
+        this( new DefaultDocumentModel(), font );
     }
 
     public TextEntryComponent( DocumentModel model, BitmapFont font ) {
@@ -174,7 +175,8 @@ public class TextEntryComponent extends AbstractGuiComponent
         TextEntryComponent result = (TextEntryComponent)super.clone();
         result.bitmapText = new BitmapText(font);
         bitmapText.setLineWrapMode(LineWrapMode.Clip);
-        result.model = new DocumentModel(model.getText());
+        
+        result.model = model.clone();
         result.preferredSize = null;
         result.textBox = null;
         result.keyHandler = result.new KeyHandler();

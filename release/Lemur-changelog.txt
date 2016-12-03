@@ -1,5 +1,5 @@
-Lemur <undetermined>
-------------
+Lemur 1.10.1 (unreleased)
+-------------
 * Added a proper toString() method to the LayerComparator.
 * Added a 'debug mode' to the PickEventSession which lets a caller selectively
     raise the logging level for a particular instance.
@@ -13,6 +13,12 @@ Lemur <undetermined>
     reference for the carat position. 
 * Fixed TextEntryComponent to be more reactive to external DocumentModel changes
     and it now uses that even for its own internal changes to the document.
+* Breaking change: DocumentModel has been moved to the com.simsilica.lemur.text
+    package and is now an interface.  Make sure any of your classes that use
+    DocumentModel directly import it from the new location.  If you instantiate
+    a DocumentModel directly then now you will instantiate DefaultDocumentModel
+    instead.  Sorry.  It needed to be done and was only going to get worse
+    the longer I waited.    
     
 
 Lemur 1.9.1
