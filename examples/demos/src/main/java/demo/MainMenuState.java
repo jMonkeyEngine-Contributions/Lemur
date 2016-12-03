@@ -64,7 +64,8 @@ public class MainMenuState extends BaseAppState {
         PopupPanelDemoState.class,
         DragAndDropDemoState.class,
         WordWrapDemoState.class,
-        TextEntryDemoState.class
+        TextEntryDemoState.class,
+        FormattedTextEntryDemoState.class
     };
 
     private Container mainWindow;
@@ -115,7 +116,7 @@ public class MainMenuState extends BaseAppState {
         }
                
  
-        ActionButton exit = mainWindow.addChild(new ActionButton(new CallMethodAction("Exit Game", app, "stop")));
+        ActionButton exit = mainWindow.addChild(new ActionButton(new CallMethodAction("Exit Demo", app, "stop")));
         exit.setInsets(new Insets3f(10, 10, 10, 10)); 
            
         // Calculate a standard scale and position from the app's camera
