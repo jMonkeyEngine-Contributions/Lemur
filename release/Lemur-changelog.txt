@@ -19,6 +19,12 @@ Lemur 1.10.1 (unreleased)
     a DocumentModel directly then now you will instantiate DefaultDocumentModel
     instead.  Sorry.  It needed to be done and was only going to get worse
     the longer I waited.    
+* Added a DocumentModelFilter class that is a DocumentModel that wraps other
+    DocumentModels to provide filtering and transformation.  Callers can do simple
+    filtering with Guava Functions and Subclasses can override the methods to 
+    provide more advanced transformation and input filtering.
+* Added a TextFilters class with a bunch of default input and output implementations
+    for commonly used things.
     
 
 Lemur 1.9.1
