@@ -30,6 +30,9 @@ Lemur 1.10.1 (unreleased)
 * Added a PasswordField that is auto-wired with some useful DocumentModelFilter
     behavior suitable for password fields.  Includes stylable attributes for
     setting the output character and allowed input characters. 
+* Fixed a bug where focus wasn't cleared for objects removed from the scene
+    graph.  The fix is a bit of a hack but there really isn't any other way.
+    This fixes issues #42 and #28.
     
 
 Lemur 1.9.1
