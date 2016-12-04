@@ -100,7 +100,7 @@ public class FormattedTextEntryDemoState extends BaseAppState {
  
         // A new subsection for the output filters
         window.addChild(new Label("Filtered Output:"));
-        examples = examples = window.addChild(new Container(new SpringGridLayout(Axis.Y, Axis.X, FillMode.Even, FillMode.Last)));
+        examples = window.addChild(new Container(new SpringGridLayout(Axis.Y, Axis.X, FillMode.Even, FillMode.Last)));
 
         // Add an all-caps example
         doc = new DocumentModelFilter();
@@ -118,6 +118,33 @@ public class FormattedTextEntryDemoState extends BaseAppState {
         examples.addChild(new Label("-> unfiltered:"));
         textField = examples.addChild(new TextField(doc.getDelegate()), 1);
 
+
+        // A new subsection for the built in filtered text support like PasswordField
+        window.addChild(new Label("Standard Elements:"));
+        examples = window.addChild(new Container(new SpringGridLayout(Axis.Y, Axis.X, FillMode.Even, FillMode.Last)));
+ 
+        PasswordField pword;
+        
+        // Add a PasswordField example
+        examples.addChild(new Label("Password:"));
+        pword = examples.addChild(new PasswordField(""), 1);
+        examples.addChild(new Label("-> unfiltered:"));
+        textField = examples.addChild(new TextField(pword.getDocumentModel()), 1);         
+
+        // Add a PasswordField example
+        examples.addChild(new Label("Password Alt:"));
+        pword = examples.addChild(new PasswordField(""), 1);
+        pword.setOutputCharacter('#');
+        examples.addChild(new Label("-> unfiltered:"));
+        textField = examples.addChild(new TextField(pword.getDocumentModel()), 1);         
+
+        // Add a PasswordField example
+        // Note: don't do this in real life unless you want easily hackable passwords
+        examples.addChild(new Label("Alpha-numeric Password:"));
+        pword = examples.addChild(new PasswordField(""), 1);
+        pword.setAllowedCharacters(TextFilters.isLetterOrDigit());
+        examples.addChild(new Label("-> unfiltered:"));
+        textField = examples.addChild(new TextField(pword.getDocumentModel()), 1);         
         
         // Add a close button to both show that the layout is working and
         // also because it's better UX... even if the popup will close if
@@ -126,7 +153,7 @@ public class FormattedTextEntryDemoState extends BaseAppState {
                                                               window, "removeFromParent")));
  
         // Position the window and pop it up                                                             
-        window.setLocalTranslation(400, 400, 100);                 
+        window.setLocalTranslation(400, 600, 100);                 
         getState(PopupState.class).showPopup(window, closeCommand);    
     }
     
