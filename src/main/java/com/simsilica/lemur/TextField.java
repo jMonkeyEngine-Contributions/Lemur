@@ -102,16 +102,28 @@ public class TextField extends Panel {
                                                    LAYER_BACKGROUND,
                                                    LAYER_TEXT);
 
-        Styles styles = GuiGlobals.getInstance().getStyles();
-        BitmapFont font = styles.getAttributes(elementId.getId(), style).get("font", BitmapFont.class);
-        this.text = new TextEntryComponent(model, font);
-        getControl(GuiControl.class).setComponent(LAYER_TEXT, text);
+        setDocumentModel(model);
 
         addControl(new MouseEventControl(FocusMouseListener.INSTANCE));
 
         if( applyStyles ) {
+            Styles styles = GuiGlobals.getInstance().getStyles();
             styles.applyStyles(this, elementId.getId(), style);
         }
+    }
+
+    protected void setDocumentModel( DocumentModel model ) {
+        if( model == null ) {
+            return;
+        }
+        this.text = createTextEntryComponent(model);
+        getControl(GuiControl.class).setComponent(LAYER_TEXT, text);
+    }
+
+    protected TextEntryComponent createTextEntryComponent( DocumentModel model ) {
+        Styles styles = GuiGlobals.getInstance().getStyles();
+        BitmapFont font = styles.getAttributes(getElementId().getId(), getStyle()).get("font", BitmapFont.class);
+        return new TextEntryComponent(model, font);
     }
 
     @StyleDefaults(ELEMENT_ID)

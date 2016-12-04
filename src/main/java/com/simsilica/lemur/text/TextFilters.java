@@ -110,7 +110,7 @@ public class TextFilters {
     /**
      *  A character filter that only allows numeric digits.
      */
-    public static Function<Character, Character> alphaNumberic() {
+    public static Function<Character, Character> alphaNumeric() {
         return ALPHA_NUMERIC;
     }
     
@@ -152,6 +152,14 @@ public class TextFilters {
      */
     public static Predicate<Character> isDigit() {
         return IS_DIGIT;
+    }
+ 
+    /**
+     *  Returns a predicate that returns true for alpha or numeric characters
+     *  is in Character.isLetterOrDigit().
+     */
+    public static Predicate<Character> isLetterOrDigit() {
+        return Predicates.or(isLetter(), isDigit());
     }
     
     /**

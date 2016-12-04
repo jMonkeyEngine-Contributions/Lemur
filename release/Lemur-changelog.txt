@@ -25,6 +25,11 @@ Lemur 1.10.1 (unreleased)
     provide more advanced transformation and input filtering.
 * Added a TextFilters class with a bunch of default input and output implementations
     for commonly used things.
+* Refactored TextField a bit to make it easier to subclass and override the model
+    or TextEntryComponent.
+* Added a PasswordField that is auto-wired with some useful DocumentModelFilter
+    behavior suitable for password fields.  Includes stylable attributes for
+    setting the output character and allowed input characters. 
     
 
 Lemur 1.9.1
