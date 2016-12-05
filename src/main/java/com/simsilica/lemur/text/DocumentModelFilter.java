@@ -295,6 +295,13 @@ public class DocumentModelFilter implements DocumentModel {
     } 
 
     @Override
+    public void insert( String text ) {
+        for( int i = 0; i < text.length(); i++ ) {
+            insert(text.charAt(i));
+        }
+    }
+
+    @Override
     public long getVersion() {
         // We include our local version in case we need to update views
         // of ourselves even if the underlying model hasn't changed.

@@ -478,7 +478,7 @@ public class TextEntryComponent extends AbstractGuiComponent
     public String getText() {
         return model.getText();
     }
-
+    
     public void setHAlignment( HAlignment a ) {
         if( hAlign == a )
             return;
@@ -746,13 +746,5 @@ public class TextEntryComponent extends AbstractGuiComponent
                 resetCursorPosition();   
             }
         }
-    }
-    
-    public void insertText(String str){
-      for(int i=0;i<str.length();i++){
-          model.insert(str.charAt(i));
-      }
-      
-      resetCursorPosition();
     }
 }

@@ -389,6 +389,7 @@ public class DefaultDocumentModel implements DocumentModel, Cloneable {
         location[1] = 0;
     }
 
+    @Override
     public void insert( char c ) {
         if( c < 32 )
             return;
@@ -405,6 +406,13 @@ public class DefaultDocumentModel implements DocumentModel, Cloneable {
 
         composite = null;
         version++;
+    }
+
+    @Override
+    public void insert( String text ) {
+        for( int i = 0; i < text.length(); i++ ) {
+            insert(text.charAt(i));
+        }
     }
 
     @Override

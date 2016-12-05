@@ -37,7 +37,9 @@ Lemur 1.10.1 (unreleased)
     PickEventSessions.  PickEventSession was modified to then pass on the appropriate
     scroll values and deltas to the MouseMotionEvents and CursorMotionEvents.
     CursorMotionEvent was enhanced to have getScrollValue() and getScrollDelta()
-    methods.    
+    methods.
+* Added an insert(String) method to DocumentModel and its implementations that
+    allows bulk-insertion of text instead of just one character at a time
     
 
 Lemur 1.9.1

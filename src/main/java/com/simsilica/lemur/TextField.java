@@ -224,10 +224,6 @@ public class TextField extends Panel {
     @Override
     public String toString() {
         return getClass().getName() + "[text=" + getText() + ", color=" + getColor() + ", elementId=" + getElementId() + "]";
-    }
-    
-    public void insertText(String str){
-        text.insertText(str);
-    }
+    }    
 }
 

@@ -179,6 +179,11 @@ public interface DocumentModel extends VersionedObject<DocumentModel> {
     public void insert( char c ); 
 
     /**
+     *  Bulk inserts a string of text.
+     */
+    public void insert( String text );
+
+    /**
      *  Returns a VersionedReference that can be watched for changes to
      *  the carat position.
      */
