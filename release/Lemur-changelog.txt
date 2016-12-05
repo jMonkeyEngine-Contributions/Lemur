@@ -40,6 +40,8 @@ Lemur 1.10.1 (unreleased)
     methods.
 * Added an insert(String) method to DocumentModel and its implementations that
     allows bulk-insertion of text instead of just one character at a time
+* Fixed GuiGlobals to not crash under certain circumstances if the build info isn't 
+    available.  Fixes issue #38
     
 
 Lemur 1.9.1

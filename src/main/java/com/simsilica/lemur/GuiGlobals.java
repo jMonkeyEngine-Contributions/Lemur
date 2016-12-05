@@ -194,8 +194,8 @@ public class GuiGlobals {
             java.net.URL u = Resources.getResource("lemur.build.date");
             String build = Resources.toString(u, Charsets.UTF_8);
             log.info("Lemur build date:" + build);
-        } catch( java.io.IOException e ) {
-            log.error( "Error reading build info", e );
+        } catch( Exception e ) {
+            log.error("Error reading build info", e);
         }
     }
 
