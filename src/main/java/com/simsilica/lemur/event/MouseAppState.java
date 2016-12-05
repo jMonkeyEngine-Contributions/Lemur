@@ -72,6 +72,7 @@ import com.jme3.scene.Spatial;
 public class MouseAppState extends BasePickState {
 
     private MouseObserver mouseObserver = new MouseObserver();
+    private int scrollWheel = 0;
 
     public MouseAppState( Application app ) {
         setEnabled(true);
@@ -90,10 +91,10 @@ public class MouseAppState extends BasePickState {
     @Override
     protected void dispatchMotion() {
         Vector2f cursor = getApplication().getInputManager().getCursorPosition();
-        getSession().cursorMoved((int)cursor.x, (int)cursor.y);
+        getSession().cursorMoved((int)cursor.x, (int)cursor.y, scrollWheel);
     }
 
-    protected void dispatch(MouseButtonEvent evt) {
+    protected void dispatch( MouseButtonEvent evt ) {
         if( getSession().buttonEvent(evt.getButtonIndex(), evt.getX(), evt.getY(), evt.isPressed()) ) {
             evt.setConsumed();
         }
@@ -104,6 +105,7 @@ public class MouseAppState extends BasePickState {
         public void onMouseMotionEvent( MouseMotionEvent evt ) {
             //if( isEnabled() )
             //    dispatch(evt);
+            scrollWheel = evt.getWheel();
         }
 
         @Override

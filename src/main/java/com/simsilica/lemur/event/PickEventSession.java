@@ -118,6 +118,12 @@ public class PickEventSession {
      */
     private boolean debug;
     
+    /**
+     *  Tracks the last scroll value so we can pass a proper delta in the events.
+     */
+    private int lastScroll = 0;
+     
+    
     public PickEventSession() {
     }
 
@@ -307,7 +313,7 @@ public class PickEventSession {
             }
             if( this.hitTarget.getControl(CursorEventControl.class) != null ) {
                 // Exiting
-                event1 = new CursorMotionEvent(viewport, hitTarget, cursor.x, cursor.y, cr);
+                event1 = new CursorMotionEvent(viewport, hitTarget, cursor.x, cursor.y, 0, 0, cr);
                 this.hitTarget.getControl(CursorEventControl.class).cursorExited(event1, hitTarget, capture);
             }
         }
@@ -324,7 +330,7 @@ public class PickEventSession {
             if( this.hitTarget.getControl(CursorEventControl.class) != null ) {
                 // Entering
                 if( event1 == null ) {
-                    event1 = new CursorMotionEvent(viewport, hitTarget, cursor.x, cursor.y, cr);
+                    event1 = new CursorMotionEvent(viewport, hitTarget, cursor.x, cursor.y, 0, 0, cr);
                 }
 
                 this.hitTarget.getControl(CursorEventControl.class).cursorEntered(event1, hitTarget, capture);
@@ -420,11 +426,24 @@ public class PickEventSession {
         return result;
     }
 
+    /**
+     *  Called when the cursor has moved.
+     */
     public boolean cursorMoved( int x, int y ) {
+        return cursorMoved(x, y, 0);
+    }
 
+    /**
+     *  Called when the cursor has moved in an environment where there is
+     *  also a separate scroll wheel or other scroll control.
+     */
+    public boolean cursorMoved( int x, int y, int scroll ) {
         if( isTraceEnabled() ) {
-            trace("cursorMoved(" + x + ", " + y + ") capture:" + capture);
+            trace("cursorMoved(" + x + ", " + y + ", scroll=" + scroll + ") capture:" + capture);
         }
+
+        int scrollDelta = scroll - lastScroll;
+        lastScroll = scroll;
 
         Vector2f cursor = new Vector2f(x,y);
 
@@ -448,7 +467,7 @@ public class PickEventSession {
             // controls.
             boolean consumed = false;
             if( capture.getControl(MouseEventControl.class) != null ) {
-                event = new MouseMotionEvent((int)cursor.x, (int)cursor.y, 0, 0, 0, 0);
+                event = new MouseMotionEvent((int)cursor.x, (int)cursor.y, 0, 0, scroll, scrollDelta);
                 delivered.add(capture);
                 capture.getControl(MouseEventControl.class).mouseMoved(event, capture, capture);
                 if( event.isConsumed() ) {
@@ -484,7 +503,9 @@ public class PickEventSession {
                         cr = results.getClosestCollision();
                         results.clear();
                     }
-                    CursorMotionEvent cme = new CursorMotionEvent(captureRoot.viewport, capture, cursor.x, cursor.y, cr);
+                    CursorMotionEvent cme = new CursorMotionEvent(captureRoot.viewport, capture, 
+                                                                  cursor.x, cursor.y, scroll, scrollDelta, 
+                                                                  cr);
                     delivered.add(capture);
                     capture.getControl(CursorEventControl.class).cursorMoved(cme, capture, capture);
                     if( cme.isConsumed() ) {
@@ -540,7 +561,7 @@ public class PickEventSession {
                         if( hit.getControl(MouseEventControl.class) != null ) {
                             // See if this is one that will take our event
                             if( event == null ) {
-                                event = new MouseMotionEvent((int)cursor.x, (int)cursor.y, 0, 0, 0, 0);
+                                event = new MouseMotionEvent((int)cursor.x, (int)cursor.y, 0, 0, scroll, scrollDelta);
                             }
 
                             hit.getControl(MouseEventControl.class).mouseMoved(event, hit, capture);
@@ -552,7 +573,8 @@ public class PickEventSession {
                         }
 
                         if( hit.getControl(CursorEventControl.class) != null ) {
-                            CursorMotionEvent cme = new CursorMotionEvent(e.viewport, hit, cursor.x, cursor.y, cr);
+                            CursorMotionEvent cme = new CursorMotionEvent(e.viewport, hit, cursor.x, cursor.y, 
+                                                                          scroll, scrollDelta, cr);
                             hit.getControl(CursorEventControl.class).cursorMoved(cme, hit, capture);
 
                             // If the event is consumed then we're done

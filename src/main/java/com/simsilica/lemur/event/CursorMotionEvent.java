@@ -47,9 +47,40 @@ import com.jme3.scene.Spatial;
  */
 public class CursorMotionEvent extends AbstractCursorEvent {
 
+    /**
+     *  Included for parity with the JME classes but mostly useless.
+     */
+    private int scroll;
+    
+    /**
+     *  Tracks the amount of scroll change in the frame of motion.  Unlike
+     *  x,y locations, the scroll delta is often more useful than the full scroll
+     *  value since event listeners will have no way of knowing how much adjustment
+     *  was done outside of their 'view' before being called again.
+     */
+    private int scrollDelta;
+    
     public CursorMotionEvent( ViewPort view, Spatial target, float x, float y, 
-                              CollisionResult collision ) {
-        super(view, target, x, y, collision);                              
+                              int scroll, int scrollDelta, CollisionResult collision ) {
+        super(view, target, x, y, collision);
+                                      
+        this.scroll = scroll;
+        this.scrollDelta = scrollDelta;
+    }
+ 
+    /**
+     *  Returns the full value of the 'scroll wheel' or scroll control at the time
+     *  of this motion event.
+     */  
+    public int getScrollValue() {
+        return scroll;
+    }
+    
+    /**
+     *  Returns the amount the scroll wheel moved during this mouse motion.
+     */  
+    public int getScrollDelta() {
+        return scrollDelta;
     }    
 }
 
