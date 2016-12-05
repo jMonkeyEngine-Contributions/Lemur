@@ -138,9 +138,7 @@ public class TextEntryDemoState extends BaseAppState {
     }
  
     protected void insert() {
-        document.insert('a');
-        document.insert('d');
-        document.insert('d');
+        document.insert("add");
     }
     
     protected void delete() {
