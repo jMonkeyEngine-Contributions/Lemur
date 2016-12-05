@@ -38,6 +38,8 @@ package com.simsilica.lemur;
 
 import java.util.*;
 
+import org.slf4j.*;
+
 import com.google.common.base.Objects;
 
 import com.jme3.material.RenderState.BlendMode;
@@ -57,6 +59,8 @@ import com.simsilica.lemur.style.*;
  *  @author    Paul Speed
  */
 public class ListBox<T> extends Panel {
+ 
+    static Logger log = LoggerFactory.getLogger(ListBox.class);
     
     public static final String ELEMENT_ID = "list";
     public static final String CONTAINER_ID = "container";
@@ -82,6 +86,7 @@ public class ListBox<T> extends Panel {
     private VersionedReference<Set<Integer>> selectionRef;
     
     private ClickListener clickListener = new ClickListener();
+    private BackgroundListener backgroundListener = new BackgroundListener();
     private CommandMap<ListBox, ListAction> commandMap
                                     = new CommandMap<ListBox, ListAction>(this);
 
@@ -94,6 +99,12 @@ public class ListBox<T> extends Panel {
     private RangedValueModel baseIndex;  // upside down actually
     private VersionedReference<Double> indexRef;
     private int maxIndex;
+    
+    /**
+     *  Set to true the mouse wheel will scroll the list if the mouse
+     *  is over the list.
+     */
+    private boolean scrollOnHover = true;
     
     public ListBox() {
         this(true, new VersionedList<T>(), null,
@@ -150,6 +161,9 @@ public class ListBox<T> extends Panel {
             Styles styles = GuiGlobals.getInstance().getStyles();
             styles.applyStyles(this, getElementId(), style);
         }
+
+        // Listen to our own mouse events that don't hit something else
+        CursorEventControl.addListenersToSpatial(this, backgroundListener);        
 
         // Need a spacer so that the 'selector' panel doesn't think
         // it's being managed by this panel.
@@ -316,6 +330,20 @@ public class ListBox<T> extends Panel {
         setChildAlpha(selector, alpha);
     }
 
+    /**
+     *  Set to true to enable mouse-wheel style scrolling when the
+     *  mouse is hovering over the ListBox. (Versus only when the list
+     *  has focus.)  Default is true.
+     */
+    @StyleAttribute(value="scrollOnHover", lookupDefault=false)
+    public void setScrollOnHover( boolean f ) {
+        this.scrollOnHover = f;
+    }
+    
+    public boolean getScrollOnHover() {
+        return scrollOnHover;
+    }
+
     protected void refreshSelector() {    
         if( selectorArea == null ) {
             return;
@@ -369,7 +397,7 @@ public class ListBox<T> extends Panel {
  
         if( cell != existing ) {
             // Transfer the click listener                  
-            CursorEventControl.addListenersToSpatial(cell, clickListener);            
+            CursorEventControl.addListenersToSpatial(cell, clickListener);
             CursorEventControl.removeListenersFromSpatial(existing, clickListener);
         }         
         return cell;
@@ -388,6 +416,12 @@ public class ListBox<T> extends Panel {
         }
     }
 
+    protected void scroll( int amount ) {
+        double delta = getSlider().getDelta();
+        double value = getSlider().getModel().getValue();
+        getSlider().getModel().setValue(value + delta * amount);   
+    }
+    
     @Override
     public String toString() {
         return getClass().getName() + "[elementId=" + getElementId() + "]";
@@ -468,6 +502,31 @@ public class ListBox<T> extends Panel {
             }
         }
     }
+ 
+    /**
+     *  Listens to the whole list to intercept things like mouse wheel events
+     *  and click to focus.  This should be all we need for hover scrolling as
+     *  long as the cell renderers don't consume the motion events.
+     */   
+    private class BackgroundListener extends DefaultCursorListener {
+        @Override       
+        public void cursorMoved( CursorMotionEvent event, Spatial target, Spatial capture ) {
+            if( event.getScrollDelta() != 0 ) {
+                if( log.isTraceEnabled() ) {
+                    log.trace("Scroll delta:" + event.getScrollDelta() + "  value:" + event.getScrollValue());
+                }  
+                if( scrollOnHover ) {
+                    // My wheel moves in multiples of 120... I don't know if that's
+                    // universal so we'll at least always send some value. 
+                    if( event.getScrollDelta() > 0 ) {
+                        scroll(Math.max(1, event.getScrollDelta() / 120));
+                    } else {
+                        scroll(Math.min(-1, event.getScrollDelta() / 120));
+                    }
+                }
+            }
+        }
+    } 
 
     private class GridListener extends AbstractGuiControlListener {
         public void reshape( GuiControl source, Vector3f pos, Vector3f size ) {
