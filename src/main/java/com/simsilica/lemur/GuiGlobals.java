@@ -121,7 +121,7 @@ public class GuiGlobals {
 
     public static void setInstance( GuiGlobals globals ) {
         instance = globals;
-        log.info( "Initializing GuiGlobals with:" + globals );
+        log.info( "Initializing GuiGlobals with:{}", globals );
         instance.logBuildInfo();
     }
 
@@ -193,7 +193,7 @@ public class GuiGlobals {
         try {
             java.net.URL u = Resources.getResource("lemur.build.date");
             String build = Resources.toString(u, Charsets.UTF_8);
-            log.info("Lemur build date:" + build);
+            log.info("Lemur build date:{}", build);
         } catch( java.io.IOException e ) {
             log.error( "Error reading build info", e );
         }
