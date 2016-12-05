@@ -747,4 +747,12 @@ public class TextEntryComponent extends AbstractGuiComponent
             }
         }
     }
+    
+    public void insertText(String str){
+      for(int i=0;i<str.length();i++){
+          model.insert(str.charAt(i));
+      }
+      
+      resetCursorPosition();
+    }
 }
