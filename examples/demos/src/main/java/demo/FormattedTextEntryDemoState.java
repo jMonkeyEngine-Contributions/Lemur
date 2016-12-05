@@ -55,6 +55,8 @@ import com.simsilica.lemur.text.TextFilters;
  */
 public class FormattedTextEntryDemoState extends BaseAppState {
  
+    private Container window;
+ 
     /**
      *  A command we'll pass to the label pop-up to let
      *  us know when the user clicks away.
@@ -76,7 +78,7 @@ public class FormattedTextEntryDemoState extends BaseAppState {
     protected void onEnable() {
  
         // We'll wrap the text in a window to make sure the layout is working
-        Container window = new Container();
+        window = new Container();
         window.addChild(new Label("Word Wrapped Text", new ElementId("window.title.label")));        
  
         window.addChild(new Label("Filtered input:"));
@@ -159,6 +161,7 @@ public class FormattedTextEntryDemoState extends BaseAppState {
     
     @Override   
     protected void onDisable() {
+        window.removeFromParent();
     } 
     
     private class CloseCommand implements Command<Object> {
