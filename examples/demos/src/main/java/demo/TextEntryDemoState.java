@@ -53,6 +53,8 @@ import com.simsilica.lemur.text.DocumentModel;
  */
 public class TextEntryDemoState extends BaseAppState {
  
+    private Container window;
+    
     /**
      *  A command we'll pass to the label pop-up to let
      *  us know when the user clicks away.
@@ -77,7 +79,7 @@ public class TextEntryDemoState extends BaseAppState {
     protected void onEnable() {
  
         // We'll wrap the text in a window to make sure the layout is working
-        Container window = new Container();
+        window = new Container();
         window.addChild(new Label("Word Wrapped Text", new ElementId("window.title.label")));
  
         // Create a multiline text field with our document model
@@ -103,8 +105,11 @@ public class TextEntryDemoState extends BaseAppState {
         // Add a close button to both show that the layout is working and
         // also because it's better UX... even if the popup will close if
         // you click outside of it.
-        window.addChild(new ActionButton(new CallMethodAction("Close", 
-                                                              window, "removeFromParent")));
+        //window.addChild(new ActionButton(new CallMethodAction("Close", 
+        //                                                      window, "removeFromParent")));
+        // Creating a modified close button to more easily test that we really
+        // do lose focus and don't keep accepting 'space' to click this button.
+        window.addChild(new ActionButton(new CallMethodAction(this, "close")));
  
         // Position the window and pop it up                                                             
         window.setLocalTranslation(400, 400, 100);                 
@@ -113,6 +118,7 @@ public class TextEntryDemoState extends BaseAppState {
     
     @Override   
     protected void onDisable() {
+        window.removeFromParent();
     }
  
     protected void home() {
@@ -139,6 +145,16 @@ public class TextEntryDemoState extends BaseAppState {
     
     protected void delete() {
         document.delete();
+    }
+ 
+    /**
+     *  Added this to test the bug where elements removed from the 
+     *  scene graph would still retain focus... thus their focus actions
+     *  like 'space' to activate buttons would still be active.
+     */
+    protected void close() {
+        System.out.println("close");
+        getState(MainMenuState.class).closeChild(this);
     }
     
     private class CloseCommand implements Command<Object> {
