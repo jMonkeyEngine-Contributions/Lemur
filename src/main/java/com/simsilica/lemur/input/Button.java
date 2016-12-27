@@ -65,13 +65,13 @@ public class Button {
     public static final Button JOYSTICK_START = new Button("joystick_start", "Start");
     public static final Button JOYSTICK_SELECT = new Button("joystick_select", "Select");
 
-    public static final Button JOYSTICK_LEFT1 = new Button("joystick_left1", "Left 1");
-    public static final Button JOYSTICK_LEFT2 = new Button("joystick_left2", "Left 2");
-    public static final Button JOYSTICK_LEFT3 = new Button("joystick_left3", "Left 3");
+    public static final Button JOYSTICK_LEFT1 = new Button("joystick_left1", "Joystick Left 1");
+    public static final Button JOYSTICK_LEFT2 = new Button("joystick_left2", "Joystick Left 2");
+    public static final Button JOYSTICK_LEFT3 = new Button("joystick_left3", "Joystick Left 3");
 
-    public static final Button JOYSTICK_RIGHT1 = new Button("joystick_right1", "Right 1");
-    public static final Button JOYSTICK_RIGHT2 = new Button("joystick_right2", "Right 2");
-    public static final Button JOYSTICK_RIGHT3 = new Button("joystick_right3", "Right 3");
+    public static final Button JOYSTICK_RIGHT1 = new Button("joystick_right1", "Joystick Right 1");
+    public static final Button JOYSTICK_RIGHT2 = new Button("joystick_right2", "Joystick Right 2");
+    public static final Button JOYSTICK_RIGHT3 = new Button("joystick_right3", "Joystick Right 3");
 
     private String id;
     private String name;
