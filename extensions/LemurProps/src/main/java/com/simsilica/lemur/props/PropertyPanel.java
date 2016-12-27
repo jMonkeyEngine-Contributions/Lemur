@@ -226,6 +226,12 @@ public class PropertyPanel extends Panel
         return p;
     }
 
+    public Property<Double> addDoubleProperty( String name, Object bean, String property, double min, double max, double step ) {
+        DoubleProperty p = new DoubleProperty(name, new PropertyAccess(bean, property), min, max, step);
+        addProperty(p);
+        return p;
+    }
+
     public Property<Integer> addIntProperty( String name, Object bean, String proprety, int min, int max, int step ) {
         IntProperty p = new IntProperty(name, new PropertyAccess(bean, proprety), min, max, step);      
         addProperty(p);
@@ -518,6 +524,59 @@ public class PropertyPanel extends Panel
         @Override
         public void refresh() {
             Float current = getValue();
+            model.setValue(current);
+        }
+    }
+ 
+    protected class DoubleProperty extends AbstractProperty<Double> {
+        private Label label;
+        private Label valueText;
+        private Slider slider;
+        private RangedValueModel model;
+        private double step;        
+        private VersionedReference<Double> value;
+        private String format = "%14.3f";
+        
+        public DoubleProperty( String name, Access<Double> access, double min, double max, double step ) {
+            super(name, access);
+ 
+            this.model = new DefaultRangedValueModel( min, max, 0 );
+            this.step = step;
+        }
+        
+        @Override
+        public void initialize( Container container ) {
+            label = new Label(getDisplayName() + ":", getElementId().child("double.label"), getStyle());
+            label.setTextHAlignment(HAlignment.Right); 
+            slider = new Slider( model, Axis.X, getElementId().child("double.slider"), getStyle());
+            slider.setDelta(step);
+            //Double current = getValue();
+            //model.setValue(current);
+            refresh();
+            valueText = new Label("", getElementId().child("value.label"), getStyle());
+            updateText();
+                        
+            value = slider.getModel().createReference();
+            container.addChild(label);
+            container.addChild(valueText, 1); 
+            container.addChild(slider, 2); 
+        }
+
+        protected void updateText() {
+            valueText.setText(String.format(format, model.getValue()));
+        }
+
+        @Override
+        public void update() {
+            if( value.update() ) {
+                super.setValue((double)model.getValue());
+                updateText();
+            }
+        }
+        
+        @Override
+        public void refresh() {
+            Double current = getValue();
             model.setValue(current);
         }
     }

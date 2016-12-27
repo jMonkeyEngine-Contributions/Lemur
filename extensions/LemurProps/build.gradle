@@ -4,8 +4,8 @@ version='1.0.1'
 
 ext {
     bintrayLabels = ['jMonkeyEngine', 'gamedev', 'GUI']
-    releaseDescription = "Lemur Props ${project.version}"    
-    releaseVcsTag = "${project.name}-v${project.version}"    
+    releaseDescription = "Lemur Props ${project.version}"
+    releaseVcsTag = "${project.name}-v${project.version}"
 }
 
 ext.jmeVersion='[3.1,)'
@@ -27,7 +27,7 @@ dependencies {
 task sourcesJar(type: Jar) {
     classifier = 'sources'
     from sourceSets.main.allSource
-    exclude '**/.backups' 
+    exclude '**/.backups'
 }
 
 task javadocJar(type: Jar, dependsOn: javadoc) {
