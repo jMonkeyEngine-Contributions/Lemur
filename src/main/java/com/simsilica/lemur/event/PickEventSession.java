@@ -430,7 +430,7 @@ public class PickEventSession {
      *  Called when the cursor has moved.
      */
     public boolean cursorMoved( int x, int y ) {
-        return cursorMoved(x, y, 0);
+        return cursorMoved(x, y, lastScroll);
     }
 
     /**
@@ -441,7 +441,6 @@ public class PickEventSession {
         if( isTraceEnabled() ) {
             trace("cursorMoved(" + x + ", " + y + ", scroll=" + scroll + ") capture:" + capture);
         }
-
         int scrollDelta = scroll - lastScroll;
         lastScroll = scroll;
 

@@ -376,7 +376,7 @@ public class ListBox<T> extends Panel {
         }
     }
 
-    protected void resetModelRange() {
+    protected void resetModelRange() {    
         int count = model == null ? 0 : model.size();
         int visible = grid.getVisibleRows();
         maxIndex = Math.max(0, count - visible);
