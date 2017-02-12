@@ -44,7 +44,7 @@ Lemur 1.10.1 (unreleased)
     available.  Fixes issue #38
 * Fixed the human-readable names for some of the joystick-related input.Button constants.     
 * Fixed an issue with mouse button events sending the wrong mouse wheel delta to cursor
-    event listeners.  Fixes issue #39 
+    event listeners.  Fixes issue #49 
     
 
 Lemur 1.9.1
