@@ -105,7 +105,18 @@ public class ListBox<T> extends Panel {
      *  is over the list.
      */
     private boolean scrollOnHover = true;
+ 
+    /**
+     *  Keeps track of if we've triggered 'activated' effects (and send entered events)
+     */
+    private boolean activated = false;
     
+    /**
+     *  Keeps track of whether some listener has detected enter/exit.  When this
+     *  is different than activated then we need to trigger effects and fire events.
+     */
+    private boolean entered = false;
+       
     public ListBox() {
         this(true, new VersionedList<T>(), null,
              new SelectionModel(),
@@ -191,7 +202,7 @@ public class ListBox<T> extends Panel {
     @Override
     public void updateLogicalState( float tpf ) {
         super.updateLogicalState(tpf);
- 
+        
         if( modelRef.update() ) {
             resetModelRange();
         }
@@ -204,6 +215,10 @@ public class ListBox<T> extends Panel {
         }         
         if( selectionUpdate || indexUpdate ) {
             refreshSelector();
+        }
+        
+        if( activated != entered ) {
+            refreshActivation();
         }
     }
 
@@ -391,6 +406,14 @@ public class ListBox<T> extends Panel {
         baseIndex.setValue(maxIndex - val);        
     }
 
+    protected void refreshActivation() {
+        if( entered ) {
+            activate();
+        } else {
+            deactivate();
+        }
+    }
+
     protected Panel getListCell( int row, int col, Panel existing ) {
         T value = model.get(row);
         Panel cell = cellRenderer.getView(value, false, existing);
@@ -421,6 +444,24 @@ public class ListBox<T> extends Panel {
         double value = getSlider().getModel().getValue();
         getSlider().getModel().setValue(value + delta * amount);   
     }
+
+    protected void activate() {
+        if( activated ) {
+            return;
+        }
+        activated = true;
+        commandMap.runCommands(ListAction.Entered);
+        runEffect(EFFECT_ACTIVATE);
+    }
+    
+    protected void deactivate() {
+        if( !activated ) {
+            return;
+        }
+        activated = false;
+        commandMap.runCommands(ListAction.Exited);
+        runEffect(EFFECT_DEACTIVATE);
+    }
     
     @Override
     public String toString() {
@@ -430,7 +471,7 @@ public class ListBox<T> extends Panel {
     private class ClickListener extends DefaultCursorListener {
  
         // tracks whether we've sent entered events or not
-        private boolean entered = false;
+        //private boolean entered = false;
         
         // Tracks whether we've sent pressed events or not
         private boolean pressed = false;
@@ -461,9 +502,8 @@ public class ListBox<T> extends Panel {
             // Do our own better handling of 'click' now
             //if( !isEnabled() )
             //    return;                                            
-
-            pressed = event.isPressed();
             if( event.isPressed() ) {
+                pressed = true;            
                 commandMap.runCommands(ListAction.Down);
                 runEffect(EFFECT_PRESS);
             } else {
@@ -476,30 +516,46 @@ public class ListBox<T> extends Panel {
                 // potentially get up events with no down event.  This messes
                 // up listeners that are (correctly) expecting an up for every
                 // down and no ups without downs.
-                // So, any time the capture is us then we will run, else not
-                if( capture == ListBox.this ) {
+                // So, any time the capture is us then we will run, else not.
+                // ...but that's not right either because if we consume the
+                // event (which we do) then the capture will be the item and not
+                // the list.  Not sure how it ever worked like that... but I'm
+                // leaving it here commented out just in case.
+                //if( capture == ListBox.this ) {
+                //    commandMap.runCommands(ListAction.Up);
+                //    runEffect(EFFECT_RELEASE);
+                //}
+                if( pressed ) {
                     commandMap.runCommands(ListAction.Up);
                     runEffect(EFFECT_RELEASE);
+                    pressed = false;            
                 }
             }
         }
     
         @Override
         public void cursorEntered( CursorMotionEvent event, Spatial target, Spatial capture ) {
+            entered = true;                        
+            /*
+            Not sure how this code ever worked but it looks like I meant it.  I can
+            find no use-cases in my own codebase so I'm not sure what I was thinking that day.
+            Leaving it just in case.
+            TODO: may need to readdress if we refactor the mouse/cursor events processing.
             if( capture == ListBox.this || (target == ListBox.this && capture == null) ) {
                 entered = true;
                 commandMap.runCommands(ListAction.Entered);
                 runEffect(EFFECT_ACTIVATE);
-            }
+            }*/
         }
 
         @Override
         public void cursorExited( CursorMotionEvent event, Spatial target, Spatial capture ) {
-            if( entered ) {
+            entered = false;            
+            /*if( entered ) {
                 commandMap.runCommands(ListAction.Exited);
                 runEffect(EFFECT_DEACTIVATE);
                 entered = false;
-            }
+            }*/
         }
     }
  
@@ -509,6 +565,17 @@ public class ListBox<T> extends Panel {
      *  long as the cell renderers don't consume the motion events.
      */   
     private class BackgroundListener extends DefaultCursorListener {
+    
+        @Override
+        public void cursorEntered( CursorMotionEvent event, Spatial target, Spatial capture ) {
+            entered = true;
+        }
+        
+        @Override
+        public void cursorExited( CursorMotionEvent event, Spatial target, Spatial capture ) {
+            entered = false;
+        }
+        
         @Override       
         public void cursorMoved( CursorMotionEvent event, Spatial target, Spatial capture ) {
             if( event.getScrollDelta() != 0 ) {

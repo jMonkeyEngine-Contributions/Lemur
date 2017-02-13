@@ -2,6 +2,10 @@ Lemur-Proto 1.9.1 (unreleased)
 ------------------
 * Added mouse wheel support to ListBox based on the new scroll support
     in Lemur 1.10.1.
+* Fixed some handling of ListAction events and the related effect triggers.
+    Down and Up should be properly delivered as well as considering the whole
+    list box in entered/exited/activate/deactivated states.  Currently, moving
+    over the scroll bar will still 'deactivate'.  
     
 
 Lemur-Proto 1.8.1
