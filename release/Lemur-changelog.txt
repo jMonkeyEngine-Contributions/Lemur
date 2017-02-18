@@ -1,3 +1,7 @@
+Lemur 1.10.2 (unreleased) 
+-------------
+
+
 Lemur 1.10.1 
 -------------
 * Added a proper toString() method to the LayerComparator.

@@ -1,3 +1,7 @@
+Lemur-Proto 1.9.2 (unreleased)
+------------------
+
+
 Lemur-Proto 1.9.1 
 ------------------
 * Added mouse wheel support to ListBox based on the new scroll support
