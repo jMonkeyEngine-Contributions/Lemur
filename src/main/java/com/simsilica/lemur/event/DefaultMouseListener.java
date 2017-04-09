@@ -77,6 +77,7 @@ public class DefaultMouseListener implements MouseListener {
         event.setConsumed();
 
         if( event.isPressed() ) {
+            mousePressed(event, target, capture);
             xDown = event.getX();
             yDown = event.getY();
         } else if( isClick(event, xDown, yDown) ) {
@@ -84,6 +85,9 @@ public class DefaultMouseListener implements MouseListener {
         }
     }
 
+    public void mousePressed( MouseMotionEvent event, Spatial target, Spatial capture ) {
+    }
+    
     public void mouseEntered( MouseMotionEvent event, Spatial target, Spatial capture ) {
     }
 
