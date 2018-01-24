@@ -182,7 +182,7 @@ public class FocusNavigationState extends BaseAppState {
         
         // Start at the parent so that we can look for contains of containers
         // easily. 
-        for( Spatial s = spatial.getParent(); s != null; s = s.getParent() ) {
+        for( Spatial s = spatial; s != null; s = s.getParent() ) {
             FocusTraversal ft = getFocusTraversal(s);
             if( ft != null ) {
                 return s;
