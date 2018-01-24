@@ -49,6 +49,8 @@ import com.simsilica.lemur.input.FunctionId;
 import com.simsilica.lemur.input.InputMapper;
 import com.simsilica.lemur.input.InputState;
 import com.simsilica.lemur.input.StateFunctionListener;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  *  Manages the input based UI navigation and maybe some minimal
@@ -58,6 +60,8 @@ import com.simsilica.lemur.input.StateFunctionListener;
  */
 public class FocusNavigationState extends BaseAppState {
  
+    static Logger log = LoggerFactory.getLogger(FocusNavigationState.class);
+    
     private FocusManagerState focusState;   
     private InputMapper inputMapper;
     private InputHandler inputHandler = new InputHandler();
@@ -229,7 +233,7 @@ public class FocusNavigationState extends BaseAppState {
     
     private class InputHandler implements StateFunctionListener {
         public void valueChanged( FunctionId func, InputState value, double tpf ) {
-            //System.out.println("focus input:" + func + ", " + value);
+            log.debug("focus input:" + func + ", " + value);
             
             // On the down or on the up?  Let's do down in case we
             // do something clever with repeats later
