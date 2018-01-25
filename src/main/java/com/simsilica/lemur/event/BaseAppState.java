@@ -50,6 +50,8 @@ import org.slf4j.LoggerFactory;
  *  appropriately during initialize(), terminate(), or setEnabled()
  *  depending on the mutual state of "initialized" and "enabled".
  *
+ * @deprecated Replaced by com.jme3.app.state.BaseAppState
+ * 
  *  @author    Paul Speed
  */
 public abstract class BaseAppState implements AppState {
