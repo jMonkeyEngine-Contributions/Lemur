@@ -34,6 +34,8 @@
 
 package com.simsilica.lemur.component;
 
+import java.util.Objects;
+
 import com.jme3.material.RenderState.BlendMode;
 import com.jme3.math.*;
 import com.jme3.scene.*;
@@ -71,6 +73,7 @@ public class IconComponent extends AbstractGuiComponent
     private VAlignment vAlign = VAlignment.Center;
     private Vector3f offset = null;
     private Vector2f iconScale;
+    private Vector2f iconSize;
     private boolean overlay = false;
     private boolean lit = false;
 
@@ -196,6 +199,29 @@ public class IconComponent extends AbstractGuiComponent
         return iconScale;
     }
 
+    /**
+     *  Forces the size of the icon to be the size specified regardless
+     *  of it's actual pixel size.  So if setIconSize(new Vector2f(64, 646)) is
+     *  used for an icon that is actually 32x32, it will be doubled in size.
+     *  The iconScale is applied after this scaling.
+     *  Set iconSize to null to go back to the actual image size.
+     */
+    public void setIconSize( Vector2f iconSize ) {
+        if( Objects.equals(this.iconSize, iconSize) ) {
+            return;
+        }
+        this.iconSize = iconSize;
+        
+        // Not very efficient
+        createIcon();
+
+        invalidate();
+    }
+    
+    public Vector2f getIconSize() {
+        return iconSize;
+    } 
+
     public void setHAlignment( HAlignment a ) {
         if( hAlign == a )
             return;
@@ -267,8 +293,9 @@ public class IconComponent extends AbstractGuiComponent
 
         // The preferred size depends on the alignment and
         // the size of the image.
-        float width = iconScale.x * image.getImage().getWidth() + xMargin * 2;
-        float height = iconScale.y * image.getImage().getHeight() + yMargin * 2;
+        Vector2f imageSize = getEffectiveIconSize();
+        float width = iconScale.x * imageSize.x + xMargin * 2;
+        float height = iconScale.y * imageSize.y + yMargin * 2;
 
         switch( vAlign ) {
             case Top:
@@ -300,8 +327,9 @@ public class IconComponent extends AbstractGuiComponent
     }
 
     public void reshape( Vector3f pos, Vector3f size ) {
-        float width = iconScale.x * image.getImage().getWidth();
-        float height = iconScale.y * image.getImage().getHeight();
+        Vector2f imageSize = getEffectiveIconSize();
+        float width = iconScale.x * imageSize.x;
+        float height = iconScale.y * imageSize.y;
         float boxWidth = width + xMargin * 2;
         float boxHeight = height + yMargin * 2;
 
@@ -362,8 +390,9 @@ public class IconComponent extends AbstractGuiComponent
     }
 
     protected void createIcon() {
-        float width = iconScale.x * image.getImage().getWidth();
-        float height = iconScale.y * image.getImage().getHeight();
+        Vector2f imageSize = getEffectiveIconSize();
+        float width = iconScale.x * imageSize.x;
+        float height = iconScale.y * imageSize.y;
         Quad q = new Quad(width, height);
         icon = new Geometry("icon:" + imagePath, q);
         if( material == null ) {
@@ -388,5 +417,15 @@ public class IconComponent extends AbstractGuiComponent
         if( isAttached() ) {
             getNode().attachChild(icon);
         }
+    }
+    
+    protected Vector2f getEffectiveIconSize() {
+        if( iconSize != null ) {
+            return iconSize;
+        }
+        if( image != null ) {
+            return new Vector2f(image.getImage().getWidth(), image.getImage().getHeight());
+        }
+        return Vector2f.ZERO;
     }
 }
