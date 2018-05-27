@@ -255,6 +255,9 @@ public class PopupState extends BaseAppState {
         } else if( bv instanceof BoundingSphere ) {
             BoundingSphere bs = (BoundingSphere)bv;
             return bs.getCenter().z + bs.getRadius();
+        } else if( bv == null ) {
+            // Apparently this can happen for empty nodes...
+            return 0;
         }
         Vector3f offset = bv.getCenter().add(0, 0, 1000); 
         return offset.z - bv.distanceTo(offset);

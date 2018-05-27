@@ -9,7 +9,9 @@ Lemur 1.10.2 (unreleased)
 * Added SpatialTweens.focusOn() to set the focus to a particular spatial as part of
     animation.
 * Fixed PopupState to take the current guiNode's scaling into account when calculating
-    screen size for the blocker quad.    
+    screen size for the blocker quad.
+* Worked around an NPE in PopupState caused be a JME bug on Node.getWorldBound() when the node
+    is empty.
 
 
 Lemur 1.10.1 
