@@ -2,6 +2,10 @@ Lemur 1.10.2 (unreleased)
 -------------
 * Added IconComponent.setIconSize() to force the size of the icon before
     scaling.
+* Added additional PopupState.showModalPopup() convenience methods that take
+    a background color.
+* Modified PopupState to automatically call runEffect("open") and runEffect("close")
+    if the popup is a Panel (or subclass).
 
 
 Lemur 1.10.1 

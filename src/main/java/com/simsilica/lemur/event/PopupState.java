@@ -53,6 +53,7 @@ import com.jme3.scene.shape.Quad;
 
 import com.simsilica.lemur.Command;
 import com.simsilica.lemur.GuiGlobals;
+import com.simsilica.lemur.Panel;
 import com.simsilica.lemur.core.GuiMaterial;
 import com.simsilica.lemur.style.ElementId;
 
@@ -152,6 +153,25 @@ public class PopupState extends BaseAppState {
     }
     
     /**
+     *  Shows the specified spatial on the GUI node with a background blocker
+     *  geometry that will consume all mouse events until the popup has been
+     *  closed.
+     */
+    public void showModalPopup( Spatial popup, ColorRGBA backgroundColor ) {
+        showPopup(popup, ClickMode.Consume, null, backgroundColor);
+    }
+
+    /**
+     *  Shows the specified spatial on the GUI node with a background blocker
+     *  geometry that will consume all mouse events until the popup has been
+     *  closed.
+     */
+    public void showModalPopup( Spatial popup, Command<? super PopupState> closeCommand,
+                                ColorRGBA backgroundColor ) {
+        showPopup(popup, ClickMode.Consume, closeCommand, backgroundColor);
+    }
+    
+    /**
      *  Shows the specified popup on the GUI node with the specified click mode
      *  determining how background mouse events will be handled.  An optional
      *  closeCommand will be called when the popup is closed.  An optional background
@@ -189,7 +209,15 @@ public class PopupState extends BaseAppState {
         if( !stack.remove(entry) ) {
             return;
         }
-        entry.popup.removeFromParent();
+        // Up to the effect to remove the popup... we'll do it if the
+        // popup doesn't exist. 
+        if( entry.popup instanceof Panel && ((Panel)entry.popup).hasEffect("close") ) {
+            ((Panel)entry.popup).runEffect("close");
+            // Would be nice if there was a way to run something at the end 
+            // of an effect just to be sure.
+        } else {
+            entry.popup.removeFromParent();
+        }
         entry.blocker.removeFromParent();
         if( entry.closeCommand != null ) {
             entry.closeCommand.execute(this);
@@ -347,6 +375,11 @@ public class PopupState extends BaseAppState {
             
             // Make sure the popup spatial is above the blocker
             popup.move(0, 0, zBase - zOffset + 1);
+            
+            if( popup instanceof Panel ) {
+                // Play any open effects that it has
+                ((Panel)popup).runEffect("open");  // should really be a constant
+            }
         }
     }
     
