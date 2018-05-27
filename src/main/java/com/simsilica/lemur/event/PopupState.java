@@ -281,7 +281,13 @@ public class PopupState extends BaseAppState {
     
     protected Geometry createBlocker( float z, ColorRGBA backgroundColor ) {
         Camera cam = getApplication().getCamera();
-        Quad quad = new Quad(cam.getWidth(), cam.getHeight());
+ 
+        // Get the inverse scale of whatever the current guiNode is so that
+        // we can find a proper screen size
+        float width = cam.getWidth() / guiNode.getLocalScale().x;
+        float height = cam.getHeight() / guiNode.getLocalScale().y;
+        
+        Quad quad = new Quad(width, height);
         Geometry result = new Geometry("blocker", quad);
         GuiMaterial guiMat = createBlockerMaterial(backgroundColor);
         result.setMaterial(guiMat.getMaterial());

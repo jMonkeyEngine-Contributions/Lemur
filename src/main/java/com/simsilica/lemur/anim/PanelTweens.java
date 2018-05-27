@@ -61,7 +61,7 @@ public class PanelTweens {
         }
         return new Fade(target, fromAlpha, toAlpha, length);   
     }
-    
+ 
     private static class Fade extends AbstractTween {
 
         private final Panel target;

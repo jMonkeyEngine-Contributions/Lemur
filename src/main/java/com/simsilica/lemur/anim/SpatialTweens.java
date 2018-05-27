@@ -40,6 +40,7 @@ import com.jme3.math.Quaternion;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Spatial;
 
+import com.simsilica.lemur.GuiGlobals;
 
 /**
  *  Static utility methods for creating common Spatial-related Tween objects.
@@ -120,6 +121,13 @@ public class SpatialTweens {
      */   
     public static Tween attach( Spatial target, Spatial parent ) {
         return Tweens.callMethod(parent, "attachChild", target);
+    }
+    
+    /**
+     *  Sets the focus to the specified spatial.
+     */   
+    public static Tween focusOn( Spatial target ) {        
+        return Tweens.callMethod(GuiGlobals.getInstance().getFocusManagerState(), "setFocus", target);
     }
     
     private static class MoveSpatial extends AbstractTween {

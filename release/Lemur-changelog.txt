@@ -6,6 +6,10 @@ Lemur 1.10.2 (unreleased)
     a background color.
 * Modified PopupState to automatically call runEffect("open") and runEffect("close")
     if the popup is a Panel (or subclass).
+* Added SpatialTweens.focusOn() to set the focus to a particular spatial as part of
+    animation.
+* Fixed PopupState to take the current guiNode's scaling into account when calculating
+    screen size for the blocker quad.    
 
 
 Lemur 1.10.1 
