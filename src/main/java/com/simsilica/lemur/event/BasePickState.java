@@ -36,14 +36,17 @@
 
 package com.simsilica.lemur.event;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Map.Entry;
+
+import org.slf4j.*;
+
 import com.jme3.app.Application;
 import com.jme3.input.MouseInput;
 import com.jme3.math.Vector2f;
 import com.jme3.renderer.ViewPort;
 import com.jme3.scene.Spatial;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Map.Entry;
 
 
 /**
@@ -55,6 +58,8 @@ import java.util.Map.Entry;
  */
 public abstract class BasePickState extends BaseAppState
                                     implements PickState {
+    static Logger log = LoggerFactory.getLogger(BasePickState.class);
+
     private boolean includeDefaultNodes = true;
 
     private long sampleFrequency = 1000000000 / 60; // 60 fps
@@ -66,11 +71,75 @@ public abstract class BasePickState extends BaseAppState
      */
     private PickEventSession session = new PickEventSession();
 
+    /**
+     *  Keeps track of the owners interested in picking being enabled
+     *  as well as how many times they have requested picking.
+     */
+    private Map<Object, Integer> owners = new HashMap<>();
+    private int totalRequests = 0;
+
     protected BasePickState() {
     }
 
     protected final PickEventSession getSession() {
         return session;
+    }
+
+    /**
+     *  Signifies that the specified owner needs the pick state to be enabled.
+     */
+    @Override
+    public void requestEnabled( Object owner ) {
+        Integer existing = owners.get(owner);
+        if( existing == null ) {
+            owners.put(owner, 1);            
+        } else {
+            owners.put(owner, existing + 1);
+        }
+        totalRequests++;
+        if( log.isTraceEnabled() ) {
+            log.trace("request: Total enabled requests:" + totalRequests);
+        }
+        setEnabled(true);
+    }
+    
+    /**
+     *  Signifies that the specified owner no longer needs the pick state to be enabled.
+     *  Will return true if the state is still enabled (because of other requests) or
+     *  false if the state is now disabled.
+     */
+    @Override
+    public boolean releaseEnabled( Object owner ) {
+        Integer existing = owners.get(owner);
+        if( existing == null || existing == 0 ) {
+            throw new IllegalArgumentException("Invalid owner, no requests pending");
+        }        
+        if( existing == 1 ) {
+            owners.remove(owner);
+        } else {
+            owners.put(owner, existing-1);
+        }
+        totalRequests--;
+        if( log.isTraceEnabled() ) {
+            log.trace("release: Total enabled requests:" + totalRequests);
+        }
+        setEnabled(totalRequests > 0);
+        return isEnabled();
+    }
+    
+    @Override
+    public boolean hasRequestedEnabled( Object owner ) {
+        Integer existing = owners.get(owner);
+        return existing == null || existing < 1;
+    }    
+    
+    @Override    
+    public boolean resetEnabled() {
+        if( log.isTraceEnabled() ) {
+            log.trace("reset: Total enabled requests:" + totalRequests);
+        }
+        setEnabled(totalRequests > 0);
+        return isEnabled();
     }
 
     public void setIncludeDefaultCollisionRoots( boolean b ) {

@@ -179,6 +179,7 @@ public class OptionPanelState extends BaseAppState {
         getGuiNode().attachChild(panel);
         panel.runEffect(OptionPanel.EFFECT_OPEN);
         GuiGlobals.getInstance().requestFocus(panel);
+        GuiGlobals.getInstance().requestCursorEnabled(panel);
     }
  
     /**

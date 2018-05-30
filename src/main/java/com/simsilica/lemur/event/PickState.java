@@ -64,4 +64,30 @@ public interface PickState extends AppState {
     public void removeCollisionRoot( Spatial root );
     public void setPickLayerOrder( String... layers );
     public String[] getPickLayerOrder();
+    
+    /**
+     *  Signifies that the specified owner needs the pick state to be enabled.
+     */
+    public void requestEnabled( Object owner );
+    
+    /**
+     *  Signifies that the specified owner no longer needs the pick state to be enabled.
+     *  Will return true if the state is still enabled (because of other requests) or
+     *  false if the state is now disabled.
+     */
+    public boolean releaseEnabled( Object owner );
+    
+    /**
+     *  Returns true if the specified owner has an active request for picking to
+     *  be enabled.
+     */
+    public boolean hasRequestedEnabled( Object owner );
+ 
+    /**
+     *  Refreshes the enabled/disabled state based on the current
+     *  request count.  This is useful to reset the 'stack' if a forced
+     *  enable/disable was previously done.
+     */   
+    public boolean resetEnabled();
+
 }

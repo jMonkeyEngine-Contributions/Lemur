@@ -1,5 +1,9 @@
 Lemur-Proto 1.9.2 (unreleased)
 ------------------
+* Modified OptionPanelState and OptionPanel to automatically request/release
+    the cursor using the new GuiGlobals.request/releaseCursorEnabled().
+    This may be irrelevant if OptionPanelState is converted to use PopupState
+    as it should be.
 
 
 Lemur-Proto 1.9.1 

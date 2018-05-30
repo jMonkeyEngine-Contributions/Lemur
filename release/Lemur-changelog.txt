@@ -12,6 +12,16 @@ Lemur 1.10.2 (unreleased)
     screen size for the blocker quad.
 * Worked around an NPE in PopupState caused be a JME bug on Node.getWorldBound() when the node
     is empty.
+* Added PickState methods for better managing "cursor interest" in the form of a
+    request/release API.
+* Modified GuiGlobals to have methods for calling the new PickState request/release API
+    for cursor enabling.
+* Modified GuiGlobals.setCursorEnabled(boolean) to internally call the new PickState.request/release
+    calls.  A new GuiGlobals.setCursorEnabled(boolean, force:boolean) method was added
+    in case it is necessary to force the old behavior.
+* Modified PopupState to automatically call GuiGlobals.requestCursorEnabled() and 
+    releaseCursorEnabled() when opening/closing popups.  This may be a breaking
+    change for some applications.         
 
 
 Lemur 1.10.1 

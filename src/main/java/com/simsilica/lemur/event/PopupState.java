@@ -208,20 +208,8 @@ public class PopupState extends BaseAppState {
     protected void close( PopupEntry entry ) {
         if( !stack.remove(entry) ) {
             return;
-        }
-        // Up to the effect to remove the popup... we'll do it if the
-        // popup doesn't exist. 
-        if( entry.popup instanceof Panel && ((Panel)entry.popup).hasEffect("close") ) {
-            ((Panel)entry.popup).runEffect("close");
-            // Would be nice if there was a way to run something at the end 
-            // of an effect just to be sure.
-        } else {
-            entry.popup.removeFromParent();
-        }
-        entry.blocker.removeFromParent();
-        if( entry.closeCommand != null ) {
-            entry.closeCommand.execute(this);
-        }
+        }        
+        entry.release();
         
         if( !stack.isEmpty() ) {
             current = stack.get(stack.size()-1);
@@ -389,6 +377,28 @@ public class PopupState extends BaseAppState {
                 // Play any open effects that it has
                 ((Panel)popup).runEffect("open");  // should really be a constant
             }
+            
+            // Request access to the cursor
+            GuiGlobals.getInstance().requestCursorEnabled(this);
+        }
+        
+        public void release() {
+            // Up to the effect to remove the popup... we'll do it if the
+            // popup doesn't exist. 
+            if( popup instanceof Panel && ((Panel)popup).hasEffect("close") ) {
+                ((Panel)popup).runEffect("close");
+                // Would be nice if there was a way to run something at the end 
+                // of an effect just to be sure.
+            } else {
+                popup.removeFromParent();
+            }
+            blocker.removeFromParent();
+            if( closeCommand != null ) {
+                closeCommand.execute(PopupState.this);
+            }
+            
+            // Release our cursor request
+            GuiGlobals.getInstance().releaseCursorEnabled(this);
         }
     }
     

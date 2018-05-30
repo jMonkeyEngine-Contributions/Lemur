@@ -36,16 +36,9 @@ package com.simsilica.lemur;
 
 import com.google.common.base.Charsets;
 import com.google.common.io.Resources;
-import com.simsilica.lemur.core.GuiMaterial;
-import com.simsilica.lemur.core.UnshadedMaterialAdapter;
-import com.simsilica.lemur.core.LightingMaterialAdapter;
-import com.simsilica.lemur.style.Styles;
-import com.simsilica.lemur.event.KeyListener;
-import com.simsilica.lemur.event.KeyInterceptState;
-import com.simsilica.lemur.event.MouseAppState;
-import com.simsilica.lemur.event.PopupState;
-import com.simsilica.lemur.focus.FocusManagerState;
-import com.simsilica.lemur.focus.FocusNavigationState;
+
+import org.slf4j.*;
+
 import com.jme3.app.Application;
 import com.jme3.asset.AssetManager;
 import com.jme3.asset.TextureKey;
@@ -60,11 +53,21 @@ import com.jme3.renderer.queue.RenderQueue;
 import com.jme3.renderer.queue.RenderQueue.Bucket;
 import com.jme3.scene.Spatial;
 import com.jme3.texture.Texture;
+
 import com.simsilica.lemur.anim.AnimationState;
+import com.simsilica.lemur.core.GuiMaterial;
+import com.simsilica.lemur.core.UnshadedMaterialAdapter;
+import com.simsilica.lemur.core.LightingMaterialAdapter;
+import com.simsilica.lemur.event.KeyListener;
+import com.simsilica.lemur.event.KeyInterceptState;
+import com.simsilica.lemur.event.MouseAppState;
+import com.simsilica.lemur.event.PickState;
+import com.simsilica.lemur.event.PopupState;
 import com.simsilica.lemur.event.TouchAppState;
+import com.simsilica.lemur.focus.FocusManagerState;
+import com.simsilica.lemur.focus.FocusNavigationState;
 import com.simsilica.lemur.input.InputMapper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import com.simsilica.lemur.style.Styles;
 
 
 /**
@@ -179,6 +182,10 @@ public class GuiGlobals {
 
         ViewPort main = app.getViewPort();
         setupGuiComparators(main);
+        
+        // By default all of our app picking states are enabled so we should
+        // make a 'formal' request.
+        setCursorEventsEnabled(true);
     }
 
     protected AssetManager getAssetManager() {
@@ -342,13 +349,72 @@ public class GuiGlobals {
     public ViewPort getCollisionViewPort( Spatial s ) {
         if( mouseState != null ) {
             return mouseState.findViewPort(s);
-        } else if( touchState != null ) {
-            return touchState.findViewPort(s);
-        } else {
-            return null;
         }
+        if( touchState != null ) {
+            return touchState.findViewPort(s);
+        } 
+        return null;
     }
 
+    /**
+     *  Indicates that the specified owner requires the cursor
+     *  to be enabled.  This is a way of letting multiple separate
+     *  UI elements manage their need for the cursor.  If one
+     *  particular object indicates that it no longer has a need for
+     *  the cursor then it can be disabled if no other owners
+     *  require it.  This makes it easier to automatically manage
+     *  the enabled/disabled state of the picking behavior in the
+     *  face of complicated UIs.
+     */
+    public void requestCursorEnabled( Object owner ) {
+        if( mouseState != null ) {
+            mouseState.requestEnabled(owner);
+        }
+        if( touchState != null ) {
+            touchState.requestEnabled(owner);
+        }
+        if( focusNavState != null ) {            
+            focusNavState.setEnabled(isCursorEventsEnabled());       
+        }
+    }
+ 
+    /**
+     *  Releases a previous cursor request for the specified
+     *  sowner.  Returns true if the cursor is still enabled
+     *  after this call.
+     */    
+    public boolean releaseCursorEnabled( Object owner ) {
+        boolean result = false;
+        if( mouseState != null ) {
+            if( mouseState.releaseEnabled(owner) ) {
+                result = true;
+            }
+        }
+        if( touchState != null ) {
+            if( touchState.releaseEnabled(owner) ) {
+                result = true;
+            }
+        }
+        if( focusNavState != null ) {            
+            focusNavState.setEnabled(result);       
+        }
+        return result;
+    }
+    
+    /**
+     *  Returns true if the specified owner has an active cursor
+     *  enabled request pending.
+     */
+    public boolean hasRequestedCursorEnabled( Object owner ) {
+        if( mouseState != null ) {
+            return mouseState.hasRequestedEnabled(owner);
+        }
+        if( touchState != null ) {
+            return touchState.hasRequestedEnabled(owner);
+        }
+        return false;
+    }
+ 
     /**
      *  @deprecated Use setCursorEventsEnabled() instead.
      */
@@ -358,14 +424,37 @@ public class GuiGlobals {
     }
     
     public void setCursorEventsEnabled( boolean f ) {
-        if( mouseState != null ) {
-            mouseState.setEnabled(f);
-        }
-        if( touchState != null ) {
-            touchState.setEnabled(f);
-        }
-        if( focusNavState != null ) {
-            focusNavState.setEnabled(f);
+        setCursorEventsEnabled(f, false);
+    }
+    
+    /**
+     *  The same as setCursorEventsEnabled(f) except that this will force
+     *  the cursor enabled state even if there are pending requests otherwise.
+     *  This can be a way to force the enabled/disabled state in the case
+     *  where an application has not converted to the new request/release
+     *  approach and/or has a specific need where counting requests will not
+     *  work.
+     */
+    public void setCursorEventsEnabled( boolean f, boolean force ) {
+        if( force ) {
+            if( mouseState != null ) {
+                mouseState.setEnabled(f);
+            }
+            if( touchState != null ) {
+                touchState.setEnabled(f);
+            }
+            if( focusNavState != null ) {
+                focusNavState.setEnabled(f);
+            }
+        } else {
+            // In an attempt to be backwards compatible with the new
+            // request/release paradigm, we will consider set/get like
+            // a request with GuiGlobals as the owner.
+            if( f ) {
+                requestCursorEnabled(this);
+            } else if( hasRequestedCursorEnabled(this) ) {        
+                releaseCursorEnabled(this);
+            }
         }
     }
 

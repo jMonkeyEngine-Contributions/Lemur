@@ -247,6 +247,7 @@ public class OptionPanel extends Panel {
      *  to provide different close behavior.
      */   
     public void close() {
+        GuiGlobals.getInstance().releaseCursorEnabled(this);
         if( hasEffect(EFFECT_CLOSE) ) {
             runEffect(EFFECT_CLOSE);
         } else if( getParent() instanceof Container ) {
