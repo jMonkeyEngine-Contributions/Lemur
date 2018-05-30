@@ -128,9 +128,9 @@ public abstract class BasePickState extends BaseAppState
     }
     
     @Override
-    public boolean hasRequestedEnabled( Object owner ) {
+    public boolean hasRequestedEnabled( Object owner ) {    
         Integer existing = owners.get(owner);
-        return existing == null || existing < 1;
+        return existing != null && existing > 0;
     }    
     
     @Override    
