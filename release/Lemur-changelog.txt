@@ -21,7 +21,11 @@ Lemur 1.10.2 (unreleased)
     in case it is necessary to force the old behavior.
 * Modified PopupState to automatically call GuiGlobals.requestCursorEnabled() and 
     releaseCursorEnabled() when opening/closing popups.  This may be a breaking
-    change for some applications.         
+    change for some applications.
+* Added a GuiGlobals.srgbaColor() method for conditionally creating linear colors from
+    SRGB colors based on whether gamma is enabled or not.
+* Modified the groovy style API to (by default) use srgbaColor() internally.  A flag
+    can be specified to turn this off.
 
 
 Lemur 1.10.1 

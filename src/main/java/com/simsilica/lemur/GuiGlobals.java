@@ -118,6 +118,8 @@ public class GuiGlobals {
 
     private Styles styles;
 
+    private boolean gammaEnabled;
+
     public static void initialize( Application app ) {
         setInstance(new GuiGlobals(app));
     }
@@ -186,6 +188,8 @@ public class GuiGlobals {
         // By default all of our app picking states are enabled so we should
         // make a 'formal' request.
         setCursorEventsEnabled(true);
+        
+        gammaEnabled = app.getContext().getSettings().isGammaCorrection();
     }
 
     protected AssetManager getAssetManager() {
@@ -327,6 +331,39 @@ public class GuiGlobals {
         }
 
         return t;
+    }
+
+    static final float GAMMA = 2.2f;
+
+    /**
+     *  Creates a color from the specified RGBA values as if they were in SRGB space,
+     *  depending on whether gamma correction is enabled or disabled.  If there is no
+     *  gamma correction then the RGBA values are interpretted literally.  If gamma
+     *  correction is enabled then the values are converted to linear space before
+     *  returning.  
+     */     
+    public ColorRGBA srgbaColor( float r, float g, float b, float a ) {
+        if( gammaEnabled ) {
+            // Note: unlike JME's seAsSrgb() method, when converting from SRGB
+            //   space this method will also convert the alpha as it seems to matter in color
+            //   matching.
+            // ...except it didn't always work.  
+            //return new ColorRGBA().setAsSrgb(r, g, b, (float)Math.pow(a, GAMMA));
+            return new ColorRGBA().setAsSrgb(r, g, b, a); 
+        } else {
+            return new ColorRGBA(r, g, b, a);
+        }
+    }
+
+    /**
+     *  Creates a color from the specified RGBA values as if they were in SRGB space,
+     *  depending on whether gamma correction is enabled or disabled.  If there is no
+     *  gamma correction then the RGBA values are interpretted literally.  If gamma
+     *  correction is enabled then the values are converted to linear space before
+     *  returning. 
+     */
+    public ColorRGBA srgbaColor( ColorRGBA srgbColor ) {
+        return srgbaColor(srgbColor.r, srgbColor.g, srgbColor.b, srgbColor.a);  
     }
 
     public void requestFocus( Spatial s ) {

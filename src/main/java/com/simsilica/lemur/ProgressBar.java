@@ -119,11 +119,12 @@ public class ProgressBar extends Panel {
  
     @StyleDefaults(ELEMENT_ID)
     public static void initializeDefaultStyles( Styles styles, Attributes attrs ) {
+        GuiGlobals globals = GuiGlobals.getInstance();
         ElementId parent = new ElementId(ELEMENT_ID);        
         styles.getSelector(parent.child(CONTAINER_ID), null).set("background", 
-                                                new QuadBackgroundComponent(new ColorRGBA(0.2f, 0.2f, 0.2f, 0.5f), 2, 2)); 
+                                                new QuadBackgroundComponent(globals.srgbaColor(new ColorRGBA(0.2f, 0.2f, 0.2f, 0.5f)), 2, 2)); 
         styles.getSelector(parent.child(VALUE_ID), null).set("background", 
-                                                new QuadBackgroundComponent(new ColorRGBA(0.1f, 0.7f, 0.3f, 1))); 
+                                                new QuadBackgroundComponent(globals.srgbaColor(new ColorRGBA(0.1f, 0.7f, 0.3f, 1)))); 
         styles.getSelector(parent.child(LABEL_ID), null).set("textHAlignment", HAlignment.Center, false);
     }
  

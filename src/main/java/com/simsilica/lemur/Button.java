@@ -126,10 +126,11 @@ public class Button extends Label {
 
     @StyleDefaults(ELEMENT_ID)
     public static void initializeDefaultStyles( Attributes attrs ) {
+        GuiGlobals globals = GuiGlobals.getInstance();
         attrs.set("background", new QuadBackgroundComponent(new ColorRGBA(0,0,0,0)), false);
-        attrs.set("highlightColor", ColorRGBA.Yellow, false);
-        attrs.set("focusColor", ColorRGBA.Green, false);
-        attrs.set("shadowColor", new ColorRGBA(0, 0, 0, 0.5f), false);
+        attrs.set("highlightColor", ColorRGBA.Yellow, false);  // yellow should not need srgb conversion
+        attrs.set("focusColor", ColorRGBA.Green, false);       // green should not need srgb conversion
+        attrs.set("shadowColor", globals.srgbaColor(new ColorRGBA(0, 0, 0, 0.5f)), false);
     }
 
     public void addCommands( ButtonAction a, Command<? super Button>... commands ) {

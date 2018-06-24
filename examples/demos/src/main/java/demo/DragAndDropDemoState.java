@@ -135,7 +135,8 @@ public class DragAndDropDemoState extends BaseAppState {
         float r = (float)(Math.random() * 0.4 + 0.2);
         float g = (float)(Math.random() * 0.6 + 0.2);
         float b = (float)(Math.random() * 0.6 + 0.2);
-        ColorRGBA color = new ColorRGBA(r, g, b, 1);
+        //ColorRGBA color = new ColorRGBA(r, g, b, 1);
+        ColorRGBA color = GuiGlobals.getInstance().srgbaColor(r, g, b, 1);
         
         Material mat = GuiGlobals.getInstance().createMaterial(color, true).getMaterial();
         //mat.getAdditionalRenderState().setWireframe(true);

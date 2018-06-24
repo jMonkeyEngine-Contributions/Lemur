@@ -217,7 +217,8 @@ public class Panel extends Node {
 
     @StyleDefaults(ELEMENT_ID)
     public static void initializeDefaultStyles( Attributes attrs ) {
-        attrs.set( "background", new QuadBackgroundComponent(ColorRGBA.Gray), false );
+        ColorRGBA gray = GuiGlobals.getInstance().srgbaColor(ColorRGBA.Gray);        
+        attrs.set( "background", new QuadBackgroundComponent(gray), false );
     }
 
     @StyleAttribute(value="background", lookupDefault=false)

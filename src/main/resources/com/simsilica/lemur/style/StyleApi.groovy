@@ -81,7 +81,15 @@ BitmapFont font( String name ) {
 }
 
 ColorRGBA color( Number r, Number g, Number b, Number a ) {
-    return new ColorRGBA( r.floatValue(), g.floatValue(), b.floatValue(), a.floatValue() )
+    return color(r, g, b, a, true);
+}
+
+ColorRGBA color( Number r, Number g, Number b, Number a, boolean autoConvertSrgb ) {
+    if( autoConvertSrgb ) {
+        return gui.srgbaColor(r.floatValue(), g.floatValue(), b.floatValue(), a.floatValue())
+    } else {
+        return new ColorRGBA(r.floatValue(), g.floatValue(), b.floatValue(), a.floatValue())
+    }
 }
 
 Texture texture( String name ) {
