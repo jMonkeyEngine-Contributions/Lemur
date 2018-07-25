@@ -49,6 +49,7 @@ public class Button {
     public static final Button MOUSE_BUTTON2 = new Button("mouse_2", "Mouse Button 2");
     public static final Button MOUSE_BUTTON3 = new Button("mouse_3", "Mouse Button 3");
 
+    public static final Button JOYSTICK_BUTTON0 = new Button("joystick_0", "Joystick Button 0");
     public static final Button JOYSTICK_BUTTON1 = new Button("joystick_1", "Joystick Button 1");
     public static final Button JOYSTICK_BUTTON2 = new Button("joystick_2", "Joystick Button 2");
     public static final Button JOYSTICK_BUTTON3 = new Button("joystick_3", "Joystick Button 3");
