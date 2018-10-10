@@ -297,6 +297,9 @@ public class TextEntryComponent extends AbstractGuiComponent
         // The cursor is attached to the bitmap text directly
         // so we need to move it.       
         bitmapText.attachChild(cursor);
+        
+         // we also need to change the font! as the font parameter is used in getVisibleWidth()
+        this.font = font;
                 
         resizeCursor();
         resetCursorPosition();
