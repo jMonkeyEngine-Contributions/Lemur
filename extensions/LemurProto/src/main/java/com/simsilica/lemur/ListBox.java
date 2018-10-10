@@ -417,7 +417,9 @@ public class ListBox<T> extends Panel {
     protected Panel getListCell( int row, int col, Panel existing ) {
         T value = model.get(row);
         Panel cell = cellRenderer.getView(value, false, existing);
- 
+     
+        if (cell.getBackground() == null) cell.setBackground(new QuadBackgroundComponent(new ColorRGBA(ColorRGBA.BlackNoAlpha)));
+                
         if( cell != existing ) {
             // Transfer the click listener                  
             CursorEventControl.addListenersToSpatial(cell, clickListener);
