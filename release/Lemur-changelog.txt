@@ -26,6 +26,8 @@ Lemur 1.10.2 (unreleased)
     SRGB colors based on whether gamma is enabled or not.
 * Modified the groovy style API to (by default) use srgbaColor() internally.  A flag
     can be specified to turn this off.
+* Fixed a bug in TextEntryComponent where the font wasn't being kept when changed.  This caused
+    issues like cursor positions being wrong, etc..
 
 
 Lemur 1.10.1 
