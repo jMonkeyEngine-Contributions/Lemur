@@ -34,16 +34,21 @@
 
 package com.simsilica.lemur;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 import com.jme3.math.ColorRGBA;
+
+import com.simsilica.lemur.core.VersionedHolder;
+import com.simsilica.lemur.core.VersionedObject;
+import com.simsilica.lemur.core.VersionedReference;
 import com.simsilica.lemur.component.BorderLayout;
 import com.simsilica.lemur.component.SpringGridLayout;
 import com.simsilica.lemur.core.GuiControl;
 import com.simsilica.lemur.style.ElementId;
 import com.simsilica.lemur.style.StyleAttribute;
 import com.simsilica.lemur.style.Styles;
-import java.util.ArrayList;
-import java.util.List;
 
 
 /**
@@ -61,7 +66,10 @@ public class TabbedPanel extends Panel {
     private Container tabButtons;
     private Container container;
     private List<Tab> tabs = new ArrayList<Tab>();
-    private Tab selected;
+    
+    private VersionedHolder<Tab> selectionModel = new VersionedHolder<>();
+    private VersionedReference<Tab> selectionRef = selectionModel.createReference();  
+    private Tab displayedTab;
     
     private ColorRGBA activationColor = ColorRGBA.Cyan;    
     
@@ -105,13 +113,78 @@ public class TabbedPanel extends Panel {
         Tab tab = new Tab(title, contents);
         tabs.add(tab);
         refreshTabs();
-        if( selected == null ) {
-            setSelected(tab);
+        if( selectionModel.getObject() == null ) {
+            setSelectedTab(tab);
+        }
+        return contents;
+    }
+
+    /**
+     *  Inserts the specified contents as a new tab using the specified
+     *  title inserted at the specified index.
+     */
+    public <T extends Panel> T insertTab( int index, String title, T contents ) {
+        Tab tab = new Tab(title, contents);
+        tabs.add(index, tab);
+        refreshTabs();
+        if( selectionModel.getObject() == null ) {
+            setSelectedTab(tab);
         }
         return contents;
     }
  
-    // TODO: implement tab retrieval and tab removal
+    /**
+     *  Removes the specified tab from this tabbed panel.  Returns
+     *  the tab that was removed or null if the tab is not a member
+     *  of this tabbed panel.
+     *  Note: if the specified tab is the currently selected tab
+     *  then the selection will be reset to the next available tab.
+     */
+    public Tab removeTab( Tab tab ) {    
+        int index = tabs.indexOf(tab);
+        if( index < 0 ) {
+            return null;
+        }
+        if( selectionModel.getObject() == tab ) {
+            // Clear the current selection
+            selectionModel.setObject(null);
+        }
+        
+        tabs.remove(tab);
+        refreshTabs();
+ 
+        // See if we need to set the selection again
+        if( selectionModel.getObject() == null && !tabs.isEmpty() ) {
+            // Do the best we can
+            setSelectedTab(tabs.get(Math.min(index, tabs.size()-1)));
+        }
+        
+        return tab;
+    }
+ 
+    /**
+     *  Returns a read-only list of the Tabs contained in this tabbed panel.
+     */
+    public List<Tab> getTabs() {
+        return Collections.unmodifiableList(tabs);
+    }
+ 
+    /** 
+     *  Returns a versioned view of the currently selected tab.
+     *  Callers can create VersionedReferences to watch for changes.
+     */
+    public VersionedObject<Tab> getSelectionModel() {
+        return selectionModel;
+    }
+ 
+    /*
+    No reconfigurable selection model... at least for now.  There is no
+    real 'model' class and VersionedObject has no setters (for good reason).
+    public void setSelectionModel( VersionedHolder<Tab> selectionModel ) {
+        this.selectionModel = selectionModel;
+        setSelectedTab(displayedTab);
+    }*/
+    
  
     /**
      *  Sets the text color that will be used for activated tabs. 
@@ -119,8 +192,8 @@ public class TabbedPanel extends Panel {
     @StyleAttribute(value="activationColor", lookupDefault=false)
     public void setActivationColor( ColorRGBA color ) {
         this.activationColor = color;
-        if( selected != null ) {
-            selected.title.setColor(color);
+        if( displayedTab != null ) {
+            displayedTab.title.setColor(color);
         }                
     }
  
@@ -140,22 +213,58 @@ public class TabbedPanel extends Panel {
         }       
     }
  
-    protected void setSelected( Tab tab ) {
-        if( this.selected == tab) {
+    /**
+     *  Sets the currently selected tab to the tab specified.
+     */
+    public void setSelectedTab( Tab tab ) {
+        // This should take care of ignoring nulls also
+        if( !tabs.contains(tab) ) {
             return;
         }
-        if( this.selected != null ) {
-            selected.removeContents();
+        
+        selectionModel.updateObject(tab);
+        
+        // Short-circuit just to make sure we change right away... no 
+        // reason to wait until the next frame in this case.
+        setDisplayedTab(selectionModel.getObject());
+    }
+ 
+    /**
+     *  Returns the currently selected tab.
+     */   
+    public Tab getSelectedTab() {
+        return selectionModel.getObject();
+    }
+    
+    protected void setDisplayedTab( Tab tab ) {
+        if( displayedTab == tab ) {
+            // Already displaying it
+            return;
         }
-        this.selected = tab;
-        if( this.selected != null ) {
-            selected.addContents();
+        if( displayedTab != null ) {
+            displayedTab.removeContents();
+        }
+        displayedTab = tab;
+        if( displayedTab != null ) {
+            displayedTab.addContents();
         }
         for( Tab t : tabs ) {
             t.title.setChecked(t == tab);
+        }        
+    }
+ 
+    @Override
+    public void updateLogicalState( float tpf ) {
+        super.updateLogicalState(tpf);
+
+        if( selectionRef != null && selectionRef.update() ) {
+            setDisplayedTab(selectionRef.get());
         }
     }
-    
+ 
+    /**
+     *  Represents a Tab in the TabbedPanel.
+     */   
     public class Tab {
         private Checkbox title;
         private Panel contents;
@@ -165,6 +274,18 @@ public class TabbedPanel extends Panel {
             this.title = new Checkbox(title, getElementId().child("tab.button"), getStyle());
             this.title.addClickCommands(new SwitchToTab(this));
             this.contents = contents;
+        }
+        
+        public String getTitle() {
+            return title.getText();
+        }
+        
+        public Checkbox getTitleButton() {
+            return title;
+        }
+        
+        public Panel getContents() {
+            return contents;
         }
         
         protected void removeContents() {
@@ -197,7 +318,7 @@ public class TabbedPanel extends Panel {
         }
 
         public void execute( Button source ) {
-            setSelected(tab);
+            setSelectedTab(tab);
         }
     }
 }

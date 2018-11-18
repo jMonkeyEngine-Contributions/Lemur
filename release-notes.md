@@ -40,7 +40,10 @@ Lemur 1.11.0 (unreleased)
 * Fixed an issue with key repeats in TextEntryComponent and lwjgl3 which seems to 
     separate 'pressed' events from 'repeating' events for some reason.
     See PR 65.
-* Fixed the toString() of KeyAction to add the closing bracket ']'.    
+* Fixed the toString() of KeyAction to add the closing bracket ']'.
+* Modified TabbedPanel to expose a tab selection model, support get/set of selected
+    tab, expose the list of tabs, and added insert/remove functionality.  This
+    meets and exceeds feature request #59       
 
 
 Lemur 1.10.1 
