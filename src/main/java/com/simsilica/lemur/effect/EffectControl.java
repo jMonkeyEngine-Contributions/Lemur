@@ -145,9 +145,13 @@ public class EffectControl<T extends Spatial> extends AbstractControl {
         if( a != null ) {
             anim().add(a);
             
+            // Always create a result even if we won't put it in the channel.
+            // This gives us something useful to return to the caller about
+            // what is being animated.
+            result = new EffectInfo(name, e, a);
+            
             if( channel != null ) {
                 // Keep track of it for later
-                result = new EffectInfo(name, e, a);
                 channels.put(channel, result);
             }            
         }
