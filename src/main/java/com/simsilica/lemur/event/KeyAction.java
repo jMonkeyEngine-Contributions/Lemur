@@ -105,6 +105,6 @@ public class KeyAction {
             sb.append( "Shift " );
         }
         sb.append(name);
-        return sb.toString();
+        return sb.toString() + "]";
     }
 }

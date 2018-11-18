@@ -37,6 +37,10 @@ Lemur 1.11.0 (unreleased)
     based on the world bounds of the root spatial.  This should fix issue #55 as
     well as several other problems caused by GUI elements above z=1000.  Also,
     negative Z GUI values are properly supported now, also.
+* Fixed an issue with key repeats in TextEntryComponent and lwjgl3 which seems to 
+    separate 'pressed' events from 'repeating' events for some reason.
+    See PR 65.
+* Fixed the toString() of KeyAction to add the closing bracket ']'.    
 
 
 Lemur 1.10.1 
