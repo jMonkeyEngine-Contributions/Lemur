@@ -269,6 +269,13 @@ public class QuadBackgroundComponent extends AbstractGuiComponent
             }
             background.setMaterial(material.getMaterial());
             getNode().attachChild(background);
+            
+            // If we've recreated the spatial then the applied scale
+            // should be reset also.  We could either move slightly different
+            // scaling logic into the branch and the else branch... or just
+            // reset appliedTextureScale here so that the if branch below
+            // rescales things properly.
+            appliedTextureScale.set(1, 1);
         } else {
             // Else reset the size of the quad
             Quad q = (Quad)background.getMesh();

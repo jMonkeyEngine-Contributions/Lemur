@@ -31,7 +31,8 @@ Lemur 1.11.0 (unreleased)
 * Deprecated Lemur's BaseAppState so apps know to prefer JME's built in version.
 * Fixed issue #53 where Panel.runEffect() would incorrectly return false for effects 
     with no channel.
-    
+* Fixed issue #54 where texture scaling was not being reapplied to cloned 
+    QuadBackgroundComponents.    
 
 
 Lemur 1.10.1 
