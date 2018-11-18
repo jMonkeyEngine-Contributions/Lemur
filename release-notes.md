@@ -32,7 +32,11 @@ Lemur 1.11.0 (unreleased)
 * Fixed issue #53 where Panel.runEffect() would incorrectly return false for effects 
     with no channel.
 * Fixed issue #54 where texture scaling was not being reapplied to cloned 
-    QuadBackgroundComponents.    
+    QuadBackgroundComponents.
+* Modified the GUI bucket picking code to dynamically say the Ray min/max Z values 
+    based on the world bounds of the root spatial.  This should fix issue #55 as
+    well as several other problems caused by GUI elements above z=1000.  Also,
+    negative Z GUI values are properly supported now, also.
 
 
 Lemur 1.10.1 

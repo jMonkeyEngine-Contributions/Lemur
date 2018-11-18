@@ -34,6 +34,13 @@
 
 package com.simsilica.lemur.event;
 
+import java.util.*;
+
+import org.slf4j.*;
+
+import com.jme3.bounding.BoundingBox;
+import com.jme3.bounding.BoundingSphere;
+import com.jme3.bounding.BoundingVolume;
 import com.jme3.collision.Collidable;
 import com.jme3.collision.CollisionResult;
 import com.jme3.collision.CollisionResults;
@@ -48,14 +55,6 @@ import com.jme3.renderer.queue.RenderQueue.Bucket;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Spatial;
 import com.jme3.util.SafeArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedHashMap;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
-import org.slf4j.*;
 
 /**
  *  Encapsulates the state necessary to deliver events to targets,
@@ -386,6 +385,24 @@ public class PickEventSession {
         return !(x < x1 || x > x2 || y < y1 || y > y2);
     }
 
+    /**
+     *  Returns the min and max world z values for the specified
+     *  spatial. 
+     */
+    protected float[] getZBounds( Spatial s ) {
+        BoundingVolume bv = s.getWorldBound();
+        Vector3f center = bv.getCenter();
+        if( bv instanceof BoundingBox ) {
+            BoundingBox bb = (BoundingBox)bv;
+            return new float[] { center.z - bb.getZExtent(), center.z + bb.getZExtent() };
+        } else if( bv instanceof BoundingSphere ) {
+            BoundingSphere bs = (BoundingSphere)bv;
+            return new float[] { center.z - bs.getRadius(), center.z + bs.getRadius() };
+        } else {
+            throw new UnsupportedOperationException("Bounding volume type not supported for:" + bv);
+        }        
+    }
+
     protected Ray getPickRay( RootEntry rootEntry, Vector2f cursor ) {
     
         if( isTraceEnabled() ) {
@@ -400,8 +417,15 @@ public class PickEventSession {
 
         if( rootEntry.root instanceof Spatial && ((Spatial)rootEntry.root).getQueueBucket() == Bucket.Gui ) {
             trace("Creating GuiBucket ray.");
+            // Base the upper and lower Z on the bounds of the spatial +/- some buffer
+            float[] range = getZBounds((Spatial)rootEntry.root);
+            
+            // Adjust by some buffer
+            range[0] -= 1;
+            range[1] += 1;
+            
             // Special case for Gui Bucket nodes since they are always in screen space
-            result = new Ray(new Vector3f(cursor.x, cursor.y, 1000), new Vector3f(0, 0, -1));
+            result = new Ray(new Vector3f(cursor.x, cursor.y, range[1]), new Vector3f(0, 0, range[0]));
         } else {
 
             // Ortho and perspective can be handled the same exact way it turns out.
