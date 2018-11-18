@@ -713,7 +713,7 @@ public class TextEntryComponent extends AbstractGuiComponent
         @Override
         public void onKeyEvent( KeyInputEvent evt ) {
             ModifiedKeyInputEvent mEvt = (ModifiedKeyInputEvent)evt;                    
-            if( mEvt.isPressed() ) {
+            if( mEvt.isPressed() || mEvt.isRepeating() ) {
                 KeyAction key = mEvt.toKeyAction(); //new KeyAction(code, (control?KeyAction.CONTROL_DOWN:0), (shift?KeyAction.SHIFT_DOWN:0) );
                 KeyActionListener handler = actionMap.get(key);
                 if( handler != null ) {
