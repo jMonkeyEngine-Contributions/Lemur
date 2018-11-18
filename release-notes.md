@@ -1,4 +1,4 @@
-Lemur 1.10.2 (unreleased) 
+Lemur 1.11.0 (unreleased) 
 -------------
 * Added IconComponent.setIconSize() to force the size of the icon before
     scaling.
@@ -28,6 +28,10 @@ Lemur 1.10.2 (unreleased)
     can be specified to turn this off.
 * Fixed a bug in TextEntryComponent where the font wasn't being kept when changed.  This caused
     issues like cursor positions being wrong, etc..
+* Deprecated Lemur's BaseAppState so apps know to prefer JME's built in version.
+* Fixed issue #53 where Panel.runEffect() would incorrectly return false for effects 
+    with no channel.
+    
 
 
 Lemur 1.10.1 
