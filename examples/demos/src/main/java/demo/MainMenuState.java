@@ -67,7 +67,8 @@ public class MainMenuState extends BaseAppState {
         TextEntryDemoState.class,
         FormattedTextEntryDemoState.class,
         ListBoxDemoState.class,
-        IconDemoState.class
+        IconDemoState.class,
+        TabbedPanelDemoState.class
     };
 
     private Container mainWindow;

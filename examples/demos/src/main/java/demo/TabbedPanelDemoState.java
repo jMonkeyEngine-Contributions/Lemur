@@ -1,7 +1,7 @@
 /*
  * $Id$
  * 
- * Copyright (c) 2016, Simsilica, LLC
+ * Copyright (c) 2018, Simsilica, LLC
  * All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without
@@ -36,10 +36,13 @@
 
 package demo;
 
+import java.util.List;
+
 import com.jme3.app.Application;
 import com.jme3.app.state.BaseAppState;
 
 import com.simsilica.lemur.*;
+import com.simsilica.lemur.core.VersionedReference;
 import com.simsilica.lemur.component.SpringGridLayout;
 import com.simsilica.lemur.event.ConsumingMouseListener;
 import com.simsilica.lemur.event.MouseEventControl;
@@ -48,11 +51,11 @@ import com.simsilica.lemur.style.ElementId;
 import com.simsilica.lemur.text.DocumentModel;
 
 /**
- *  A demo of the ListBox element.
+ *  A demo of the TabbedPanel element.
  *
  *  @author    Paul Speed
  */
-public class ListBoxDemoState extends BaseAppState {
+public class TabbedPanelDemoState extends BaseAppState {
  
     private Container window;
     
@@ -62,12 +65,13 @@ public class ListBoxDemoState extends BaseAppState {
      */
     private CloseCommand closeCommand = new CloseCommand();
  
-    private ListBox listBox;
- 
-    // Just to give added items a unique suffix
-    private int nextItem = 1;
+    private TabbedPanel tabs;
+    private int nextTabNumber = 1;
     
-    public ListBoxDemoState() {
+    private Label statusLabel;
+    private VersionedReference<TabbedPanel.Tab> selectionRef; 
+    
+    public TabbedPanelDemoState() {
     }
      
     @Override   
@@ -77,7 +81,7 @@ public class ListBoxDemoState extends BaseAppState {
     @Override   
     protected void cleanup( Application app ) {
     }
- 
+
     @Override   
     protected void onEnable() {
  
@@ -85,21 +89,29 @@ public class ListBoxDemoState extends BaseAppState {
         // mouse events over it so it doesn't auto-close when clicked
         // outside of interactive child elements.
         window = new Container();
-        window.addChild(new Label("List Box Demo", new ElementId("window.title.label")));
+        window.addChild(new Label("Tabbed Panel Demo", new ElementId("window.title.label")));
         MouseEventControl.addListenersToSpatial(window, ConsumingMouseListener.INSTANCE);
+ 
+        tabs = window.addChild(new TabbedPanel());
+        tabs.setInsets(new Insets3f(5, 5, 5, 5));
+        selectionRef = tabs.getSelectionModel().createReference();
 
-        listBox = window.addChild(new ListBox());
-        listBox.setVisibleItems(5);
+        for( int i = 0; i < 3; i++ ) {
+            add();
+        }
+        
+        statusLabel = window.addChild(new Label("Status"));
+        statusLabel.setInsets(new Insets3f(2, 5, 2, 5)); 
  
-        for( int i = 0; i < 10; i++ ) {        
-            listBox.getModel().add("Item " + nextItem);
-            nextItem++;
-        }        
- 
+        // Add some actions that will manipulate the document model independently
+        // of the text field
         Container buttons = window.addChild(new Container(new SpringGridLayout(Axis.X, Axis.Y)));
+        buttons.setInsets(new Insets3f(5, 5, 5, 5));
+        buttons.addChild(new ActionButton(new CallMethodAction(this, "first")));
         buttons.addChild(new ActionButton(new CallMethodAction(this, "add")));
         buttons.addChild(new ActionButton(new CallMethodAction(this, "insert")));
         buttons.addChild(new ActionButton(new CallMethodAction(this, "remove")));
+        buttons.addChild(new ActionButton(new CallMethodAction(this, "last")));
  
         // Add a close button to both show that the layout is working and
         // also because it's better UX... even if the popup will close if
@@ -117,31 +129,55 @@ public class ListBoxDemoState extends BaseAppState {
         window.removeFromParent();
     }
  
+    @Override
+    public void update( float tpf ) {
+        if( selectionRef.update() ) {
+            statusLabel.setText("Selected " + selectionRef.get().getTitle());
+        }
+    }
+ 
+    protected Container createTabContents( String name ) {
+        Container contents = new Container();
+        Label label = contents.addChild(new Label("A test label for tab:" 
+                                    + name + ".\nThere are others like it.\nBut this one is mine."));
+        label.setInsets(new Insets3f(5, 5, 5, 5));
+        return contents;
+    }
+    
+    protected void first() {
+        if( !tabs.getTabs().isEmpty() ) {
+            tabs.setSelectedTab(tabs.getTabs().get(0));
+        }
+    }    
+ 
     protected void add() {
-        // Add it to the end
-        listBox.getModel().add("Added item " + (nextItem++));
+        String name = "Tab " + nextTabNumber;
+        tabs.addTab(name, createTabContents(name));
+        nextTabNumber++;
     }
 
     protected void insert() {
-        Integer selection = listBox.getSelectionModel().getSelection();
-        if( selection == null ) {
-            return;
-        }
-        listBox.getModel().add(selection, "Inserted item " + (nextItem++));
+        int index = tabs.getTabs().indexOf(tabs.getSelectedTab());
+        String name = "Tab " + nextTabNumber;
+        tabs.insertTab(index, name, createTabContents(name));
+        nextTabNumber++;
     }
     
     protected void remove() {
-        Integer selection = listBox.getSelectionModel().getSelection();
-        if( selection == null ) {
-            return;
+        tabs.removeTab(tabs.getSelectedTab());
+    }
+
+    protected void last() {
+        List<TabbedPanel.Tab> list = tabs.getTabs();
+        if( !list.isEmpty() ) {        
+            tabs.setSelectedTab(list.get(list.size()-1));
         }
-        listBox.getModel().remove((int)selection);
     }
     
     private class CloseCommand implements Command<Object> {
         
         public void execute( Object src ) {
-            getState(MainMenuState.class).closeChild(ListBoxDemoState.this);
+            getState(MainMenuState.class).closeChild(TabbedPanelDemoState.this);
         }
     }
 }
