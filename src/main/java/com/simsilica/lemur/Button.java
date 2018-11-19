@@ -80,7 +80,7 @@ public class Button extends Label {
     public static final String EFFECT_FOCUS = "focus";
     public static final String EFFECT_UNFOCUS = "unfocus";
     
-    public enum ButtonAction { Down, Up, Click, HighlightOn, HighlightOff, FocusGained, FocusLost };
+    public enum ButtonAction { Down, Up, Click, HighlightOn, HighlightOff, FocusGained, FocusLost, Hover };
 
     private boolean enabled = true;
     private ColorRGBA color;
@@ -239,6 +239,14 @@ public class Button extends Label {
         return focusShadowColor;
     }
     
+    /**
+     *  Can be called by application code to simulate a click on a button.
+     *  Note: this will run the click effects/actions but not the press/release
+     *  actions.
+     */
+    public void click() {
+        runClick();
+    }
 
     public void setEnabled( boolean b ) {
         if( this.enabled == b )
@@ -448,5 +456,12 @@ public class Button extends Label {
             commandMap.runCommands(ButtonAction.HighlightOff);
             runEffect(EFFECT_DEACTIVATE);
         }
+        
+        @Override
+        public void mouseMoved( MouseMotionEvent event, Spatial target, Spatial capture ) {
+            //System.out.println("mouseMoved(" + event + ")");
+            commandMap.runCommands(ButtonAction.Hover);
+        }
+        
     }
 }

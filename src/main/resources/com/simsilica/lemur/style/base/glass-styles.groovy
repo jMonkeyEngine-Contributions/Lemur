@@ -59,9 +59,38 @@ def pressedCommand = new Command<Button>() {
         }       
     };
     
+def repeatCommand = new Command<Button>() {
+        private long startTime;
+        private long lastClick;
+        
+        public void execute( Button source ) {
+            // Only do the repeating click while the mouse is
+            // over the button (and pressed of course)
+            if( source.isPressed() && source.isHighlightOn() ) {
+                long elapsedTime = System.currentTimeMillis() - startTime;
+                // After half a second pause, click 8 times a second
+                if( elapsedTime > 500 ) {
+                    if( elapsedTime - lastClick > 125 ) {  
+                        source.click();
+                        
+                        // Try to quantize the last click time to prevent drift
+                        lastClick = ((elapsedTime - 500) / 125) * 125 + 500;
+                    }
+                } 
+            } else {
+                startTime = System.currentTimeMillis();
+                lastClick = 0;
+            }
+        }       
+    };     
+    
 def stdButtonCommands = [
         (ButtonAction.Down):[pressedCommand], 
         (ButtonAction.Up):[pressedCommand]
+    ];
+
+def sliderButtonCommands = [
+        (ButtonAction.Hover):[repeatCommand]
     ];
 
 selector( "title", "glass" ) {
@@ -107,7 +136,9 @@ selector( "slider.left.button", "glass" ) {
     background = doubleGradient.clone()
     background.setColor(color(0.5, 0.75, 0.75, 0.5))
     background.setMargin(5, 0);
-    color = color(0.6, 0.8, 0.8, 0.85)     
+    color = color(0.6, 0.8, 0.8, 0.85)
+         
+    buttonCommands = sliderButtonCommands;
 }
 
 selector( "slider.right.button", "glass" ) {
@@ -115,7 +146,17 @@ selector( "slider.right.button", "glass" ) {
     background = doubleGradient.clone()
     background.setColor(color(0.5, 0.75, 0.75, 0.5))
     background.setMargin(4, 0);
-    color = color(0.6, 0.8, 0.8, 0.85)     
+    color = color(0.6, 0.8, 0.8, 0.85)
+         
+    buttonCommands = sliderButtonCommands;
+}
+
+selector( "slider.up.button", "glass" ) {
+    buttonCommands = sliderButtonCommands;
+}
+
+selector( "slider.down.button", "glass" ) {
+    buttonCommands = sliderButtonCommands;
 }
 
 selector( "checkbox", "glass" ) {

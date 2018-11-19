@@ -54,6 +54,12 @@ Lemur 1.11.0 (unreleased)
     BaseAppState which is a potentially breaking change for any application code
     that extends Lemur app states but expects enable()/disable() instead of 
     onEnable()/onDisable().
+* Added a Button.click() method to allow calling code to manually trigger a button 
+    click.
+* Added Button.ButtonAction.Hover for notifying listeners about when the mouse is
+    hovering over a button.  This is useful for implementing things like repeating
+    actions, etc.  
+* Updated the built-in glass style to add repeat to slider +/- buttons.       
 
 
 Lemur 1.10.1 
