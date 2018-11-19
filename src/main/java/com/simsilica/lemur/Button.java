@@ -120,7 +120,7 @@ public class Button extends Label {
 
         Styles styles = GuiGlobals.getInstance().getStyles();
         if( applyStyles ) {
-            styles.applyStyles( this, elementId.getId(), style );
+            styles.applyStyles( this, elementId, style );
         }
     }
 
@@ -133,6 +133,7 @@ public class Button extends Label {
         attrs.set("shadowColor", globals.srgbaColor(new ColorRGBA(0, 0, 0, 0.5f)), false);
     }
 
+    @SuppressWarnings("unchecked") // because Java doesn't like var-arg generics
     public void addCommands( ButtonAction a, Command<? super Button>... commands ) {
         commandMap.addCommands(a, commands);
     }
@@ -141,10 +142,12 @@ public class Button extends Label {
         return commandMap.get(a, false);
     }
 
+    @SuppressWarnings("unchecked") // because Java doesn't like var-arg generics
     public void addClickCommands( Command<? super Button>... commands ) {
         commandMap.addCommands(ButtonAction.Click, commands);
     }
 
+    @SuppressWarnings("unchecked") // because Java doesn't like var-arg generics
     public void removeClickCommands( Command<? super Button>... commands ) {
         getClickCommands().removeAll(Arrays.asList(commands));
     } 

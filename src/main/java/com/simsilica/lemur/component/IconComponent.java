@@ -401,8 +401,10 @@ public class IconComponent extends AbstractGuiComponent
             material.setTexture(image);
 
             material.getMaterial().getAdditionalRenderState().setBlendMode(BlendMode.Alpha);
-            material.getMaterial().getAdditionalRenderState().setAlphaTest(true);
-            material.getMaterial().getAdditionalRenderState().setAlphaFallOff(0.01f);
+            // AlphaTest and AlphaFalloff are deprecated in favor of the material
+            // parameter... in fact in current JME there are no-ops.
+            //material.getMaterial().getAdditionalRenderState().setAlphaTest(true);
+            //material.getMaterial().getAdditionalRenderState().setAlphaFallOff(0.01f);
             material.getMaterial().setFloat("AlphaDiscardThreshold", 0.1f);
         }
 

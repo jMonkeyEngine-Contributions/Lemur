@@ -62,6 +62,7 @@ public class CommandMap<S,K> extends HashMap<K, List<Command<? super S>>> {
         }
     }
 
+    @SuppressWarnings("unchecked") // because Java doesn't like var-arg generics
     public void addCommands( K key, Command<? super S>... commands ) {
         addCommands(key, Arrays.asList(commands));
     }

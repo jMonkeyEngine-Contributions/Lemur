@@ -262,6 +262,7 @@ public class GuiControl extends AbstractNodeControl<GuiControl>
         invalidate();
     }
 
+    @SuppressWarnings("unchecked")
     public <T extends GuiLayout> T getLayout() {
         return (T)layout;
     }

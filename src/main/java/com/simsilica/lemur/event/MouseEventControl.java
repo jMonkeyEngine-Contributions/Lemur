@@ -99,7 +99,7 @@ public class MouseEventControl extends AbstractControl {
     public <T extends MouseListener> T getMouseListener( Class<T> type ) {
         for( MouseListener l : listeners ) {
             if( l.getClass() == type ) {
-                return (T)l;
+                return type.cast(l);
             }
         }
         return null;

@@ -24,6 +24,12 @@ ext {
     releaseVcsTag = "v${project.version}"
 }
 
+sourceCompatibility = 1.7
+compileJava {
+    options.encoding = 'UTF-8'
+    options.compilerArgs << "-Xlint:unchecked" << "-Xlint:deprecation"
+}
+
 repositories {
     mavenLocal()
     jcenter()

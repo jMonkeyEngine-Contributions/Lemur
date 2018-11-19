@@ -107,9 +107,15 @@ public class HoverMouseListener<T extends Spatial> extends DefaultMouseListener 
         // Else check time
         long time = System.currentTimeMillis();
         if( (time - hoverStart) / 1000.0 > triggerTime ) {
-            command.execute((T)target);
+            executeCommand(target);
             hoverSent = true;
         }        
+    }
+ 
+    // Simply to allow us to isolate the generics warning suppression
+    @SuppressWarnings("unchecked")
+    protected void executeCommand( Spatial target ) {
+        command.execute((T)target);
     }
     
     protected void reset( float x, float y, Spatial s ) {

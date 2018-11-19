@@ -155,25 +155,22 @@ public class Slider extends Panel {
         switch( axis ) {
             case X:
                 increment = layout.addChild(BorderLayout.Position.East,
-                                            new Button(null, true, elementId.child(RIGHT_ID), style));
-                increment.addClickCommands( new ChangeValueCommand(1) );
+                                            new Button(null, true, elementId.child(RIGHT_ID), style));                
                 decrement = layout.addChild(BorderLayout.Position.West,
-                                            new Button(null, true, elementId.child(LEFT_ID), style));
-                decrement.addClickCommands( new ChangeValueCommand(-1) );
+                                            new Button(null, true, elementId.child(LEFT_ID), style));                
                 range = layout.addChild(new Panel(true, 50, 2, elementId.child(RANGE_ID), style));
                 break;
             case Y:
                 increment = layout.addChild(BorderLayout.Position.North,
                                             new Button(null, true, elementId.child(UP_ID), style));
-                increment.addClickCommands( new ChangeValueCommand(1) );
                 decrement = layout.addChild(BorderLayout.Position.South,
                                             new Button(null, true, elementId.child(DOWN_ID), style));
-                decrement.addClickCommands( new ChangeValueCommand(-1) );
                 range = layout.addChild(new Panel(true, 2, 50, elementId.child(RANGE_ID), style));
                 break;
             case Z:
                 throw new IllegalArgumentException("Z axis not yet supported.");
         }
+        setupCommands();
 
         thumb = new Button(null, true, elementId.child(THUMB_ID), style);
         ButtonDragger dragger = new ButtonDragger();
@@ -185,8 +182,13 @@ public class Slider extends Panel {
         thumb.getControl(GuiControl.class).setSize(thumb.getControl(GuiControl.class).getPreferredSize());
 
         if( applyStyles ) {
-            styles.applyStyles(this, elementId.getId(), style);
+            styles.applyStyles(this, elementId, style);
         }
+    }
+    @SuppressWarnings("unchecked") // because Java doesn't like var-arg generics
+    protected final void setupCommands() {
+        increment.addClickCommands(new ChangeValueCommand(1));
+        decrement.addClickCommands(new ChangeValueCommand(-1));
     }
 
     @StyleDefaults(ELEMENT_ID)

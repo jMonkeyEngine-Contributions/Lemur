@@ -264,6 +264,7 @@ public class ComponentStack extends AbstractList<GuiComponent> {
     /**
      *  Returns the component that was previously associated with the specified layer.
      */
+    @SuppressWarnings("unchecked")
     public <T extends GuiComponent> T getComponent( String layer ) {
         return (T)index.get(layer);
     }
@@ -271,6 +272,7 @@ public class ComponentStack extends AbstractList<GuiComponent> {
     /**
      *  Removes the component that was previously associated with the specified layer.
      */
+    @SuppressWarnings("unchecked")
     public <T extends GuiComponent> T removeComponent( String layer ) {
         GuiComponent result = index.get(layer);
         if( result == null ) {

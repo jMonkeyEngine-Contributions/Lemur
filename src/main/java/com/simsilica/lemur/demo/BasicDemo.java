@@ -200,7 +200,7 @@ public class BasicDemo extends SimpleApplication {
         // hudPanel.setPreferredSize( new Vector3f(200,0,0).maxLocal(hudPanel.getPreferredSize()) );
 
         // Something in scene
-        Box box = new Box( Vector3f.ZERO, 1, 1, 1 );
+        Box box = new Box(1, 1, 1);
         Geometry geom = new Geometry( "Box", box );
         Material mat = new Material( assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
         mat.setColor( "Color", boxColor );

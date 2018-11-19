@@ -79,6 +79,14 @@ public class EffectControl<T extends Spatial> extends AbstractControl {
     public EffectControl() {
         this(null);
     }
+ 
+    /**
+     *  Type-parameter safe version of getSpatial().
+     */   
+    @SuppressWarnings("unchecked")
+    public T getSpatial() {
+        return (T)super.getSpatial();
+    }
     
     protected AnimationState anim() {
         if( state == null ) {
@@ -123,7 +131,7 @@ public class EffectControl<T extends Spatial> extends AbstractControl {
             existing = channels.remove(channel);
         }
         
-        Animation a = e.create((T)spatial, existing);
+        Animation a = e.create(getSpatial(), existing);
  
         // If we want to fast forward and we are a different effect       
         if( fastForward && existing != null && e != existing.getEffect() ) {

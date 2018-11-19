@@ -40,6 +40,7 @@ import java.util.*;
 
 import com.jme3.app.Application;
 import com.jme3.app.SimpleApplication;
+import com.jme3.app.state.BaseAppState;
 import com.jme3.bounding.*;
 import com.jme3.input.event.*;
 import com.jme3.material.Material;
@@ -319,7 +320,7 @@ public class PopupState extends BaseAppState {
     }
 
     @Override
-    protected void enable() {
+    protected void onEnable() {
     }
 
     @Override
@@ -333,7 +334,7 @@ public class PopupState extends BaseAppState {
     }
 
     @Override
-    protected void disable() {
+    protected void onDisable() {
     }
  
     private class PopupEntry {

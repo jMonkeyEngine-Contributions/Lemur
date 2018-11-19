@@ -269,7 +269,8 @@ public class TabbedPanel extends Panel {
         private Checkbox title;
         private Panel contents;
         private ColorRGBA originalColor;
-        
+
+        @SuppressWarnings("unchecked") // because Java doesn't like var-arg generics        
         public Tab( String title, Panel contents ) {
             this.title = new Checkbox(title, getElementId().child("tab.button"), getStyle());
             this.title.addClickCommands(new SwitchToTab(this));

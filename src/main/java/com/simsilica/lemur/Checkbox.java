@@ -97,9 +97,14 @@ public class Checkbox extends Button {
 
         Styles styles = GuiGlobals.getInstance().getStyles();
         if( applyStyles ) {
-            styles.applyStyles(this, elementId.getId(), style);
+            styles.applyStyles(this, elementId, style);
         }
 
+        setupCommands();
+    }
+
+    @SuppressWarnings("unchecked") // because Java doesn't like var-arg generics
+    protected final void setupCommands() {
         addCommands(ButtonAction.Click, Checkbox.TOGGLE_COMMAND);
     }
 

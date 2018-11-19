@@ -241,8 +241,10 @@ public class QuadBackgroundComponent extends AbstractGuiComponent
             material.setTexture(texture);
         }
         material.getMaterial().getAdditionalRenderState().setBlendMode(BlendMode.Alpha);
-        material.getMaterial().getAdditionalRenderState().setAlphaTest(true);
-        material.getMaterial().getAdditionalRenderState().setAlphaFallOff(0.1f);
+        // AlphaTest and AlphaFalloff are deprecated in favor of the material
+        // parameter... in fact in current JME there are no-ops.
+        //material.getMaterial().getAdditionalRenderState().setAlphaTest(true);
+        //material.getMaterial().getAdditionalRenderState().setAlphaFallOff(0.1f);
         material.getMaterial().setFloat("AlphaDiscardThreshold", 0.1f);
     }
 

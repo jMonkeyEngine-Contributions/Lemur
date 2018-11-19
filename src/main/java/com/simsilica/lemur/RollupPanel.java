@@ -91,7 +91,7 @@ public class RollupPanel extends Panel {
         layout.addChild(titleContainer, BorderLayout.Position.North);
         this.title = new Button(titleString, elementId.child("title"), style);
         titleContainer.addChild(title);
-        title.addClickCommands(new ToggleOpenCommand());
+        setupCommands();
 
         if( applyStyles ) {
             Styles styles = GuiGlobals.getInstance().getStyles();
@@ -99,6 +99,11 @@ public class RollupPanel extends Panel {
         }
 
         resetOpen();
+    }
+
+    @SuppressWarnings("unchecked") // because Java doesn't like var-arg generics
+    protected final void setupCommands() {
+        title.addClickCommands(new ToggleOpenCommand());
     }
 
     /**

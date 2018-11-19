@@ -106,7 +106,7 @@ public class Label extends Panel {
         getControl(GuiControl.class).setComponent(LAYER_TEXT, text);
 
         if( applyStyles ) {
-            styles.applyStyles(this, elementId.getId(), style);
+            styles.applyStyles(this, elementId, style);
         }
     }
 

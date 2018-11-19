@@ -35,6 +35,7 @@
 package com.simsilica.lemur.event;
 
 import com.jme3.app.Application;
+import com.jme3.app.state.BaseAppState;
 import com.jme3.input.KeyInput;
 import com.jme3.input.event.KeyInputEvent;
 import com.jme3.util.SafeArrayList;
@@ -82,11 +83,11 @@ public class KeyInterceptState extends BaseAppState {
     }
 
     @Override
-    protected void enable() {
+    protected void onEnable() {
     }
 
     @Override
-    protected void disable() {
+    protected void onDisable() {
     }
 
     protected void setModifier( int mask, boolean on ) {

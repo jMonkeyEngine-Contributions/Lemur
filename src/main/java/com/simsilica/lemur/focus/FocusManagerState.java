@@ -37,9 +37,9 @@ package com.simsilica.lemur.focus;
 import java.util.*;
 
 import com.jme3.app.Application;
+import com.jme3.app.state.BaseAppState;
 import com.jme3.scene.Spatial;
 import com.jme3.scene.control.Control;
-import com.simsilica.lemur.event.BaseAppState;
 
 
 /**
@@ -225,7 +225,7 @@ public class FocusManagerState extends BaseAppState {
     }  
 
     @Override
-    protected void enable() {
+    protected void onEnable() {
         // Let the whole existing focus hiearchy know
         // we're focused
         for( Spatial s : focusHierarchy ) {
@@ -237,7 +237,7 @@ public class FocusManagerState extends BaseAppState {
     }
 
     @Override
-    protected void disable() {
+    protected void onDisable() {
         // Let the whole existing focus hierarchy know
         // we're unfocused. 
         for( Spatial s : focusHierarchy ) {

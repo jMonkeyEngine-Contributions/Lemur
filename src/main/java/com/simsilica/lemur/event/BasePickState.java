@@ -43,6 +43,7 @@ import java.util.Map.Entry;
 import org.slf4j.*;
 
 import com.jme3.app.Application;
+import com.jme3.app.state.BaseAppState;
 import com.jme3.input.MouseInput;
 import com.jme3.math.Vector2f;
 import com.jme3.renderer.ViewPort;
@@ -217,12 +218,12 @@ public abstract class BasePickState extends BaseAppState
     }
 
     @Override
-    protected void enable() {
+    protected void onEnable() {
         getApplication().getInputManager().setCursorVisible(true);
     }
 
     @Override
-    protected void disable() {
+    protected void onDisable() {
         getApplication().getInputManager().setCursorVisible(false);
     }
 

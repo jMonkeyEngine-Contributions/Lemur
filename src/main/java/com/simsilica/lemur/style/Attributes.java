@@ -73,6 +73,7 @@ public class Attributes {
         }
     }
 
+    @SuppressWarnings("unchecked")
     protected Map mergeMap( Map high, Map low ) {
         Map result = new HashMap();
         result.putAll(high);
@@ -119,6 +120,7 @@ public class Attributes {
         values.put( attribute, value );
     }
 
+    @SuppressWarnings("unchecked")
     public <T> T get( String attribute ) {
         return (T)values.get(attribute);
     }
@@ -127,11 +129,19 @@ public class Attributes {
         return get(attribute, type, true);
     }
 
+    @SuppressWarnings("unchecked")
     public <T> T get( String attribute, Class<T> type, boolean lookupDefault ) {
         Object result = values.get(attribute);
         if( result == null && lookupDefault ) {
             result = parent.getDefault(type);
         }
+        // Normally type.cast(result) would work here and allow us to get
+        // rid of the generics warning suppression but in this case there are
+        // times when it's ok to cast the result.  For whatever reason, if
+        // we return an Integer the calling code is fine with it even if the
+        // type is float.  Probably there is some additional coercion to be
+        // done here if we wanted to be properly type safe but things are seemingly
+        // working ok at the moment and that's a pretty deep time-sink.
         return (T)result;
     }
 

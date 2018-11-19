@@ -260,8 +260,10 @@ public class GuiGlobals {
     public void fixFont( BitmapFont font ) {
         for( int i = 0; i < font.getPageSize(); i++ ) {
             Material m = font.getPage(i);
-            m.getAdditionalRenderState().setAlphaTest(true);
-            m.getAdditionalRenderState().setAlphaFallOff(0.1f);
+            // AlphaTest and AlphaFalloff are deprecated in favor of the material
+            // parameter... in fact in current JME there are no-ops.
+            //m.getAdditionalRenderState().setAlphaTest(true);
+            //m.getAdditionalRenderState().setAlphaFallOff(0.1f);
             m.setFloat("AlphaDiscardThreshold", 0.1f);
         }
     }
@@ -327,7 +329,9 @@ public class GuiGlobals {
         if( repeat ) {
             t.setWrap(Texture.WrapMode.Repeat);
         } else {
-            t.setWrap(Texture.WrapMode.Clamp);
+            // JME has deprecated Clamp and defaults to EdgeClamp.
+            // I think the WrapMode.EdgeClamp javadoc is totally bonkers, though.
+            t.setWrap(Texture.WrapMode.EdgeClamp);
         }
 
         return t;

@@ -48,6 +48,8 @@ Lemur 1.11.0 (unreleased)
     spatials.  
 * Enhanced DragHandler to allow indirect manipulation of a spatial by specifying
     a draggable locator Function.  Useful for things like titlebar based dragging.
+* Set sourceCompatibility to 1.7 and turned on detailed warnings.
+* Fixed a bunch of deprecation and 'unchecked' warnings.
 
 
 Lemur 1.10.1 

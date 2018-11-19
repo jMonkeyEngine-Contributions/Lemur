@@ -167,7 +167,7 @@ public class Panel extends Node {
 
         if( applyStyles ) {
             Styles styles = GuiGlobals.getInstance().getStyles();
-            styles.applyStyles(this, elementId.getId(), style);
+            styles.applyStyles(this, elementId, style);
         }
     }
 
@@ -332,6 +332,16 @@ public class Panel extends Node {
     }
 
     /**
+     *  Provides convenient access to the EffectControl... that also
+     *  hides the Java-generic voodoo necessary to get it without an
+     *  unchecked warning.
+     */
+    @SuppressWarnings("unchecked")
+    protected EffectControl<Panel> getEffectControl() {
+        return (EffectControl<Panel>)getControl(EffectControl.class);
+    }
+
+    /**
      *  Runs the specified effect if configured for this GUI element.  If
      *  the effect referenced is on a channel that already has a running
      *  effect then that effect will be canceled and the new effect will
@@ -345,7 +355,7 @@ public class Panel extends Node {
      *          was found.
      */
     public boolean runEffect( String effectName ) {
-        EffectControl effects = getControl(EffectControl.class);
+        EffectControl<Panel> effects = getEffectControl();
         if( effects != null ) {
             return effects.runEffect(effectName) != null;
         }
@@ -357,9 +367,9 @@ public class Panel extends Node {
      *  to runEffect() will then be able to execute this effect.
      */
     public void addEffect( String effectName, Effect<? super Panel> effect ) {
-        EffectControl effects = getControl(EffectControl.class);
+        EffectControl<Panel> effects = getEffectControl();
         if( effects == null ) {
-            effects = new EffectControl();
+            effects = new EffectControl<>();
             addControl(effects);
         }
         effects.addEffect(effectName, effect);
@@ -370,7 +380,7 @@ public class Panel extends Node {
      *  the removed effect if it existed.
      */
     public Effect<? super Panel> removeEffect( String effectName ) {
-        EffectControl effects = getControl(EffectControl.class);
+        EffectControl<Panel> effects = getEffectControl();
         if( effects == null ) {
             return null;
         }
@@ -382,7 +392,7 @@ public class Panel extends Node {
      *  configured.
      */
     public boolean hasEffect( String effectName ) {
-        EffectControl effects = getControl(EffectControl.class);
+        EffectControl<Panel> effects = getEffectControl();
         if( effects == null ) {
             return false;
         }
@@ -407,7 +417,7 @@ public class Panel extends Node {
      *  Returns a read-only view of the entire map of effects for this GUI element.
      */
     public Map<String, Effect<? super Panel>> getEffects() {
-        EffectControl effects = getControl(EffectControl.class);
+        EffectControl<Panel> effects = getEffectControl();
         if( effects == null ) {
             return Collections.emptyMap();
         }

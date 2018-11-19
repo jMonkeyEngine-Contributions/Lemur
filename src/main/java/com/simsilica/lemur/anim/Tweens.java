@@ -425,7 +425,8 @@ public class Tweens {
             }
             this.method.setAccessible(true);            
         }
-        
+
+        @SuppressWarnings("unchecked")        
         private static Method findMethod( Class type, String name, Object... args ) {
             for( Method m : type.getDeclaredMethods() ) {
                 if( !Objects.equals(m.getName(), name) ) {

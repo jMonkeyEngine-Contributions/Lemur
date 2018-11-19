@@ -72,6 +72,7 @@ public class StateMethodDelegate implements StateFunctionListener {
         return method.getName();
     }
 
+    @SuppressWarnings("unchecked")
     protected static Method resolveMethod( Class targetClass, String name,
                                            boolean takesArgument ) {
         try {

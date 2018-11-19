@@ -196,6 +196,7 @@ public class Styles {
         defaults.put(value.getClass(), value);
     }
 
+    @SuppressWarnings("unchecked")
     public <T> T getDefault( Class<T> type ) {
         return (T)defaults.get(type);
     }
@@ -378,6 +379,7 @@ public class Styles {
         }
     }
 
+    @SuppressWarnings("unchecked")
     protected Object getExistingValue( Object o, Method m ) {
         Class c = o.getClass();
         String name = m.getName();
@@ -428,7 +430,8 @@ public class Styles {
     public void applyStyles( Object o, ElementId elementId ) {
         applyStyles(o, elementId, null);
     }
-    
+
+    @SuppressWarnings("unchecked")    
     public void applyStyles( Object o, ElementId elementId, String style ) {
 
         Class c = o.getClass();

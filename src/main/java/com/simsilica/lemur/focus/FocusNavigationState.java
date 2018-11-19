@@ -153,7 +153,7 @@ public class FocusNavigationState extends BaseAppState {
         for( int i = 0; i < s.getNumControls(); i++ ) {
             Object c = s.getControl(i);
             if( type.isInstance(c) )
-                return (T)c;
+                return type.cast(c);
         }
         return null;
     }
