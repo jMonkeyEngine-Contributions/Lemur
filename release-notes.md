@@ -50,6 +50,10 @@ Lemur 1.11.0 (unreleased)
     a draggable locator Function.  Useful for things like titlebar based dragging.
 * Set sourceCompatibility to 1.7 and turned on detailed warnings.
 * Fixed a bunch of deprecation and 'unchecked' warnings.
+* Part of that was a conversion from extending the internal BaseAppState to JME's
+    BaseAppState which is a potentially breaking change for any application code
+    that extends Lemur app states but expects enable()/disable() instead of 
+    onEnable()/onDisable().
 
 
 Lemur 1.10.1 
