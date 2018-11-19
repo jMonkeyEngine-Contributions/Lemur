@@ -151,7 +151,7 @@ public class ListBox<T> extends Panel {
  
         if( cellRenderer == null ) {
             // Create a default one
-            cellRenderer = new DefaultCellRenderer(elementId.child("item"), style);
+            cellRenderer = new DefaultCellRenderer<>(elementId.child("item"), style);
         }
         this.cellRenderer = cellRenderer;
  
@@ -283,7 +283,8 @@ public class ListBox<T> extends Panel {
     public SelectionModel getSelectionModel() {
         return selection;
     }
- 
+
+    @SuppressWarnings("unchecked") // because Java doesn't like var-arg generics 
     public void addCommands( ListAction a, Command<? super ListBox>... commands ) {
         commandMap.addCommands(a, commands);
     }
@@ -292,10 +293,12 @@ public class ListBox<T> extends Panel {
         return commandMap.get(a, false);
     }
 
+    @SuppressWarnings("unchecked") // because Java doesn't like var-arg generics 
     public void addClickCommands( Command<? super ListBox>... commands ) {
         commandMap.addCommands(ListAction.Click, commands);
     }
 
+    @SuppressWarnings("unchecked") // because Java doesn't like var-arg generics 
     public void removeClickCommands( Command<? super ListBox>... commands ) {
         getClickCommands().removeAll(Arrays.asList(commands));
     } 
@@ -326,7 +329,7 @@ public class ListBox<T> extends Panel {
     }
 
     @StyleAttribute(value="cellRenderer", lookupDefault=false)
-    public void setCellRenderer( CellRenderer renderer ) {
+    public void setCellRenderer( CellRenderer<T> renderer ) {
         if( Objects.equal(this.cellRenderer, renderer) ) {
             return;
         }
@@ -334,7 +337,7 @@ public class ListBox<T> extends Panel {
         grid.refreshGrid(); // cheating
     }
     
-    public CellRenderer getCellRenderer() {
+    public CellRenderer<T> getCellRenderer() {
         return cellRenderer;
     }    
 

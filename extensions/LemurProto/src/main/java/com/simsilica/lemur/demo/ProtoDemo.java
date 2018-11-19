@@ -66,7 +66,7 @@ import com.simsilica.lemur.style.ElementId;
  */
 public class ProtoDemo extends SimpleApplication {
 
-    private ListBox listBox;
+    private ListBox<String> listBox;
     private VersionedList<String> testList = new VersionedList<String>();
 
     public static void main( String... args ) {
@@ -99,7 +99,7 @@ public class ProtoDemo extends SimpleApplication {
         }
 
         // Create a list box for the test data and add it to the window         
-        listBox = new ListBox(testList, "glass");
+        listBox = new ListBox<>(testList, "glass");
         window.addChild(listBox);          
  
         // Create some actions

@@ -72,6 +72,7 @@ public class DefaultCellRenderer<T> implements CellRenderer<T>, Cloneable {
     }
     
     @Override
+    @SuppressWarnings("unchecked") 
     public DefaultCellRenderer<T> clone() {
         try {
             return (DefaultCellRenderer<T>)super.clone();

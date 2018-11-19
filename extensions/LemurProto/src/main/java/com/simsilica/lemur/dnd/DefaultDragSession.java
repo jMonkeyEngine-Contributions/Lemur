@@ -75,6 +75,7 @@ public class DefaultDragSession implements DragSession {
     }
     
     @Override
+    @SuppressWarnings("unchecked") 
     public <T> T get( String name, T defaultValue ) {
         if( attributes == null ) {
             return defaultValue;

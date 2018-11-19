@@ -87,7 +87,7 @@ public class GridPanel extends Panel {
  
         if( applyStyles ) {
             Styles styles = GuiGlobals.getInstance().getStyles();
-            styles.applyStyles(this, elementId.getId(), style);
+            styles.applyStyles(this, elementId, style);
         }
         
         setModel(model);                

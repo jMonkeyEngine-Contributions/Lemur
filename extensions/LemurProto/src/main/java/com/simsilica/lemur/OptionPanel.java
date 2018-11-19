@@ -165,7 +165,8 @@ public class OptionPanel extends Panel {
      *  the bottom of the panel.  Any action that is clicked will also
      *  call the OptionPanel.close() method which by default removes
      *  the panel from its parent node.
-     */   
+     */
+    @SuppressWarnings("unchecked") // because Java doesn't like var-arg generics    
     public void setOptions( Action... options ) {
  
         if( this.options == options ) {

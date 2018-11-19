@@ -4,6 +4,13 @@ Lemur-Proto 1.9.2 (unreleased)
     the cursor using the new GuiGlobals.request/releaseCursorEnabled().
     This may be irrelevant if OptionPanelState is converted to use PopupState
     as it should be.
+* Set sourceCompatibility to 1.7 and turned on warnings.
+* Fixed some issues related to deprecation warnings and 'unchecked' generics
+    warnings.
+* Part of that was a conversion from extending the internal BaseAppState to JME's
+    BaseAppState which is a potentially breaking change for any application code
+    that extends Lemur app states but expects enable()/disable() instead of 
+    onEnable()/onDisable().  In this case, just OptionPanelState.
 
 
 Lemur-Proto 1.9.1 

@@ -70,8 +70,13 @@ public class ActionButton extends Button {
     public ActionButton( Action action, ElementId elementId, String style ) {
         super(action.getName(), elementId, style);
         setAction(action);
-        addClickCommands(new ClickCommand());
+        setupCommands();
     }
+
+    @SuppressWarnings("unchecked") // because Java doesn't like var-arg generics
+    protected final void setupCommands() {
+        addClickCommands(new ClickCommand());
+    } 
  
     /**
      *  Sets a new Action to this button and clears any previously

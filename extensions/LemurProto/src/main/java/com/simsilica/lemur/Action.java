@@ -173,6 +173,7 @@ public abstract class Action implements VersionedObject<Action>, Command<Button>
      *  Returns a previously set value from this action or
      *  null if the property has not been set.
      */
+    @SuppressWarnings("unchecked") 
     public <T> T getValue( String key ) {
         return (T)properties.get(key);
     }
@@ -181,6 +182,7 @@ public abstract class Action implements VersionedObject<Action>, Command<Button>
      *  Returns a previously set value from this action or
      *  defaultValue if the property has not been set.
      */
+    @SuppressWarnings("unchecked") 
     public <T> T getValue( String key, T defaultValue ) {
         Object result = properties.get(key);
         return result == null ? defaultValue : (T)result;

@@ -38,6 +38,7 @@ package com.simsilica.lemur;
 
 import com.jme3.app.Application;
 import com.jme3.app.SimpleApplication;
+import com.jme3.app.state.BaseAppState;
 import com.jme3.bounding.BoundingBox;
 import com.jme3.material.Material;
 import com.jme3.material.RenderState.BlendMode;
@@ -48,7 +49,7 @@ import com.jme3.renderer.queue.RenderQueue.Bucket;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
 import com.jme3.scene.shape.Quad;
-import com.simsilica.lemur.event.BaseAppState;
+
 import com.simsilica.lemur.event.ConsumingMouseListener;
 import com.simsilica.lemur.event.MouseEventControl;
 import com.simsilica.lemur.style.ElementId;
@@ -270,7 +271,7 @@ public class OptionPanelState extends BaseAppState {
     }
 
     @Override
-    protected void enable() {
+    protected void onEnable() {
     }
 
     @Override
@@ -284,6 +285,6 @@ public class OptionPanelState extends BaseAppState {
     }
 
     @Override
-    protected void disable() {
+    protected void onDisable() {
     }
 }
