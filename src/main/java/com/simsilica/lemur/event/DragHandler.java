@@ -34,6 +34,9 @@
 
 package com.simsilica.lemur.event;
 
+import com.google.common.base.Function;
+import com.google.common.base.Functions;
+
 import com.jme3.input.MouseInput;
 import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
@@ -55,7 +58,26 @@ public class DragHandler extends DefaultCursorListener {
     private boolean consumeDrags = false;
     private boolean consumeDrops = false;
 
+    private Function<Spatial, Spatial> draggableLocator = Functions.identity();
+
     public DragHandler() {
+    }
+
+    public DragHandler( Function<Spatial, Spatial> draggableLocator ) {
+        this.draggableLocator = draggableLocator;
+    }
+
+    /**
+     *  Sets the function that will be used to find the draggable spatial
+     *  relative to the spatial that was clicked.  By default, this is the identity()
+     *  function and will return the spatial that was clicked.
+     */
+    public void setDraggableLocator( Function<Spatial, Spatial> draggableLocator ) {
+        this.draggableLocator = draggableLocator;
+    }
+    
+    public Function<Spatial, Spatial> getDraggableLocator() {
+        return draggableLocator;
     }
 
     public boolean isDragging() {
@@ -66,9 +88,19 @@ public class DragHandler extends DefaultCursorListener {
         return drag;
     }
 
+    /**
+     *  Finds the draggable spatial for the specified capture spatial.
+     *  By default this just returns the capture  because the parentLocator 
+     *  function is the identity function.  This can be overridden by specifying
+     *  a different function or overriding this method.
+     */
+    protected Spatial findDraggable( Spatial capture ) {
+        return draggableLocator.apply(capture);
+    }
+
     protected void startDrag( CursorButtonEvent event, Spatial target, Spatial capture ) {
         drag = new Vector2f(event.getX(), event.getY());
-        basePosition = capture.getWorldTranslation().clone();
+        basePosition = findDraggable(capture).getWorldTranslation().clone();
         event.setConsumed();
     }
 
@@ -112,11 +144,19 @@ public class DragHandler extends DefaultCursorListener {
         if( cam.isParallelProjection() || capture.getQueueBucket() == Bucket.Gui ) {
             Vector2f current = new Vector2f(event.getX(), event.getY());
             Vector2f delta = current.subtract(drag);
+ 
+            Spatial draggable = findDraggable(capture);
             
             // Make sure if Z has changed that it is applied to base
-            basePosition.z = capture.getLocalTranslation().z;
+            basePosition.z = draggable.getWorldTranslation().z;
+ 
+            // Convert the world position into local space
+            Vector3f localPos = basePosition.add(delta.x, delta.y, 0);
+            if( draggable.getParent() != null ) {
+                localPos = draggable.getParent().worldToLocal(localPos, null);
+            }
             
-            capture.setLocalTranslation(basePosition.add(delta.x, delta.y, 0));
+            draggable.setLocalTranslation(localPos);
             return;
         }
 
@@ -146,8 +186,9 @@ public class DragHandler extends DefaultCursorListener {
         Vector3f newPos = pos.add(cam.getLeft().mult(-delta.x));
         newPos.addLocal(cam.getUp().mult(delta.y));
 
-        Vector3f local = capture.getParent().worldToLocal(newPos, null);
-        capture.setLocalTranslation(local);
+        Spatial draggable = findDraggable(capture);
+        Vector3f local = draggable.getParent().worldToLocal(newPos, null);
+        draggable.setLocalTranslation(local);
     }
 }
 

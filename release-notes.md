@@ -43,7 +43,11 @@ Lemur 1.11.0 (unreleased)
 * Fixed the toString() of KeyAction to add the closing bracket ']'.
 * Modified TabbedPanel to expose a tab selection model, support get/set of selected
     tab, expose the list of tabs, and added insert/remove functionality.  This
-    meets and exceeds feature request #59       
+    meets and exceeds feature request #59
+* Fixed a bug in DragHandler where ortho dragging wasn't properly translating child
+    spatials.  
+* Enhanced DragHandler to allow indirect manipulation of a spatial by specifying
+    a draggable locator Function.  Useful for things like titlebar based dragging.
 
 
 Lemur 1.10.1 
