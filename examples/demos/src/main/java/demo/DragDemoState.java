@@ -70,13 +70,7 @@ public class DragDemoState extends BaseAppState {
      *  A command we'll pass to the label pop-up to let
      *  us know when the user clicks away.
      */
-    private CloseCommand closeCommand = new CloseCommand();
- 
-    private TabbedPanel tabs;
-    private int nextTabNumber = 1;
-    
-    private Label statusLabel;
-    private VersionedReference<TabbedPanel.Tab> selectionRef; 
+    private CloseCommand closeCommand = new CloseCommand(); 
     
     public DragDemoState() {
     }
