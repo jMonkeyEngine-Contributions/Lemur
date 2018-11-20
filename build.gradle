@@ -13,10 +13,9 @@ buildscript {
 
 apply plugin: 'java'
 
-version='1.11.0-SNAPSHOT'
+version='1.11.0'
 
-ext.jmeVersion='3.1.0-stable' // but must be alpha4 or better
-//ext.jmeVersion='unknown'
+ext.jmeVersion='3.1.0-stable' 
 
 ext {
     bintrayLabels = ['jMonkeyEngine', 'gamedev', 'GUI']

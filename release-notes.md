@@ -1,4 +1,4 @@
-Lemur 1.11.0 (unreleased) 
+Lemur 1.11.0 (latest) 
 -------------
 * Added IconComponent.setIconSize() to force the size of the icon before
     scaling.
