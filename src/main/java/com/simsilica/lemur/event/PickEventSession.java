@@ -425,7 +425,12 @@ public class PickEventSession {
             range[1] += 1;
             
             // Special case for Gui Bucket nodes since they are always in screen space
-            result = new Ray(new Vector3f(cursor.x, cursor.y, range[1]), new Vector3f(0, 0, range[0]));
+            // Range isn't really needed except for the top value.  I must have been operating
+            // with only half a brain the day I wrote this line.
+            //result = new Ray(new Vector3f(cursor.x, cursor.y, range[1]), new Vector3f(0, 0, range[0]));
+            
+            // Cast a ray from the top good value down through the 2D scene. 
+            result = new Ray(new Vector3f(cursor.x, cursor.y, range[1]), new Vector3f(0, 0, -1));
         } else {
 
             // Ortho and perspective can be handled the same exact way it turns out.
