@@ -1,3 +1,9 @@
+Lemur 1.11.1 (unreleased)
+-------------
+* Fixed a bug in the new getPickRay() code where incorrect Rays were being
+    created if the Gui Bucket didn't have a spatial at z=0.
+    
+
 Lemur 1.11.0 (latest) 
 -------------
 * Added IconComponent.setIconSize() to force the size of the icon before
