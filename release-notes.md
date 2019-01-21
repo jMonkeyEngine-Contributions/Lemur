@@ -2,6 +2,11 @@ Lemur 1.11.1 (unreleased)
 -------------
 * Fixed a bug in the new getPickRay() code where incorrect Rays were being
     created if the Gui Bucket didn't have a spatial at z=0.
+* Modified how TextEntryComponent calculates its cursor width to avoid cases
+    where cursors weren't being drawn because of sub-pixel widths at certain
+    screen locations.
+* Added a TextField.setPreferredCursorWidth() styleable attribute that can be
+    used to change the default cursor width for text fields.     
     
 
 Lemur 1.11.0 (latest) 

@@ -221,6 +221,19 @@ public class TextField extends Panel {
         return text.getPreferredLineCount();
     }
 
+    /**
+     *  Sets the preferred with of the cursor quad.  If set to null then
+     *  the default behavior is used.  See TextEntryComponent.setPreferredCursorWidth().
+     */
+    @StyleAttribute("preferredCursorWidth")
+    public void setPreferredCursorWidth( Float f ) {
+        text.setPreferredCursorWidth(f);
+    }
+
+    public Float getPreferredCursorWidth() {
+        return text.getPreferredCursorWidth();
+    }
+
     @Override
     public String toString() {
         return getClass().getName() + "[text=" + getText() + ", color=" + getColor() + ", elementId=" + getElementId() + "]";
