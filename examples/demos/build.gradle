@@ -7,7 +7,13 @@ mainClassName='demo.DemoLauncher'
 
 repositories {
     mavenLocal()
-    jcenter()
+
+    if( JavaVersion.current() == JavaVersion.VERSION_1_7 ) {
+        // Fallback for JDK 7 that can no longer connect to jcenter with https
+        maven { url "http://jcenter.bintray.com" }
+    } else {
+        jcenter()
+    }
 }
 
 ext.jmeVersion = "3.1.0-stable"
@@ -35,8 +41,8 @@ dependencies {
     compile "org.jmonkeyengine:jme3-desktop:$jmeVersion"
     compile "org.jmonkeyengine:jme3-lwjgl:$jmeVersion"
  
-    compile "com.simsilica:lemur:1.11.0-SNAPSHOT"
-    compile "com.simsilica:lemur-proto:1.9.2-SNAPSHOT"
+    compile "com.simsilica:lemur:1.11.0"
+    compile "com.simsilica:lemur-proto:1.10.0"
     
     // needed for the style language
     runtime "org.codehaus.groovy:groovy-all:2.4.5"

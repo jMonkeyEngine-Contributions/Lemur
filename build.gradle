@@ -31,7 +31,13 @@ compileJava {
 
 repositories {
     mavenLocal()
-    jcenter()
+    
+    if( JavaVersion.current() == JavaVersion.VERSION_1_7 ) {
+        // Fallback for JDK 7 that can no longer connect to jcenter with https
+        maven { url "http://jcenter.bintray.com" }
+    } else {
+        jcenter()
+    }
 }
 
 dependencies {
