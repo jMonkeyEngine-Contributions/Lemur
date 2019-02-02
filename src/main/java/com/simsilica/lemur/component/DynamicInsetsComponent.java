@@ -68,13 +68,13 @@ public class DynamicInsetsComponent extends InsetsComponent {
         for( int i = 0; i < 3; i++ ) {
             float min = balanced.min.get(i);
             float max = balanced.max.get(i);
-            if( min == 0 && max == 0 ) {
-                // If both are 0 then center... prevents divide by zero
-                min = 0.5f;
-                max = 0.5f;
-            }
+            //if( min == 0 && max == 0 ) {
+            //    // If both are 0 then center... prevents divide by zero
+            //    min = 0.5f;
+            //    max = 0.5f;
+            //}
             float size = min + max;
-            float scale = 1 / size;
+            float scale = size < 1 ? 1 : (1 / size);
             balanced.min.set(i, min * scale);
             balanced.max.set(i, max * scale);
         }
@@ -133,6 +133,7 @@ public class DynamicInsetsComponent extends InsetsComponent {
             }
 
             float min = insets.min.get(i);
+            float max = insets.max.get(i);
             float p = pos.get(i);
             float s = size.get(i);
 
@@ -143,7 +144,10 @@ public class DynamicInsetsComponent extends InsetsComponent {
             } else {
                 pos.set(i, p + min * d);
             }
-            size.set(i, s - d);
+            
+            // Set the size such that min and max are accounted
+            // for
+            size.set(i, s - (min * d + max * d));
         }
     }
 

@@ -1,4 +1,4 @@
-Lemur 1.11.1 (unreleased)
+Lemur 1.12.0 (unreleased)
 -------------
 * Fixed a bug in the new getPickRay() code where incorrect Rays were being
     created if the Gui Bucket didn't have a spatial at z=0.
@@ -6,7 +6,13 @@ Lemur 1.11.1 (unreleased)
     where cursors weren't being drawn because of sub-pixel widths at certain
     screen locations.
 * Added a TextField.setPreferredCursorWidth() styleable attribute that can be
-    used to change the default cursor width for text fields.     
+    used to change the default cursor width for text fields.
+* Modified DynamicInsetsComponent to treat the insets values as percentages
+    instead of always making them sum to 1.  (That behavior still happens if
+    the total of min+max is more than 1.)  This modification lets dynamic
+    insets support dynamic stretching instead of just positioning.
+    This is potentially a breaking change for code relying on the old 
+    normalization. (though that was kind of weird) 
     
 
 Lemur 1.11.0 (latest) 
