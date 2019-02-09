@@ -255,6 +255,12 @@ public class PropertyPanel extends Panel
         addProperty(p);
         return p;
     }
+    
+    public Property<Double> addDoubleField( String name, Object bean, String field, double min, double max, double step ) {
+        DoubleProperty p = new DoubleProperty(name, new FieldAccess(bean, field), min, max, step);
+        addProperty(p);
+        return p;
+    }
 
     public Property<Integer> addIntField( String name, Object bean, String field, int min, int max, int step ) {
         IntProperty p = new IntProperty(name, new FieldAccess(bean, field), min, max, step);
