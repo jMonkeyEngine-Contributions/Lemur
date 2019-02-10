@@ -391,6 +391,10 @@ public class PickEventSession {
      */
     protected float[] getZBounds( Spatial s ) {
         BoundingVolume bv = s.getWorldBound();
+        if( bv == null ) {
+            // JME returns null for empty nodes
+            return new float[] {0, 1}; 
+        }
         Vector3f center = bv.getCenter();
         if( bv instanceof BoundingBox ) {
             BoundingBox bb = (BoundingBox)bv;

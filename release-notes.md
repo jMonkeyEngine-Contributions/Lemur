@@ -12,7 +12,8 @@ Lemur 1.12.0 (unreleased)
     the total of min+max is more than 1.)  This modification lets dynamic
     insets support dynamic stretching instead of just positioning.
     This is potentially a breaking change for code relying on the old 
-    normalization. (though that was kind of weird) 
+    normalization. (though that was kind of weird)
+* Fixed pick session bug caused by empty GUI nodes. (added a null check)
     
 
 Lemur 1.11.0 (latest) 
