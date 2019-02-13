@@ -14,6 +14,11 @@ Lemur 1.12.0 (unreleased)
     This is potentially a breaking change for code relying on the old 
     normalization. (though that was kind of weird)
 * Fixed pick session bug caused by empty GUI nodes. (added a null check)
+* Added Button.EFFECT_ENABLE and Button.EFFECT_DISABLE constants and modified 
+    Button to call the appropriate effect chain during setEnabled(true/false).
+* Added Button.ButtonAction.Enabled and Button.ButtonAction.Disabled and
+    modified Button to call the appropriate command chain during 
+    setEnabled(true/false).
     
 
 Lemur 1.11.0 (latest) 

@@ -79,8 +79,14 @@ public class Button extends Label {
     public static final String EFFECT_DEACTIVATE = "deactivate";
     public static final String EFFECT_FOCUS = "focus";
     public static final String EFFECT_UNFOCUS = "unfocus";
+    public static final String EFFECT_ENABLE = "enable";
+    public static final String EFFECT_DISABLE = "disable";
     
-    public enum ButtonAction { Down, Up, Click, HighlightOn, HighlightOff, FocusGained, FocusLost, Hover };
+    public enum ButtonAction { Down, Up, Click, 
+                               HighlightOn, HighlightOff, 
+                               FocusGained, FocusLost, 
+                               Hover,
+                               Enabled, Disabled };
 
     private boolean enabled = true;
     private ColorRGBA color;
@@ -252,6 +258,14 @@ public class Button extends Label {
         if( this.enabled == b )
             return;
         this.enabled = b;
+        
+        if( isEnabled() ) {
+            commandMap.runCommands(ButtonAction.Enabled);
+            runEffect(EFFECT_ENABLE);
+        } else {
+            commandMap.runCommands(ButtonAction.Disabled);
+            runEffect(EFFECT_DISABLE);
+        }
     }
 
     public boolean isEnabled() {
