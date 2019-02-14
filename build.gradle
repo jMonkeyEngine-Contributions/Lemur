@@ -13,7 +13,7 @@ buildscript {
 
 apply plugin: 'java'
 
-version='1.12.0'
+version='1.12.1-SNAPSHOT'
 
 ext.jmeVersion='3.1.0-stable'
 
@@ -31,7 +31,7 @@ compileJava {
 
 repositories {
     mavenLocal()
-    
+
     if( JavaVersion.current() == JavaVersion.VERSION_1_7 ) {
         // Fallback for JDK 7 that can no longer connect to jcenter with https
         maven { url "http://jcenter.bintray.com" }

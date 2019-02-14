@@ -1,3 +1,7 @@
+Lemur-Proto 1.10.1 (unreleased)
+-------------------
+
+
 Lemur-Proto 1.10.0 (latest)
 -------------------
 * Modified OptionPanelState and OptionPanel to automatically request/release
@@ -9,19 +13,19 @@ Lemur-Proto 1.10.0 (latest)
     warnings.
 * Part of that was a conversion from extending the internal BaseAppState to JME's
     BaseAppState which is a potentially breaking change for any application code
-    that extends Lemur app states but expects enable()/disable() instead of 
+    that extends Lemur app states but expects enable()/disable() instead of
     onEnable()/onDisable().  In this case, just OptionPanelState.
 
 
-Lemur-Proto 1.9.1 
+Lemur-Proto 1.9.1
 ------------------
 * Added mouse wheel support to ListBox based on the new scroll support
     in Lemur 1.10.1.
 * Fixed some handling of ListAction events and the related effect triggers.
     Down and Up should be properly delivered as well as considering the whole
     list box in entered/exited/activate/deactivated states.  Currently, moving
-    over the scroll bar will still 'deactivate'.  
-    
+    over the scroll bar will still 'deactivate'.
+
 
 Lemur-Proto 1.8.1
 ------------------
@@ -29,7 +33,7 @@ Lemur-Proto 1.8.1
 * OptionPanelState now requests focus for the option panel when shown.
 * Added additional information to the exception rethrown when CallMethodAction
     catches an IllegalArgumentException.
-* Fixed a bug in CallMethodAction where the wrong method could be selected if 
+* Fixed a bug in CallMethodAction where the wrong method could be selected if
     it had the same name but invalid argument types.
 * Added additional trace logging to CallMethodAction
 * Initial drag-and-drop support.  See the new com.simsilica.lemur.dnd package.

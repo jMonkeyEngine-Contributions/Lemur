@@ -1,3 +1,7 @@
+Version 1.1.1 (unreleased)
+--------------
+
+
 Version 1.1.0 (latest)
 --------------
 *  Added Double property support.

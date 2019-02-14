@@ -1,4 +1,8 @@
-Lemur 1.12.0 (latest) 
+Lemur 1.12.1 (unreleased)
+-------------
+
+
+Lemur 1.12.0 (latest)
 -------------
 * Fixed a bug in the new getPickRay() code where incorrect Rays were being
     created if the Gui Bucket didn't have a spatial at z=0.
@@ -11,17 +15,17 @@ Lemur 1.12.0 (latest)
     instead of always making them sum to 1.  (That behavior still happens if
     the total of min+max is more than 1.)  This modification lets dynamic
     insets support dynamic stretching instead of just positioning.
-    This is potentially a breaking change for code relying on the old 
+    This is potentially a breaking change for code relying on the old
     normalization. (though that was kind of weird)
 * Fixed pick session bug caused by empty GUI nodes. (added a null check)
-* Added Button.EFFECT_ENABLE and Button.EFFECT_DISABLE constants and modified 
+* Added Button.EFFECT_ENABLE and Button.EFFECT_DISABLE constants and modified
     Button to call the appropriate effect chain during setEnabled(true/false).
 * Added Button.ButtonAction.Enabled and Button.ButtonAction.Disabled and
-    modified Button to call the appropriate command chain during 
+    modified Button to call the appropriate command chain during
     setEnabled(true/false).
-    
 
-Lemur 1.11.0 
+
+Lemur 1.11.0
 -------------
 * Added IconComponent.setIconSize() to force the size of the icon before
     scaling.
@@ -42,7 +46,7 @@ Lemur 1.11.0
 * Modified GuiGlobals.setCursorEnabled(boolean) to internally call the new PickState.request/release
     calls.  A new GuiGlobals.setCursorEnabled(boolean, force:boolean) method was added
     in case it is necessary to force the old behavior.
-* Modified PopupState to automatically call GuiGlobals.requestCursorEnabled() and 
+* Modified PopupState to automatically call GuiGlobals.requestCursorEnabled() and
     releaseCursorEnabled() when opening/closing popups.  This may be a breaking
     change for some applications.
 * Added a GuiGlobals.srgbaColor() method for conditionally creating linear colors from
@@ -52,15 +56,15 @@ Lemur 1.11.0
 * Fixed a bug in TextEntryComponent where the font wasn't being kept when changed.  This caused
     issues like cursor positions being wrong, etc..
 * Deprecated Lemur's BaseAppState so apps know to prefer JME's built in version.
-* Fixed issue #53 where Panel.runEffect() would incorrectly return false for effects 
+* Fixed issue #53 where Panel.runEffect() would incorrectly return false for effects
     with no channel.
-* Fixed issue #54 where texture scaling was not being reapplied to cloned 
+* Fixed issue #54 where texture scaling was not being reapplied to cloned
     QuadBackgroundComponents.
-* Modified the GUI bucket picking code to dynamically say the Ray min/max Z values 
+* Modified the GUI bucket picking code to dynamically say the Ray min/max Z values
     based on the world bounds of the root spatial.  This should fix issue #55 as
     well as several other problems caused by GUI elements above z=1000.  Also,
     negative Z GUI values are properly supported now, also.
-* Fixed an issue with key repeats in TextEntryComponent and lwjgl3 which seems to 
+* Fixed an issue with key repeats in TextEntryComponent and lwjgl3 which seems to
     separate 'pressed' events from 'repeating' events for some reason.
     See PR 65.
 * Fixed the toString() of KeyAction to add the closing bracket ']'.
@@ -68,24 +72,24 @@ Lemur 1.11.0
     tab, expose the list of tabs, and added insert/remove functionality.  This
     meets and exceeds feature request #59
 * Fixed a bug in DragHandler where ortho dragging wasn't properly translating child
-    spatials.  
+    spatials.
 * Enhanced DragHandler to allow indirect manipulation of a spatial by specifying
     a draggable locator Function.  Useful for things like titlebar based dragging.
 * Set sourceCompatibility to 1.7 and turned on detailed warnings.
 * Fixed a bunch of deprecation and 'unchecked' warnings.
 * Part of that was a conversion from extending the internal BaseAppState to JME's
     BaseAppState which is a potentially breaking change for any application code
-    that extends Lemur app states but expects enable()/disable() instead of 
+    that extends Lemur app states but expects enable()/disable() instead of
     onEnable()/onDisable().
-* Added a Button.click() method to allow calling code to manually trigger a button 
+* Added a Button.click() method to allow calling code to manually trigger a button
     click.
 * Added Button.ButtonAction.Hover for notifying listeners about when the mouse is
     hovering over a button.  This is useful for implementing things like repeating
-    actions, etc.  
-* Updated the built-in glass style to add repeat to slider +/- buttons.       
+    actions, etc.
+* Updated the built-in glass style to add repeat to slider +/- buttons.
 
 
-Lemur 1.10.1 
+Lemur 1.10.1
 -------------
 * Added a proper toString() method to the LayerComparator.
 * Added a 'debug mode' to the PickEventSession which lets a caller selectively
@@ -95,9 +99,9 @@ Lemur 1.10.1
     child GuiComponents can hook into the controlUpdate() without having
     to create another full control themselves.
 * Modified GuiControl to lazily instantiate its listener lists.
-* Added a TextField(DocumentModel) convenience constructor.    
+* Added a TextField(DocumentModel) convenience constructor.
 * Added a DocumentModel.createCaratReference() method that returns a versioned
-    reference for the carat position. 
+    reference for the carat position.
 * Fixed TextEntryComponent to be more reactive to external DocumentModel changes
     and it now uses that even for its own internal changes to the document.
 * Breaking change: DocumentModel has been moved to the com.simsilica.lemur.text
@@ -105,10 +109,10 @@ Lemur 1.10.1
     DocumentModel directly import it from the new location.  If you instantiate
     a DocumentModel directly then now you will instantiate DefaultDocumentModel
     instead.  Sorry.  It needed to be done and was only going to get worse
-    the longer I waited.    
+    the longer I waited.
 * Added a DocumentModelFilter class that is a DocumentModel that wraps other
     DocumentModels to provide filtering and transformation.  Callers can do simple
-    filtering with Guava Functions and Subclasses can override the methods to 
+    filtering with Guava Functions and Subclasses can override the methods to
     provide more advanced transformation and input filtering.
 * Added a TextFilters class with a bunch of default input and output implementations
     for commonly used things.
@@ -116,7 +120,7 @@ Lemur 1.10.1
     or TextEntryComponent.
 * Added a PasswordField that is auto-wired with some useful DocumentModelFilter
     behavior suitable for password fields.  Includes stylable attributes for
-    setting the output character and allowed input characters. 
+    setting the output character and allowed input characters.
 * Fixed a bug where focus wasn't cleared for objects removed from the scene
     graph.  The fix is a bit of a hack but there really isn't any other way.
     This fixes issues #42 and #28.
@@ -127,12 +131,12 @@ Lemur 1.10.1
     methods.
 * Added an insert(String) method to DocumentModel and its implementations that
     allows bulk-insertion of text instead of just one character at a time
-* Fixed GuiGlobals to not crash under certain circumstances if the build info isn't 
+* Fixed GuiGlobals to not crash under certain circumstances if the build info isn't
     available.  Fixes issue #38
-* Fixed the human-readable names for some of the joystick-related input.Button constants.     
+* Fixed the human-readable names for some of the joystick-related input.Button constants.
 * Fixed an issue with mouse button events sending the wrong mouse wheel delta to cursor
-    event listeners.  Fixes issue #49 
-    
+    event listeners.  Fixes issue #49
+
 
 Lemur 1.9.1
 ------------
@@ -144,13 +148,13 @@ Lemur 1.9.1
     in the standard GUI elements.
 * Modified KeyAction to support SHIFT_DOWN in addition to CONTROL_DOWN.
 * Upated TextEntryComponent to hook up some standard keys to focus actions for
-    single line text fields.    
+    single line text fields.
     Tab = Next, Shift+Tab = Previous, Enter = Next, Up = Up, Down = Down.
 * Added a ModifiedKeyInputEvent that extends JME's normal KeyInputEvent to
     provide modifier flags for alt, ctrl, shift, etc..  Modified the KeyInterceptorState
     to wrap KeyInputEvents in this event for delivery to the listeners.  Listeners
     that want the modifiers (unfortunately) must cast to the more specific
-    event class.  
+    event class.
 * Added a KeyModifiers class and moved the key modifier bit constants to it.
 * Modified SpringGridLayout to keep its children in a LinkedHashMap so that the
     initial ordering is still available.
@@ -164,14 +168,14 @@ Lemur 1.9.1
     hooked up the focus activation event to pressed/released/click handling.
 * Added trace logging to InputMapper that logs the raw events received from JME.
 * Fixed a bug where Label's shadow text component wasn't picking up the max width
-    if set.    
+    if set.
 * Added method an AbstractCursorEvent.getLocation() convenience method for getting
     the event location as a Vector2f.
 * Added a general PopupState for managing modal and non-modal popups that can be
     closed by simply clicking outside of the popped up panel (or optionally block
     those events).
 * Added PopupState as a built-in state in GuiGlobals.
-    
+
 
 Lemur 1.8.2
 ------------
