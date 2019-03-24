@@ -201,7 +201,7 @@ public class IconComponent extends AbstractGuiComponent
 
     /**
      *  Forces the size of the icon to be the size specified regardless
-     *  of it's actual pixel size.  So if setIconSize(new Vector2f(64, 646)) is
+     *  of it's actual pixel size.  So if setIconSize(new Vector2f(64, 64)) is
      *  used for an icon that is actually 32x32, it will be doubled in size.
      *  The iconScale is applied after this scaling.
      *  Set iconSize to null to go back to the actual image size.
