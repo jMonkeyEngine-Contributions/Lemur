@@ -71,7 +71,8 @@ public class MainMenuState extends BaseAppState {
         TabbedPanelDemoState.class,
         DragDemoState.class,
         ViewPortDemoState.class,
-        DynamicInsetsState.class
+        DynamicInsetsState.class,
+        PanelAlphaDemoState.class
     };
 
     private Container mainWindow;
