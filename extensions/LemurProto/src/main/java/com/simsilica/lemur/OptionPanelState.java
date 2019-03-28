@@ -36,6 +36,8 @@
 
 package com.simsilica.lemur;
 
+import org.slf4j.*;
+
 import com.jme3.app.Application;
 import com.jme3.app.SimpleApplication;
 import com.jme3.app.state.BaseAppState;
@@ -43,6 +45,7 @@ import com.jme3.bounding.BoundingBox;
 import com.jme3.material.Material;
 import com.jme3.material.RenderState.BlendMode;
 import com.jme3.math.ColorRGBA;
+import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
 import com.jme3.renderer.Camera;
 import com.jme3.renderer.queue.RenderQueue.Bucket;
@@ -52,6 +55,7 @@ import com.jme3.scene.shape.Quad;
 
 import com.simsilica.lemur.event.ConsumingMouseListener;
 import com.simsilica.lemur.event.MouseEventControl;
+import com.simsilica.lemur.event.PopupState;
 import com.simsilica.lemur.style.ElementId;
 
 
@@ -59,14 +63,18 @@ import com.simsilica.lemur.style.ElementId;
  *  Provides modal option panel support where the option
  *  panel is the only thing that can receive mouse/touch input 
  *  until closed.
+ *  
+ *  Note: requires PopupState to have also been attached, which
+ *  is done by GuiGlobals by default.  This class is now just a thin
+ *  wrapper around the standard PopupState.
  *
  *  @author    Paul Speed
  */
 public class OptionPanelState extends BaseAppState {
 
+    static Logger log = LoggerFactory.getLogger(OptionPanelState.class);
+
     private OptionPanel current;
-    private Geometry blocker;
-    private Node guiNode;
     private String style;
     private ElementId defaultElementId = new ElementId(OptionPanel.ELEMENT_ID);
     
@@ -83,7 +91,9 @@ public class OptionPanelState extends BaseAppState {
     }
     
     public OptionPanelState( Node guiNode ) {
-        this.guiNode = guiNode;
+        if( guiNode != null ) {
+            log.warn("guiNode constructor now ignores the guiNode parameter, see: PopupState");
+        }
     }
     
     /** 
@@ -158,29 +168,14 @@ public class OptionPanelState extends BaseAppState {
         
         this.current = panel;
  
-        Vector3f size = current.getPreferredSize();
+        Vector2f screen = getState(PopupState.class).getGuiSize();
+        Vector3f pref = current.getPreferredSize();
         
-        Camera cam = getApplication().getCamera();
-        Vector3f camSize = new Vector3f(cam.getWidth(), cam.getHeight(), 0);        
-        Vector3f pos = camSize.mult(0.5f);
-        pos.x -= size.x * 0.5f;
-        pos.y += size.y * 0.5f;
+        Vector3f pos = new Vector3f(screen.x, screen.y, 0).multLocal(0.5f);
+        pos.x -= pref.x * 0.5f;
+        pos.y += pref.y * 0.5f;
         
-        BoundingBox bb = (BoundingBox)getGuiNode().getWorldBound();
-        if( bb != null ) {        
-            pos.z = bb.getCenter().z + bb.getZExtent() * 2;
-        }
-
-        setupBlocker(pos.z, camSize);
-
-        // Move it forward just a little more to be safe
-        pos.z++;
- 
-        panel.setLocalTranslation(pos);
-        getGuiNode().attachChild(panel);
-        panel.runEffect(OptionPanel.EFFECT_OPEN);
-        GuiGlobals.getInstance().requestFocus(panel);
-        GuiGlobals.getInstance().requestCursorEnabled(panel);
+        getState(PopupState.class).showModalPopup(current);
     }
  
     /**
@@ -199,30 +194,6 @@ public class OptionPanelState extends BaseAppState {
      */
     public OptionPanel getCurrent() {
         return current;
-    }
- 
-    protected void setupBlocker( float z, Vector3f screenSize ) {
-        if( blocker == null ) {
-            Quad quad = new Quad(screenSize.x, screenSize.y);
-            blocker = new Geometry("blocker", quad);
-            ColorRGBA transparent = new ColorRGBA(0, 0, 0, 0);
-            Material mat = GuiGlobals.getInstance().createMaterial(transparent, false).getMaterial();
-            mat.getAdditionalRenderState().setBlendMode(BlendMode.Alpha);
-            blocker.setMaterial(mat);
-            blocker.setQueueBucket(Bucket.Transparent);
- 
-            // Make sure that this consumes all mouse events
-            // ie: it 'blocks'           
-            MouseEventControl.addListenersToSpatial(blocker, ConsumingMouseListener.INSTANCE);
-        } else {
-            // Check to see if it's the same size
-            Quad quad = (Quad)blocker.getMesh();
-            if( quad.getWidth() != screenSize.x || quad.getHeight() != screenSize.y ) {
-                quad.updateGeometry(screenSize.x, screenSize.y);
-            }
-        }
-        blocker.setLocalTranslation(0, 0, z);
-        getGuiNode().attachChild(blocker);
     }
  
     /**
@@ -244,22 +215,17 @@ public class OptionPanelState extends BaseAppState {
      *  panel.  By default, this is SimpleApplication.getGuiNode().
      */
     public void setGuiNode( Node guiNode ) {
-        this.guiNode = guiNode;
+        if( guiNode != null ) {
+            log.warn("guiNode parameter ignored, uses PopupState's guiNode instead, see: PopupState");
+        }
     }
     
     /**
      *  Returns the GUI node that will be used to display the option
-     *  panel.  By default, this is SimpleApplication.getGuiNode().  
+     *  panel.  This is now always PopupState.getGuiNode()
      */
     public Node getGuiNode() {
-        if( guiNode != null ) {
-            return guiNode;
-        }
-        Application app = getApplication();
-        if( app instanceof SimpleApplication ) {
-            this.guiNode = ((SimpleApplication)app).getGuiNode();
-        }
-        return guiNode;
+        return getState(PopupState.class).getGuiNode();
     }
 
     @Override
@@ -276,12 +242,6 @@ public class OptionPanelState extends BaseAppState {
 
     @Override
     public void update( float tpf ) {
-        if( current != null ) {
-            if( !current.isVisible() ) {
-                current = null;
-                blocker.removeFromParent();
-            }
-        }
     }
 
     @Override

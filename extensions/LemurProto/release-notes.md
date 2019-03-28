@@ -1,5 +1,8 @@
 Lemur-Proto 1.10.1 (unreleased)
 -------------------
+* Modified OptionPanelState to delegate all popup stuff to PopupState.
+    Breaking change: OptionPanelState will use PopupState's guiNode
+    and will ignore the setting of any other local guiNode.
 
 
 Lemur-Proto 1.10.0 (latest)
