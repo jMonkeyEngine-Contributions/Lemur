@@ -3,7 +3,11 @@ Lemur 1.12.1 (unreleased)
 * Added PopupState.getGuiSize() that returns the potentially scaled size
     of the GUI 'canvas'.
 * Added constants EFFECT_OPEN and EFFECT_CLOSE to Panel to make it easier
-    to standardize open/close effects.    
+    to standardize open/close effects.
+* Modified PopupState to use the new Panel.EFFECT_OPEN and Panel.EFFECT_CLOSE
+    instead of string literals.
+* Added PopupState.getGuiSize() that returns the (potentially scaled) screen size
+    based on the PopupState's guiNode.
 
 
 Lemur 1.12.0 (latest)

@@ -46,6 +46,7 @@ import com.jme3.input.event.*;
 import com.jme3.material.Material;
 import com.jme3.material.RenderState.BlendMode;
 import com.jme3.math.ColorRGBA;
+import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
 import com.jme3.renderer.Camera;
 import com.jme3.renderer.queue.RenderQueue.Bucket;
@@ -289,6 +290,17 @@ public class PopupState extends BaseAppState {
     }
  
     /**
+     *  Returns the size of the screen based on the app's main camera size
+     *  and the current scale of the guiNode.
+     */   
+    public Vector2f getGuiSize() {
+        Camera cam = getApplication().getCamera();
+        float width = cam.getWidth() / guiNode.getLocalScale().x;
+        float height = cam.getHeight() / guiNode.getLocalScale().y;
+        return new Vector2f(width, height);        
+    }
+ 
+    /**
      *  Sets the GUI node that will be used to display the option
      *  panel.  By default, this is SimpleApplication.getGuiNode().
      */
@@ -376,7 +388,7 @@ public class PopupState extends BaseAppState {
             
             if( popup instanceof Panel ) {
                 // Play any open effects that it has
-                ((Panel)popup).runEffect("open");  // should really be a constant
+                ((Panel)popup).runEffect(Panel.EFFECT_OPEN);  
             }
             
             // Request access to the cursor
@@ -386,8 +398,8 @@ public class PopupState extends BaseAppState {
         public void release() {
             // Up to the effect to remove the popup... we'll do it if the
             // popup doesn't exist. 
-            if( popup instanceof Panel && ((Panel)popup).hasEffect("close") ) {
-                ((Panel)popup).runEffect("close");
+            if( popup instanceof Panel && ((Panel)popup).hasEffect(Panel.EFFECT_CLOSE) ) {
+                ((Panel)popup).runEffect(Panel.EFFECT_CLOSE);
                 // Would be nice if there was a way to run something at the end 
                 // of an effect just to be sure.
             } else {
