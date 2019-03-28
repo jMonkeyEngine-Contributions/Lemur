@@ -56,8 +56,8 @@ public class OptionPanel extends Panel {
  
     public static final String ELEMENT_ID = "optionPanel";
 
-    public static final String EFFECT_OPEN = "open";
-    public static final String EFFECT_CLOSE = "close";
+    public static final String EFFECT_OPEN = Panel.EFFECT_OPEN;
+    public static final String EFFECT_CLOSE = Panel.EFFECT_CLOSE;
  
     private BorderLayout layout;
     private Label titleLabel;
