@@ -91,6 +91,9 @@ public class Panel extends Node {
     public static final String LAYER_INSETS = "insets";
     public static final String LAYER_BORDER = "border";
 
+    public static final String EFFECT_OPEN = "open";
+    public static final String EFFECT_CLOSE = "close";
+
     private ElementId elementId;
     private String style;
 
