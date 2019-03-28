@@ -1,8 +1,12 @@
-Lemur-Proto 1.10.1 (unreleased)
+Lemur-Proto 1.11.0 (unreleased)
 -------------------
 * Modified OptionPanelState to delegate all popup stuff to PopupState.
     Breaking change: OptionPanelState will use PopupState's guiNode
     and will ignore the setting of any other local guiNode.
+* OptionPanel no longer releases cursor enabling because it was not the thing that
+    requested cursor enabling.  That's up to the caller now.
+    Breaking change: any caller that was manually managing OptionPanels
+    and expecting them to clean this up will now need to clean it up themselves. 
 
 
 Lemur-Proto 1.10.0 (latest)

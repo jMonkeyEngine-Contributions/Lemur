@@ -174,6 +174,7 @@ public class OptionPanelState extends BaseAppState {
         Vector3f pos = new Vector3f(screen.x, screen.y, 0).multLocal(0.5f);
         pos.x -= pref.x * 0.5f;
         pos.y += pref.y * 0.5f;
+        current.setLocalTranslation(pos);
         
         getState(PopupState.class).showModalPopup(current);
     }

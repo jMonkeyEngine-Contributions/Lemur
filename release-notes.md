@@ -6,6 +6,8 @@ Lemur 1.12.1 (unreleased)
     instead of string literals.
 * Added PopupState.getGuiSize() that returns the (potentially scaled) screen size
     based on the PopupState's guiNode.
+* Modified PopupState to properly request focus of the things it is popping up.
+    Without this, keyboard navigation was trickier.
 
 
 Lemur 1.12.0 (latest)

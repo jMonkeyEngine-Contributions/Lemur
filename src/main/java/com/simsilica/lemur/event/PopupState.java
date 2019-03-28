@@ -295,8 +295,8 @@ public class PopupState extends BaseAppState {
      */   
     public Vector2f getGuiSize() {
         Camera cam = getApplication().getCamera();
-        float width = cam.getWidth() / guiNode.getLocalScale().x;
-        float height = cam.getHeight() / guiNode.getLocalScale().y;
+        float width = cam.getWidth() / getGuiNode().getLocalScale().x;
+        float height = cam.getHeight() / getGuiNode().getLocalScale().y;
         return new Vector2f(width, height);        
     }
  
@@ -393,6 +393,7 @@ public class PopupState extends BaseAppState {
             
             // Request access to the cursor
             GuiGlobals.getInstance().requestCursorEnabled(this);
+            GuiGlobals.getInstance().requestFocus(popup);
         }
         
         public void release() {
