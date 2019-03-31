@@ -37,7 +37,6 @@ package com.simsilica.lemur.event;
 import java.util.*;
 import java.util.concurrent.*;
 
-import com.jme3.input.event.*;
 import com.jme3.renderer.*;
 import com.jme3.scene.control.*;
 import com.jme3.scene.Spatial;
@@ -66,18 +65,18 @@ public class CursorEventControl extends AbstractControl {
     }
 
     /**
-     *  Convenience method that will add a MouseEventControl if it
+     *  Convenience method that will add a CursorEventControl if it
      *  doesn't exist, while adding the specified listeners.
      */
     public static void addListenersToSpatial( Spatial s, CursorListener... listeners ) {
         if( s == null ) {
             return;
         }
-        CursorEventControl mec = s.getControl(CursorEventControl.class);
-        if( mec == null ) {
+        CursorEventControl cec = s.getControl(CursorEventControl.class);
+        if( cec == null ) {
             s.addControl(new CursorEventControl(listeners));
         } else {
-            mec.listeners.addAll(Arrays.asList(listeners));
+            cec.listeners.addAll(Arrays.asList(listeners));
         }
     }
 
