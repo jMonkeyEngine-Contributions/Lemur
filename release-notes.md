@@ -8,6 +8,10 @@ Lemur 1.12.1 (unreleased)
     based on the PopupState's guiNode.
 * Modified PopupState to properly request focus of the things it is popping up.
     Without this, keyboard navigation was trickier.
+* Modified InputMapper to map all gamepad buttons and axes, even if they don't
+    match up with predefined constants.
+* Modified Axis to include constants for JOYSTICK_LEFT_TRIGGER and JOYSTICK_RIGHT_TRIGGER
+    along with support in InputMapper.     
 
 
 Lemur 1.12.0 (latest)

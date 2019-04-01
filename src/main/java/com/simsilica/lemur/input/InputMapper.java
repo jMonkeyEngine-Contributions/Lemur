@@ -151,14 +151,22 @@ public class InputMapper {
     }
 
     protected void mapJoystick( Joystick j ) {
+    
         // We attempt to determine what kind of stick it is so
         // that we can provide more intelligent button and axis mappings
         if( j.getAxis(JoystickAxis.Z_ROTATION) != null
-            && j.getAxis(JoystickAxis.Z_AXIS) != null ) {
+            || j.getAxis(JoystickAxis.Z_AXIS) != null ) {
+
+            // Some XBOX controllers seem not to have a Z_ROTATION in this context
+            // but are game pads.  All gampads seem to have a Z_AXIS.  At any rate,
+            // the gamepad mapping is the more thorough mapping and so it's probably
+            // better to default there if we aren't sure. 
 
             mapGamepad(j);
             return;
         }
+
+        log.info("map basic joystick:" + j);
 
         // Else it's a generic one
         joystickAxisMap.put(j.getXAxis(), Axis.JOYSTICK_X);
@@ -177,10 +185,23 @@ public class InputMapper {
     }
 
     protected void mapGamepad( Joystick j ) {
+        log.info("mapGamepad(" + j + ")");
+ 
+        // Map as many standard things as we can find and then
+        // map anything left as best as we can.   
         joystickAxisMap.put(j.getXAxis(), Axis.JOYSTICK_LEFT_X);
         joystickAxisMap.put(j.getYAxis(), Axis.JOYSTICK_LEFT_Y);
         joystickAxisMap.put(j.getAxis(JoystickAxis.Z_AXIS), Axis.JOYSTICK_RIGHT_X);
         joystickAxisMap.put(j.getAxis(JoystickAxis.Z_ROTATION), Axis.JOYSTICK_RIGHT_Y);
+        
+        // Replace these
+        joystickAxisMap.put(j.getAxis("rx"), Axis.JOYSTICK_LEFT_TRIGGER);
+        joystickAxisMap.put(j.getAxis("ry"), Axis.JOYSTICK_RIGHT_TRIGGER);        
+        // with these:
+        //joystickAxisMap.put(j.getAxis(JoystickAxis.LEFT_TRIGGER), Axis.JOYSTICK_LEFT_TRIGGER);
+        //joystickAxisMap.put(j.getAxis(JoystickAxis.RIGHT_TRIGGER), Axis.JOYSTICK_RIGHT_TRIGGER);
+        // ...when JME 3.3 is released.
+        
         joystickAxisMap.put(j.getPovXAxis(), Axis.JOYSTICK_HAT_X);
         joystickAxisMap.put(j.getPovYAxis(), Axis.JOYSTICK_HAT_Y);
 
@@ -199,6 +220,38 @@ public class InputMapper {
 
         joystickButtonMap.put(j.getButton(JoystickButton.BUTTON_10), Button.JOYSTICK_LEFT3);
         joystickButtonMap.put(j.getButton(JoystickButton.BUTTON_11), Button.JOYSTICK_RIGHT3);
+        
+        // Map any buttons that are left-over
+        for( JoystickButton b : j.getButtons() ) {
+            if( joystickButtonMap.containsKey(b) ) {
+                continue;
+            }
+            
+            // Come up with a default name that matches our
+            // conventions.
+            String id = b.getLogicalId();
+            String name = b.getName();
+            if( Character.isDigit(id.charAt(0)) ) {
+                int idVal = Integer.parseInt(id) + 1;
+                id = String.valueOf(idVal);
+                name = "Button " + id;
+            }
+            String targetId = "joystick_" + id;
+            
+            log.warn("No mapping for button:" + b + "  Defaulting to:" + targetId + " name:" + name);
+            joystickButtonMap.put(b, new Button(targetId, name));
+        }
+        
+        // Map any axes that are left over
+        for( JoystickAxis a : j.getAxes() ) {
+            if( joystickAxisMap.containsKey(a) ) {
+                continue;
+            }
+            String targetId = "joystick_" + a.getLogicalId();
+            String name = "Joystick " + a.getName();
+            log.warn("no mapping for axis:" + a + "  Defaulting to:" + targetId + " name:" + name);
+            joystickAxisMap.put(a, new Axis(targetId, name)); 
+        }
     }
 
     protected StateGroupIndex getIndex( Object state, boolean create ) {
@@ -828,7 +881,7 @@ public class InputMapper {
                 log.trace("onJoyAxisEvent(axis:" + evt.getAxis()
                                         + ", val:" + evt.getValue() + ")");
             }
-        
+
             JoystickAxis a = evt.getAxis();
             Joystick j = a.getJoystick();
             float val = evt.getValue();
@@ -838,7 +891,7 @@ public class InputMapper {
             if( aVal <= 0.01 || aVal <= Math.max(a.getDeadZone(), inputManager.getAxisDeadZone()) ) {
                 val = 0;
             }
-
+        
             Axis axis = joystickAxisMap.get(a);
             if( axis == null ) {
                 log.warn("No axis mapping for:" + a );

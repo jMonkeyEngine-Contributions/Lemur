@@ -65,6 +65,10 @@ public class Axis {
                                 = new Axis("hat_x", "Joystick HAT Left/Right");
     public static final Axis JOYSTICK_HAT_Y
                                 = new Axis("hat_y", "Joystick HAT Up/Down");
+    public static final Axis JOYSTICK_LEFT_TRIGGER
+                                = new Axis("joystick_left_trigger", "Joystick Left Trigger");
+    public static final Axis JOYSTICK_RIGHT_TRIGGER
+                                = new Axis("joystick_right_trigger", "Joystick Right Trigger");
 
 
     private String id;
