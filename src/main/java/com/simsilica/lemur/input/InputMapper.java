@@ -44,6 +44,8 @@ import com.jme3.input.*;
 import com.jme3.input.event.*;
 import com.jme3.util.SafeArrayList;
 
+import com.simsilica.lemur.input.InputDevice.DeviceAxis;
+import com.simsilica.lemur.input.InputDevice.DeviceButton;
 
 /**
  *  Wraps the normal InputManager to provide enhanced
@@ -103,14 +105,14 @@ public class InputMapper {
     private Set<String> activeGroups = new HashSet<String>();
 
 
-    private Map<Object,StateGroupIndex> stateIndex = new HashMap<Object,StateGroupIndex>();
+    private Map<Object,StateGroupIndex> stateIndex = new HashMap<>();
     private Set<StateGroup> activeStates = new HashSet<StateGroup>();
 
-    private Map<JoystickAxis,Axis> joystickAxisMap = new HashMap<JoystickAxis,Axis>();
-    private Map<JoystickButton,Button> joystickButtonMap = new HashMap<JoystickButton,Button>();
+    private Map<Joystick,InputDevice> joystickMap = new HashMap<>();
+    private Map<JoystickAxis,DeviceAxis> joystickAxisMap = new HashMap<>();
+    private Map<JoystickButton,DeviceButton> joystickButtonMap = new HashMap<>();
 
-    private Map<FunctionId, FunctionListeners> listenerMap
-                                                = new HashMap<FunctionId, FunctionListeners>();
+    private Map<FunctionId, FunctionListeners> listenerMap = new HashMap<>();
 
     private double tpf = 0;
     private long lastFrameNanos;
@@ -151,6 +153,10 @@ public class InputMapper {
     }
 
     protected void mapJoystick( Joystick j ) {
+ 
+        InputDevice device = InputDevice.joystick(joystickMap.size() + 1); 
+        joystickMap.put(j, device);
+        log.info("Registered:" + j + " as:" + device); 
     
         // We attempt to determine what kind of stick it is so
         // that we can provide more intelligent button and axis mappings
@@ -162,17 +168,17 @@ public class InputMapper {
             // the gamepad mapping is the more thorough mapping and so it's probably
             // better to default there if we aren't sure. 
 
-            mapGamepad(j);
+            mapGamepad(device, j);
             return;
         }
 
         log.info("map basic joystick:" + j);
 
         // Else it's a generic one
-        joystickAxisMap.put(j.getXAxis(), Axis.JOYSTICK_X);
-        joystickAxisMap.put(j.getYAxis(), Axis.JOYSTICK_Y);
-        joystickAxisMap.put(j.getPovXAxis(), Axis.JOYSTICK_HAT_X);
-        joystickAxisMap.put(j.getPovYAxis(), Axis.JOYSTICK_HAT_Y);
+        joystickAxisMap.put(j.getXAxis(), device.axis(Axis.JOYSTICK_X));
+        joystickAxisMap.put(j.getYAxis(), device.axis(Axis.JOYSTICK_Y));
+        joystickAxisMap.put(j.getPovXAxis(), device.axis(Axis.JOYSTICK_HAT_X));
+        joystickAxisMap.put(j.getPovYAxis(), device.axis(Axis.JOYSTICK_HAT_Y));
 
         for( JoystickButton b : j.getButtons() ) {
             String id = b.getLogicalId();
@@ -180,46 +186,47 @@ public class InputMapper {
                 continue;
 
             int idVal = Integer.parseInt(id) + 1;
-            joystickButtonMap.put(b, new Button("joystick_" + idVal, "Button " + idVal));
+            Button button = new Button("joystick_" + idVal, "Button " + idVal); 
+            joystickButtonMap.put(b, device.button(button));
         }
     }
 
-    protected void mapGamepad( Joystick j ) {
+    protected void mapGamepad( InputDevice device, Joystick j ) {
         log.info("mapGamepad(" + j + ")");
  
         // Map as many standard things as we can find and then
         // map anything left as best as we can.   
-        joystickAxisMap.put(j.getXAxis(), Axis.JOYSTICK_LEFT_X);
-        joystickAxisMap.put(j.getYAxis(), Axis.JOYSTICK_LEFT_Y);
-        joystickAxisMap.put(j.getAxis(JoystickAxis.Z_AXIS), Axis.JOYSTICK_RIGHT_X);
-        joystickAxisMap.put(j.getAxis(JoystickAxis.Z_ROTATION), Axis.JOYSTICK_RIGHT_Y);
+        joystickAxisMap.put(j.getXAxis(), device.axis(Axis.JOYSTICK_LEFT_X));
+        joystickAxisMap.put(j.getYAxis(), device.axis(Axis.JOYSTICK_LEFT_Y));
+        joystickAxisMap.put(j.getAxis(JoystickAxis.Z_AXIS), device.axis(Axis.JOYSTICK_RIGHT_X));
+        joystickAxisMap.put(j.getAxis(JoystickAxis.Z_ROTATION), device.axis(Axis.JOYSTICK_RIGHT_Y));
         
         // Replace these
-        joystickAxisMap.put(j.getAxis("rx"), Axis.JOYSTICK_LEFT_TRIGGER);
-        joystickAxisMap.put(j.getAxis("ry"), Axis.JOYSTICK_RIGHT_TRIGGER);        
+        joystickAxisMap.put(j.getAxis("rx"), device.axis(Axis.JOYSTICK_LEFT_TRIGGER));
+        joystickAxisMap.put(j.getAxis("ry"), device.axis(Axis.JOYSTICK_RIGHT_TRIGGER));        
         // with these:
         //joystickAxisMap.put(j.getAxis(JoystickAxis.LEFT_TRIGGER), Axis.JOYSTICK_LEFT_TRIGGER);
         //joystickAxisMap.put(j.getAxis(JoystickAxis.RIGHT_TRIGGER), Axis.JOYSTICK_RIGHT_TRIGGER);
         // ...when JME 3.3 is released.
         
-        joystickAxisMap.put(j.getPovXAxis(), Axis.JOYSTICK_HAT_X);
-        joystickAxisMap.put(j.getPovYAxis(), Axis.JOYSTICK_HAT_Y);
+        joystickAxisMap.put(j.getPovXAxis(), device.axis(Axis.JOYSTICK_HAT_X));
+        joystickAxisMap.put(j.getPovYAxis(), device.axis(Axis.JOYSTICK_HAT_Y));
 
-        joystickButtonMap.put(j.getButton(JoystickButton.BUTTON_0), Button.JOYSTICK_BUTTON1);
-        joystickButtonMap.put(j.getButton(JoystickButton.BUTTON_1), Button.JOYSTICK_BUTTON2);
-        joystickButtonMap.put(j.getButton(JoystickButton.BUTTON_2), Button.JOYSTICK_BUTTON3);
-        joystickButtonMap.put(j.getButton(JoystickButton.BUTTON_3), Button.JOYSTICK_BUTTON4);
+        joystickButtonMap.put(j.getButton(JoystickButton.BUTTON_0), device.button(Button.JOYSTICK_BUTTON1));
+        joystickButtonMap.put(j.getButton(JoystickButton.BUTTON_1), device.button(Button.JOYSTICK_BUTTON2));
+        joystickButtonMap.put(j.getButton(JoystickButton.BUTTON_2), device.button(Button.JOYSTICK_BUTTON3));
+        joystickButtonMap.put(j.getButton(JoystickButton.BUTTON_3), device.button(Button.JOYSTICK_BUTTON4));
 
-        joystickButtonMap.put(j.getButton(JoystickButton.BUTTON_4), Button.JOYSTICK_LEFT1);
-        joystickButtonMap.put(j.getButton(JoystickButton.BUTTON_5), Button.JOYSTICK_RIGHT1);
-        joystickButtonMap.put(j.getButton(JoystickButton.BUTTON_6), Button.JOYSTICK_LEFT2);
-        joystickButtonMap.put(j.getButton(JoystickButton.BUTTON_7), Button.JOYSTICK_RIGHT2);
+        joystickButtonMap.put(j.getButton(JoystickButton.BUTTON_4), device.button(Button.JOYSTICK_LEFT1));
+        joystickButtonMap.put(j.getButton(JoystickButton.BUTTON_5), device.button(Button.JOYSTICK_RIGHT1));
+        joystickButtonMap.put(j.getButton(JoystickButton.BUTTON_6), device.button(Button.JOYSTICK_LEFT2));
+        joystickButtonMap.put(j.getButton(JoystickButton.BUTTON_7), device.button(Button.JOYSTICK_RIGHT2));
 
-        joystickButtonMap.put(j.getButton(JoystickButton.BUTTON_8), Button.JOYSTICK_SELECT);
-        joystickButtonMap.put(j.getButton(JoystickButton.BUTTON_9), Button.JOYSTICK_START);
+        joystickButtonMap.put(j.getButton(JoystickButton.BUTTON_8), device.button(Button.JOYSTICK_SELECT));
+        joystickButtonMap.put(j.getButton(JoystickButton.BUTTON_9), device.button(Button.JOYSTICK_START));
 
-        joystickButtonMap.put(j.getButton(JoystickButton.BUTTON_10), Button.JOYSTICK_LEFT3);
-        joystickButtonMap.put(j.getButton(JoystickButton.BUTTON_11), Button.JOYSTICK_RIGHT3);
+        joystickButtonMap.put(j.getButton(JoystickButton.BUTTON_10), device.button(Button.JOYSTICK_LEFT3));
+        joystickButtonMap.put(j.getButton(JoystickButton.BUTTON_11), device.button(Button.JOYSTICK_RIGHT3));
         
         // Map any buttons that are left-over
         for( JoystickButton b : j.getButtons() ) {
@@ -239,7 +246,7 @@ public class InputMapper {
             String targetId = "joystick_" + id;
             
             log.warn("No mapping for button:" + b + "  Defaulting to:" + targetId + " name:" + name);
-            joystickButtonMap.put(b, new Button(targetId, name));
+            joystickButtonMap.put(b, device.button(new Button(targetId, name)));
         }
         
         // Map any axes that are left over
@@ -250,7 +257,7 @@ public class InputMapper {
             String targetId = "joystick_" + a.getLogicalId();
             String name = "Joystick " + a.getName();
             log.warn("no mapping for axis:" + a + "  Defaulting to:" + targetId + " name:" + name);
-            joystickAxisMap.put(a, new Axis(targetId, name)); 
+            joystickAxisMap.put(a, device.axis(new Axis(targetId, name))); 
         }
     }
 
@@ -892,16 +899,35 @@ public class InputMapper {
                 val = 0;
             }
         
-            Axis axis = joystickAxisMap.get(a);
+            // Note: because we send the 0 values even if the value
+            // for this axis hasn't actually changed, it means that when
+            // two joysticks are mapped to the same function, 'dead zone'
+            // values from one stick will reset the values from the other
+            // stick.  Proper dead zone management means only sending zeroes
+            // through if the previous value was not zero.  Bug fix for
+            // another day.
+        
+            DeviceAxis axis = joystickAxisMap.get(a);
             if( axis == null ) {
                 log.warn("No axis mapping for:" + a );
                 return;
             }
 
+            // We can't tell from here which state groups are active
+            // or inactive with respect to FunctionId active groups.
+            // ie: we don't know if the StateGroupIndex 'accepts' our
+            // change... so we'll send the change to the most specific
+            // and the more general if they both have StateGroupIndex
+            // objects.
             StateGroupIndex index = getIndex(axis, false);
-            if( index == null )
-                return;
-            index.updateValue(val);
+            if( index != null ) {
+                index.updateValue(val);
+            }
+            // Try the more generic one
+            index = getIndex(axis.getAxis(), false);
+            if( index != null ) { 
+                index.updateValue(val);
+            }
         }
 
         public void onJoyButtonEvent( JoyButtonEvent evt ) {
@@ -909,7 +935,7 @@ public class InputMapper {
                 log.trace("onJoyButtonEvent(button:" + evt.getButton() + ", pressed:" + evt.isPressed() + ")");
             }
             
-            Button b = joystickButtonMap.get(evt.getButton());
+            DeviceButton b = joystickButtonMap.get(evt.getButton());
             if( b == null ) {
                 log.warn("No button mapping for:" + evt.getButton() );
                 return;
@@ -918,12 +944,22 @@ public class InputMapper {
                 log.trace("Forwarding events to button mapping:" + b);               
             }
 
+            // We can't tell from here which state groups are active
+            // or inactive with respect to FunctionId active groups.
+            // ie: we don't know if the StateGroupIndex 'accepts' our
+            // change... so we'll send the change to the most specific
+            // and the more general if they both have StateGroupIndex
+            // objects.
+            double value = evt.isPressed() ? 1.0 : 0.0; 
             StateGroupIndex index = getIndex(b, false);
-            if( index == null )
-                return;
-            double value = evt.isPressed() ? 1.0 : 0.0;
-
-            index.updateValue(value);
+            if( index != null ) {
+                index.updateValue(value);
+            }
+            // Try the more generic version
+            index = getIndex(b.getButton(), false);
+            if( index != null ) {
+                index.updateValue(value);
+            }
         }
 
         public void beginInput() {

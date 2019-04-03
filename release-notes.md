@@ -1,4 +1,4 @@
-Lemur 1.12.1 (unreleased)
+Lemur 1.13.0 (unreleased)
 -------------
 * Added constants EFFECT_OPEN and EFFECT_CLOSE to Panel to make it easier
     to standardize open/close effects.
@@ -12,6 +12,9 @@ Lemur 1.12.1 (unreleased)
     match up with predefined constants.
 * Modified Axis to include constants for JOYSTICK_LEFT_TRIGGER and JOYSTICK_RIGHT_TRIGGER
     along with support in InputMapper.     
+* Added support for multiple gamepads/joysticks.  There is now a new InputDevice
+    class that provides gamepad-specific versions of the regular Button/Axis 
+    constants.  Support for non-joystick-specific mappings still works like before.
 
 
 Lemur 1.12.0 (latest)

@@ -34,7 +34,7 @@
 
 package com.simsilica.lemur.input;
 
-import com.google.common.base.Objects;
+import java.util.Objects;
 
 
 /**
@@ -76,15 +76,27 @@ public class Button {
     private String id;
     private String name;
 
+    /**
+     *  Creates a new button identifier with the specified logical ID
+     *  and name.  Typically user-code would not call this constructor
+     *  but it's available for situations where a game controller exposes
+     *  buttons that are not part of the predefined constants.
+     */
     public Button( String id, String name ) {
         this.id = id;
         this.name = name;
     }
 
+    /**
+     *  Returns the logical ID of this button.
+     */ 
     public String getId() {
         return id;
     }
 
+    /**
+     *  Returns the human-readable name of this button.
+     */
     public String getName() {
         return name;
     }
@@ -96,13 +108,16 @@ public class Button {
 
     @Override
     public boolean equals( Object o ) {
-        if( o == this )
+        if( o == this ) {
             return true;
-        if( o == null || o.getClass() != getClass() )
+        }
+        if( o == null || o.getClass() != getClass() ) {
             return false;
+        }
         Button other = (Button)o;
-        if( !Objects.equal(id, other.id) )
+        if( !Objects.equals(id, other.id) ) {
             return false;
+        }
         return true;
     }
 
