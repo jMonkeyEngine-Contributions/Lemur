@@ -190,21 +190,20 @@ public class DragHandler extends DefaultCursorListener {
         draggable.setLocalTranslation(local);
     }
 
-    public boolean isConsumeDrags() {
-        return consumeDrags;
-    }
-
-    public void setConsumeDrags(boolean consumeDrags) {
+    public void setConsumeDrags( boolean consumeDrags ) {
         this.consumeDrags = consumeDrags;
     }
 
-    public boolean isConsumeDrops() {
-        return consumeDrops;
+    public boolean getConsumeDrags() {
+        return consumeDrags;
     }
 
-    public void setConsumeDrops(boolean consumeDrops) {
+    public void setConsumeDrops( boolean consumeDrops ) {
         this.consumeDrops = consumeDrops;
     }
 
+    public boolean getConsumeDrops() {
+        return consumeDrops;
+    }
 }
 

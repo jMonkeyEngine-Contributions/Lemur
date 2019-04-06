@@ -15,6 +15,8 @@ Lemur 1.13.0 (unreleased)
 * Added support for multiple gamepads/joysticks.  There is now a new InputDevice
     class that provides gamepad-specific versions of the regular Button/Axis 
     constants.  Support for non-joystick-specific mappings still works like before.
+* Modified DragHandler to have set/getConsumeDrags() and set/getConsumeDrops() for
+    tweaking the internal boolean settings.
 
 
 Lemur 1.12.0 (latest)
