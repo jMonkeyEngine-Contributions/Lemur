@@ -36,7 +36,6 @@ package com.simsilica.lemur.event;
 
 import com.google.common.base.Function;
 import com.google.common.base.Functions;
-
 import com.jme3.input.MouseInput;
 import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
@@ -190,5 +189,22 @@ public class DragHandler extends DefaultCursorListener {
         Vector3f local = draggable.getParent().worldToLocal(newPos, null);
         draggable.setLocalTranslation(local);
     }
+
+    public boolean isConsumeDrags() {
+        return consumeDrags;
+    }
+
+    public void setConsumeDrags(boolean consumeDrags) {
+        this.consumeDrags = consumeDrags;
+    }
+
+    public boolean isConsumeDrops() {
+        return consumeDrops;
+    }
+
+    public void setConsumeDrops(boolean consumeDrops) {
+        this.consumeDrops = consumeDrops;
+    }
+
 }
 
