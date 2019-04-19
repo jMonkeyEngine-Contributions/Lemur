@@ -374,6 +374,10 @@ public class GuiGlobals {
         focusState.setFocus(s);
     }
 
+    public void releaseFocus( Spatial s ) {
+        focusState.releaseFocus(s);
+    }
+
     public Spatial getCurrentFocus() {
         return focusState.getFocus();
     }

@@ -95,6 +95,19 @@ public class FocusManagerState extends BaseAppState {
         }
     }
 
+    /**
+     *  Clears the current focus if the specified spatial is still
+     *  in the current focus chain.  Returns true if the focus was actually
+     *  changed as a result of this call.
+     */
+    public boolean releaseFocus( Spatial focus ) {
+        if( focusHierarchy.indexOf(focus) < 0 ) {
+            return false;
+        }
+        setFocus(null);
+        return true;
+    }
+
     public Spatial getFocus() {
         return focus;
     }

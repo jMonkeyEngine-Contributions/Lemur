@@ -185,7 +185,9 @@ public class OptionPanelState extends BaseAppState {
      */
     public void close() {
         if( current != null ) {
-            current.close();
+            //current.close();
+            getState(PopupState.class).closePopup(current);
+            current = null;
         }
     }     
  

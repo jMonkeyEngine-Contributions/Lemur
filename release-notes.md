@@ -17,6 +17,10 @@ Lemur 1.13.0 (unreleased)
     constants.  Support for non-joystick-specific mappings still works like before.
 * Modified DragHandler to have set/getConsumeDrags() and set/getConsumeDrops() for
     tweaking the internal boolean settings.
+* Added GuiGlobals.releaseFocus() and the corresponding FocusManagerState.releaseFocus()
+    which are safe ways to clear the focus for a currently focused element if it is
+    still focused.  Useful for conditionally clearing focus when tearing down a window.
+* Modified PopupState to call releaseFocus() for the popup when it is closing.
 
 
 Lemur 1.12.0 (latest)

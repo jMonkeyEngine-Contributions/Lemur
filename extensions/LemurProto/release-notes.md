@@ -6,7 +6,12 @@ Lemur-Proto 1.11.0 (unreleased)
 * OptionPanel no longer releases cursor enabling because it was not the thing that
     requested cursor enabling.  That's up to the caller now.
     Breaking change: any caller that was manually managing OptionPanels
-    and expecting them to clean this up will now need to clean it up themselves. 
+    and expecting them to clean this up will now need to clean it up themselves.
+* OptionPanelState no longer calls OptionPanel.close() and instead delegates to
+    PopupState.closePopup() to avoid double-running close effects, etc. and also
+    to properly handle cursor/focus release.  
+    Breaking change: any user application relying on OptionPanel.close() to be
+    called in an OptionPanel subclass will have to hook things a different way.
 
 
 Lemur-Proto 1.10.0 (latest)

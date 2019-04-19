@@ -413,6 +413,9 @@ public class PopupState extends BaseAppState {
             
             // Release our cursor request
             GuiGlobals.getInstance().releaseCursorEnabled(this);
+                       
+            // And clear the focus if the popup is still in the focus chain
+            GuiGlobals.getInstance().releaseFocus(popup);
         }
     }
     
