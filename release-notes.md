@@ -1,4 +1,4 @@
-Lemur 1.13.0 (unreleased)
+Lemur 1.13.0 (latest)
 -------------
 * Added constants EFFECT_OPEN and EFFECT_CLOSE to Panel to make it easier
     to standardize open/close effects.
@@ -23,7 +23,7 @@ Lemur 1.13.0 (unreleased)
 * Modified PopupState to call releaseFocus() for the popup when it is closing.
 
 
-Lemur 1.12.0 (latest)
+Lemur 1.12.0 
 -------------
 * Fixed a bug in the new getPickRay() code where incorrect Rays were being
     created if the Gui Bucket didn't have a spatial at z=0.
