@@ -1,4 +1,4 @@
-Lemur-Proto 1.11.0 (unreleased)
+Lemur-Proto 1.11.0 (latest)
 -------------------
 * Modified OptionPanelState to delegate all popup stuff to PopupState.
     Breaking change: OptionPanelState will use PopupState's guiNode
@@ -14,7 +14,7 @@ Lemur-Proto 1.11.0 (unreleased)
     called in an OptionPanel subclass will have to hook things a different way.
 
 
-Lemur-Proto 1.10.0 (latest)
+Lemur-Proto 1.10.0 
 -------------------
 * Modified OptionPanelState and OptionPanel to automatically request/release
     the cursor using the new GuiGlobals.request/releaseCursorEnabled().
