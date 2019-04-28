@@ -1,3 +1,7 @@
+Lemur 1.13.1 (unreleased)
+-------------
+
+
 Lemur 1.13.0 (latest)
 -------------
 * Added constants EFFECT_OPEN and EFFECT_CLOSE to Panel to make it easier

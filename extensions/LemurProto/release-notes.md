@@ -1,3 +1,7 @@
+Lemur-Proto 1.11.1 (unrleased)
+-------------------
+
+
 Lemur-Proto 1.11.0 (latest)
 -------------------
 * Modified OptionPanelState to delegate all popup stuff to PopupState.
