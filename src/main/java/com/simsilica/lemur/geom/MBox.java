@@ -1,7 +1,7 @@
 /*
  * $Id$
  *
- * Copyright (c) 2012-2012 jMonkeyEngine
+ * Copyright (c) 2012-2019 jMonkeyEngine
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -114,6 +114,15 @@ public class MBox extends Mesh
         slices[1] = ySlices;
         slices[2] = zSlices;
 
+        refreshGeometry();
+    }
+    
+    public Vector3f getExtents() {
+        return extents;
+    }
+    
+    public void resize( Vector3f extents ) {
+        this.extents.set(extents);
         refreshGeometry();
     }
 
