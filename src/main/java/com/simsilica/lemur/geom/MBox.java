@@ -104,6 +104,13 @@ public class MBox extends Mesh implements Savable, Cloneable {
     private Vector3f extents = new Vector3f();
     private int[] slices = new int[3];
     private int sideMask;
+    
+    /**
+     * Serialization only. Do not use.
+     */
+    public MBox() {
+        super();
+    }
 
     public MBox( float xExtent, float yExtent, float zExtent,
                  int xSlices, int ySlices, int zSlices ) {
