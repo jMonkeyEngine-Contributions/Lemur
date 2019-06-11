@@ -237,6 +237,7 @@ public class MBox extends Mesh implements Savable, Cloneable {
         setBuffer(Type.Normal, 3, norms);
 
         updateBound();
+        clearCollisionData();
 
     }
 
