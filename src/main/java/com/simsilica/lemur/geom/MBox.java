@@ -34,10 +34,16 @@
 
 package com.simsilica.lemur.geom;
 
+import com.jme3.export.InputCapsule;
+import com.jme3.export.JmeExporter;
+import com.jme3.export.JmeImporter;
+import com.jme3.export.OutputCapsule;
+import com.jme3.export.Savable;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Mesh;
 import com.jme3.scene.VertexBuffer.Type;
 import com.jme3.util.BufferUtils;
+import java.io.IOException;
 import java.nio.FloatBuffer;
 import java.nio.ShortBuffer;
 
@@ -53,8 +59,7 @@ import java.nio.ShortBuffer;
  *
  *  @author    Paul Speed
  */
-public class MBox extends Mesh
-                  implements Cloneable {
+public class MBox extends Mesh implements Savable, Cloneable {
 
     public static final int TOP_MASK = 0x1;
     public static final int BOTTOM_MASK = 0x2;
@@ -314,6 +319,23 @@ public class MBox extends Mesh
 
         return lastIndex + colCount * rowCount;
     }
+    
+    @Override
+    public void read(JmeImporter e) throws IOException {
+        super.read(e);
+        InputCapsule ic = e.getCapsule(this);
+        extents = (Vector3f) ic.readSavable("extents", null);
+        slices = ic.readIntArray("slices", null);
+        sideMask = ic.readInt("sideMask", 0);
+    }
+
+    @Override
+    public void write(JmeExporter e) throws IOException {
+        super.write(e);
+        OutputCapsule oc = e.getCapsule(this);
+        oc.write(extents, "extents", null);
+        oc.write(slices, "slices", null);
+        oc.write(sideMask, "sideMask", 0);
+    }
 }
-
-
+   
