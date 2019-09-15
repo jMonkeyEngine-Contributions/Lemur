@@ -1,6 +1,7 @@
 Lemur 1.13.1 (unreleased)
 -------------
-
+* Added a default getId() implementation to BaseAppState so that it is compatible
+    with the AppState interface in JME 3.3+. 
 
 Lemur 1.13.0 (latest)
 -------------

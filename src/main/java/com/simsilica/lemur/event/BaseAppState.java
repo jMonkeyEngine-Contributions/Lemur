@@ -61,6 +61,7 @@ public abstract class BaseAppState implements AppState {
     private Application app;
     private boolean initialized;
     private boolean enabled = true;
+    private String id;
 
     protected abstract void initialize( Application app );
     protected abstract void cleanup( Application app );
@@ -78,6 +79,22 @@ public abstract class BaseAppState implements AppState {
         if( isEnabled() ) {
             enable();
         }
+    }
+
+    /**
+     *  Sets the unique ID of this app state.  Note: that setting
+     *  this while an app state is attached to the state manager will
+     *  have no effect on ID-based lookups.
+     */
+    protected void setId( String id ) {
+        this.id = id;
+    }
+
+    // Note: @Override intentionally left out so that we are compatible
+    //       with JME 3.2 and 3.3.  At some point, everything should be
+    //       converted over to use JME's BaseAppState anyway.
+    public String getId() {
+        return id;
     }
 
     public final boolean isInitialized() {
