@@ -1,7 +1,12 @@
-Lemur 1.13.1 (unreleased)
+Lemur 1.14.0 (unreleased)
 -------------
 * Added a default getId() implementation to BaseAppState so that it is compatible
-    with the AppState interface in JME 3.3+. 
+    with the AppState interface in JME 3.3+.
+* Updated the style layer to clone cloneable values before applyting them
+    to style targets.  It will also deep clone lists and maps if necessary to
+    allow for cloning child values.  (Especially important for clonable action
+    handlers in action maps.)
+
 
 Lemur 1.13.0 (latest)
 -------------
@@ -16,9 +21,9 @@ Lemur 1.13.0 (latest)
 * Modified InputMapper to map all gamepad buttons and axes, even if they don't
     match up with predefined constants.
 * Modified Axis to include constants for JOYSTICK_LEFT_TRIGGER and JOYSTICK_RIGHT_TRIGGER
-    along with support in InputMapper.     
+    along with support in InputMapper.
 * Added support for multiple gamepads/joysticks.  There is now a new InputDevice
-    class that provides gamepad-specific versions of the regular Button/Axis 
+    class that provides gamepad-specific versions of the regular Button/Axis
     constants.  Support for non-joystick-specific mappings still works like before.
 * Modified DragHandler to have set/getConsumeDrags() and set/getConsumeDrops() for
     tweaking the internal boolean settings.
@@ -28,7 +33,7 @@ Lemur 1.13.0 (latest)
 * Modified PopupState to call releaseFocus() for the popup when it is closing.
 
 
-Lemur 1.12.0 
+Lemur 1.12.0
 -------------
 * Fixed a bug in the new getPickRay() code where incorrect Rays were being
     created if the Gui Bucket didn't have a spatial at z=0.

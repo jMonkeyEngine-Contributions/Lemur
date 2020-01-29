@@ -41,6 +41,8 @@ import com.simsilica.lemur.core.GuiComponent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.jme3.util.clone.Cloner;
+import com.jme3.util.clone.JmeCloneable;
 
 /**
  *  Provides support for automatically configuring GUI elements
@@ -121,7 +123,7 @@ import org.slf4j.LoggerFactory;
 public class Styles {
 
     static Logger log = LoggerFactory.getLogger(Styles.class);
-    
+
     public static final String ROOT_STYLE = "root";
     public static final ElementId DEFAULT_ELEMENT = new ElementId("default");
 
@@ -145,12 +147,12 @@ public class Styles {
     private Map<String, Attributes> attributeMap = new HashMap<String, Attributes>();
 
     private Map<Class, Object> defaults = new HashMap<Class, Object>();
-    
+
     /**
      *  The default style that is used when no style is specified by a GUI
      *  element.  This is different than the "root" style which is the style
      *  that is inherited by all other styles.  The default style is only used
-     *  when looking up attributes for application to components.  
+     *  when looking up attributes for application to components.
      */
     private String defaultStyle = ROOT_STYLE;
 
@@ -187,7 +189,7 @@ public class Styles {
     public String getDefaultStyle() {
         return defaultStyle;
     }
-    
+
     public void clearCache() {
         attributeMap.clear();
     }
@@ -203,7 +205,7 @@ public class Styles {
 
     /**
      *  Retrieves the compiled attributes for the specified element ID
-     *  and default style.  The attributes are compiled based on the 
+     *  and default style.  The attributes are compiled based on the
      *  selector rules and attributes setup prior to this call.
      */
     public Attributes getAttributes( ElementId elementId ) {
@@ -212,43 +214,43 @@ public class Styles {
 
     /**
      *  Retrieves the compiled attributes for the specified element ID
-     *  and style.  The attributes are compiled based on the 
+     *  and style.  The attributes are compiled based on the
      *  selector rules and attributes setup prior to this call.
      */
     public Attributes getAttributes( ElementId elementId, String style ) {
-        
+
         if( style == null ) {
             style = defaultStyle;
         }
         // See if we already have a cached version
-        String key = styleKey(elementId, style); 
+        String key = styleKey(elementId, style);
         Attributes result = attributeMap.get(key);
         if( result == null ) {
             // Look it up and cache it
             result = getTree(style, true).getAttributes(elementId);
- 
+
             // If this is not the default element then apply any
             // style-specific default attributes
             if( !DEFAULT_ELEMENT.equals(elementId) ) {
                 result = result.merge(getTree(style, true).getAttributes(DEFAULT_ELEMENT));
             }
-            
+
             // Apply default styles too if necessary
-            if( !ROOT_STYLE.equals(style) ) {                
+            if( !ROOT_STYLE.equals(style) ) {
                 // Look-up the element ID in the default style
                 Attributes toMerge = getAttributes(elementId, ROOT_STYLE);
                 result = result.merge(toMerge);
             }
-                        
-            // Cache it                        
-            attributeMap.put(key, result);             
+
+            // Cache it
+            attributeMap.put(key, result);
         }
         return result;
     }
 
     /**
      *  Retrieves the compiled attributes for the specified element ID
-     *  and default style.  The attributes are compiled based on the 
+     *  and default style.  The attributes are compiled based on the
      *  selector rules and attributes setup prior to this call.
      */
     public Attributes getAttributes( String elementId ) {
@@ -257,7 +259,7 @@ public class Styles {
 
     /**
      *  Retrieves the compiled attributes for the specified element ID
-     *  and style.  The attributes are compiled based on the 
+     *  and style.  The attributes are compiled based on the
      *  selector rules and attributes setup prior to this call.
      */
     public Attributes getAttributes( String elementId, String style ) {
@@ -268,7 +270,7 @@ public class Styles {
         if( style == null || style.equals(ROOT_STYLE) ) {
             return elementId.getId();
         }
-        return style + ":" + elementId.getId(); 
+        return style + ":" + elementId.getId();
     }
 
     protected StyleTree getTree( String style, boolean create ) {
@@ -278,7 +280,7 @@ public class Styles {
         StyleTree tree = styleTrees.get(style);
         if( tree == null && create ) {
             tree = new StyleTree(this);
-            styleTrees.put(style, tree);            
+            styleTrees.put(style, tree);
         }
         return tree;
     }
@@ -290,27 +292,27 @@ public class Styles {
     public Attributes getSelector( ElementId id, String style ) {
         // The implication is that we're about to set new style attributes...
         // so clear the cache
-        clearCache();    
+        clearCache();
         return getTree(style, true).getSelector(id, true);
     }
-    
+
     public Attributes getSelector( String id, String style ) {
-        return getSelector(new ElementId(id), style); 
+        return getSelector(new ElementId(id), style);
     }
 
     public Attributes getSelector( ElementId parent, ElementId child, String style ) {
-        clearCache();    
+        clearCache();
         return getTree(style, true).getSelector(parent, child, true);
-    }    
-    
+    }
+
     public Attributes getSelector( ElementId parent, String child, String style ) {
         return getSelector(parent, new ElementId(child), style);
     }
-    
+
     public Attributes getSelector( String parent, ElementId child, String style ) {
         return getSelector(new ElementId(parent), child, style);
     }
-    
+
     public Attributes getSelector( String parent, String child, String style ) {
         return getSelector(new ElementId(parent), new ElementId(child), style);
     }
@@ -419,19 +421,19 @@ public class Styles {
 
     @Deprecated
     public void applyStyles( Object o, String elementId ) {
-        applyStyles(o, new ElementId(elementId), null); 
+        applyStyles(o, new ElementId(elementId), null);
     }
 
     @Deprecated
     public void applyStyles( Object o, String elementId, String style ) {
         applyStyles(o, new ElementId(elementId), style);
     }
-    
+
     public void applyStyles( Object o, ElementId elementId ) {
         applyStyles(o, elementId, null);
     }
 
-    @SuppressWarnings("unchecked")    
+    @SuppressWarnings("unchecked")
     public void applyStyles( Object o, ElementId elementId, String style ) {
 
         Class c = o.getClass();
@@ -440,11 +442,13 @@ public class Styles {
         if( log.isTraceEnabled() ) {
             log.trace("applyStyles elementId:" + elementId + " style:" + style + (style==null?"(" + defaultStyle + ")":""));
         }
-        
+
         Attributes attrs = getAttributes(elementId, style);
         if( log.isTraceEnabled() ) {
             log.trace("style attributes:" + attrs);
         }
+
+        Cloner cloner = null;
 
         for( Method m : getStyleAttributeMethods(c) ) {
             StyleAttribute attribute = m.getAnnotation(StyleAttribute.class);
@@ -461,9 +465,12 @@ public class Styles {
             if( value == null )
                 continue;
 
-            // FIXME: better cloner here
-            if( value instanceof GuiComponent ) {
-                value = ((GuiComponent)value).clone();
+            // See if the value needs cloning
+            Object original = value;
+            value = clone(value, null);
+
+            if( log.isTraceEnabled() && original != value ) {
+                log.trace("Cloned value.\nOriginal:" + original + "\nClone:" + value);
             }
 
             // Else call it with the value
@@ -477,6 +484,162 @@ public class Styles {
             } catch( InvocationTargetException e ) {
                 throw new RuntimeException("Error applying attribute:" + attribute + " to:" + o, e);
             }
-        }        
+        }
     }
+
+    @SuppressWarnings("unchecked")
+    protected Object clone( Object value, Cloner cloner ) {
+
+        // The cloner argument may be null when we're called from
+        // the 'root' object.  This is to cover the case where we're just
+        // cloning a GuiComponent directly... cloner can't do that and there is
+        // no reason to create one just to throw it away.  Also no reason
+        // to create one if the object isn't even cloneable.
+        // As much as possible, this method tries to avoid creating garbage
+        // if nothing is going to get cloned anyway.
+
+        // Check the simple case first
+        if( value instanceof GuiComponent ) {
+            if( log.isTraceEnabled() ) {
+                log.trace("Cloning GuiComponent:" + value);
+            }
+            // These can be cloned directly but we'll check the cloner
+            // to see if we already may have
+            if( cloner != null ) {
+                if( cloner.isCloned(value) ) {
+                    // Return what we've already cloned previously
+                    return cloner.clone(value);
+                } else {
+                    // Save the clone for next time
+                    Object result = ((GuiComponent)value).clone();
+                    cloner.setClonedValue(value, result);
+                    return result;
+                }
+            }
+            // Else just clone it directly
+            return ((GuiComponent)value).clone();
+        }
+
+        if( value instanceof List ) {
+            if( log.isTraceEnabled() ) {
+                log.trace("Attempting to clone list:" + value);
+            }
+            return cloneList((List<Object>)value, cloner == null ? new Cloner() : cloner);
+        } else if( value instanceof Map ) {
+            if( log.isTraceEnabled() ) {
+                log.trace("Attempting to clone map:" + value);
+            }
+            return cloneMap((Map<Object, Object>)value, cloner == null ? new Cloner() : cloner);
+        } else if( value instanceof Cloneable ) {
+            if( log.isTraceEnabled() ) {
+                log.trace("Attempting to clone value:" + value);
+            }
+            if( cloner == null ) {
+                cloner = new Cloner();
+            }
+            return cloner.clone(value);
+        }
+
+        // Value was not cloneable... just return it
+        return value;
+    }
+
+    protected Map<Object, Object> cloneMap( Map<Object, Object> source, Cloner cloner ) {
+
+        // See if we've already cloned this one
+        if( cloner.isCloned(source) ) {
+            // clone() will just lookup the previous value
+            return (Map<Object, Object>)cloner.clone(source);
+        }
+
+        // We'll delay creating a map until we have a real
+        // cloned value that requires it
+        Map<Object, Object> result = null;
+
+        // Go through each of the entries and clone the values if possible
+        for( Map.Entry<Object, Object> e : source.entrySet() ) {
+            Object value = e.getValue();
+            Object clone = clone(value, cloner);
+            if( value != clone ) {
+                // We actually cloned the value... so we'll store it.
+                if( result == null ) {
+                    // Need to create the map into which we'll poor our values
+                    // First do a shallow clone if possible to keep the implementation
+                    // the same in case it's a special map class
+                    if( source instanceof Cloneable ) {
+                        try {
+                            result = (Map<Object, Object>)cloner.javaClone(source);
+                        } catch( CloneNotSupportedException ex ) {
+                            log.warn("Map implementation cannot be cloned:" + source.getClass() + " values:" + source, ex);
+
+                            // Else just create any old map
+                            result = new HashMap<>(source);
+                        }
+                    } else {
+                        // Else just create any old map
+                        result = new HashMap<>(source);
+                    }
+                }
+                result.put(e.getKey(), clone);
+            }
+        }
+
+        if( result != null ) {
+            // Cache it for later
+            cloner.setClonedValue(source, result);
+            return result;
+        }
+
+        // Else we didn't clone it so just return the value directly
+        return source;
+    }
+
+    protected List<Object> cloneList( List<Object> source, Cloner cloner ) {
+
+        // See if we've already cloned this one
+        if( cloner.isCloned(source) ) {
+            // clone() will just lookup the previous value
+            return (List<Object>)cloner.clone(source);
+        }
+
+        // We'll delay creating a list until we have a real
+        // cloned value that requires it
+        List<Object> result = null;
+
+        for( int i = 0; i < source.size(); i++ ) {
+            Object value = source.get(i);
+            Object clone = clone(value, cloner);
+            if( clone != value ) {
+                // We actually cloned the value... so we'll store it.
+                if( result == null ) {
+                    // First do a shallow clone if possible to keep the implementation
+                    // the same in case it's a special map class
+                    if( source instanceof Cloneable ) {
+                        try {
+                            result = (List<Object>)cloner.javaClone(source);
+                        } catch( CloneNotSupportedException e ) {
+                            log.warn("List implementation cannot be cloned:" + source.getClass() + " values:" + source, e);
+
+                            // Else just create any old map
+                            result = new ArrayList<>(source);
+                        }
+                    } else {
+                        // Else just create any old map
+                        result = new ArrayList<>(source);
+                    }
+                }
+                result.set(i, clone);
+            }
+        }
+
+        if( result != null ) {
+            // Cache it for later
+            cloner.setClonedValue(source, result);
+            return result;
+        }
+
+        // Else we didn't clone it so just return the value directly
+        return source;
+    }
+
 }
