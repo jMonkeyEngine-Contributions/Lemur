@@ -152,7 +152,7 @@ public class PasswordField extends TextField {
     @StyleAttribute(value="outputCharacter", lookupDefault=false)
     public void setOutputCharacter( Character c ) {
         this.outputChar = c == null ? '*' : c;
-        wrapper.setOutputTransform(TextFilters.constantTransform(c));
+        wrapper.setOutputTransform(TextFilters.constantTransform(this.outputChar));
     }
     
     public char getOutputCharacter() {
