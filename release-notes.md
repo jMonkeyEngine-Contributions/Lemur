@@ -6,6 +6,7 @@ Lemur 1.14.0 (unreleased)
     to style targets.  It will also deep clone lists and maps if necessary to
     allow for cloning child values.  (Especially important for clonable action
     handlers in action maps.)
+* Fixed an NPE related to calling PasswordField.setOutputChar(null). Thahks, syluna.
 
 
 Lemur 1.13.0 (latest)
