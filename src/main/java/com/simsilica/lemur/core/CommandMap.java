@@ -47,6 +47,7 @@ import com.simsilica.lemur.Command;
  *  @author    Paul Speed
  */
 public class CommandMap<S,K> extends HashMap<K, List<Command<? super S>>> {
+    private static final long serialVersionUID = -3911971011361221761L;
     private S source;
 
     public CommandMap( S source ) {
@@ -62,8 +63,8 @@ public class CommandMap<S,K> extends HashMap<K, List<Command<? super S>>> {
         }
     }
 
-    @SuppressWarnings("unchecked") // because Java doesn't like var-arg generics
-    public void addCommands( K key, Command<? super S>... commands ) {
+    @SafeVarargs
+    public final void addCommands( K key, Command<? super S>... commands ) {
         addCommands(key, Arrays.asList(commands));
     }
 
