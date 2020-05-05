@@ -139,8 +139,8 @@ public class Button extends Label {
         attrs.set("shadowColor", globals.srgbaColor(new ColorRGBA(0, 0, 0, 0.5f)), false);
     }
 
-    @SuppressWarnings("unchecked") // because Java doesn't like var-arg generics
-    public void addCommands( ButtonAction a, Command<? super Button>... commands ) {
+    @SafeVarargs
+    public final void addCommands( ButtonAction a, Command<? super Button>... commands ) {
         commandMap.addCommands(a, commands);
     }
 
@@ -148,13 +148,13 @@ public class Button extends Label {
         return commandMap.get(a, false);
     }
 
-    @SuppressWarnings("unchecked") // because Java doesn't like var-arg generics
-    public void addClickCommands( Command<? super Button>... commands ) {
+    @SafeVarargs
+    public final void addClickCommands( Command<? super Button>... commands ) {
         commandMap.addCommands(ButtonAction.Click, commands);
     }
 
-    @SuppressWarnings("unchecked") // because Java doesn't like var-arg generics
-    public void removeClickCommands( Command<? super Button>... commands ) {
+    @SafeVarargs
+    public final void removeClickCommands( Command<? super Button>... commands ) {
         getClickCommands().removeAll(Arrays.asList(commands));
     } 
 
