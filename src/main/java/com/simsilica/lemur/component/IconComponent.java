@@ -87,7 +87,20 @@ public class IconComponent extends AbstractGuiComponent
         this(imagePath, new Vector2f(iconScale, iconScale), xMargin, yMargin,
              zOffset, lit);                          
     }
-                              
+
+    public IconComponent( Texture texture, Vector2f iconScale,
+                          float xMargin, float yMargin, float zOffset,
+                          boolean lit ) {
+        this.imagePath = texture.getName();
+        this.image = texture;
+        this.iconScale = iconScale;
+        this.xMargin = xMargin;
+        this.yMargin = yMargin;
+        this.zOffset = zOffset;
+        this.lit = lit;
+        createIcon();
+    }
+
     public IconComponent( String imagePath, Vector2f iconScale,
                           float xMargin, float yMargin, float zOffset,
                           boolean lit ) {
