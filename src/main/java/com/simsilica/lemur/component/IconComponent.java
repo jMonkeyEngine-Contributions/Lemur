@@ -264,6 +264,13 @@ public class IconComponent extends AbstractGuiComponent
         invalidate();
     }
 
+    public void setMargin(Vector2f margin) {
+        this.xMargin = margin.x;
+        this.yMargin = margin.y;
+
+        invalidate();
+    }
+
     public Vector2f getMargin() {
         return new Vector2f(xMargin, yMargin);
     }
