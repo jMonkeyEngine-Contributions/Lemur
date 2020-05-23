@@ -199,6 +199,11 @@ public class QuadBackgroundComponent extends AbstractGuiComponent
         invalidate();
     }
 
+    public void setMargin(Vector2f margin) {
+        this.xMargin = margin.x;
+        this.yMargin = margin.y;
+    }
+
     public Vector2f getMargin() {
         return new Vector2f(xMargin, yMargin);
     }

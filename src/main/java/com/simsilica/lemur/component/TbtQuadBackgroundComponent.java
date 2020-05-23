@@ -241,6 +241,11 @@ public class TbtQuadBackgroundComponent extends AbstractGuiComponent
         invalidate();
     }
 
+    public void setMargin(Vector2f margin) {
+        this.xMargin = margin.x;
+        this.yMargin = margin.y;
+    }
+
     public float getZOffset() {
         return zOffset;
     }
