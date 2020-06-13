@@ -199,6 +199,13 @@ public class QuadBackgroundComponent extends AbstractGuiComponent
         invalidate();
     }
 
+    public void setMargin( Vector2f margin ) {
+        if( margin == null ) {
+            throw new IllegalArgumentException("Margin cannot be null");
+        }
+        setMargin(margin.x, margin.y);
+    }
+
     public Vector2f getMargin() {
         return new Vector2f(xMargin, yMargin);
     }

@@ -12,6 +12,10 @@ Lemur 1.14.0 (unreleased)
     tools.
 * Modified InputMapper to check for null listeners in the add/remove listener
     methods.  Throws IllegalArgumentException if null.    
+* Added Texture-based constructor to IconComponent;
+* Added IconComponent.setMargin(Vector2f)
+* Added QuadBackgroundComponent.setMargin(Vector2f)
+* Added TbtQuadBackgroundComponent..setMargin(Vector2f)
 
 
 Lemur 1.13.0 (latest)

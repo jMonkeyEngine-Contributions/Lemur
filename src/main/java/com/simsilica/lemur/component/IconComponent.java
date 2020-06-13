@@ -91,8 +91,20 @@ public class IconComponent extends AbstractGuiComponent
     public IconComponent( String imagePath, Vector2f iconScale,
                           float xMargin, float yMargin, float zOffset,
                           boolean lit ) {
-        this.imagePath = imagePath;
-        this.image = GuiGlobals.getInstance().loadTexture(imagePath, false, false);
+        this(GuiGlobals.getInstance().loadTexture(imagePath, false, false),
+             iconScale, xMargin, yMargin, zOffset, lit);                          
+    }                          
+                          
+    public IconComponent( Texture image, Vector2f iconScale,
+                          float xMargin, float yMargin, float zOffset,
+                          boolean lit ) {
+        if( image == null ) {
+            throw new IllegalArgumentException("Image texture cannot be null");
+        }
+        // In the case where the 'imagePath' based constructors are called,
+        // the Text.name is the same as the imagePath provided originally.                          
+        this.imagePath = image.getName();
+        this.image = image;
         this.iconScale = iconScale;
         this.xMargin = xMargin;
         this.yMargin = yMargin;
@@ -249,6 +261,13 @@ public class IconComponent extends AbstractGuiComponent
         this.yMargin = y;
 
         invalidate();
+    }
+    
+    public void setMargin( Vector2f margin ) {
+        if( margin == null ) {
+            throw new IllegalArgumentException("Margin cannot be null");
+        }
+        setMargin(margin.x, margin.y);
     }
 
     public Vector2f getMargin() {
