@@ -52,6 +52,7 @@ import com.jme3.renderer.ViewPort;
 import com.jme3.renderer.queue.RenderQueue;
 import com.jme3.renderer.queue.RenderQueue.Bucket;
 import com.jme3.scene.Spatial;
+import com.jme3.system.JmeContext.Type;
 import com.jme3.texture.Texture;
 
 import com.simsilica.lemur.anim.AnimationState;
@@ -134,8 +135,25 @@ public class GuiGlobals {
         return instance;
     }
 
+    protected boolean isHeadless( Application app ) {
+        Type type = app.getContext().getType(); 
+        return type == Type.Headless; // || type == Type.OffscreenSurface;
+    }
+
     protected GuiGlobals( Application app ) {
         this.assets = app.getAssetManager();
+        
+        if( isHeadless(app) ) {
+            // Do only minimal initialization... and nothing requiring
+            // input, a screen, etc.
+            styles = new Styles();
+            setDefaultStyles();
+
+            iconBase = getClass().getPackage().getName().replace( '.', '/' ) + "/icons";
+            
+            return;
+        }
+         
         this.keyInterceptor = new KeyInterceptState(app);
         
         // For now, pick either mouse or touch based on the
@@ -217,6 +235,8 @@ public class GuiGlobals {
                                  new LayerComparator(rq.getGeometryComparator(Bucket.Opaque), -1));
         rq.setGeometryComparator(Bucket.Transparent,
                                  new LayerComparator(rq.getGeometryComparator(Bucket.Transparent), -1));
+        rq.setGeometryComparator(Bucket.Translucent,
+                                 new LayerComparator(rq.getGeometryComparator(Bucket.Translucent), -1));
         rq.setGeometryComparator(Bucket.Gui,
                                  new LayerComparator(rq.getGeometryComparator(Bucket.Gui), -1));
     }

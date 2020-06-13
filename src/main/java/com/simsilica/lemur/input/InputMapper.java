@@ -392,8 +392,12 @@ public class InputMapper {
     }     
 
     public void addStateListener( StateFunctionListener l, FunctionId... functions ) {
-        if( functions == null || functions.length == 0 )
+        if( functions == null || functions.length == 0 ) {
             throw new RuntimeException( "No function IDs specified." );
+        }
+        if( l == null ) {
+            throw new IllegalArgumentException("Listener cannot be null");
+        }
 
         for( FunctionId function : functions ) {
             FunctionListeners listeners = getFunctionListeners(function, true);
@@ -402,8 +406,12 @@ public class InputMapper {
     }
 
     public void removeStateListener( StateFunctionListener l, FunctionId... functions ) {
-        if( functions == null || functions.length == 0 )
+        if( functions == null || functions.length == 0 ) {
             throw new RuntimeException( "No function IDs specified." );
+        }
+        if( l == null ) {
+            throw new IllegalArgumentException("Listener cannot be null");
+        }
 
         for( FunctionId function : functions ) {
             FunctionListeners listeners = getFunctionListeners(function, false);
@@ -414,8 +422,12 @@ public class InputMapper {
     }
 
     public void addAnalogListener( AnalogFunctionListener l, FunctionId... functions ) {
-        if( functions == null || functions.length == 0 )
+        if( functions == null || functions.length == 0 ) {
             throw new RuntimeException( "No function IDs specified." );
+        }
+        if( l == null ) {
+            throw new IllegalArgumentException("Listener cannot be null");
+        }
 
         for( FunctionId function : functions ) {
             FunctionListeners listeners = getFunctionListeners(function, true);
@@ -424,8 +436,12 @@ public class InputMapper {
     }
 
     public void removeAnalogListener( AnalogFunctionListener l, FunctionId... functions ) {
-        if( functions == null || functions.length == 0 )
+        if( functions == null || functions.length == 0 ) {
             throw new RuntimeException( "No function IDs specified." );
+        }
+        if( l == null ) {
+            throw new IllegalArgumentException("Listener cannot be null");
+        }
 
         for( FunctionId function : functions ) {
             FunctionListeners listeners = getFunctionListeners(function, false);

@@ -7,6 +7,11 @@ Lemur 1.14.0 (unreleased)
     allow for cloning child values.  (Especially important for clonable action
     handlers in action maps.)
 * Fixed an NPE related to calling PasswordField.setOutputChar(null). Thanks, syluna.
+* Fixed GuiGlobals to add the LayerComparator to the Translucent bucket.
+* Modified GuiGlobals to support JME's headless mode for writing Lemur-using command line
+    tools.
+* Modified InputMapper to check for null listeners in the add/remove listener
+    methods.  Throws IllegalArgumentException if null.    
 
 
 Lemur 1.13.0 (latest)
