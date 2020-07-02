@@ -72,7 +72,7 @@ public class TweenAnimation implements Animation {
      *  Returns true if the animation is currently running.
      */
     public boolean isRunning() {
-        return (loop && running) && t >= 0;
+        return running && (loop || t >= 0);
     }
  
     /**
