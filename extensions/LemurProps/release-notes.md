@@ -1,9 +1,9 @@
-Version 1.1.1 (unreleased)
+Version 1.1.1 (latest)
 --------------
 * Modified the JME dependency version to be specific instead of floating.
 
 
-Version 1.1.0 (latest)
+Version 1.1.0
 --------------
 *  Added Double property support.
 

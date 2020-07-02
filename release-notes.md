@@ -1,4 +1,4 @@
-Lemur 1.14.0 (unreleased)
+Lemur 1.14.0 (latest)
 -------------
 * Added a default getId() implementation to BaseAppState so that it is compatible
     with the AppState interface in JME 3.3+.
@@ -11,14 +11,14 @@ Lemur 1.14.0 (unreleased)
 * Modified GuiGlobals to support JME's headless mode for writing Lemur-using command line
     tools.
 * Modified InputMapper to check for null listeners in the add/remove listener
-    methods.  Throws IllegalArgumentException if null.    
+    methods.  Throws IllegalArgumentException if null.
 * Added Texture-based constructor to IconComponent;
 * Added IconComponent.setMargin(Vector2f)
 * Added QuadBackgroundComponent.setMargin(Vector2f)
 * Added TbtQuadBackgroundComponent..setMargin(Vector2f)
 
 
-Lemur 1.13.0 (latest)
+Lemur 1.13.0
 -------------
 * Added constants EFFECT_OPEN and EFFECT_CLOSE to Panel to make it easier
     to standardize open/close effects.
