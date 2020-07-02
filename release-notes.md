@@ -1,3 +1,7 @@
+Lemur 1.14.1 (unreleased)
+-------------
+
+
 Lemur 1.14.0 (latest)
 -------------
 * Added a default getId() implementation to BaseAppState so that it is compatible
@@ -16,6 +20,8 @@ Lemur 1.14.0 (latest)
 * Added IconComponent.setMargin(Vector2f)
 * Added QuadBackgroundComponent.setMargin(Vector2f)
 * Added TbtQuadBackgroundComponent..setMargin(Vector2f)
+* Fixed an issue with TweenAnimation where isRunning() always returns false for 
+    nonlooping animations.
 
 
 Lemur 1.13.0
