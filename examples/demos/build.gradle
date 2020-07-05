@@ -41,8 +41,8 @@ dependencies {
     compile "org.jmonkeyengine:jme3-desktop:$jmeVersion"
     compile "org.jmonkeyengine:jme3-lwjgl:$jmeVersion"
  
-    compile "com.simsilica:lemur:1.12.1-SNAPSHOT"
-    compile "com.simsilica:lemur-proto:1.11.0-SNAPSHOT"
+    compile "com.simsilica:lemur:1.14.0"
+    compile "com.simsilica:lemur-proto:1.11.0"
     
     // needed for the style language
     runtime "org.codehaus.groovy:groovy-all:2.4.5"
