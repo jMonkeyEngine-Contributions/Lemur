@@ -38,6 +38,8 @@ package com.simsilica.lemur.core;
 
 import java.util.*;
 
+import org.slf4j.*;
+
 import com.jme3.util.SafeArrayList;
 
 
@@ -70,6 +72,8 @@ import com.jme3.util.SafeArrayList;
  *  @author    Paul Speed
  */
 public class ComponentStack extends AbstractList<GuiComponent> {
+
+    static Logger log = LoggerFactory.getLogger(ComponentStack.class);
 
     /**
      *  The GuiControl that contains us.  Note: even if this stack
@@ -228,7 +232,12 @@ public class ComponentStack extends AbstractList<GuiComponent> {
         if( c != null ) {   
             // Remove it just in case the caller was confused
             // about what this is doing.
-            removeComponent(c);
+            // removeComponent(c);
+            // Actually, we need to remove it from whatever parent it
+            // might be in already.
+            if( c.getGuiControl() != null ) {
+                c.getGuiControl().removeComponent(c);
+            }
         
             // Now, if the layer already has a component then we
             // will have to detach it... but we also get away without
@@ -288,8 +297,10 @@ public class ComponentStack extends AbstractList<GuiComponent> {
      *  Removes the specified component from the stack.
      */    
     public boolean removeComponent( GuiComponent c ) {
-        if( !components.remove(c) )
+log.info("removeComponent(" + c + ")");    
+        if( !components.remove(c) ) {
             return false;
+        }
             
         // Make sure it's removed from the base structures            
         index.values().remove(c);
