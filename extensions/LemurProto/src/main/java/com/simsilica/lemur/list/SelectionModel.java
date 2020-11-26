@@ -36,7 +36,10 @@
 
 package com.simsilica.lemur.list;
 
-import com.google.common.base.Objects;
+import java.util.Objects;
+
+import com.simsilica.lemur.core.VersionedHolder;
+import com.simsilica.lemur.core.VersionedReference;
 import com.simsilica.lemur.core.VersionedSet;
 
 
@@ -50,8 +53,18 @@ public class SelectionModel extends VersionedSet<Integer>
     
     private SelectionMode mode = SelectionMode.Single;
     private Integer lastAdd;
+ 
+    // In single selection, this will contain the current selection.   
+    private VersionedHolder<Integer> selected = new VersionedHolder<>(null);
     
     public SelectionModel() {
+    }
+ 
+    /**
+     *  For single-selections, this will hold the currently selected value.  
+     */
+    public VersionedReference<Integer> createSelectionReference() {
+        return selected.createReference(); 
     }
     
     public void setSelectionMode( SelectionMode mode ) {
@@ -103,7 +116,7 @@ public class SelectionModel extends VersionedSet<Integer>
      *  than 0 then the selection is simply cleared. 
      */
     public void setSelection( Integer selection ) {
-        if( Objects.equal(selection, lastAdd) && size() == 1 )
+        if( Objects.equals(selection, lastAdd) && size() == 1 )
             return;
         clear();
         if( selection >= 0 ) {
@@ -114,11 +127,26 @@ public class SelectionModel extends VersionedSet<Integer>
     @Override   
     public boolean add( Integer selection ) {        
         if( mode == SelectionMode.Single ) {
-            if( Objects.equal(selection, lastAdd) && size() == 1 )
+            if( Objects.equals(selection, lastAdd) && size() == 1 )
                 return false; 
             clear();
         }
         lastAdd = selection;
         return super.add(selection);
-    }    
+    }
+    
+    @Override
+    protected void incrementVersion() {
+        super.incrementVersion();
+        updateSelected();
+    } 
+        
+    protected void updateSelected() {
+        Integer i = getSelection();
+        if( Objects.equals(i, selected.getObject()) ) {
+            return;
+        }
+        selected.setObject(i);
+    }
+    
 }

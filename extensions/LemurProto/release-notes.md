@@ -1,5 +1,7 @@
 Lemur-Proto 1.11.1 (unrleased)
 -------------------
+* Added SelectionModel.createSelectionReference() for obtaining a VersionedReference
+    of just the single-selection state.
 
 
 Lemur-Proto 1.11.0 (latest)
