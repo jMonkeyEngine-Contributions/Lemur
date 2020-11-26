@@ -297,7 +297,6 @@ public class ComponentStack extends AbstractList<GuiComponent> {
      *  Removes the specified component from the stack.
      */    
     public boolean removeComponent( GuiComponent c ) {
-log.info("removeComponent(" + c + ")");    
         if( !components.remove(c) ) {
             return false;
         }
