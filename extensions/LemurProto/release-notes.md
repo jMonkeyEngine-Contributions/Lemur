@@ -5,6 +5,7 @@ Lemur-Proto 1.11.1 (unrleased)
 * Fixed DefaultCellRenderer to use 'null' as the default style instead of "root".
     This fits the overall API better and was probably a hold over from before there
     were default styles.  It still might be a breaking change for someone.    
+* Fixed a bug where ListBox click listeners weren't getting executed.
 
 
 Lemur-Proto 1.11.0 (latest)

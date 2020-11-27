@@ -420,7 +420,6 @@ public class ListBox<T> extends Panel {
     protected Panel getListCell( int row, int col, Panel existing ) {
         T value = model.get(row);
         Panel cell = cellRenderer.getView(value, false, existing);
- 
         if( cell != existing ) {
             // Transfer the click listener                  
             CursorEventControl.addListenersToSpatial(cell, clickListener);
@@ -489,7 +488,7 @@ public class ListBox<T> extends Panel {
     
         @Override
         public void cursorButtonEvent( CursorButtonEvent event, Spatial target, Spatial capture ) {
- 
+
             // Find the element we clicked on
             int base = grid.getRow();
             for( int i = 0; i < grid.getVisibleRows(); i++ ) {
@@ -510,7 +509,10 @@ public class ListBox<T> extends Panel {
                 commandMap.runCommands(ListAction.Down);
                 runEffect(EFFECT_PRESS);
             } else {
-                if( target == capture ) {
+                // Adding a target == ListBox.this check because the capture
+                // seems to be the button but the target on release is the list
+                // for some reason.
+                if( target == capture || target == ListBox.this ) {
                     // Then we are still over the list box and we should run the
                     // click
                     click(event, target, capture);
