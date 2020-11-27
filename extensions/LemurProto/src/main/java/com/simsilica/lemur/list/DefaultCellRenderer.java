@@ -54,7 +54,11 @@ public class DefaultCellRenderer<T> implements CellRenderer<T>, Cloneable {
     private Function<T, String> transform;
     
     public DefaultCellRenderer() {
-        this(new ElementId(Button.ELEMENT_ID), Styles.ROOT_STYLE, null);
+        //this(new ElementId(Button.ELEMENT_ID), Styles.ROOT_STYLE, null);
+        // I believe the above is a mistake as we should be using the default
+        // style if none is specified.  It is a change in behavior, though.
+        // 2020-11-27
+        this(new ElementId(Button.ELEMENT_ID), null, null);
     }
     
     public DefaultCellRenderer( String style ) {

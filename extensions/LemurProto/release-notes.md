@@ -2,6 +2,9 @@ Lemur-Proto 1.11.1 (unrleased)
 -------------------
 * Added SelectionModel.createSelectionReference() for obtaining a VersionedReference
     of just the single-selection state.
+* Fixed DefaultCellRenderer to use 'null' as the default style instead of "root".
+    This fits the overall API better and was probably a hold over from before there
+    were default styles.  It still might be a breaking change for someone.    
 
 
 Lemur-Proto 1.11.0 (latest)
