@@ -6,6 +6,8 @@ Lemur-Proto 1.11.1 (unrleased)
     This fits the overall API better and was probably a hold over from before there
     were default styles.  It still might be a breaking change for someone.    
 * Fixed a bug where ListBox click listeners weren't getting executed.
+* Added a Selector GUI element for selecting options for a list of values.
+    Basically it's a single value field that pops up a list box when clicked.
 
 
 Lemur-Proto 1.11.0 (latest)
