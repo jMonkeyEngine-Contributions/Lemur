@@ -1,0 +1,344 @@
+/*
+ * $Id$
+ * 
+ * Copyright (c) 2020, Simsilica, LLC
+ * All rights reserved.
+ * 
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions 
+ * are met:
+ * 
+ * 1. Redistributions of source code must retain the above copyright 
+ *    notice, this list of conditions and the following disclaimer.
+ * 
+ * 2. Redistributions in binary form must reproduce the above copyright 
+ *    notice, this list of conditions and the following disclaimer in 
+ *    the documentation and/or other materials provided with the 
+ *    distribution.
+ * 
+ * 3. Neither the name of the copyright holder nor the names of its 
+ *    contributors may be used to endorse or promote products derived 
+ *    from this software without specific prior written permission.
+ * 
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS 
+ * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT 
+ * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS 
+ * FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE 
+ * COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, 
+ * INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES 
+ * (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR 
+ * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) 
+ * HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, 
+ * STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) 
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED 
+ * OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+package com.simsilica.lemur;
+
+import org.slf4j.*;
+
+import com.jme3.math.Vector2f;
+import com.jme3.math.Vector3f;
+import com.jme3.scene.Spatial;
+
+import com.simsilica.lemur.core.*;
+import com.simsilica.lemur.component.*;
+import com.simsilica.lemur.event.*;
+import com.simsilica.lemur.list.*;
+import com.simsilica.lemur.style.*;
+
+
+/**
+ *  A GUI element that presents a value and a drop down for selecting
+ *  a different value.  
+ *
+ *  @author    Paul Speed
+ */
+public class Selector<T> extends Panel {
+
+    static Logger log = LoggerFactory.getLogger(ListBox.class);
+    
+    public static final String ELEMENT_ID = "selector";
+    public static final String CONTAINER_ID = "container";
+    public static final String EXPANDER_ID = "down.button";
+
+    private BorderLayout layout;
+
+    private CellRenderer<T> cellRenderer;
+    private ListBox<T> listBox;
+    private Panel view;
+    private Button expander;
+    private Container popup; // because it won't look good with the default list background
+     
+    private ClickListener clickListener = new ClickListener();        
+    private SelectListener selectListener = new SelectListener();
+    private ReshapeListener reshapeListener = new ReshapeListener();
+ 
+    private boolean expanded;
+    private int maximumVisibleItems;
+
+    private VersionedReference<Integer> selectionRef;
+    private VersionedHolder<T> selectedItem = new VersionedHolder<>();
+ 
+    public Selector() {
+        this(true, new VersionedList<T>(), null,
+             new SelectionModel(),
+             new ElementId(ELEMENT_ID), null);             
+    }
+
+    public Selector( VersionedList<T> model ) {
+        this(true, model, null, 
+                new SelectionModel(), new ElementId(ELEMENT_ID), null);             
+    }
+
+    public Selector( VersionedList<T> model, CellRenderer<T> renderer, String style ) {
+        this(true, model, renderer, new SelectionModel(), new ElementId(ELEMENT_ID), style);             
+    }
+
+    public Selector( VersionedList<T> model, String style ) {
+        this(true, model, null, new SelectionModel(), new ElementId(ELEMENT_ID), style);             
+    }
+ 
+    public Selector( VersionedList<T> model, ElementId elementId, String style ) {
+        this(true, model, null, new SelectionModel(), elementId, style);             
+    }
+
+    public Selector( VersionedList<T> model, CellRenderer<T> renderer, ElementId elementId, String style ) {
+        this(true, model, renderer, new SelectionModel(), elementId, style);             
+    }
+     
+    @SuppressWarnings("unchecked") // because Java doesn't like var-arg generics
+    protected Selector( boolean applyStyles, VersionedList<T> model, CellRenderer<T> cellRenderer,
+                        SelectionModel selection, ElementId elementId, String style ) {
+        super(false, elementId.child(CONTAINER_ID), style);
+                        
+        // For now we will internally use a ListBox for the drop down part.
+        // I think any problems we have with this are actually ListBox problems
+        // and so may work themselves out in the end.  For example, it would be
+        // nice to have a scroll bar only when required.
+
+        // We create it here to share it with the ListBox because we will
+        // need to render the element for display. 
+        if( cellRenderer == null ) {
+            // Create a default one
+            cellRenderer = new DefaultCellRenderer<>(elementId.child("item"), style);
+        }
+        this.cellRenderer = cellRenderer;
+ 
+        this.listBox = new ListBox<>(model, cellRenderer, elementId.child("list"), style);
+        listBox.setSelectionModel(selection);
+        listBox.addClickCommands(selectListener);
+        this.selectionRef = listBox.getSelectionModel().createSelectionReference();
+        selectedItem.setObject(getSelectedListValue());
+ 
+        this.layout = new BorderLayout();
+        getControl(GuiControl.class).setLayout(layout);
+
+        // Apply styles before creating children to make sure the
+        // default styles are applied first.
+        if( applyStyles ) {
+            Styles styles = GuiGlobals.getInstance().getStyles();
+            styles.applyStyles(this, getElementId(), style);
+        }
+
+        this.popup = new Container(new BorderLayout(), elementId.child("popup"), style);
+        popup.addChild(listBox, BorderLayout.Position.Center);
+
+        this.expander = new Button(null, true, elementId.child(EXPANDER_ID), style);
+        expander.addClickCommands(clickListener);
+
+        layout.addChild(BorderLayout.Position.East, expander);
+ 
+        resetView();               
+    }
+ 
+    @StyleDefaults(ELEMENT_ID)
+    public static void initializeDefaultStyles( Styles styles, Attributes attrs ) {
+        ElementId parent = new ElementId(ELEMENT_ID);
+        styles.getSelector(parent.child(EXPANDER_ID), null).set("text", "v", false);
+    }
+ 
+    public ListBox getListBox() {
+        return listBox;
+    }
+    
+    public Button getExpanderButton() {
+        return expander;
+    }
+    
+    public Container getPopupContainer() {
+        return popup;
+    }
+ 
+    @StyleAttribute(value="maximumVisibleItems", lookupDefault=false)
+    public void setMaximumVisibleItems( int count ) {
+        if( this.maximumVisibleItems == count ) {
+            return;
+        }
+        this.maximumVisibleItems = count;
+    }
+    
+    public int getMaximumVisibleItems() {
+        return maximumVisibleItems;
+    }
+ 
+    public void setSelectedItem( T item ) {
+        int i = listBox.getModel().indexOf(item);
+        if( i < 0 ) {
+            log.warn("No item in list:" + item);
+            listBox.getSelectionModel().clear();
+        } else {
+            listBox.getSelectionModel().setSelection(i);
+        }
+    }
+    
+    public T getSelectedItem() {
+        updateSelection();
+        return selectedItem.getObject();
+    }    
+
+    public VersionedReference<T> createSelectedItemReference() {
+        return selectedItem.createReference();
+    }
+
+    protected void updateSelection() {
+        if( selectionRef.update() ) {
+            Integer i = selectionRef.get();
+            if( i == null ) {
+                selectedItem.setObject(null);
+            } else {
+                selectedItem.setObject(listBox.getModel().get(i));
+            }
+            resetView();
+        }
+    }
+ 
+    @Override
+    public void updateLogicalState( float tpf ) {
+        super.updateLogicalState(tpf);
+        updateSelection();
+    }
+    
+    public void setExpanded( boolean b ) {
+        if( this.expanded == b ) {
+            return;
+        }
+        if( b ) {
+            expand();
+        } else {
+            collapse();
+        }        
+    }
+    
+    public boolean isExpanded() {
+        return expanded;
+    }
+    
+    protected void resetView() {
+        Panel newView = cellRenderer.getView(getSelectedListValue(), false, view);
+        if( newView != view ) {
+            // Transfer the click listener                  
+            CursorEventControl.addListenersToSpatial(newView, clickListener);
+            CursorEventControl.removeListenersFromSpatial(view, clickListener);
+        
+            this.view = newView;
+            layout.addChild(view, BorderLayout.Position.Center);            
+        }
+    }
+    
+    protected T getSelectedListValue() {
+        Integer i = listBox.getSelectionModel().getSelection();
+        if( i == null ) {
+            return null;
+        }
+        if( i >= listBox.getModel().size() ) {
+            i = 0;
+        }
+        return listBox.getModel().get(i);              
+    }
+
+    protected int calculateListSize() {
+        int size = listBox.getModel().size();
+        if( maximumVisibleItems != 0 ) {
+            size = Math.min(maximumVisibleItems, size);
+        }
+        // Either way, we should make sure that we don't fall off the
+        // bottom or sides of the screen.
+        // We'll guess the size from the view       
+        Vector2f guiSize = GuiGlobals.getInstance().getPopupState().getGuiSize();
+        int maxSize = (int)(guiSize.y / view.getSize().y);         
+        maxSize = Math.max(maxSize, 3); // always show at least 3 items
+        size = Math.min(size, maxSize);
+
+        return size;
+    }
+ 
+    protected Vector3f calculatePopupLocation( Vector3f loc ) {
+        Vector3f pref = popup.getPreferredSize();
+        Vector2f guiSize = GuiGlobals.getInstance().getPopupState().getGuiSize();
+        loc.x = Math.min(loc.x, guiSize.x - pref.x);
+        // y grows down in Lemur
+        loc.y = Math.max(loc.y, pref.y);
+        return loc; 
+    }
+    
+    protected void expand() {
+        listBox.setVisibleItems(calculateListSize());        
+        popup.setLocalTranslation(calculatePopupLocation(getWorldTranslation().clone()));
+ 
+        // Make sure we keep it on screen even if it resizes itself
+        popup.getControl(GuiControl.class).addListener(reshapeListener);
+         
+        GuiGlobals.getInstance().getPopupState()
+                .showPopup(popup, new Command<PopupState>() {
+                        public void execute( PopupState state ) {
+                            collapse();
+                        }
+                    }); 
+        
+        this.expanded = true;
+    }
+
+    protected void collapse() {
+        PopupState state = GuiGlobals.getInstance().getPopupState(); 
+        if( state.isPopup(popup) ) {
+            state.closePopup(popup);
+        }
+        popup.getControl(GuiControl.class).removeListener(reshapeListener);    
+        this.expanded = false;
+    }
+    
+    private class ClickListener extends DefaultCursorListener implements Command<Button> {
+ 
+        @Override
+        protected void click( CursorButtonEvent event, Spatial target, Spatial capture ) {
+            expand();
+        }
+ 
+        public void execute( Button button ) {
+            expand();
+        }           
+    }
+
+    private class SelectListener implements Command<ListBox> {
+        public void execute( ListBox list ) {
+            collapse();
+        }
+    }
+ 
+    private class ReshapeListener extends AbstractGuiControlListener {
+ 
+        @Override
+        public void reshape( GuiControl source, Vector3f pos, Vector3f size ) {
+            // Note: reshape() is about the layout within the container
+            // and not its position on screen... so moving the popup isn't
+            // really a recursive operation.
+            Vector3f world = popup.getLocalTranslation();
+            Vector3f loc = calculatePopupLocation(world);
+            popup.setLocalTranslation(loc);
+        }
+    }           
+}
+
+

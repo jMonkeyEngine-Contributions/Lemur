@@ -64,3 +64,22 @@ selector( "colorChooser.colors", "glass" ) {
     border.setColor(color(0.25, 0.5, 0.5, 0.5))
     insets = new Insets3f( 2, 2, 2, 2, 2, 2 );
 }
+
+selector( "selector.container", "glass" ) {
+    background = gradient.clone()
+    color = color(0.8, 0.9, 1, 0.85f)
+    background.setColor(color(0, 0.75, 0.75, 0.5))
+    //insets = new Insets3f( 2, 2, 2, 2 );
+}
+
+selector( "selector.item", "glass" ) {
+    color = color(0.5, 0.75, 0.75, 0.85)     
+    background = transparent;
+    insets = new Insets3f(1, 1, 1, 1, 1, 1);
+}
+
+selector( "selector.popup", "glass" ) {
+    background = gradient.clone()
+    background.setColor(color(0, 0.75, 0.75, 0.75))
+}
+
