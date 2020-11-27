@@ -83,3 +83,7 @@ selector( "selector.popup", "glass" ) {
     background.setColor(color(0, 0.75, 0.75, 0.75))
 }
 
+selector( "selector.down.button", "glass" ) {
+    insets = new Insets3f(0, 0, 0, 0, 0, 0);
+}
+
