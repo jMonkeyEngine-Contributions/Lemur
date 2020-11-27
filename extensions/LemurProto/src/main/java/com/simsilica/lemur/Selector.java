@@ -36,6 +36,8 @@
 
 package com.simsilica.lemur;
 
+import java.util.List;
+
 import org.slf4j.*;
 
 import com.jme3.math.Vector2f;
@@ -80,6 +82,7 @@ public class Selector<T> extends Panel {
 
     private VersionedReference<Integer> selectionRef;
     private VersionedHolder<T> selectedItem = new VersionedHolder<>();
+    private VersionedReference<List<T>> modelRef;
  
     public Selector() {
         this(true, new VersionedList<T>(), null,
@@ -129,7 +132,9 @@ public class Selector<T> extends Panel {
         this.listBox = new ListBox<>(model, cellRenderer, elementId.child("list"), style);
         listBox.setSelectionModel(selection);
         listBox.addClickCommands(selectListener);
+        this.modelRef = listBox.getModel().createReference();
         this.selectionRef = listBox.getSelectionModel().createSelectionReference();
+        boundSelection();
         selectedItem.setObject(getSelectedListValue());
  
         this.layout = new BorderLayout();
@@ -158,11 +163,31 @@ public class Selector<T> extends Panel {
         ElementId parent = new ElementId(ELEMENT_ID);
         styles.getSelector(parent.child(EXPANDER_ID), null).set("text", "v", false);
     }
+    
+    public VersionedList<T> getModel() {
+        return listBox.getModel();
+    }
+     
+    public void setModel( VersionedList<T> model ) {
+        listBox.setModel(model);
+        this.modelRef = model.createReference();
+        boundSelection();
+    } 
  
+    public void setSelectionModel( SelectionModel selectionModel ) {
+        listBox.setSelectionModel(selectionModel);
+        this.selectionRef = listBox.getSelectionModel().createSelectionReference();
+        boundSelection();
+    }
+    
+    public SelectionModel getSelectionModel() {
+        return listBox.getSelectionModel();
+    }
+    
     public ListBox getListBox() {
         return listBox;
     }
-    
+ 
     public Button getExpanderButton() {
         return expander;
     }
@@ -202,6 +227,21 @@ public class Selector<T> extends Panel {
         return selectedItem.createReference();
     }
 
+    /**
+     *  Attempts to make sure that the selected item is always in range.
+     */
+    protected void boundSelection() {
+        Integer i = listBox.getSelectionModel().getSelection();
+        if( i == null ) {
+            if( !listBox.getModel().isEmpty() ) {
+                listBox.getSelectionModel().setSelection(0);
+            }
+        } else if( i > listBox.getModel().size() ) {
+            // clamp it
+            listBox.getSelectionModel().setSelection(listBox.getModel().size()-1); 
+        }
+    }
+
     protected void updateSelection() {
         if( selectionRef.update() ) {
             Integer i = selectionRef.get();
@@ -217,6 +257,9 @@ public class Selector<T> extends Panel {
     @Override
     public void updateLogicalState( float tpf ) {
         super.updateLogicalState(tpf);
+        if( modelRef.update() ) {
+            boundSelection();
+        }
         updateSelection();
     }
     
