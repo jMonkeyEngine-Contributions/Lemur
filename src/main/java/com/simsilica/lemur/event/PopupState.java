@@ -56,6 +56,7 @@ import com.jme3.scene.shape.Quad;
 import com.simsilica.lemur.Command;
 import com.simsilica.lemur.GuiGlobals;
 import com.simsilica.lemur.Panel;
+import com.simsilica.lemur.core.GuiControl;
 import com.simsilica.lemur.core.GuiMaterial;
 import com.simsilica.lemur.style.ElementId;
 
@@ -298,6 +299,65 @@ public class PopupState extends BaseAppState {
         float width = cam.getWidth() / getGuiNode().getLocalScale().x;
         float height = cam.getHeight() / getGuiNode().getLocalScale().y;
         return new Vector2f(width, height);        
+    }
+ 
+    /**
+     *  Moves the specified GUI element so that it is the most on the
+     *  screen that it can be based on the current GUI size.  Returns true
+     *  if the spatial was actually moved.
+     */
+    public boolean clampToGui( Spatial s ) {
+
+        GuiControl control = s.getControl(GuiControl.class);
+        if( control == null ) {
+            // We could support this but I don't have the time today
+            throw new UnsupportedOperationException("Only spatials with GuiControls are supported");
+        }
+        
+        Vector2f guiSize = getGuiSize();
+        Vector3f size = control.getSize();
+        if( size.length() == 0 ) {
+            // It may not have been fully realized yet so we'll make
+            // a best guess
+            size = control.getPreferredSize();
+        }
+        Vector3f pos = s.getWorldTranslation();
+        Vector3f delta = new Vector3f();
+        
+        // Calculate a delta as necessary
+        if( size.x > guiSize.x ) {
+            // Center it
+            float x = guiSize.x * 0.5f - size.x * 0.5f;
+            delta.x = x - pos.x;
+        } else if( pos.x < 0 ) {
+            // Slide it right
+            delta.x = -pos.x;
+        } else if( pos.x + size.x > guiSize.x ) {
+            // Slide it left
+            float x = guiSize.x - size.x;
+            delta.x = x - pos.x;
+        }           
+ 
+        // Y grows down so it's slightly different
+        if( size.y > guiSize.y ) {
+            float y = guiSize.y * 0.5f - size.y * 0.5f;
+            delta.y = y - pos.y;
+        } else if( pos.y > guiSize.y ) {
+            // Shift it back down
+            delta.y = guiSize.y - pos.y;
+        } else if( pos.y - size.y < 0 ) {
+            // Shift it up
+            float y = size.y;
+            delta.y = y - pos.y;
+        }
+ 
+        // We move based on a delta in case this is a child of some
+        // other thing.  We calculate where we want it to be in world
+        // space and the delta necessary to get us there and then move it.
+        // All of that works fine as long as nothing is scaled.           
+        s.move(delta);            
+        
+        return delta.length() != 0;    
     }
  
     /**

@@ -3,6 +3,8 @@ Lemur 1.14.1 (unreleased)
 * Fixed a bug where moving a GuiComponent from one GUI element to another
     caused lingering state issues.  This most prominently manifested when
     using icons in ListBox labels.
+* Added PopupState.clampToGui() for conveniently moving a GUI element so
+    that it is fully on screen.
 
 
 Lemur 1.14.0 (latest)
