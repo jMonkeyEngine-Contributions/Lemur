@@ -164,6 +164,17 @@ public class ColorChooser extends Panel {
         return model;
     }
 
+    public void setColor( ColorRGBA color ) {
+        if( !(model instanceof VersionedHolder) ) {
+            throw new UnsupportedOperationException("Current model does not support externally setting the color");
+        }
+        ((VersionedHolder<ColorRGBA>)model).setObject(color);
+    }
+    
+    public ColorRGBA getColor() {
+        return model == null ? null : model.getObject();
+    }
+
     @Override
     public void updateLogicalState( float tpf ) {
         super.updateLogicalState(tpf);

@@ -184,6 +184,10 @@ public class Selector<T> extends Panel {
         return listBox.getSelectionModel();
     }
     
+    public CellRenderer<T> getCellRenderer() {
+        return cellRenderer;
+    }
+    
     public ListBox getListBox() {
         return listBox;
     }

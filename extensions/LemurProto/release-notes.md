@@ -8,6 +8,8 @@ Lemur-Proto 1.11.1 (unrleased)
 * Fixed a bug where ListBox click listeners weren't getting executed.
 * Added a Selector GUI element for selecting options for a list of values.
     Basically it's a single value field that pops up a list box when clicked.
+* Added ColorChooser.set/getColor() that can be used to more conveniently access
+    the edited color.    
 
 
 Lemur-Proto 1.11.0 (latest)
