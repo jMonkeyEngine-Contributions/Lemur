@@ -67,8 +67,21 @@ public class DocumentModelFilter implements DocumentModel {
         this(new DefaultDocumentModel());
     }
     
+    public DocumentModelFilter( Function<Character, Character> inputTransform,
+                                Function<String, String> outputTransform ) {
+        this(new DefaultDocumentModel(), inputTransform, outputTransform);
+    }                                
+
     public DocumentModelFilter( DocumentModel delegate ) {
         this.delegate = delegate;
+    } 
+
+    public DocumentModelFilter( DocumentModel delegate, 
+                                Function<Character, Character> inputTransform,
+                                Function<String, String> outputTransform ) {
+        this.delegate = delegate;        
+        this.inputTransform = inputTransform;
+        this.outputTransform = outputTransform;
     } 
 
     /**

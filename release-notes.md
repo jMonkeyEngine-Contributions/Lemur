@@ -5,6 +5,8 @@ Lemur 1.14.1 (unreleased)
     using icons in ListBox labels.
 * Added PopupState.clampToGui() for conveniently moving a GUI element so
     that it is fully on screen.
+* Added additional convenience constructors to DocumentModelFilter that
+    allow passing filters directly instead of setting them post-construction.    
 
 
 Lemur 1.14.0 (latest)
