@@ -40,6 +40,8 @@ import java.util.List;
 
 import org.slf4j.*;
 
+import com.google.common.base.Function;
+
 import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Spatial;
@@ -92,6 +94,12 @@ public class Selector<T> extends Panel {
 
     public Selector( VersionedList<T> model ) {
         this(true, model, null, 
+                new SelectionModel(), new ElementId(ELEMENT_ID), null);             
+    }
+
+    public Selector( VersionedList<T> model, Function<T, String> cellTransform ) {
+        this(true, model, 
+                new DefaultCellRenderer<T>(new ElementId(ELEMENT_ID).child("item"), null, cellTransform),
                 new SelectionModel(), new ElementId(ELEMENT_ID), null);             
     }
 
@@ -252,6 +260,9 @@ public class Selector<T> extends Panel {
             if( i == null ) {
                 selectedItem.setObject(null);
             } else {
+                // Clamp it in range
+                i = Math.min(i, listBox.getModel().size()-1);
+                i = Math.max(i, 0);
                 selectedItem.setObject(listBox.getModel().get(i));
             }
             resetView();
