@@ -47,8 +47,8 @@ import com.simsilica.lemur.core.VersionedSet;
  *
  *  @author    Paul Speed
  */
-public class SelectionModel extends VersionedSet<Integer>
-{
+public class SelectionModel extends VersionedSet<Integer> {
+
     public enum SelectionMode { Single, Contiguous, Multi }
     
     private SelectionMode mode = SelectionMode.Single;
