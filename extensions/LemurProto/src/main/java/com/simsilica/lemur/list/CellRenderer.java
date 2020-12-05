@@ -37,13 +37,14 @@
 package com.simsilica.lemur.list;
 
 import com.simsilica.lemur.Panel;
+import com.simsilica.lemur.ValueRenderer;
 
 
 /**
  *
  *  @author    Paul Speed
  */
-public interface CellRenderer<T> {
+public interface CellRenderer<T> extends ValueRenderer<T> {
     public Panel getView( T value, boolean selected, Panel existing );
 }
 

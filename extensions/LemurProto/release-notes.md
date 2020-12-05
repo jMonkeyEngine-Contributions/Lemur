@@ -9,7 +9,17 @@ Lemur-Proto 1.11.1 (unrleased)
 * Added a Selector GUI element for selecting options for a list of values.
     Basically it's a single value field that pops up a list box when clicked.
 * Added ColorChooser.set/getColor() that can be used to more conveniently access
-    the edited color.    
+    the edited color.
+* Added ValueRender and a default implemenation DefaultValueRenderer that are
+    more general non-list-specific value renderers similar to ListBox's cell
+    renderer.
+* Added ValueRenders which provides convenience factories for common value renderer
+    use-cases.
+* Updated CellRenderer to extend ValueRenderer.
+* Modified ListBox to take a ValueRender to be more general.  Since method
+    signatures have changes this will be a breaking change for any ListBox-using
+    code that cannot be recompiled.
+        
 
 
 Lemur-Proto 1.11.0 (latest)

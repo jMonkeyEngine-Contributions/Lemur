@@ -80,7 +80,7 @@ public class ListBox<T> extends Panel {
     private BorderLayout layout;
     private VersionedList<T> model;
     private VersionedReference<List<T>> modelRef;
-    private CellRenderer<T> cellRenderer;
+    private ValueRenderer<T> cellRenderer;
     
     private SelectionModel selection;
     private VersionedReference<Set<Integer>> selectionRef;
@@ -128,7 +128,7 @@ public class ListBox<T> extends Panel {
                 new SelectionModel(), new ElementId(ELEMENT_ID), null);             
     }
 
-    public ListBox( VersionedList<T> model, CellRenderer<T> renderer, String style ) {
+    public ListBox( VersionedList<T> model, ValueRenderer<T> renderer, String style ) {
         this(true, model, renderer, new SelectionModel(), new ElementId(ELEMENT_ID), style);             
     }
 
@@ -140,11 +140,11 @@ public class ListBox<T> extends Panel {
         this(true, model, null, new SelectionModel(), elementId, style);             
     }
 
-    public ListBox( VersionedList<T> model, CellRenderer<T> renderer, ElementId elementId, String style ) {
+    public ListBox( VersionedList<T> model, ValueRenderer<T> renderer, ElementId elementId, String style ) {
         this(true, model, renderer, new SelectionModel(), elementId, style);             
     }
     
-    protected ListBox( boolean applyStyles, VersionedList<T> model, CellRenderer<T> cellRenderer, 
+    protected ListBox( boolean applyStyles, VersionedList<T> model, ValueRenderer<T> cellRenderer, 
                        SelectionModel selection,  
                        ElementId elementId, String style ) {
         super(false, elementId.child(CONTAINER_ID), style);
@@ -152,6 +152,8 @@ public class ListBox<T> extends Panel {
         if( cellRenderer == null ) {
             // Create a default one
             cellRenderer = new DefaultCellRenderer<>(elementId.child("item"), style);
+        } else {
+            cellRenderer.configureStyle(elementId.child("item"), style);
         }
         this.cellRenderer = cellRenderer;
  
@@ -329,7 +331,7 @@ public class ListBox<T> extends Panel {
     }
 
     @StyleAttribute(value="cellRenderer", lookupDefault=false)
-    public void setCellRenderer( CellRenderer<T> renderer ) {
+    public void setCellRenderer( ValueRenderer<T> renderer ) {
         if( Objects.equal(this.cellRenderer, renderer) ) {
             return;
         }
@@ -337,7 +339,7 @@ public class ListBox<T> extends Panel {
         grid.refreshGrid(); // cheating
     }
     
-    public CellRenderer<T> getCellRenderer() {
+    public ValueRenderer<T> getCellRenderer() {
         return cellRenderer;
     }    
 

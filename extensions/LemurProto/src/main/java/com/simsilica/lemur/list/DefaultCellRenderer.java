@@ -84,6 +84,20 @@ public class DefaultCellRenderer<T> implements CellRenderer<T>, Cloneable {
             throw new RuntimeException("Error cloning", e);
         }
     }
+
+    /**
+     *  Default implementation uses the specified style unless the renderer
+     *  already has an elementId and style set. 
+     */
+    @Override
+    public void configureStyle( ElementId elementId, String style ) {
+        if( this.elementId == null ) {
+            this.elementId = elementId;
+        }
+        if( this.style == null ) {
+            this.style = style;
+        } 
+    }
     
     public void setTransform( Function<T, String> transform ) {
         this.transform = transform;

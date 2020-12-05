@@ -51,6 +51,7 @@ import com.simsilica.lemur.component.*;
 import com.simsilica.lemur.event.*;
 import com.simsilica.lemur.list.*;
 import com.simsilica.lemur.style.*;
+import com.simsilica.lemur.value.DefaultValueRenderer;
 
 
 /**
@@ -69,7 +70,7 @@ public class Selector<T> extends Panel {
 
     private BorderLayout layout;
 
-    private CellRenderer<T> cellRenderer;
+    private ValueRenderer<T> valueRenderer;
     private ListBox<T> listBox;
     private Panel view;
     private Button expander;
@@ -97,13 +98,17 @@ public class Selector<T> extends Panel {
                 new SelectionModel(), new ElementId(ELEMENT_ID), null);             
     }
 
-    public Selector( VersionedList<T> model, Function<T, String> cellTransform ) {
+    public Selector( VersionedList<T> model, Function<Object, String> stringTransform ) {
         this(true, model, 
-                new DefaultCellRenderer<T>(new ElementId(ELEMENT_ID).child("item"), null, cellTransform),
+                new DefaultValueRenderer<T>(new ElementId(ELEMENT_ID).child("item"), null, stringTransform),
                 new SelectionModel(), new ElementId(ELEMENT_ID), null);             
     }
 
-    public Selector( VersionedList<T> model, CellRenderer<T> renderer, String style ) {
+    public Selector( VersionedList<T> model, ValueRenderer<T> renderer ) {
+        this(true, model, renderer, new SelectionModel(), new ElementId(ELEMENT_ID), null);             
+    }
+
+    public Selector( VersionedList<T> model, ValueRenderer<T> renderer, String style ) {
         this(true, model, renderer, new SelectionModel(), new ElementId(ELEMENT_ID), style);             
     }
 
@@ -115,12 +120,12 @@ public class Selector<T> extends Panel {
         this(true, model, null, new SelectionModel(), elementId, style);             
     }
 
-    public Selector( VersionedList<T> model, CellRenderer<T> renderer, ElementId elementId, String style ) {
+    public Selector( VersionedList<T> model, ValueRenderer<T> renderer, ElementId elementId, String style ) {
         this(true, model, renderer, new SelectionModel(), elementId, style);             
     }
      
     @SuppressWarnings("unchecked") // because Java doesn't like var-arg generics
-    protected Selector( boolean applyStyles, VersionedList<T> model, CellRenderer<T> cellRenderer,
+    protected Selector( boolean applyStyles, VersionedList<T> model, ValueRenderer<T> valueRenderer,
                         SelectionModel selection, ElementId elementId, String style ) {
         super(false, elementId.child(CONTAINER_ID), style);
                         
@@ -131,13 +136,15 @@ public class Selector<T> extends Panel {
 
         // We create it here to share it with the ListBox because we will
         // need to render the element for display. 
-        if( cellRenderer == null ) {
+        if( valueRenderer == null ) {
             // Create a default one
-            cellRenderer = new DefaultCellRenderer<>(elementId.child("item"), style);
+            valueRenderer = new DefaultValueRenderer<>(elementId.child("item"), style);
+        } else  {
+            valueRenderer.configureStyle(elementId.child("item"), style);
         }
-        this.cellRenderer = cellRenderer;
+        this.valueRenderer = valueRenderer;
  
-        this.listBox = new ListBox<>(model, cellRenderer, elementId.child("list"), style);
+        this.listBox = new ListBox<>(model, valueRenderer, elementId.child("list"), style);
         listBox.setSelectionModel(selection);
         listBox.addClickCommands(selectListener);
         this.modelRef = listBox.getModel().createReference();
@@ -192,8 +199,17 @@ public class Selector<T> extends Panel {
         return listBox.getSelectionModel();
     }
     
-    public CellRenderer<T> getCellRenderer() {
-        return cellRenderer;
+    public void setValueRenderer( ValueRenderer<T> valueRenderer ) {
+        if( this.valueRenderer == valueRenderer ) {
+            return;
+        }
+        this.valueRenderer = valueRenderer;
+        listBox.setCellRenderer(valueRenderer);
+        resetView();
+    } 
+    
+    public ValueRenderer<T> getValueRenderer() {
+        return valueRenderer;
     }
     
     public ListBox getListBox() {
@@ -294,7 +310,7 @@ public class Selector<T> extends Panel {
     }
     
     protected void resetView() {
-        Panel newView = cellRenderer.getView(getSelectedListValue(), false, view);
+        Panel newView = valueRenderer.getView(getSelectedListValue(), false, view);
         if( newView != view ) {
             // Transfer the click listener                  
             CursorEventControl.addListenersToSpatial(newView, clickListener);
