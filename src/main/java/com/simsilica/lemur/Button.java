@@ -148,6 +148,10 @@ public class Button extends Label {
         return commandMap.get(a, false);
     }
 
+    public void addClickCommands( Command<? super Button> command ) {
+        commandMap.addCommands(ButtonAction.Click, command);
+    }
+
     @SuppressWarnings("unchecked") // because Java doesn't like var-arg generics
     public void addClickCommands( Command<? super Button>... commands ) {
         commandMap.addCommands(ButtonAction.Click, commands);

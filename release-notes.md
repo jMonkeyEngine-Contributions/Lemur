@@ -9,7 +9,10 @@ Lemur 1.14.1 (unreleased)
     allow passing filters directly instead of setting them post-construction.    
 * Added PopupState.centerInGui() for conveniently centering a GUI element
     in the popup space.
-     
+* Added CommandMap.addComments() and Button.addClickCommands() that take
+    a single argument instead of var-args. This is the most common case
+    and prevents a bunch of extra 'unchecked' warnings because of the 
+    var-args arrays.     
 
 
 Lemur 1.14.0 (latest)
