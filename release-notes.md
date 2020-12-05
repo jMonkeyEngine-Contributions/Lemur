@@ -7,6 +7,9 @@ Lemur 1.14.1 (unreleased)
     that it is fully on screen.
 * Added additional convenience constructors to DocumentModelFilter that
     allow passing filters directly instead of setting them post-construction.    
+* Added PopupState.centerInGui() for conveniently centering a GUI element
+    in the popup space.
+     
 
 
 Lemur 1.14.0 (latest)

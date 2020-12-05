@@ -302,6 +302,34 @@ public class PopupState extends BaseAppState {
     }
  
     /**
+     *  Positions the specified spatial so that it is in the center of 
+     *  the GUI.
+     */
+    public void centerInGui( Spatial s ) {
+        GuiControl control = s.getControl(GuiControl.class);
+        if( control == null ) {
+            // We could support this but I don't have the time today
+            throw new UnsupportedOperationException("Only spatials with GuiControls are supported");
+        }
+        
+        Vector2f guiSize = getGuiSize();
+        Vector3f size = control.getSize();
+        if( size.length() == 0 ) {
+            // It may not have been fully realized yet so we'll make
+            // a best guess
+            size = control.getPreferredSize();
+        }
+        Vector3f pos = s.getWorldTranslation();
+        Vector3f target = new Vector3f();
+ 
+        target.x = guiSize.x * 0.5f - size.x * 0.5f;       
+        target.y = guiSize.y * 0.5f + size.y * 0.5f;
+        target.z = pos.z;
+        
+        s.move(target.subtract(pos));               
+    }
+ 
+    /**
      *  Moves the specified GUI element so that it is the most on the
      *  screen that it can be based on the current GUI size.  Returns true
      *  if the spatial was actually moved.
