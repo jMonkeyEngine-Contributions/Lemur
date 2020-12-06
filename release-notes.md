@@ -16,6 +16,9 @@ Lemur 1.14.1 (unreleased)
 * Fixed a subtle bug in the FocusManagerState where changing the focus
     during a focus change event may cause parts of the focus hierarchy
     to be left in an indeterminate state.
+* FocusNavigationState.requestChangeFocus() now checks for null parameters
+    and throws an IllegalArgumentException instead of an NPE further down
+    in the stack.    
 
 
 Lemur 1.14.0 (latest)
