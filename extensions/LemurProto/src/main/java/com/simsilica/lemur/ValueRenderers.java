@@ -52,18 +52,10 @@ public class ValueRenderers {
         return new DefaultValueRenderer<>(toString(nullValue));
     }
     
-    public static <T> DefaultValueRenderer<T> toStringRenderer( String nullValue, ElementId elementId, String style ) {
-        return new DefaultValueRenderer<>(elementId, style, toString(nullValue));
-    } 
-
     public static <T> DefaultValueRenderer<T> formattedRenderer( String format, String nullValue ) {
         return new DefaultValueRenderer<>(formatString(format, nullValue));
     }
     
-    public static <T> DefaultValueRenderer<T> formattedRenderer( String format, String nullValue, ElementId elementId, String style ) {
-        return new DefaultValueRenderer<>(elementId, style, formatString(format, nullValue));
-    } 
- 
     // Some useful toString functions
     public static Function<Object, String> toString( String nullValue ) {
         return new SafeToString(nullValue);

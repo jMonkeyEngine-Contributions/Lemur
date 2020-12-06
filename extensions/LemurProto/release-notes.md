@@ -1,4 +1,4 @@
-Lemur-Proto 1.11.1 (unrleased)
+Lemur-Proto 1.12.0 (unrleased)
 -------------------
 * Added SelectionModel.createSelectionReference() for obtaining a VersionedReference
     of just the single-selection state.
@@ -19,7 +19,11 @@ Lemur-Proto 1.11.1 (unrleased)
 * Modified ListBox to take a ValueRender to be more general.  Since method
     signatures have changes this will be a breaking change for any ListBox-using
     code that cannot be recompiled.
-        
+* Added a SequenceModel interface and some default implementations to represent
+    a potentially unbounded sequence of values that can be navigated forwards
+    or backwards.
+* Added a Spinner GUI element that allows next/previous through a SequenceModel
+    as well as (optionally) direct entering a value.
 
 
 Lemur-Proto 1.11.0 (latest)

@@ -66,14 +66,13 @@ selector( "colorChooser.colors", "glass" ) {
 }
 
 selector( "selector.container", "glass" ) {
-    background = gradient.clone()
     color = color(0.8, 0.9, 1, 0.85f)
-    background.setColor(color(0, 0.75, 0.75, 0.5))
-    //insets = new Insets3f( 2, 2, 2, 2 );
+    background = gradient.clone()
+    background.setColor(color(0, 0.6, 0.6, 0.5))
 }
 
 selector( "selector.item", "glass" ) {
-    color = color(0.5, 0.75, 0.75, 0.85)     
+    color = color(0.8, 0.8, 0.9, 0.9)     
     background = transparent;
     insets = new Insets3f(1, 1, 1, 1, 1, 1);
 }
@@ -85,5 +84,27 @@ selector( "selector.popup", "glass" ) {
 
 selector( "selector.down.button", "glass" ) {
     insets = new Insets3f(0, 0, 0, 0, 0, 0);
+}
+
+
+selector( "spinner.value", "glass" ) {
+    color = color(0.8, 0.8, 0.9, 0.9)     
+    background = gradient.clone();
+    background.color = color(0, 0.2, 0.2, 0.75);    
+}
+
+selector( "spinner.buttons.container", "glass" ) {
+    background = transparent;
+    insets = new Insets3f(0, 0, 0, 0);
+} 
+
+selector( "spinner", "button", "glass" ) {
+    background = gradient.clone()
+    // A negative margin works here when the font can support it.
+    // It helps eat up the extra whitespace above/below the '+'/'-' signs.
+    background.setMargin(2, -3.5);
+    background.setColor(color(0, 0.75, 0.75, 0.5))
+    insets = new Insets3f(0, 0, 0, 0);
+    textHAlignment = HAlignment.Center;
 }
 
