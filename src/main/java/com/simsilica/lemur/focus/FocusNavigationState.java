@@ -84,6 +84,10 @@ public class FocusNavigationState extends BaseAppState {
      */
     public Spatial requestChangeFocus( Spatial spatial, FocusTraversal.TraversalDirection dir ) {
 
+        if( spatial == null ) {
+            throw new IllegalArgumentException("Cannot traverse focus from a null spatial");
+        }
+
         // Find the container of this spatial
         Spatial container = getFocusContainer(spatial);
         if( container == null ) {
@@ -174,7 +178,10 @@ public class FocusNavigationState extends BaseAppState {
     }
                     
     protected Spatial getFocusContainer( Spatial spatial ) {
-        // Find the parent of the spatial that can be a FocusTraversal hub
+        if( spatial == null ) {
+            return null;
+        }
+        // Find the parent of the spatial that can be a FocusTraversal hub        
         
         // Start at the parent so that we can look for contains of containers
         // easily. 
