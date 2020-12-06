@@ -36,6 +36,8 @@ package com.simsilica.lemur.focus;
 
 import java.util.*;
 
+import org.slf4j.*;
+
 import com.jme3.app.Application;
 import com.jme3.app.state.BaseAppState;
 import com.jme3.scene.Spatial;
@@ -50,9 +52,22 @@ import com.jme3.scene.control.Control;
  */
 public class FocusManagerState extends BaseAppState {
 
+    static Logger log = LoggerFactory.getLogger(FocusManagerState.class);
+
     private Spatial focus;
     private FocusNavigationState focusNavigationState;
     private List<Spatial> focusHierarchy = Collections.emptyList();
+    
+    // During a focus change, we notify an entire hierarchy of old
+    // targets that they lost focus and then we notify the entire
+    // new hierarchy that focus has been gained.  If during that
+    // notification, focus changes as a result then it screws up the
+    // state of notifications and of the hierarchy.  So while we update
+    // the hierarchy we will collect the newest next focus instead of
+    // processing it.  Then when hierarchy updating is done it will 
+    // get processed.
+    private boolean hierarchyUpdating = false;
+    private Spatial nextFocus = null;
 
     public FocusManagerState() {
         setEnabled(true);
@@ -79,19 +94,66 @@ public class FocusManagerState extends BaseAppState {
     }
 
     public void setFocus( Spatial focus ) {
+        if( log.isTraceEnabled() ) {
+            log.trace("setFocus(" + focus + ")");
+        }
+
+        if( hierarchyUpdating ) {
+            log.trace("hierarchy is updating, saving it for later");
+            nextFocus = focus;
+            return;
+        }
 
         if( getFocusNavigationState() != null ) {
             // See if the specified spatial is really a container and if we should
             // instead drill into its default child
             focus = getFocusNavigationState().getDefaultFocus(focus);
+            if( log.isTraceEnabled() ) {
+                log.trace("resolved to:" + focus);
+            }
         }
     
-        if( this.focus == focus )
+        if( this.focus == focus ) {
             return;
+        }
 
         this.focus = focus;
         if( isEnabled() ) {
-            updateFocusHierarchy();
+            // Mark us as updating the hierarchy so that we won't get
+            // interrupted by other focus changes while processing the focus
+            // lost and focus gained processing.  It's possible that focus listeners
+            // may change the focus as part of their processing but it's important
+            // that all existing hierarchies get updated first.  So we create a one-deep
+            // queue and try again.  (So if 9 focus gained listeners all try to set
+            // the focus while we're blocked, only the last one wins.) 
+            hierarchyUpdating = true;
+            try {
+                updateFocusHierarchy();
+                
+                // See if anything in those focus listeners tried to change
+                // the hierarchy and then loop until we settle down.                
+                if( nextFocus != null && nextFocus != focus ) {
+                    Set<Spatial> visited = new HashSet<>();
+                    visited.add(focus);
+                    while( nextFocus != null ) {
+                        // Detect loops
+                        if( !visited.add(nextFocus) ) {
+                            throw new IllegalStateException("Loop detected in side-effect focus processing");
+                        }
+                        if( nextFocus == this.focus ) {
+                            break;
+                        }
+                        this.focus = nextFocus;
+                        nextFocus = null;
+                        if( log.isTraceEnabled() ) {
+                            log.trace("processing pending focus:" + this.focus);
+                        }
+                        updateFocusHierarchy();
+                    }
+                }
+            } finally {
+                hierarchyUpdating = false;
+            }
         }
     }
 
@@ -101,7 +163,11 @@ public class FocusManagerState extends BaseAppState {
      *  changed as a result of this call.
      */
     public boolean releaseFocus( Spatial focus ) {
+        if( log.isTraceEnabled() ) {
+            log.trace("releaseFocus(" + focus + ")");
+        }    
         if( focusHierarchy.indexOf(focus) < 0 ) {
+            log.trace(" not in focus chain");
             return false;
         }
         setFocus(null);
@@ -137,7 +203,7 @@ public class FocusManagerState extends BaseAppState {
         //
         // The problem with (1) is that we'd have to manage a bunch of scene roots
         // and applications would have to remember to set them.  Not all focus hierarchies
-        // will leave in the GUI node or regular scene root.
+        // will live in the GUI node or regular scene root.
         //
         // The problem with (2) is that if the application sets an unconnected focus
         // to begin with, well we can't tell that it's not connected.  However, in this
@@ -145,6 +211,7 @@ public class FocusManagerState extends BaseAppState {
         // they set the focus to something unattached on purpose and anyway we otherwise
         // relinquish them from additional root-management burden.
         if( !isConnected(focusHierarchy) ) {
+            log.trace("current focus hierarchy has is disconnected");
             setFocus(null);
         }
     }
@@ -187,6 +254,9 @@ public class FocusManagerState extends BaseAppState {
     }
 
     protected void updateFocusHierarchy() {
+        if( log.isTraceEnabled() ) {
+            log.trace("updateFocusHiearchy():" + focus);
+        }
     
         // We need to deliver focus lost and focus gained
         // to any parents that have changed... and we need to do
@@ -217,22 +287,33 @@ public class FocusManagerState extends BaseAppState {
             }
         }
         
+        // The listeners may change the focus as we traverse
+        Spatial originalFocus = focus;
+ 
+        log.trace("updating focus lost");        
         // Tell the old hierarchy that focus is gone
         for( int i = lca + 1; i < oldHierarchy.size(); i++ ) {
             FocusTarget target = findFocusTarget(oldHierarchy.get(i));
+            if( log.isTraceEnabled() ) {
+                log.trace("[" + i + "]:" + oldHierarchy.get(i) + "  target:" + target);
+            }             
             if( target != null ) {
                 target.focusLost();
             }
         }
-        
+
+        log.trace("updating focus gained");        
         // Tell the new hierarchy that we're here    
         for( int i = lca + 1; i < newHierarchy.size(); i++ ) {
             FocusTarget target = findFocusTarget(newHierarchy.get(i));
+            if( log.isTraceEnabled() ) {
+                log.trace("[" + i + "]:" + newHierarchy.get(i) + "  target:" + target);
+            }             
             if( target != null ) {
                 target.focusGained();
             }
         }
-        
+ 
         // Cache the hierarchy for later
         focusHierarchy = newHierarchy;
     }  

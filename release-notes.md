@@ -12,7 +12,10 @@ Lemur 1.14.1 (unreleased)
 * Added CommandMap.addComments() and Button.addClickCommands() that take
     a single argument instead of var-args. This is the most common case
     and prevents a bunch of extra 'unchecked' warnings because of the 
-    var-args arrays.     
+    var-args arrays.
+* Fixed a subtle bug in the FocusManagerState where changing the focus
+    during a focus change event may cause parts of the focus hierarchy
+    to be left in an indeterminate state.
 
 
 Lemur 1.14.0 (latest)
