@@ -36,6 +36,8 @@ package com.simsilica.lemur.component;
 
 import java.util.*;
 
+import org.slf4j.*;
+
 import com.jme3.font.*;
 import com.jme3.font.BitmapFont.Align;
 import com.jme3.font.BitmapFont.VAlign;
@@ -78,6 +80,8 @@ import com.simsilica.lemur.text.DefaultDocumentModel;
  */
 public class TextEntryComponent extends AbstractGuiComponent
                                 implements FocusTarget, ColoredComponent {
+
+    static Logger log = LoggerFactory.getLogger(TextEntryComponent.class);
 
     public static final KeyActionListener DOC_HOME = new DocumentHome();
     public static final KeyActionListener DOC_END = new DocumentEnd();
@@ -720,12 +724,17 @@ public class TextEntryComponent extends AbstractGuiComponent
         }
     
         @Override
-        public void keyAction( TextEntryComponent source, KeyAction key ) {
+        public void keyAction( TextEntryComponent source, KeyAction key ) { 
             FocusNavigationState nav = GuiGlobals.getInstance().getFocusNavigationState();
             if( nav == null ) {
                 return;
-            }
+            }            
             Spatial current = GuiGlobals.getInstance().getCurrentFocus();
+            if( current == null ) {
+                // Focus was already lost somewhere... uncommon in normal cases
+                // but it can technically happen.
+                return;
+            }
             nav.requestChangeFocus(current, dir);    
         } 
     }

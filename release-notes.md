@@ -1,4 +1,4 @@
-Lemur 1.14.1 (unreleased)
+Lemur 1.15.0 (unreleased)
 -------------
 * Fixed a bug where moving a GuiComponent from one GUI element to another
     caused lingering state issues.  This most prominently manifested when
@@ -19,6 +19,10 @@ Lemur 1.14.1 (unreleased)
 * FocusNavigationState.requestChangeFocus() now checks for null parameters
     and throws an IllegalArgumentException instead of an NPE further down
     in the stack.    
+* Added a TextField(model, elementId, style) constructor.
+* Fixed TextEntryComponent to skip navigating focus if there is no current
+    focus.
+* Add some focusGained/focusLost trace logging to GuiControl.    
 
 
 Lemur 1.14.0 (latest)

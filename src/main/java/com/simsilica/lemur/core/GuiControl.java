@@ -36,6 +36,8 @@ package com.simsilica.lemur.core;
 
 import java.util.*;
 
+import org.slf4j.*;
+
 import com.jme3.math.Vector3f;
 import com.jme3.scene.*;
 import com.jme3.util.SafeArrayList;
@@ -53,6 +55,8 @@ import com.simsilica.lemur.focus.FocusTraversal;
  */
 public class GuiControl extends AbstractNodeControl<GuiControl>
                         implements FocusTarget, FocusTraversal {
+ 
+    static Logger log = LoggerFactory.getLogger(GuiControl.class);
                         
     private ComponentStack componentStack;                        
     private GuiLayout layout;
@@ -167,6 +171,10 @@ public class GuiControl extends AbstractNodeControl<GuiControl>
 
     @Override
     public void focusGained() {
+        if( log.isTraceEnabled() ) {
+            log.trace(getSpatial() + " focusGained() isFocused:" + focused);
+        }
+
         if( this.focused ) {
             return;
         }
@@ -195,6 +203,9 @@ public class GuiControl extends AbstractNodeControl<GuiControl>
 
     @Override
     public void focusLost() {
+        if( log.isTraceEnabled() ) {
+            log.trace(getSpatial() + " focusLost() isFocused:" + focused);
+        }
         if( !this.focused ) {
             return;
         }

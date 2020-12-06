@@ -93,6 +93,10 @@ public class TextField extends Panel {
         this(model, true, new ElementId(ELEMENT_ID), style);
     }
 
+    public TextField( DocumentModel model, ElementId elementId, String style ) {
+        this(model, true, elementId, style);
+    }
+    
     protected TextField( DocumentModel model, boolean applyStyles, ElementId elementId, String style ) {
         super(false, elementId, style);
  
