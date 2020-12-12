@@ -52,9 +52,7 @@ import com.simsilica.lemur.event.MouseEventControl;
 import com.simsilica.lemur.input.FunctionId;
 import com.simsilica.lemur.input.InputState;
 import com.simsilica.lemur.input.StateFunctionListener;
-import com.simsilica.lemur.focus.FocusChangeEvent;
-import com.simsilica.lemur.focus.FocusChangeListener;
-import com.simsilica.lemur.focus.FocusNavigationFunctions;
+import com.simsilica.lemur.focus.*;
 import com.simsilica.lemur.style.*;
 import com.simsilica.lemur.value.DefaultValueRenderer;
 
@@ -145,9 +143,6 @@ public class Spinner<T> extends Panel {
                                            FillMode.ForcedEven,
                                            FillMode.First);         
         getControl(GuiControl.class).setLayout(layout);
-        //addControl(new MouseEventControl(FocusMouseListener.INSTANCE, mouseHandler));
-        //getControl(GuiControl.class).addFocusChangeListener(focusObserver);
-        //getControl(GuiControl.class).setFocusable(true);
  
         // Just using cell renderer temporarily
         if( valueRenderer == null ) {
@@ -162,8 +157,6 @@ public class Spinner<T> extends Panel {
             Styles styles = GuiGlobals.getInstance().getStyles();
             styles.applyStyles(this, elementId, style);
         }
- 
-        //this.edit = layout.addChild(new TextField("", elementId.child(EDITOR_ID), style));
  
         // Build the children after styles so that we pick up
         // defaults.  But note it means that styles setters can
@@ -195,10 +188,7 @@ public class Spinner<T> extends Panel {
         styles.getSelector(parent.child(UP_ID), null).set("insets", new Insets3f(0, 0, 0, 0), false);
         styles.getSelector(parent.child(DOWN_ID), null).set("text", "-", false);
         styles.getSelector(parent.child(DOWN_ID), null).set("insets", new Insets3f(0, 0, 0, 0), false);
-
         styles.getSelector(parent.child(VALUE_ID), null).set("textVAlignment", VAlignment.Center, false);
-
-        ///styles.getSelector(parent.child(BUTTON_PANEL_ID), null).set("background", null, false);        
     }
 
     @Override
@@ -275,7 +265,6 @@ public class Spinner<T> extends Panel {
     }
 
     public void startEditing() {
-log.info("startEditing()");    
         if( valueEditor == null ) {
             return;
         }
@@ -297,7 +286,6 @@ log.info("startEditing()");
     }
     
     public void stopEditing() {
-log.info("stopEditing()");    
         if( valueEditor == null ) {
             return;
         }
@@ -307,16 +295,25 @@ log.info("stopEditing()");
         
         commandMap.runCommands(SpinnerAction.StopEdit);
         runEffect(EFFECT_STOP_EDIT);
+ 
+        // If the focus is still on the edit field then we will
+        // need to transfer focus somewhere else.  This indicates that
+        // editing was stopped programatically.
+        boolean navigateNext = edit.getControl(GuiControl.class).isFocused();
         
         layout.removeChild(edit);
         edit = null;
         if( this.view != null ) {
             layout.addChild(view, 0, 0);
         }
+        
+        if( navigateNext ) {
+            GuiGlobals.getInstance().getFocusNavigationState().requestChangeFocus(this, FocusTraversal.TraversalDirection.Next);
+        }        
     }
 
     public boolean isEditing() {
-        return valueEditor != null && valueEditor.isActive();
+        return edit != null;
     }
 
     protected void setView( Panel view ) {
@@ -324,14 +321,12 @@ log.info("stopEditing()");
             return;
         }
         if( this.view != null ) {
-log.info("remove focus change listener");        
             this.view.getControl(GuiControl.class).removeFocusChangeListener(focusObserver);
             MouseEventControl.removeListenersFromSpatial(this.view, FocusMouseListener.INSTANCE, mouseHandler); 
             layout.removeChild(this.view);
         }
         this.view = view;
         if( this.view != null ) {
-log.info("add focus change listener");        
             this.view.getControl(GuiControl.class).addFocusChangeListener(focusObserver);
             this.view.getControl(GuiControl.class).setFocusable(true);
             MouseEventControl.addListenersToSpatial(this.view, FocusMouseListener.INSTANCE, mouseHandler); 
@@ -346,39 +341,26 @@ log.info("add focus change listener");
             modelRef = model.createReference();
         }
         setView(valueRenderer.getView(modelRef.get(), false, this.view));
-        //Panel newView = valueRenderer.getView(modelRef.get(), false, this.view);
-        //if( newView != view ) {
-        //    if( this.view != null ) {
-        //        layout.removeChild(this.view);
-        //    }
-        //    this.view = newView;
-        //    if( this.view != null ) {
-        //        layout.addChild(this.view, 0, 0);
-        //    }
-        //}
     } 
     
     protected class FocusObserver implements FocusChangeListener, StateFunctionListener {
         
         public void focusGained( FocusChangeEvent event ) {
-log.info("focusGained(" + event + ")");        
             if( !isEnabled() ) {
                 return;
             }
             commandMap.runCommands(SpinnerAction.FocusGained);
             runEffect(EFFECT_FOCUS);
             
+            // Adding this listener just in case we ever want to support
+            // separate focus and editing... ie: navigate to the field and then
+            // press a button to activate editing.
             GuiGlobals.getInstance().getInputMapper().addStateListener(this, FocusNavigationFunctions.F_ACTIVATE);
             
             startEditing();
         }
         
         public void focusLost( FocusChangeEvent event ) {
-log.info("focusLost(" + event + ")");        
-            //if( !isFocusHighlightOn() ) {
-            //    // No reason to run the 'off' effects if we were never on.
-            //    return;
-            //}            
             GuiGlobals.getInstance().getInputMapper().removeStateListener(this, FocusNavigationFunctions.F_ACTIVATE);
  
             // It's actually up to the editor to stop... because by nature

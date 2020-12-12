@@ -101,7 +101,7 @@ public class TextFieldValueEditor<T> implements ValueEditor<T> {
             return;
         }
         this.object = object;
-        model.setText(toString.apply(object));
+        resetText();
         incrementVersion();
     }
     
@@ -113,10 +113,9 @@ public class TextFieldValueEditor<T> implements ValueEditor<T> {
     @Override
     public boolean updateState( float tpf ) {
         if( modelRef != null && modelRef.update() ) {
-            //log.info("model updated:" + modelRef.get().getText());
-            //log.info("current focus:" + GuiGlobals.getInstance().getCurrentFocus()); 
+            // We don't support live editing in this context
+            // but if we did, here's where we could do it.
         }
-    
         return active;
     }
     
@@ -195,13 +194,14 @@ public class TextFieldValueEditor<T> implements ValueEditor<T> {
  
     @Override
     public Panel startEditing( T initialValue ) {
-log.info("startEditing(" + initialValue + ")");    
         if( textField == null ) {
             textField = createTextField();
             textField.getControl(GuiControl.class).addFocusChangeListener(focusObserver);            
         }
+        // We don't call setObject() because we want to avoid 
+        // incrementing the version until the value changes 'for real'.
         this.object = initialValue;
-        model.setText(toString.apply(object));
+        resetText();
         active = true;
         return textField;
     }
@@ -210,9 +210,15 @@ log.info("startEditing(" + initialValue + ")");
     public Panel getEditor() {
         return textField;
     }
+
+    /** 
+     *  Resets the text field to reflect the current model value.
+     */
+    protected void resetText() {
+        model.setText(toString.apply(object));
+    }
     
     protected void stopEditing( boolean canceled ) {
-log.info("stopEditing(" + canceled + ")");    
         if( !canceled ) {
             String value = model.getText();
             try {
@@ -221,7 +227,7 @@ log.info("stopEditing(" + canceled + ")");
             } catch( NumberFormatException e ) {
                 log.warn("Error parsing:" + value, e);
                 // then just leave it as the original value
-                model.setText(toString.apply(object));
+                resetText();
             }
         }
         active = false;

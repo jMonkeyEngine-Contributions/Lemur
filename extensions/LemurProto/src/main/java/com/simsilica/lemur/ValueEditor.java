@@ -96,10 +96,6 @@ public interface ValueEditor<T> extends VersionedObject<T> {
      */       
     public Panel getEditor();
     
-    /**
-     *  Called to indicate that editing should stop.
-     */
-    //public void stopEditing( boolean canceled );
 }
 
 
