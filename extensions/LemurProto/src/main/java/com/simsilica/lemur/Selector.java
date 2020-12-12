@@ -37,6 +37,7 @@
 package com.simsilica.lemur;
 
 import java.util.List;
+import java.util.Objects;
 
 import org.slf4j.*;
 
@@ -290,6 +291,27 @@ public class Selector<T> extends Panel {
         super.updateLogicalState(tpf);
         if( modelRef.update() ) {
             boundSelection();
+            
+            // Make sure that the selected item is pointing to
+            // something that exists or the proper item if it has moved.
+            T item = null;
+            Integer i = selectionRef.get();
+            if( i != null ) {
+                item = listBox.getModel().get(i); 
+            }
+            if( !Objects.equals(item, selectedItem.getObject()) ) {
+                // See whether it's gone or just moved
+                int newIndex = listBox.getModel().indexOf(selectedItem.getObject());
+                if( newIndex < 0 ) {
+                    // It's gone... so we need to reassert the current
+                    // selection
+                    listBox.getSelectionModel().clear();
+                    listBox.getSelectionModel().setSelection(i);
+                } else {
+                    // Else it's just moved
+                    listBox.getSelectionModel().setSelection(newIndex);
+                }            
+            }             
         }
         updateSelection();
     }
