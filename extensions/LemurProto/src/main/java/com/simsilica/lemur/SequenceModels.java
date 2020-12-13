@@ -227,6 +227,7 @@ public class SequenceModels {
     }    
     
     public static class ListSequence<T> extends AbstractSequence<T> {
+        private Object currentValue; // we keep this in case the list moves
         private int index;
         private List<T> list;
         
@@ -236,6 +237,7 @@ public class SequenceModels {
             // We don't gate for null because the list might actually
             // contain null.
             this.index = list.indexOf(initialItem);
+            this.currentValue = initialItem;
             if( index < 0 ) {
                 index = 0;
             }
@@ -251,14 +253,23 @@ public class SequenceModels {
 
         @Override        
         public T getObject() {
+            if( list.isEmpty() ) {
+                return null;
+            }
             return list.get(index);
         }
         
         @Override        
         public void setObject( T object ) {
-            // Try to do it the easy way first
-            if( Objects.equals(getObject(), object) ) {
-                return; // we're already here
+            // Try to do it the easy way first... if the value is the same as 
+            // last time and the current value hasn't moved underneath us
+            // Note: it's not enough just to check index or just to check value
+            // because the list may have been reorganized in such a way that
+            // the value might be the same but the index is different or the index
+            // might be the same but the value is different... and then we need to
+            // make sure to increment the version.
+            if( Objects.equals(currentValue, object) && Objects.equals(currentValue, getObject()) ) {
+                return; // we're already here   
             }
             if( Objects.equals(getNextObject(), object) ) {
                 index = nextIndex(index);
@@ -271,6 +282,7 @@ public class SequenceModels {
                     throw new IllegalArgumentException("Item is not in sequence:" + object);
                 }
             }
+            this.currentValue = object;
             incrementVersion();
         }
          
