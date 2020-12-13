@@ -265,7 +265,7 @@ public class Selector<T> extends Panel {
             if( !listBox.getModel().isEmpty() ) {
                 listBox.getSelectionModel().setSelection(0);
             }
-        } else if( i > listBox.getModel().size() ) {
+        } else if( i >= listBox.getModel().size() ) {
             // clamp it
             listBox.getSelectionModel().setSelection(listBox.getModel().size()-1); 
         }
