@@ -63,7 +63,7 @@ import com.simsilica.lemur.value.DefaultValueRenderer;
  */
 public class Selector<T> extends Panel {
 
-    static Logger log = LoggerFactory.getLogger(ListBox.class);
+    static Logger log = LoggerFactory.getLogger(Selector.class);
     
     public static final String ELEMENT_ID = "selector";
     public static final String CONTAINER_ID = "container";
@@ -291,27 +291,33 @@ public class Selector<T> extends Panel {
         super.updateLogicalState(tpf);
         if( modelRef.update() ) {
             boundSelection();
-            
-            // Make sure that the selected item is pointing to
-            // something that exists or the proper item if it has moved.
-            T item = null;
-            Integer i = selectionRef.get();
-            if( i != null ) {
-                item = listBox.getModel().get(i); 
-            }
-            if( !Objects.equals(item, selectedItem.getObject()) ) {
-                // See whether it's gone or just moved
-                int newIndex = listBox.getModel().indexOf(selectedItem.getObject());
-                if( newIndex < 0 ) {
-                    // It's gone... so we need to reassert the current
-                    // selection
-                    listBox.getSelectionModel().clear();
-                    listBox.getSelectionModel().setSelection(i);
-                } else {
-                    // Else it's just moved
-                    listBox.getSelectionModel().setSelection(newIndex);
+ 
+            // Don't try to fix the selection if the selectionRef is already
+            // out of date.  It's quite possible that it's already accurate
+            // with the latest list model and trying to move the selection
+            // will end up reverting it.
+            if( !selectionRef.needsUpdate() ) {            
+                // Make sure that the selected item is pointing to
+                // something that exists or the proper item if it has moved.
+                T item = null;
+                Integer i = selectionRef.get();
+                if( i != null ) {
+                    item = listBox.getModel().get(i); 
                 }            
-            }             
+                if( !Objects.equals(item, selectedItem.getObject()) ) {
+                    // See whether it's gone or just moved
+                    int newIndex = listBox.getModel().indexOf(selectedItem.getObject());
+                    if( newIndex < 0 ) {
+                        // It's gone... so we need to reassert the current
+                        // selection
+                        listBox.getSelectionModel().clear();
+                        listBox.getSelectionModel().setSelection(i);
+                    } else {
+                        // Else it's just moved
+                        listBox.getSelectionModel().setSelection(newIndex);
+                    }                
+                }
+            }                 
         }
         updateSelection();
     }
