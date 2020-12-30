@@ -55,32 +55,52 @@ public class VersionedHolder<T> implements VersionedObject<T> {
         this.value = initialValue;
     }
 
+    @Override
     public long getVersion() {
         return version;
     }
 
+    /**
+     *  Sets a new value to the refenced object and increments the version.
+     */
     public void setObject( T value ) {
         this.value = value;
         incrementVersion();
     }
 
+    /**
+     *  Sets a new value to the refenced object only if has changed.
+     *  An value is considered changed if oldValue != newValue and 
+     *  oldValue.equals(newValue) returns false.  Returns true if the 
+     *  object was actually changed.
+     */
     public boolean updateObject( T value ) {
-        if( this.value == value )
+        if( this.value == value ) {
             return false;
-        if( this.value != null && this.value.equals(value) )
+        }
+        if( this.value != null && this.value.equals(value) ) {
             return false;
+        }
         setObject(value);
         return true;
     }
 
+    /**
+     *  Manually increments the version causing VersionedReferences to
+     *  see this object as changed.  This is useful in cases where it
+     *  is known that the object's fields have changed in some way the
+     *  VersionedReference holders might care about. 
+     */
     public void incrementVersion() {
         version++;
     }
 
+    @Override
     public T getObject() {
         return value;
     }
 
+    @Override
     public VersionedReference<T> createReference() {
         return new VersionedReference<T>(this);
     }

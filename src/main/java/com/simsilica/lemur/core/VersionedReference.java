@@ -64,18 +64,33 @@ public class VersionedReference<T> {
         this.lastVersion = object.getVersion();
     }
 
+    /**
+     *  Returns the version of the referenced object that last
+     *  time update() was called.
+     */
     public long getLastVersion() {
         return lastVersion;
     }
-    
+ 
+    /**
+     *  Returns the current version of the referenced object.
+     */   
     public long getObjectVersion() {
         return object.getVersion();
     }
 
+    /**
+     *  Returns true if the current version of the object
+     *  differs from the version the last time update() was called.
+     */
     public boolean needsUpdate() {
         return lastVersion != object.getVersion();
     }
 
+    /**
+     *  Updates the referenced version to the current version and
+     *  returns true if the referenced version was changed.
+     */
     public boolean update() {
         if( lastVersion == object.getVersion() )
             return false;
@@ -83,6 +98,9 @@ public class VersionedReference<T> {
         return true;
     }
 
+    /**
+     *  Returns the current version of the referenced object.
+     */
     public T get() {
         return object.getObject();
     }

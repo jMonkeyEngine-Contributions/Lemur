@@ -43,9 +43,20 @@ package com.simsilica.lemur.core;
  *  @author    Paul Speed
  */
 public interface VersionedObject<T> {
+    
+    /**
+     *  Returns the current version of the versioned object.
+     */
     public long getVersion(); 
 
+    /**
+     *  Returns the object that is being versioned.
+     */
     public T getObject();
 
+    /**
+     *  Creates a new VersionedReference that can be used to monitor
+     *  when this object changes.
+     */
     public VersionedReference<T> createReference();
 }

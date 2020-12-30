@@ -23,6 +23,8 @@ Lemur 1.15.0 (unreleased)
 * Fixed TextEntryComponent to skip navigating focus if there is no current
     focus.
 * Add some focusGained/focusLost trace logging to GuiControl.    
+* Added VersionedReference, VersionedObject, and VersionedHolder method
+    javadocs.
 
 
 Lemur 1.14.0 (latest)
