@@ -144,7 +144,6 @@ public class Spinner<T> extends Panel {
                                            FillMode.First);         
         getControl(GuiControl.class).setLayout(layout);
  
-        // Just using cell renderer temporarily
         if( valueRenderer == null ) {
             // Create a default one
             valueRenderer = new DefaultValueRenderer<>(elementId.child(VALUE_ID), style);
@@ -226,6 +225,17 @@ public class Spinner<T> extends Panel {
     
     public ValueEditor<T> getValueEditor() {
         return valueEditor;
+    }
+
+    public void setValue( T value ) {
+        getModel().setObject(value);
+    }
+    
+    public T getValue() {
+        if( model == null ) {
+            return null;
+        }
+        return getModel().getObject();
     }
 
     public void nextValue() {
