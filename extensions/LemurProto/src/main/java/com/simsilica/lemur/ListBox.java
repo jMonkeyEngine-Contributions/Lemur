@@ -336,6 +336,7 @@ public class ListBox<T> extends Panel {
             return;
         }
         this.cellRenderer = renderer;
+        cellRenderer.configureStyle(getElementId().child("item"), getStyle());
         grid.refreshGrid(); // cheating
     }
     
