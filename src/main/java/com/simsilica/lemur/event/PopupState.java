@@ -319,6 +319,7 @@ public class PopupState extends BaseAppState {
             // a best guess
             size = control.getPreferredSize();
         }
+        size = size.mult(s.getLocalScale());
         Vector3f pos = s.getWorldTranslation();
         Vector3f target = new Vector3f();
  

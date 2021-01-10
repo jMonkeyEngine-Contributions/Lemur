@@ -288,7 +288,7 @@ public class GuiControl extends AbstractNodeControl<GuiControl>
 
     public Vector3f getPreferredSize() {
         if( preferredSizeOverride != null )
-            return preferredSizeOverride;
+            return preferredSizeOverride.clone();
 
         Vector3f size = new Vector3f();
         if( layout != null ) {
