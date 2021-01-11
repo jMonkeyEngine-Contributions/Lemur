@@ -24,6 +24,8 @@ Lemur-Proto 1.12.0 (unrleased)
     or backwards.
 * Added a Spinner GUI element that allows next/previous through a SequenceModel
     as well as (optionally) direct entering a value.
+* Added a ListBox.getSelectedItem() convenience method for retrieving the single-selection
+    item in the list box.    
 
 
 Lemur-Proto 1.11.0 (latest)

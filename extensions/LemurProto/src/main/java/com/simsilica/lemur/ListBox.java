@@ -286,6 +286,22 @@ public class ListBox<T> extends Panel {
         return selection;
     }
 
+    /**
+     *  Returns the currently selected list item if there is one and only
+     *  one item selected.  This is a convenience method that interrogates
+     *  the selection model and looks up the current value in the list model.
+     */
+    public T getSelectedItem() {
+        Integer i = selection.getSelection();
+        if( i == null ) {
+            return null;
+        }
+        if( i < 0 || i > getModel().size() ) {
+            return null;
+        }
+        return getModel().get(i);     
+    }    
+
     @SuppressWarnings("unchecked") // because Java doesn't like var-arg generics 
     public void addCommands( ListAction a, Command<? super ListBox>... commands ) {
         commandMap.addCommands(a, commands);
