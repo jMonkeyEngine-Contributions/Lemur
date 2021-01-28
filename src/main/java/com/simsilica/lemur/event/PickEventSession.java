@@ -449,7 +449,15 @@ public class PickEventSession {
                 if( isTraceEnabled() ) {                
                     trace("Creating Viewport ray, clickNear:" + clickNear + " clickFar:" + clickFar);
                 }
-                result = new Ray(clickNear, clickFar.subtractLocal(clickNear).normalizeLocal());
+                Vector3f clickDir = clickFar.subtractLocal(clickNear).normalizeLocal();
+                if( clickDir.isUnitVector() ) {
+                    result = new Ray(clickNear, clickDir);
+                } else {
+                    if( isTraceEnabled() ) {
+                        trace("Camera provided near/far that produced non-unit vector:" + clickDir); 
+                    }
+                    result = null;
+                }
             } else {
                 result = null;
             }

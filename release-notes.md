@@ -29,6 +29,8 @@ Lemur 1.15.0 (unreleased)
     override so that it's 'sharing' behvior matches that of when there is
     no preferred size override. (ie: you no longer have to defensively clone
     getPreferredSize() results even when there is an override in place.) 
+* Fixed an assertion error in PickEventSession.getPickRay() caused be 'bad'
+    camera setups.
 
 
 Lemur 1.14.0 (latest)
