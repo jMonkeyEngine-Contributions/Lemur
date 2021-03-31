@@ -1,3 +1,6 @@
+Lemur-Proto 1.12.1 (unreleased)
+-------------------
+
 Lemur-Proto 1.12.0 (latest)
 -------------------
 * Added SelectionModel.createSelectionReference() for obtaining a VersionedReference
