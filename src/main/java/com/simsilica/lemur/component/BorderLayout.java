@@ -124,7 +124,7 @@ public class BorderLayout extends AbstractGuiComponent
         size.x += pref.x;
     }
 
-    public void reshape(Vector3f pos, Vector3f size) {
+    public void reshape( Vector3f pos, Vector3f size ) {
         // Note: we use the pos and size for scratch because we
         // are a layout and we should therefore always be last.
 
@@ -183,8 +183,9 @@ public class BorderLayout extends AbstractGuiComponent
     }
 
     public <T extends Node> T addChild( Position pos, T n ) {
-        if( n.getControl(GuiControl.class) == null )
-            throw new IllegalArgumentException( "Child is not GUI element." );
+        if( n.getControl(GuiControl.class) == null ) {
+            throw new IllegalArgumentException("Child is not GUI element:" + n);
+        }
 
         // See if there is already a child there
         Node existing = children.remove(pos);
@@ -208,7 +209,7 @@ public class BorderLayout extends AbstractGuiComponent
             if( o instanceof Position ) {
                 p = (Position)o;
             } else {
-                throw new IllegalArgumentException( "Unknown border layout constraint:" + o );
+                throw new IllegalArgumentException("Unknown border layout constraint:" + o);
             }
         }
         // Determine the next natural location
@@ -217,8 +218,9 @@ public class BorderLayout extends AbstractGuiComponent
     }
 
     public void removeChild( Node n ) {
-        if( !children.values().remove(n) )
-            throw new RuntimeException( "Node is not a child of this layout." );
+        if( !children.values().remove(n) ) { 
+            throw new RuntimeException("Node is not a child of this layout:" + n);
+        }            
     
         if( parent != null ) {
             parent.getNode().detachChild(n);
