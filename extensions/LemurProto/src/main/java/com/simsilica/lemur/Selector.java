@@ -99,7 +99,7 @@ public class Selector<T> extends Panel {
                 new SelectionModel(), new ElementId(ELEMENT_ID), null);             
     }
 
-    public Selector( VersionedList<T> model, Function<Object, String> stringTransform ) {
+    public Selector( VersionedList<T> model, Function<? super T, String> stringTransform ) {
         this(true, model, 
                 new DefaultValueRenderer<T>(new ElementId(ELEMENT_ID).child("item"), null, stringTransform),
                 new SelectionModel(), new ElementId(ELEMENT_ID), null);             

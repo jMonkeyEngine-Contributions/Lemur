@@ -56,7 +56,7 @@ public class DefaultValueRenderer<T> implements ValueRenderer<T>, Cloneable {
     
     private ElementId elementId;
     private String style;
-    private Function<Object, String> toString;
+    private Function<? super T, String> toString;
  
     /**
      *  Creates a value renderer with no preconfigured style, element ID, or
@@ -72,7 +72,7 @@ public class DefaultValueRenderer<T> implements ValueRenderer<T>, Cloneable {
      *  configured element ID or style.  The renderer will pick up the style information 
      *  that the using GUI element prefers. 
      */
-    public DefaultValueRenderer( Function<Object, String> toString ) {
+    public DefaultValueRenderer( Function<? super T, String> toString ) {
         this(null, null, toString);
     }
     
@@ -90,7 +90,7 @@ public class DefaultValueRenderer<T> implements ValueRenderer<T>, Cloneable {
      *  elementID and style.  This will ignore any style set by the using GUI element if
      *  elementId or style are non-null.  
      */
-    public DefaultValueRenderer( ElementId elementId, String style, Function<Object, String> toString ) {
+    public DefaultValueRenderer( ElementId elementId, String style, Function<? super T, String> toString ) {
         this.style = style;
         this.elementId = elementId;
         this.toString = toString;
@@ -124,11 +124,11 @@ public class DefaultValueRenderer<T> implements ValueRenderer<T>, Cloneable {
      *  Sets the function that will convert values to Strings.  Set to null
      *  to use the default String.valueOf() behavior.
      */
-    public void setStringTransform( Function<Object, String> toString ) {
+    public void setStringTransform( Function<? super T, String> toString ) {
         this.toString = toString;
     }
     
-    public Function<Object, String> getStringTransform() {
+    public Function<? super T, String> getStringTransform() {
         return toString;
     } 
  
