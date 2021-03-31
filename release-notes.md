@@ -1,4 +1,4 @@
-Lemur 1.15.0 (unreleased)
+Lemur 1.15.0 (latest)
 -------------
 * Fixed a bug where moving a GuiComponent from one GUI element to another
     caused lingering state issues.  This most prominently manifested when
@@ -6,34 +6,34 @@ Lemur 1.15.0 (unreleased)
 * Added PopupState.clampToGui() for conveniently moving a GUI element so
     that it is fully on screen.
 * Added additional convenience constructors to DocumentModelFilter that
-    allow passing filters directly instead of setting them post-construction.    
+    allow passing filters directly instead of setting them post-construction.
 * Added PopupState.centerInGui() for conveniently centering a GUI element
     in the popup space.
-* Added CommandMap.addComments() and Button.addClickCommands() that take
+* Added CommandMap.addCommands() and Button.addClickCommands() that take
     a single argument instead of var-args. This is the most common case
-    and prevents a bunch of extra 'unchecked' warnings because of the 
+    and prevents a bunch of extra 'unchecked' warnings because of the
     var-args arrays.
 * Fixed a subtle bug in the FocusManagerState where changing the focus
     during a focus change event may cause parts of the focus hierarchy
     to be left in an indeterminate state.
 * FocusNavigationState.requestChangeFocus() now checks for null parameters
     and throws an IllegalArgumentException instead of an NPE further down
-    in the stack.    
+    in the stack.
 * Added a TextField(model, elementId, style) constructor.
 * Fixed TextEntryComponent to skip navigating focus if there is no current
     focus.
-* Add some focusGained/focusLost trace logging to GuiControl.    
+* Add some focusGained/focusLost trace logging to GuiControl.
 * Added VersionedReference, VersionedObject, and VersionedHolder method
     javadocs.
 * Fixed GuiControl.getPreferredSize() to return a clone of the preferred size
     override so that it's 'sharing' behvior matches that of when there is
     no preferred size override. (ie: you no longer have to defensively clone
-    getPreferredSize() results even when there is an override in place.) 
-* Fixed an assertion error in PickEventSession.getPickRay() caused be 'bad'
+    getPreferredSize() results even when there is an override in place.)
+* Fixed an assertion error in PickEventSession.getPickRay() caused by 'bad'
     camera setups.
 
 
-Lemur 1.14.0 (latest)
+Lemur 1.14.0
 -------------
 * Added a default getId() implementation to BaseAppState so that it is compatible
     with the AppState interface in JME 3.3+.
@@ -51,7 +51,7 @@ Lemur 1.14.0 (latest)
 * Added IconComponent.setMargin(Vector2f)
 * Added QuadBackgroundComponent.setMargin(Vector2f)
 * Added TbtQuadBackgroundComponent..setMargin(Vector2f)
-* Fixed an issue with TweenAnimation where isRunning() always returns false for 
+* Fixed an issue with TweenAnimation where isRunning() always returns false for
     nonlooping animations.
 
 

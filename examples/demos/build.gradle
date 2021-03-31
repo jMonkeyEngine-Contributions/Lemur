@@ -17,33 +17,33 @@ repositories {
 }
 
 ext.jmeVersion = "3.1.0-stable"
-//ext.jmeVersion = "3.3.0-SNAPSHOT" 
+//ext.jmeVersion = "3.3.0-SNAPSHOT"
 
 project(":assets") {
     apply plugin: "java"
-    
+
     buildDir = rootProject.file("build/assets")
-    
+
     sourceSets {
         main {
             resources {
                 srcDir '.'
             }
         }
-    }    
+    }
 }
 
 
 dependencies {
- 
+
     // Need at least basic JME
     compile "org.jmonkeyengine:jme3-core:$jmeVersion"
     compile "org.jmonkeyengine:jme3-desktop:$jmeVersion"
     compile "org.jmonkeyengine:jme3-lwjgl:$jmeVersion"
- 
-    compile "com.simsilica:lemur:1.14.0"
-    compile "com.simsilica:lemur-proto:1.11.0"
-    
+
+    compile "com.simsilica:lemur:1.15.0"
+    compile "com.simsilica:lemur-proto:1.12.0"
+
     // needed for the style language
     runtime "org.codehaus.groovy:groovy-all:2.4.5"
 
@@ -52,8 +52,8 @@ dependencies {
     compile 'org.slf4j:slf4j-api:1.7.13'
     runtime 'org.apache.logging.log4j:log4j-slf4j-impl:2.5'
     runtime 'org.apache.logging.log4j:log4j-core:2.5'
-        
-    runtime project(':assets')    
+
+    runtime project(':assets')
 }
 
 task wrapper(type: Wrapper) {

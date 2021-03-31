@@ -1,10 +1,10 @@
-Lemur-Proto 1.12.0 (unrleased)
+Lemur-Proto 1.12.0 (latest)
 -------------------
 * Added SelectionModel.createSelectionReference() for obtaining a VersionedReference
     of just the single-selection state.
 * Fixed DefaultCellRenderer to use 'null' as the default style instead of "root".
     This fits the overall API better and was probably a hold over from before there
-    were default styles.  It still might be a breaking change for someone.    
+    were default styles.  It still might be a breaking change for someone.
 * Fixed a bug where ListBox click listeners weren't getting executed.
 * Added a Selector GUI element for selecting options for a list of values.
     Basically it's a single value field that pops up a list box when clicked.
@@ -25,10 +25,10 @@ Lemur-Proto 1.12.0 (unrleased)
 * Added a Spinner GUI element that allows next/previous through a SequenceModel
     as well as (optionally) direct entering a value.
 * Added a ListBox.getSelectedItem() convenience method for retrieving the single-selection
-    item in the list box.    
+    item in the list box.
 
 
-Lemur-Proto 1.11.0 (latest)
+Lemur-Proto 1.11.0
 -------------------
 * Modified OptionPanelState to delegate all popup stuff to PopupState.
     Breaking change: OptionPanelState will use PopupState's guiNode
@@ -39,12 +39,12 @@ Lemur-Proto 1.11.0 (latest)
     and expecting them to clean this up will now need to clean it up themselves.
 * OptionPanelState no longer calls OptionPanel.close() and instead delegates to
     PopupState.closePopup() to avoid double-running close effects, etc. and also
-    to properly handle cursor/focus release.  
+    to properly handle cursor/focus release.
     Breaking change: any user application relying on OptionPanel.close() to be
     called in an OptionPanel subclass will have to hook things a different way.
 
 
-Lemur-Proto 1.10.0 
+Lemur-Proto 1.10.0
 -------------------
 * Modified OptionPanelState and OptionPanel to automatically request/release
     the cursor using the new GuiGlobals.request/releaseCursorEnabled().
