@@ -76,7 +76,7 @@ public class ListBox<T> extends Panel {
     
     public enum ListAction { Down, Up, Click, Entered, Exited };
 
-
+    private ElementId baseElementId;
     private BorderLayout layout;
     private VersionedList<T> model;
     private VersionedReference<List<T>> modelRef;
@@ -148,12 +148,13 @@ public class ListBox<T> extends Panel {
                        SelectionModel selection,  
                        ElementId elementId, String style ) {
         super(false, elementId.child(CONTAINER_ID), style);
- 
+        this.baseElementId = elementId;
+         
         if( cellRenderer == null ) {
             // Create a default one
-            cellRenderer = new DefaultCellRenderer<>(elementId.child("item"), style);
+            cellRenderer = new DefaultCellRenderer<>(baseElementId.child("item"), style);
         } else {
-            cellRenderer.configureStyle(elementId.child("item"), style);
+            cellRenderer.configureStyle(baseElementId.child("item"), style);
         }
         this.cellRenderer = cellRenderer;
  
@@ -352,7 +353,9 @@ public class ListBox<T> extends Panel {
             return;
         }
         this.cellRenderer = renderer;
-        cellRenderer.configureStyle(getElementId().child("item"), getStyle());
+        // We send through the same element ID that was provided to our constructor
+        // because that's what the default cell renderer would have used.            
+        cellRenderer.configureStyle(baseElementId.child("item"), getStyle());
         grid.refreshGrid(); // cheating
     }
     

@@ -1,5 +1,12 @@
 Lemur-Proto 1.12.1 (unreleased)
 -------------------
+* Added DefaultCellRenderer.getElementId() and deprecated DefaultCellRenderer.getElement()
+    since it was a typo that made it into a release.
+* Fixed the cell renderer configureStyle() behavior to pass the original element ID
+    instead of the ListBox.getElementId() which will have already been a container
+    child of the original.  This fixes a bug where the list style would drastically
+    change when swapping in a new renderer.    
+   
 
 Lemur-Proto 1.12.0 (latest)
 -------------------

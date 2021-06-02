@@ -107,7 +107,15 @@ public class DefaultCellRenderer<T> implements CellRenderer<T>, Cloneable {
         return transform;
     } 
  
+    /**
+     *  This was a typo that went into a release.  Use getElementId() instead.
+     */
+    @Deprecated 
     public ElementId getElement() {
+        return elementId;
+    }
+
+    public ElementId getElementId() {
         return elementId;
     }
     
