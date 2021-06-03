@@ -179,21 +179,7 @@ public class TouchAppState extends BasePickState {
             }
             PointerData pointerData;
             switch (te.getType()) {
-                case DOWN:
-                    pointerData = getPointerData(
-                            te.getPointerId(), (int)te.getX(), (int)te.getY());
-                    if (dispatchButton(pointerData, true)) {
-                        te.setConsumed();
-                    }
-                    break;
-                case MOVE:
-                    pointerData = pointerDataMap.get(te.getPointerId());
-                    if (pointerData != null) {
-                        pointerData.lastX = (int)te.getX();
-                        pointerData.lastY = (int)te.getY();
-                    }
-                    break;
-                case UP:
+                case TAP:
                     pointerData = pointerDataMap.get(te.getPointerId());
                     if (pointerData != null) {
                         pointerData.lastX = (int)te.getX();
@@ -202,6 +188,13 @@ public class TouchAppState extends BasePickState {
                             te.setConsumed();
                         }
                         pointerDataMap.remove(te.getPointerId());
+                    }
+                    break;
+                case MOVE:
+                    pointerData = pointerDataMap.get(te.getPointerId());
+                    if (pointerData != null) {
+                        pointerData.lastX = (int)te.getX();
+                        pointerData.lastY = (int)te.getY();
                     }
                     break;
                 default:
