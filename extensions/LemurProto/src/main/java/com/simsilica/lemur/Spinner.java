@@ -260,6 +260,9 @@ public class Spinner<T> extends Panel {
         if( this.enabled == b )
             return;
         this.enabled = b;
+        
+        previous.setEnabled(b);
+        next.setEnabled(b);
          
         if( isEnabled() ) {
             commandMap.runCommands(SpinnerAction.Enabled);

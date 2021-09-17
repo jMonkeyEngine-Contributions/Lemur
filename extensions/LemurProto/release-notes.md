@@ -5,7 +5,9 @@ Lemur-Proto 1.12.1 (unreleased)
 * Fixed the cell renderer configureStyle() behavior to pass the original element ID
     instead of the ListBox.getElementId() which will have already been a container
     child of the original.  This fixes a bug where the list style would drastically
-    change when swapping in a new renderer.    
+    change when swapping in a new renderer.
+* Fixed Spinner to disable/enable the previous/next buttons when the spinner is
+    disabled/enabled.
    
 
 Lemur-Proto 1.12.0 (latest)
