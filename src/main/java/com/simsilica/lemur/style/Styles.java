@@ -339,14 +339,18 @@ public class Styles {
         Attributes a2 = test.getAttributes( "slider.thumb.button", "foo" );
         System.out.println( "a2:" + a2 );
     }
-
-    public void initializeStyles(Class c) {
+    // the old way for compatibility reasons
+    public void initializeStyles(Class c){
+        initializeStyles(c,null); 
+   }
+    
+    public void initializeStyles(Class c, String style) {
         if( initialized.contains(c) )
             return;
         initialized.add(c);
 
         if( c.getSuperclass() != Object.class ) {
-            initializeStyles(c.getSuperclass());
+             initializeStyles(c.getSuperclass(), style);
         }
 
         // Find the right method
@@ -369,7 +373,7 @@ public class Styles {
                     if( Styles.class.isAssignableFrom(parmTypes[i]) ) {
                         args[i] = this;
                     } else if( Attributes.class.isAssignableFrom(parmTypes[i]) ) {
-                        args[i] = getSelector(styleDefaults.value(), null);
+                        args[i] = getSelector(styleDefaults.value(), style);
                     }
                 }
                 m.invoke(c, args);
@@ -433,11 +437,16 @@ public class Styles {
         applyStyles(o, elementId, null);
     }
 
+    public void applyStyles( Object o, ElementId elementId ) {
+        applyStyles(o, elementId, null);
+    }
+    
     @SuppressWarnings("unchecked")
     public void applyStyles( Object o, ElementId elementId, String style ) {
 
         Class c = o.getClass();
-        initializeStyles(c);
+        if (style == null) style = this.getDefaultStyle();
+        initializeStyles(c, style);
 
         if( log.isTraceEnabled() ) {
             log.trace("applyStyles elementId:" + elementId + " style:" + style + (style==null?"(" + defaultStyle + ")":""));
