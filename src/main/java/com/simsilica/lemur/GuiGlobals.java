@@ -357,7 +357,6 @@ public class GuiGlobals {
         return t;
     }
 
-    static final float GAMMA = 2.2f;
 
     /**
      *  Creates a color from the specified RGBA values as if they were in SRGB space,
