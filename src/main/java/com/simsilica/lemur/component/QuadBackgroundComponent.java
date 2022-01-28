@@ -60,6 +60,7 @@ public class QuadBackgroundComponent extends AbstractGuiComponent
     private float xMargin = 0;
     private float yMargin = 0;
     private float zOffset = 0.01f;
+    private float alphaDiscard = 0;
     private boolean lit = false;
 
     // Keep track of any scale we've already applied to the quad
@@ -70,7 +71,7 @@ public class QuadBackgroundComponent extends AbstractGuiComponent
         this(ColorRGBA.Gray, 0, 0, 0.01f, false);
     }
 
-    public QuadBackgroundComponent( ColorRGBA color ) { 
+    public QuadBackgroundComponent( ColorRGBA color ) {
         this(color, 0, 0, 0.01f, false);
     }
 
@@ -89,7 +90,7 @@ public class QuadBackgroundComponent extends AbstractGuiComponent
         createMaterial();
     }
 
-    public QuadBackgroundComponent( Texture texture ) { 
+    public QuadBackgroundComponent( Texture texture ) {
         this(texture, 0, 0, 0.01f, false);
     }
 
@@ -136,7 +137,7 @@ public class QuadBackgroundComponent extends AbstractGuiComponent
         this.color = c;
         resetColor();
     }
-    
+
     protected void resetColor() {
         if( material == null ) {
             return;
@@ -165,7 +166,7 @@ public class QuadBackgroundComponent extends AbstractGuiComponent
         this.alpha = f;
         resetColor();
     }
-    
+
     @Override
     public float getAlpha() {
         return alpha;
@@ -219,6 +220,31 @@ public class QuadBackgroundComponent extends AbstractGuiComponent
         return zOffset;
     }
 
+    /**
+     *  Sets the alphaDiscardThreshold for the image material.  If an
+     *  alpha value is below this threshold then it will be discarded
+     *  rather than being written to the color and zbuffers.  Set to 0
+     *  to disable.  Defaults to 0.
+     *
+     *  <p>Note: for 2D UIs this threshold is not necessary as 2D GUIs
+     *  will always sort purely back-to-front on Z.  For 3D UIs, this
+     *  setting may prevent visual artifacts from certain directions
+     *  for very transparent pixels (background showing through, etc.))</p>
+     */
+    public void setAlphaDiscard( float alphaDiscard ) {
+        if( this.alphaDiscard == alphaDiscard ) {
+            return;
+        }
+        this.alphaDiscard = alphaDiscard;
+        if( material != null ) {
+            material.getMaterial().setFloat("AlphaDiscardThreshold", alphaDiscard);
+        }
+    }
+
+    public float getAlphaDiscard() {
+        return alphaDiscard;
+    }
+
     public GuiMaterial getMaterial() {
         return material;
     }
@@ -248,11 +274,7 @@ public class QuadBackgroundComponent extends AbstractGuiComponent
             material.setTexture(texture);
         }
         material.getMaterial().getAdditionalRenderState().setBlendMode(BlendMode.Alpha);
-        // AlphaTest and AlphaFalloff are deprecated in favor of the material
-        // parameter... in fact in current JME there are no-ops.
-        //material.getMaterial().getAdditionalRenderState().setAlphaTest(true);
-        //material.getMaterial().getAdditionalRenderState().setAlphaFallOff(0.1f);
-        material.getMaterial().setFloat("AlphaDiscardThreshold", 0.1f);
+        material.getMaterial().setFloat("AlphaDiscardThreshold", alphaDiscard);
     }
 
     protected void refreshBackground( Vector3f size ) {
@@ -272,13 +294,13 @@ public class QuadBackgroundComponent extends AbstractGuiComponent
             // Can't do this even though it seems logical because it
             // is just as likely that we are in bucket.gui.  It is up to
             // the caller to put the main 3D ui in the transparent bucket
-            //background.setQueueBucket(Bucket.Transparent); 
+            //background.setQueueBucket(Bucket.Transparent);
             if( material == null ) {
                 createMaterial();
             }
             background.setMaterial(material.getMaterial());
             getNode().attachChild(background);
-            
+
             // If we've recreated the spatial then the applied scale
             // should be reset also.  We could either move slightly different
             // scaling logic into the branch and the else branch... or just
@@ -288,26 +310,26 @@ public class QuadBackgroundComponent extends AbstractGuiComponent
         } else {
             // Else reset the size of the quad
             Quad q = (Quad)background.getMesh();
-            if( size.x != q.getWidth() || size.y != q.getHeight() ) {               
+            if( size.x != q.getWidth() || size.y != q.getHeight() ) {
                 q.updateGeometry(size.x, size.y);
-                q.clearCollisionData(); 
+                q.clearCollisionData();
             }
         }
-        
+
         Vector2f effectiveScale = textureCoordinateScale == null ? Vector2f.UNIT_XY : textureCoordinateScale;
         if( !appliedTextureScale.equals(effectiveScale) ) {
-            
+
             // Need to apply new texture coordinate scaling
             Mesh m = background.getMesh();
-            
+
             // Unscale what we already scaled
             m.scaleTextureCoordinates(new Vector2f(1/appliedTextureScale.x, 1/appliedTextureScale.y));
-            
+
             appliedTextureScale.set(effectiveScale);
- 
-            // And now apply the latest coordinate scaling.           
+
+            // And now apply the latest coordinate scaling.
             m.scaleTextureCoordinates(appliedTextureScale);
-            
+
             // Note: it's probably safer to have just applied the scale value directly to
             // the quad's texture coordinate values instead of multiplying.  The above may
             // accumulate errors.  Still, I thought this would be more future proof and

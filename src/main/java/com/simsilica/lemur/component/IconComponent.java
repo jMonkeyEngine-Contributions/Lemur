@@ -69,6 +69,7 @@ public class IconComponent extends AbstractGuiComponent
     private float xMargin = 0;
     private float yMargin = 0;
     private float zOffset = 0.01f;
+    private float alphaDiscard = 0;
     private HAlignment hAlign = HAlignment.Left;
     private VAlignment vAlign = VAlignment.Center;
     private Vector3f offset = null;
@@ -85,16 +86,16 @@ public class IconComponent extends AbstractGuiComponent
                           float xMargin, float yMargin, float zOffset,
                           boolean lit ) {
         this(imagePath, new Vector2f(iconScale, iconScale), xMargin, yMargin,
-             zOffset, lit);                          
+             zOffset, lit);
     }
-                              
+
     public IconComponent( String imagePath, Vector2f iconScale,
                           float xMargin, float yMargin, float zOffset,
                           boolean lit ) {
         this(GuiGlobals.getInstance().loadTexture(imagePath, false, false),
-             iconScale, xMargin, yMargin, zOffset, lit);                          
-    }                          
-                          
+             iconScale, xMargin, yMargin, zOffset, lit);
+    }
+
     public IconComponent( Texture image, Vector2f iconScale,
                           float xMargin, float yMargin, float zOffset,
                           boolean lit ) {
@@ -102,7 +103,7 @@ public class IconComponent extends AbstractGuiComponent
             throw new IllegalArgumentException("Image texture cannot be null");
         }
         // In the case where the 'imagePath' based constructors are called,
-        // the Text.name is the same as the imagePath provided originally.                          
+        // the Text.name is the same as the imagePath provided originally.
         this.imagePath = image.getName();
         this.image = image;
         this.iconScale = iconScale;
@@ -154,7 +155,7 @@ public class IconComponent extends AbstractGuiComponent
         this.color = c;
         resetColor();
     }
-    
+
     protected void resetColor() {
         if( material == null ) {
             return;
@@ -183,19 +184,19 @@ public class IconComponent extends AbstractGuiComponent
         this.alpha = f;
         resetColor();
     }
-    
+
     @Override
     public float getAlpha() {
         return alpha;
     }
-    
+
     public void setIconScale( float scale ) {
         if( scale == this.iconScale.x && scale == this.iconScale.y ) {
             return;
         }
         setIconScale(new Vector2f(scale, scale));
     }
-    
+
     public void setIconScale( Vector2f scale ) {
         if( this.iconScale.equals(scale) )
             return;
@@ -223,16 +224,16 @@ public class IconComponent extends AbstractGuiComponent
             return;
         }
         this.iconSize = iconSize;
-        
+
         // Not very efficient
         createIcon();
 
         invalidate();
     }
-    
+
     public Vector2f getIconSize() {
         return iconSize;
-    } 
+    }
 
     public void setHAlignment( HAlignment a ) {
         if( hAlign == a )
@@ -262,7 +263,7 @@ public class IconComponent extends AbstractGuiComponent
 
         invalidate();
     }
-    
+
     public void setMargin( Vector2f margin ) {
         if( margin == null ) {
             throw new IllegalArgumentException("Margin cannot be null");
@@ -300,6 +301,31 @@ public class IconComponent extends AbstractGuiComponent
 
     public boolean isOverlay() {
         return overlay;
+    }
+
+    /**
+     *  Sets the alphaDiscardThreshold for the image material.  If an
+     *  alpha value is below this threshold then it will be discarded
+     *  rather than being written to the color and zbuffers.  Set to 0
+     *  to disable.  Defaults to 0.
+     *
+     *  <p>Note: for 2D UIs this threshold is not necessary as 2D GUIs
+     *  will always sort purely back-to-front on Z.  For 3D UIs, this
+     *  setting may prevent visual artifacts from certain directions
+     *  for very transparent pixels (background showing through, etc.))</p>
+     */
+    public void setAlphaDiscard( float alphaDiscard ) {
+        if( this.alphaDiscard == alphaDiscard ) {
+            return;
+        }
+        this.alphaDiscard = alphaDiscard;
+        if( material != null ) {
+            material.getMaterial().setFloat("AlphaDiscardThreshold", alphaDiscard);
+        }
+    }
+
+    public float getAlphaDiscard() {
+        return alphaDiscard;
     }
 
     public GuiMaterial getMaterial() {
@@ -420,11 +446,7 @@ public class IconComponent extends AbstractGuiComponent
             material.setTexture(image);
 
             material.getMaterial().getAdditionalRenderState().setBlendMode(BlendMode.Alpha);
-            // AlphaTest and AlphaFalloff are deprecated in favor of the material
-            // parameter... in fact in current JME there are no-ops.
-            //material.getMaterial().getAdditionalRenderState().setAlphaTest(true);
-            //material.getMaterial().getAdditionalRenderState().setAlphaFallOff(0.01f);
-            material.getMaterial().setFloat("AlphaDiscardThreshold", 0.1f);
+            material.getMaterial().setFloat("AlphaDiscardThreshold", alphaDiscard);
         }
 
         icon.setMaterial(material.getMaterial());
@@ -439,7 +461,7 @@ public class IconComponent extends AbstractGuiComponent
             getNode().attachChild(icon);
         }
     }
-    
+
     protected Vector2f getEffectiveIconSize() {
         if( iconSize != null ) {
             return iconSize;

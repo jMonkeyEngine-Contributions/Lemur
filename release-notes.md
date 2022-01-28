@@ -1,5 +1,15 @@
-Version 1.15.1 (unreleased)
---------------
+Version 1.16.0 (unreleased)
+---------------
+* Added QuadBackgroundComponent.set/getAlphaDiscard().
+    Breaking change: QuadBackgroundComponent now defaults to 0 alpha discard
+    instead of the previous hard-coded 0.1 discard threshold.  Discard
+    should be unnecessary for 2D UIs and may only be rarely necessary for
+    3D UIs.
+* Added IconComponent.set/getAlphaDiscard().
+    Breaking change: IconComponent now defaults to 0 alpha discard
+    instead of the previous hard-coded 0.1 discard threshold.  Discard
+    should be unnecessary for 2D UIs and may only be rarely necessary for
+    3D UIs.
 
 
 Lemur 1.15.0 (latest)
