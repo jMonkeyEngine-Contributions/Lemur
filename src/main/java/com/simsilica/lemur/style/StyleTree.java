@@ -53,6 +53,10 @@ public class StyleTree {
         this.styles = styles;
     }
 
+    protected Node getRoot() {
+        return root;
+    }
+
     public Attributes getSelector( ElementId id, boolean create ) { 
         Node node = findChild(root, id.getParts(), create);   
         if( node == null ) {
@@ -266,6 +270,10 @@ public class StyleTree {
             }
             return attributes;
         }   
+        
+        protected Map<String, Node> getChildren() {
+            return children;
+        }
         
         public String toString() {
             return "Node[" + (id == null ? "*":id) + (attributes == null ? "" : (", " + attributes)) + "]";

@@ -52,12 +52,16 @@ public class Attributes {
         this.parent = parent;
     }
 
+    protected Map<String, Object> getValues() {
+        return values;
+    }
+
     protected void applyNew( Attributes atts ) {
- 
+
         // Note: applyNew is called in highest to lowest priority.
         //       Things that fill the values map now should override
         //       later things.
-               
+
         for( Map.Entry<String,Object> e : atts.values.entrySet() ) {
             Object existing = values.get(e.getKey());
             if( existing instanceof Map && e.getValue() instanceof Map ) {
@@ -65,10 +69,10 @@ public class Attributes {
                 values.put(e.getKey(), mergeMap((Map)existing, (Map)e.getValue()));
             } else if( existing == null && !values.containsKey(e.getKey()) ) {
                 // Null check above is not enough because the map might have a
-                // null value that should override subsequent attempts to 
+                // null value that should override subsequent attempts to
                 // set the value.
                 values.put(e.getKey(), e.getValue());
-            } 
+            }
             // Else we ignore it
         }
     }
@@ -84,7 +88,7 @@ public class Attributes {
             }
         }
         return result;
-    } 
+    }
 
     /**
      *  Like applyNew except that it returns a new Attributes object
@@ -95,7 +99,7 @@ public class Attributes {
     protected Attributes merge( Attributes atts ) {
         if( atts.isEmpty() ) {
             return this;
-        } 
+        }
         Attributes result = new Attributes(parent);
         result.values.putAll(this.values);
         result.applyNew(atts);
