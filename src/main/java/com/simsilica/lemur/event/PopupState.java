@@ -38,6 +38,8 @@ package com.simsilica.lemur.event;
 
 import java.util.*;
 
+import org.slf4j.*;
+
 import com.jme3.app.Application;
 import com.jme3.app.SimpleApplication;
 import com.jme3.app.state.BaseAppState;
@@ -71,6 +73,8 @@ import com.simsilica.lemur.style.ElementId;
  *  @author    Paul Speed
  */
 public class PopupState extends BaseAppState {
+
+    static Logger log = LoggerFactory.getLogger(PopupState.class);
 
     /**
      *  Controls the behavior for clicks outside the specified popup.
