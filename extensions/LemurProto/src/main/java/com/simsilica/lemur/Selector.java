@@ -1,36 +1,36 @@
 /*
  * $Id$
- * 
+ *
  * Copyright (c) 2020, Simsilica, LLC
  * All rights reserved.
- * 
+ *
  * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions 
+ * modification, are permitted provided that the following conditions
  * are met:
- * 
- * 1. Redistributions of source code must retain the above copyright 
+ *
+ * 1. Redistributions of source code must retain the above copyright
  *    notice, this list of conditions and the following disclaimer.
- * 
- * 2. Redistributions in binary form must reproduce the above copyright 
- *    notice, this list of conditions and the following disclaimer in 
- *    the documentation and/or other materials provided with the 
+ *
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in
+ *    the documentation and/or other materials provided with the
  *    distribution.
- * 
- * 3. Neither the name of the copyright holder nor the names of its 
- *    contributors may be used to endorse or promote products derived 
+ *
+ * 3. Neither the name of the copyright holder nor the names of its
+ *    contributors may be used to endorse or promote products derived
  *    from this software without specific prior written permission.
- * 
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS 
- * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT 
- * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS 
- * FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE 
- * COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, 
- * INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES 
- * (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR 
- * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) 
- * HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, 
- * STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) 
- * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED 
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+ * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+ * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS
+ * FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
+ * COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
+ * INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+ * (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+ * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+ * HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
+ * STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
  * OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
@@ -57,14 +57,14 @@ import com.simsilica.lemur.value.DefaultValueRenderer;
 
 /**
  *  A GUI element that presents a value and a drop down for selecting
- *  a different value.  
+ *  a different value.
  *
  *  @author    Paul Speed
  */
 public class Selector<T> extends Panel {
 
     static Logger log = LoggerFactory.getLogger(Selector.class);
-    
+
     public static final String ELEMENT_ID = "selector";
     public static final String CONTAINER_ID = "container";
     public static final String EXPANDER_ID = "down.button";
@@ -76,67 +76,67 @@ public class Selector<T> extends Panel {
     private Panel view;
     private Button expander;
     private Container popup; // because it won't look good with the default list background
-     
-    private ClickListener clickListener = new ClickListener();        
+
+    private ClickListener clickListener = new ClickListener();
     private SelectListener selectListener = new SelectListener();
     private ReshapeListener reshapeListener = new ReshapeListener();
- 
+
     private boolean expanded;
     private int maximumVisibleItems;
 
     private VersionedReference<Integer> selectionRef;
     private VersionedHolder<T> selectedItem = new VersionedHolder<>();
     private VersionedReference<List<T>> modelRef;
- 
+
     public Selector() {
         this(true, new VersionedList<T>(), null,
              new SelectionModel(),
-             new ElementId(ELEMENT_ID), null);             
+             new ElementId(ELEMENT_ID), null);
     }
 
     public Selector( VersionedList<T> model ) {
-        this(true, model, null, 
-                new SelectionModel(), new ElementId(ELEMENT_ID), null);             
+        this(true, model, null,
+                new SelectionModel(), new ElementId(ELEMENT_ID), null);
     }
 
     public Selector( VersionedList<T> model, Function<? super T, String> stringTransform ) {
-        this(true, model, 
+        this(true, model,
                 new DefaultValueRenderer<T>(new ElementId(ELEMENT_ID).child("item"), null, stringTransform),
-                new SelectionModel(), new ElementId(ELEMENT_ID), null);             
+                new SelectionModel(), new ElementId(ELEMENT_ID), null);
     }
 
     public Selector( VersionedList<T> model, ValueRenderer<T> renderer ) {
-        this(true, model, renderer, new SelectionModel(), new ElementId(ELEMENT_ID), null);             
+        this(true, model, renderer, new SelectionModel(), new ElementId(ELEMENT_ID), null);
     }
 
     public Selector( VersionedList<T> model, ValueRenderer<T> renderer, String style ) {
-        this(true, model, renderer, new SelectionModel(), new ElementId(ELEMENT_ID), style);             
+        this(true, model, renderer, new SelectionModel(), new ElementId(ELEMENT_ID), style);
     }
 
     public Selector( VersionedList<T> model, String style ) {
-        this(true, model, null, new SelectionModel(), new ElementId(ELEMENT_ID), style);             
+        this(true, model, null, new SelectionModel(), new ElementId(ELEMENT_ID), style);
     }
- 
+
     public Selector( VersionedList<T> model, ElementId elementId, String style ) {
-        this(true, model, null, new SelectionModel(), elementId, style);             
+        this(true, model, null, new SelectionModel(), elementId, style);
     }
 
     public Selector( VersionedList<T> model, ValueRenderer<T> renderer, ElementId elementId, String style ) {
-        this(true, model, renderer, new SelectionModel(), elementId, style);             
+        this(true, model, renderer, new SelectionModel(), elementId, style);
     }
-     
+
     @SuppressWarnings("unchecked") // because Java doesn't like var-arg generics
     protected Selector( boolean applyStyles, VersionedList<T> model, ValueRenderer<T> valueRenderer,
                         SelectionModel selection, ElementId elementId, String style ) {
         super(false, elementId.child(CONTAINER_ID), style);
-                        
+
         // For now we will internally use a ListBox for the drop down part.
         // I think any problems we have with this are actually ListBox problems
         // and so may work themselves out in the end.  For example, it would be
         // nice to have a scroll bar only when required.
 
         // We create it here to share it with the ListBox because we will
-        // need to render the element for display. 
+        // need to render the element for display.
         if( valueRenderer == null ) {
             // Create a default one
             valueRenderer = new DefaultValueRenderer<>(elementId.child("item"), style);
@@ -144,7 +144,7 @@ public class Selector<T> extends Panel {
             valueRenderer.configureStyle(elementId.child("item"), style);
         }
         this.valueRenderer = valueRenderer;
- 
+
         this.listBox = new ListBox<>(model, valueRenderer, elementId.child("list"), style);
         listBox.setSelectionModel(selection);
         listBox.addClickCommands(selectListener);
@@ -152,7 +152,7 @@ public class Selector<T> extends Panel {
         this.selectionRef = listBox.getSelectionModel().createSelectionReference();
         boundSelection();
         selectedItem.setObject(getSelectedListValue());
- 
+
         this.layout = new BorderLayout();
         getControl(GuiControl.class).setLayout(layout);
 
@@ -170,36 +170,36 @@ public class Selector<T> extends Panel {
         expander.addClickCommands(clickListener);
 
         layout.addChild(BorderLayout.Position.East, expander);
- 
-        resetView();               
+
+        resetView();
     }
- 
+
     @StyleDefaults(ELEMENT_ID)
     public static void initializeDefaultStyles( Styles styles, Attributes attrs ) {
         ElementId parent = new ElementId(ELEMENT_ID);
         styles.getSelector(parent.child(EXPANDER_ID), null).set("text", "v", false);
     }
-    
+
     public VersionedList<T> getModel() {
         return listBox.getModel();
     }
-     
+
     public void setModel( VersionedList<T> model ) {
         listBox.setModel(model);
         this.modelRef = model.createReference();
         boundSelection();
-    } 
- 
+    }
+
     public void setSelectionModel( SelectionModel selectionModel ) {
         listBox.setSelectionModel(selectionModel);
         this.selectionRef = listBox.getSelectionModel().createSelectionReference();
         boundSelection();
     }
-    
+
     public SelectionModel getSelectionModel() {
         return listBox.getSelectionModel();
     }
-    
+
     public void setValueRenderer( ValueRenderer<T> valueRenderer ) {
         if( this.valueRenderer == valueRenderer ) {
             return;
@@ -207,24 +207,24 @@ public class Selector<T> extends Panel {
         this.valueRenderer = valueRenderer;
         listBox.setCellRenderer(valueRenderer);
         resetView();
-    } 
-    
+    }
+
     public ValueRenderer<T> getValueRenderer() {
         return valueRenderer;
     }
-    
+
     public ListBox getListBox() {
         return listBox;
     }
- 
+
     public Button getExpanderButton() {
         return expander;
     }
-    
+
     public Container getPopupContainer() {
         return popup;
     }
- 
+
     @StyleAttribute(value="maximumVisibleItems", lookupDefault=false)
     public void setMaximumVisibleItems( int count ) {
         if( this.maximumVisibleItems == count ) {
@@ -232,11 +232,11 @@ public class Selector<T> extends Panel {
         }
         this.maximumVisibleItems = count;
     }
-    
+
     public int getMaximumVisibleItems() {
         return maximumVisibleItems;
     }
- 
+
     public void setSelectedItem( T item ) {
         int i = listBox.getModel().indexOf(item);
         if( i < 0 ) {
@@ -244,13 +244,17 @@ public class Selector<T> extends Panel {
             listBox.getSelectionModel().clear();
         } else {
             listBox.getSelectionModel().setSelection(i);
+
+            // Make sure that the selected item reference reflects
+            // the value right away.
+            updateSelection();
         }
     }
-    
+
     public T getSelectedItem() {
         updateSelection();
         return selectedItem.getObject();
-    }    
+    }
 
     public VersionedReference<T> createSelectedItemReference() {
         return selectedItem.createReference();
@@ -267,7 +271,7 @@ public class Selector<T> extends Panel {
             }
         } else if( i >= listBox.getModel().size() ) {
             // clamp it
-            listBox.getSelectionModel().setSelection(listBox.getModel().size()-1); 
+            listBox.getSelectionModel().setSelection(listBox.getModel().size()-1);
         }
     }
 
@@ -285,25 +289,25 @@ public class Selector<T> extends Panel {
             resetView();
         }
     }
- 
+
     @Override
     public void updateLogicalState( float tpf ) {
         super.updateLogicalState(tpf);
         if( modelRef.update() ) {
             boundSelection();
- 
+
             // Don't try to fix the selection if the selectionRef is already
             // out of date.  It's quite possible that it's already accurate
             // with the latest list model and trying to move the selection
             // will end up reverting it.
-            if( !selectionRef.needsUpdate() ) {            
+            if( !selectionRef.needsUpdate() ) {
                 // Make sure that the selected item is pointing to
                 // something that exists or the proper item if it has moved.
                 T item = null;
                 Integer i = selectionRef.get();
                 if( i != null ) {
-                    item = listBox.getModel().get(i); 
-                }            
+                    item = listBox.getModel().get(i);
+                }
                 if( !Objects.equals(item, selectedItem.getObject()) ) {
                     // See whether it's gone or just moved
                     int newIndex = listBox.getModel().indexOf(selectedItem.getObject());
@@ -315,13 +319,13 @@ public class Selector<T> extends Panel {
                     } else {
                         // Else it's just moved
                         listBox.getSelectionModel().setSelection(newIndex);
-                    }                
+                    }
                 }
-            }                 
+            }
         }
         updateSelection();
     }
-    
+
     public void setExpanded( boolean b ) {
         if( this.expanded == b ) {
             return;
@@ -330,25 +334,25 @@ public class Selector<T> extends Panel {
             expand();
         } else {
             collapse();
-        }        
+        }
     }
-    
+
     public boolean isExpanded() {
         return expanded;
     }
-    
+
     protected void resetView() {
         Panel newView = valueRenderer.getView(getSelectedListValue(), false, view);
         if( newView != view ) {
-            // Transfer the click listener                  
+            // Transfer the click listener
             CursorEventControl.addListenersToSpatial(newView, clickListener);
             CursorEventControl.removeListenersFromSpatial(view, clickListener);
-        
+
             this.view = newView;
-            layout.addChild(view, BorderLayout.Position.Center);            
+            layout.addChild(view, BorderLayout.Position.Center);
         }
     }
-    
+
     protected T getSelectedListValue() {
         Integer i = listBox.getSelectionModel().getSelection();
         if( i == null ) {
@@ -357,7 +361,7 @@ public class Selector<T> extends Panel {
         if( i >= listBox.getModel().size() ) {
             i = 0;
         }
-        return listBox.getModel().get(i);              
+        return listBox.getModel().get(i);
     }
 
     protected int calculateListSize() {
@@ -367,60 +371,60 @@ public class Selector<T> extends Panel {
         }
         // Either way, we should make sure that we don't fall off the
         // bottom or sides of the screen.
-        // We'll guess the size from the view       
+        // We'll guess the size from the view
         Vector2f guiSize = GuiGlobals.getInstance().getPopupState().getGuiSize();
-        int maxSize = (int)(guiSize.y / view.getSize().y);         
+        int maxSize = (int)(guiSize.y / view.getSize().y);
         maxSize = Math.max(maxSize, 3); // always show at least 3 items
         size = Math.min(size, maxSize);
 
         return size;
     }
- 
+
     protected Vector3f calculatePopupLocation( Vector3f loc ) {
         Vector3f pref = popup.getPreferredSize();
         Vector2f guiSize = GuiGlobals.getInstance().getPopupState().getGuiSize();
         loc.x = Math.min(loc.x, guiSize.x - pref.x);
         // y grows down in Lemur
         loc.y = Math.max(loc.y, pref.y);
-        return loc; 
+        return loc;
     }
-    
+
     protected void expand() {
-        listBox.setVisibleItems(calculateListSize());        
+        listBox.setVisibleItems(calculateListSize());
         popup.setLocalTranslation(calculatePopupLocation(getWorldTranslation().clone()));
- 
+
         // Make sure we keep it on screen even if it resizes itself
         popup.getControl(GuiControl.class).addListener(reshapeListener);
-         
+
         GuiGlobals.getInstance().getPopupState()
                 .showPopup(popup, new Command<PopupState>() {
                         public void execute( PopupState state ) {
                             collapse();
                         }
-                    }); 
-        
+                    });
+
         this.expanded = true;
     }
 
     protected void collapse() {
-        PopupState state = GuiGlobals.getInstance().getPopupState(); 
+        PopupState state = GuiGlobals.getInstance().getPopupState();
         if( state.isPopup(popup) ) {
             state.closePopup(popup);
         }
-        popup.getControl(GuiControl.class).removeListener(reshapeListener);    
+        popup.getControl(GuiControl.class).removeListener(reshapeListener);
         this.expanded = false;
     }
-    
+
     private class ClickListener extends DefaultCursorListener implements Command<Button> {
- 
+
         @Override
         protected void click( CursorButtonEvent event, Spatial target, Spatial capture ) {
             expand();
         }
- 
+
         public void execute( Button button ) {
             expand();
-        }           
+        }
     }
 
     private class SelectListener implements Command<ListBox> {
@@ -428,9 +432,9 @@ public class Selector<T> extends Panel {
             collapse();
         }
     }
- 
+
     private class ReshapeListener extends AbstractGuiControlListener {
- 
+
         @Override
         public void reshape( GuiControl source, Vector3f pos, Vector3f size ) {
             // Note: reshape() is about the layout within the container
@@ -440,7 +444,7 @@ public class Selector<T> extends Panel {
             Vector3f loc = calculatePopupLocation(world);
             popup.setLocalTranslation(loc);
         }
-    }           
+    }
 }
 
 

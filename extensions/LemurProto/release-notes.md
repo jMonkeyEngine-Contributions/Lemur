@@ -8,7 +8,9 @@ Lemur-Proto 1.12.1 (unreleased)
     change when swapping in a new renderer.
 * Fixed Spinner to disable/enable the previous/next buttons when the spinner is
     disabled/enabled.
-   
+* Fixed Selector to reset its selected item reference when setSelectedItem() is
+    called instead of delaying it until next frame.
+
 
 Lemur-Proto 1.12.0 (latest)
 -------------------
