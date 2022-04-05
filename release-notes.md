@@ -10,6 +10,8 @@ Version 1.16.0 (unreleased)
     instead of the previous hard-coded 0.1 discard threshold.  Discard
     should be unnecessary for 2D UIs and may only be rarely necessary for
     3D UIs.
+* Migrated the build to gradle 7.4.2
+* Moved distribution to maven central.
 
 
 Lemur 1.15.0 (latest)

@@ -1,58 +1,17 @@
-apply plugin: 'java'
+/*
+ * Build script for the Lemur-props property panel library.
+ */
 
-version='1.1.1'
-
-ext {
-    bintrayLabels = ['jMonkeyEngine', 'gamedev', 'GUI']
-    releaseDescription = "Lemur Props ${project.version}"
-    releaseVcsTag = "${project.name}-v${project.version}"
+plugins {
+    id 'lemur.published-library'
 }
+
+version='1.2.0-SNAPSHOT'
 
 ext.jmeVersion='3.1.0-stable'
 
-repositories {
-    if( JavaVersion.current() == JavaVersion.VERSION_1_7 ) {
-        // Fallback for JDK 7 that can no longer connect to jcenter with https
-        maven { url "http://jcenter.bintray.com" }
-    } else {
-        jcenter()
-    }
-}
-
 dependencies {
-    compile rootProject
-    compile "org.jmonkeyengine:jme3-core:$jmeVersion"
+    api rootProject
+    api "org.jmonkeyengine:jme3-core:$jmeVersion"
 }
-
-
-// *** For some reason, this can't be injected from the root project
-//     or it picks up the root project sources instead of the subproject
-//     and doesn't even produce main jars.
-// Configuration to produce maven-repo style -sources and -javadoc jars
-task sourcesJar(type: Jar) {
-    classifier = 'sources'
-    from sourceSets.main.allSource
-    exclude '**/.backups'
-}
-
-task javadocJar(type: Jar, dependsOn: javadoc) {
-    classifier = 'javadoc'
-    from javadoc.destinationDir
-}
-
-artifacts {
-    archives sourcesJar
-    archives javadocJar
-}
-
-
-
-// Put this at the end or it won't pick up the project.version and stuff
-// ...thus it also can't be injected.  But that means we can also be selective
-// about the sub-projects that we release.
-if( project.hasProperty('releaseUser') ) {
-    apply plugin: 'com.jfrog.bintray'
-    apply from: 'https://raw.githubusercontent.com/Simsilica/gradle-plugins/master/simtools-release.gradle'
-}
-
 

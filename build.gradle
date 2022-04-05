@@ -1,51 +1,23 @@
-buildscript {
-    repositories {
-        jcenter()
-    }
-    dependencies {
-        // This sucks down a lot of stuff that 'normal' users wouldn't
-        // have and won't need anyway.
-        if( project.hasProperty('releaseUser') ) {
-            classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.+'
-        }
-    }
+/**
+ *  Root-level Lemur build script for the main Lemur library.
+ */
+
+plugins {
+    id 'lemur.published-library'
 }
 
-apply plugin: 'java'
-
+println "Defining version..."
 version='1.16.0-SNAPSHOT'
+println "root.version:" + version
 
 ext.jmeVersion='3.1.0-stable'
 ext.slf4jVersion = '1.7.32'
 
-ext {
-    bintrayLabels = ['jMonkeyEngine', 'gamedev', 'GUI']
-    releaseDescription = "Lemur ${project.version}"
-    releaseVcsTag = "v${project.version}"
-}
-
-sourceCompatibility = 1.7
-compileJava {
-    options.encoding = 'UTF-8'
-    options.compilerArgs << "-Xlint:unchecked" << "-Xlint:deprecation"
-}
-
-repositories {
-    mavenLocal()
-
-    if( JavaVersion.current() == JavaVersion.VERSION_1_7 ) {
-        // Fallback for JDK 7 that can no longer connect to jcenter with https
-        maven { url "http://jcenter.bintray.com" }
-    } else {
-        jcenter()
-    }
-}
-
 dependencies {
-    compile "org.jmonkeyengine:jme3-core:$jmeVersion"
+    api "org.jmonkeyengine:jme3-core:$jmeVersion"
 
-    compile 'com.google.guava:guava:19.0'
-    compile "org.slf4j:slf4j-api:$slf4jVersion"
+    implementation 'com.google.guava:guava:19.0'
+    implementation "org.slf4j:slf4j-api:$slf4jVersion"
 }
 
 compileJava.doLast {
@@ -53,87 +25,4 @@ compileJava.doLast {
     println "Writing lemur.build.date:" + buildDate
     new File(destinationDir, 'lemur.build.date').text = buildDate
 }
-
-// Common configuration for the root and all 'real' children.
-// The plan is to just keep maven-repo publishing related stuff
-// here so that the other build files can look as close to
-// regular java builds as possible.
-configure(allprojects.findAll {it.name != 'extensions'}) {
-
-    apply plugin: 'maven' // for installing to maven local
-
-    // Common group ID for all projects here
-    group='com.simsilica'
-
-    ext {
-        websiteUrl = 'https://github.com/jMonkeyEngine-Contributions/Lemur'
-        vcsUrl = 'https://github.com/jMonkeyEngine-Contributions/Lemur.git'
-        githubRepo = 'jMonkeyEngine-Contributions/Lemur'
-        issueTrackerUrl = 'https://github.com/jMonkeyEngine-Contributions/Lemur/issues'
-    }
-
-
-    // One non-maven thing in this block to keep us honest with respect to
-    // imports
-    configurations {
-        compile.transitive = false
-    }
-
-    // Centralizing this bintray reference here so it's easier to
-    // remove when JME is in jcenter().
-    repositories {
-        // Temporary until JME jars are in jcenter()
-        //maven { url "http://dl.bintray.com/jmonkeyengine/org.jmonkeyengine" }
-        jcenter()
-    }
-
-    /*
-    // Configuration to produce maven-repo style -sources and -javadoc jars
-    task sourcesJar(type: Jar) {
-        classifier = 'sources'
-        from sourceSets.main.allSource
-    }
-
-    task javadocJar(type: Jar, dependsOn: javadoc) {
-        classifier = 'javadoc'
-        from javadoc.destinationDir
-    }
-
-    artifacts {
-        archives sourcesJar
-        archives javadocJar
-    }
-    */
-
-}
-
-// *** For some reason, this can't be injected from the root project
-//     or it picks up the root project sources instead of the subproject
-//     and doesn't even produce main jars.
-// Configuration to produce maven-repo style -sources and -javadoc jars
-task sourcesJar(type: Jar) {
-    classifier = 'sources'
-    from sourceSets.main.allSource
-    exclude '**/.backups'
-}
-
-task javadocJar(type: Jar, dependsOn: javadoc) {
-    classifier = 'javadoc'
-    from javadoc.destinationDir
-}
-
-artifacts {
-    archives sourcesJar
-    archives javadocJar
-}
-
-
-// Put this at the end or it won't pick up the project.version and stuff
-// ...thus it also can't be injected.  But that means we can also be selective
-// about the sub-projects that we release.
-if( project.hasProperty('releaseUser') ) {
-    apply plugin: 'com.jfrog.bintray'
-    apply from: 'https://raw.githubusercontent.com/Simsilica/gradle-plugins/master/simtools-release.gradle'
-}
-
 

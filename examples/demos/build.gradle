@@ -1,62 +1,53 @@
-apply plugin: 'java'
-apply plugin: 'application'
-apply plugin: 'eclipse'
-apply plugin: 'idea'
+plugins {
+    id 'java'
+    id 'application'
+    id 'idea'
+    id 'eclipse'
+}
 
 mainClassName='demo.DemoLauncher'
 
+ext.jmeVersion = "3.1.0-stable"
+
+
 repositories {
     mavenLocal()
-
-    if( JavaVersion.current() == JavaVersion.VERSION_1_7 ) {
-        // Fallback for JDK 7 that can no longer connect to jcenter with https
-        maven { url "http://jcenter.bintray.com" }
-    } else {
-        jcenter()
-    }
+    mavenCentral()
 }
-
-ext.jmeVersion = "3.1.0-stable"
-//ext.jmeVersion = "3.3.0-SNAPSHOT"
-
-project(":assets") {
-    apply plugin: "java"
-
-    buildDir = rootProject.file("build/assets")
-
-    sourceSets {
-        main {
-            resources {
-                srcDir '.'
-            }
-        }
-    }
-}
-
 
 dependencies {
 
     // Need at least basic JME
-    compile "org.jmonkeyengine:jme3-core:$jmeVersion"
-    compile "org.jmonkeyengine:jme3-desktop:$jmeVersion"
-    compile "org.jmonkeyengine:jme3-lwjgl:$jmeVersion"
+    implementation "org.jmonkeyengine:jme3-core:$jmeVersion"
+    implementation "org.jmonkeyengine:jme3-desktop:$jmeVersion"
+    implementation "org.jmonkeyengine:jme3-lwjgl:$jmeVersion"
 
-    compile "com.simsilica:lemur:1.15.0"
-    compile "com.simsilica:lemur-proto:1.12.0"
+    implementation "com.simsilica:lemur:1.15.0"
+    implementation "com.simsilica:lemur-proto:1.12.0"
 
     // needed for the style language
-    runtime "org.codehaus.groovy:groovy-all:2.4.5"
+    runtimeOnly  "org.codehaus.groovy:groovy-all:2.4.5"
 
     // Standard utility stuff
-    compile 'com.google.guava:guava:19.0'
-    compile 'org.slf4j:slf4j-api:1.7.13'
-    runtime 'org.apache.logging.log4j:log4j-slf4j-impl:2.5'
-    runtime 'org.apache.logging.log4j:log4j-core:2.5'
-
-    runtime project(':assets')
+    implementation 'com.google.guava:guava:19.0'
+    implementation 'org.slf4j:slf4j-api:1.7.13'
+    runtimeOnly  'org.apache.logging.log4j:log4j-slf4j-impl:2.5'
+    runtimeOnly  'org.apache.logging.log4j:log4j-core:2.5'
 }
 
-task wrapper(type: Wrapper) {
+
+compileJava {
+    options.encoding = 'UTF-8'
+    options.compilerArgs << '-Xlint:unchecked'
+    options.deprecation = true
+    if( JavaVersion.current().isCompatibleWith(JavaVersion.VERSION_1_10) ) {
+        options.release = 7
+    }
+}
+
+java {
+    sourceCompatibility = 1.7
+    targetCompatibility = 1.7
 }
 
 

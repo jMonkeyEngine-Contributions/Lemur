@@ -1,4 +1,4 @@
-Lemur-Proto 1.12.1 (unreleased)
+Lemur-Proto 1.13.0 (unreleased)
 -------------------
 * Added DefaultCellRenderer.getElementId() and deprecated DefaultCellRenderer.getElement()
     since it was a typo that made it into a release.
@@ -10,6 +10,8 @@ Lemur-Proto 1.12.1 (unreleased)
     disabled/enabled.
 * Fixed Selector to reset its selected item reference when setSelectedItem() is
     called instead of delaying it until next frame.
+* Migrated the build to gradle 7.4.2
+* Moved distribution to maven central.
 
 
 Lemur-Proto 1.12.0 (latest)

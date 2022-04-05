@@ -1,9 +1,10 @@
+rootProject.name = 'lemur'
+
 include 'extensions:LemurProto'
 include 'extensions:LemurProps'
-
-rootProject.name = 'lemur'
 
 // More sensible sub-project names for jars an dstuff
 project(":extensions:LemurProto").name = "lemur-proto"
 project(":extensions:LemurProps").name = "lemur-props"
+
 

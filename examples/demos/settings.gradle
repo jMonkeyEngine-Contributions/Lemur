@@ -1,1 +1,2 @@
-include 'assets'
+// Empty on purpose.  Examples/demos is a stand-alone
+// project that does not define any subprojects.

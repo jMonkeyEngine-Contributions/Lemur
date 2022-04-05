@@ -1,0 +1,15 @@
+/**
+ *  Build file for the buildSrc convention plugins.
+ *  buildSrc is a special gradle sub-project that builds local
+ *  convention plugins for use in the regular project build
+ *  files.
+ *  See:
+ *     https://docs.gradle.org/current/userguide/sharing_build_logic_between_subprojects.html
+ *     https://docs.gradle.org/current/samples/sample_convention_plugins.html
+ */
+
+plugins {
+    id 'groovy-gradle-plugin'
+}
+
+

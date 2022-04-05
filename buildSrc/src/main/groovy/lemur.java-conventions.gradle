@@ -1,0 +1,58 @@
+/**
+ *  Conventions for all Lemur java-based modules.
+ */
+
+plugins {
+    id 'java'
+    //id 'checkstyle'
+}
+
+// Projects should use Maven Central for external dependencies
+repositories {
+    mavenLocal()
+    mavenCentral()
+}
+
+//checkstyle {
+//    config = ...
+//    maxWarnings = 0
+//}
+
+compileJava { // compile-time options:
+    options.encoding = 'UTF-8'
+    options.compilerArgs << '-Xlint:unchecked'
+    options.deprecation = true
+    if( JavaVersion.current().isCompatibleWith(JavaVersion.VERSION_1_10) ) {
+        options.release = 7
+    }
+}
+
+java {
+    sourceCompatibility = 1.7
+    targetCompatibility = 1.7
+    withJavadocJar()
+    withSourcesJar()
+}
+
+javadoc {
+    // Disable doclint for JDK8+.
+    if( JavaVersion.current().isJava8Compatible() ) {
+        options.addStringOption('Xdoclint:none', '-quiet')
+    }
+}
+
+test {
+    testLogging {
+        // I want to see the tests that are run and pass, etc.
+        events "passed", "skipped", "failed", "standardOut", "standardError"
+    }
+}
+
+sourceSets {
+    main {
+        resources {
+            exclude "**/.backups/**"
+        }
+    }
+}
+

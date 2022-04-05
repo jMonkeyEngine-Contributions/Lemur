@@ -1,0 +1,88 @@
+/**
+ *  Conventions for all Lemur maven-published modules.
+ */
+
+plugins {
+    id 'java-library'
+    id 'maven-publish'
+    id 'lemur.java-conventions'
+    id 'signing'
+}
+
+group = 'com.simsilica'
+
+publishing {
+    publications {
+        library(MavenPublication) {
+            from components.java
+            pom {
+                developers {
+                    developer {
+                        name = 'Paul Speed'
+                    }
+                }
+                inceptionYear = '2012'
+                licenses {
+                    license {
+                        distribution = 'repo'
+                        name = 'New BSD (3-clause) License'
+                        url = 'https://github.com/jMonkeyEngine-Contributions/Lemur/blob/master/license.md'
+                    }
+                }
+                name = project.group + ':' + project.name
+                scm {
+                    connection = 'scm:git:git://github.com/jMonkeyEngine-Contributions/Lemur.git'
+                    developerConnection = 'scm:git:ssh://github.com:jMonkeyEngine-Contributions/Lemur.git'
+                    url = 'https://github.com/jMonkeyEngine-Contributions/Lemur/tree/master'
+                }
+                url = 'https://github.com/jMonkeyEngine-Contributions/Lemur'
+            }
+        }
+    }
+
+    // Staging to OSSRH relies on the existence of 2 properties
+    // (ossrhUsername and ossrhPassword)
+    // which should be stored in ~/.gradle/gradle.properties
+    repositories {
+        maven {
+            credentials {
+                username = project.hasProperty('ossrhUsername') ? ossrhUsername : 'Unknown user'
+                password = project.hasProperty('ossrhPassword') ? ossrhPassword : 'Unknown password'
+            }
+            name = 'OSSRH'
+
+            def releasesRepoUrl = 'https://oss.sonatype.org/service/local/staging/deploy/maven2'
+            def snapshotsRepoUrl = 'https://oss.sonatype.org/content/repositories/snapshots'
+
+            // Have to evaluate the project version late because when the conventions
+            // are configured the project build file hasn't set the version yet.
+            afterEvaluate {
+                url = project.version.endsWith('SNAPSHOT') ? snapshotsRepoUrl : releasesRepoUrl
+            }
+        }
+    }
+}
+
+
+tasks.register('install') {
+    dependsOn 'publishToMavenLocal'
+    description 'Installs Maven artifacts to the local repository.'
+}
+
+// signing tasks
+// Signing relies on the existence of 3 properties
+// (signing.keyId, signing.password, and signing.secretKeyRingFile)
+// which should be stored in ~/.gradle/gradle.properties
+
+signing {
+    sign publishing.publications
+}
+tasks.withType(Sign) {
+    onlyIf { project.hasProperty('signing.keyId') }
+}
+
+// Customize some tasks
+tasks.sourcesJar {
+    exclude "**/.backups/**"
+}
+
