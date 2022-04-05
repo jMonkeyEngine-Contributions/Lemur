@@ -11,6 +11,11 @@ version='1.16.0'
 ext.jmeVersion='3.1.0-stable'
 ext.slf4jVersion = '1.7.32'
 
+// Set this module's maven pom description
+publishing.publications.library(MavenPublication).pom {
+    description = 'A 2D/3D toolkit for jMonkeyEngine.'
+}
+
 dependencies {
     api "org.jmonkeyengine:jme3-core:$jmeVersion"
 

@@ -11,6 +11,11 @@ version='1.13.0'
 ext.jmeVersion='3.1.0-stable'
 ext.slf4jVersion = '1.7.32'
 
+// Set this module's maven pom description
+publishing.publications.library(MavenPublication).pom {
+    description = 'Extension to the Lemur 2D/3D UI toolkit where new components incubate.'
+}
+
 dependencies {
     api rootProject
     api "org.jmonkeyengine:jme3-core:$jmeVersion"
