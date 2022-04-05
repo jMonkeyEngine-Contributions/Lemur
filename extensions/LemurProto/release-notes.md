@@ -1,4 +1,4 @@
-Lemur-Proto 1.13.0 (unreleased)
+Lemur-Proto 1.13.0 (latest)
 -------------------
 * Added DefaultCellRenderer.getElementId() and deprecated DefaultCellRenderer.getElement()
     since it was a typo that made it into a release.
@@ -14,7 +14,7 @@ Lemur-Proto 1.13.0 (unreleased)
 * Moved distribution to maven central.
 
 
-Lemur-Proto 1.12.0 (latest)
+Lemur-Proto 1.12.0
 -------------------
 * Added SelectionModel.createSelectionReference() for obtaining a VersionedReference
     of just the single-selection state.

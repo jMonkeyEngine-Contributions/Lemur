@@ -1,10 +1,10 @@
-Version 1.2.0 (unreleased)
+Version 1.2.0 (latest)
 ---------------
 * Migrated the build to gradle 7.4.2
 * Moved distribution to maven central.
 
 
-Version 1.1.1 (latest)
+Version 1.1.1
 --------------
 * Modified the JME dependency version to be specific instead of floating.
 

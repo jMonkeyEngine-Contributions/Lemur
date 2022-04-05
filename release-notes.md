@@ -1,4 +1,4 @@
-Version 1.16.0 (unreleased)
+Version 1.16.0 (latest)
 ---------------
 * Added QuadBackgroundComponent.set/getAlphaDiscard().
     Breaking change: QuadBackgroundComponent now defaults to 0 alpha discard
@@ -14,7 +14,7 @@ Version 1.16.0 (unreleased)
 * Moved distribution to maven central.
 
 
-Lemur 1.15.0 (latest)
+Lemur 1.15.0
 -------------
 * Fixed a bug where moving a GuiComponent from one GUI element to another
     caused lingering state issues.  This most prominently manifested when
