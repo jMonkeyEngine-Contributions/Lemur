@@ -1,3 +1,13 @@
+Lemur-Proto 1.14.0 (unreleased)
+-------------------
+* Added ListBox.getSelector() for retrieving the list item selector element
+    for direct styling, etc..
+* Modified ListBox to be explicit with its GridPanel and Selector layers.
+    This may be a breaking change in some rare cases.  Prior to this fix, the 
+    selector widget could sort behind the GridPanel and its buttons.  Now
+    the selector widget should always be on top.
+
+
 Lemur-Proto 1.13.0 (latest)
 -------------------
 * Added DefaultCellRenderer.getElementId() and deprecated DefaultCellRenderer.getElement()

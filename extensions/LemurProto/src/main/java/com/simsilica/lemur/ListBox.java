@@ -186,6 +186,10 @@ public class ListBox<T> extends Panel {
         selectorArea = new Node("selectorArea");
         attachChild(selectorArea);
         selector = new Panel(elementId.child(SELECTOR_ID), style);
+
+        // Make sensible layering at the base level
+        LayerComparator.setLayer(grid, 1);
+        LayerComparator.setLayer(selectorArea, 2);
         
         setModel(model);                
         resetModelRange();
@@ -272,6 +276,10 @@ public class ListBox<T> extends Panel {
     
     public GridPanel getGridPanel() {
         return grid;
+    }
+
+    public Panel getSelector() {
+        return selector;
     }
  
     public void setSelectionModel( SelectionModel selection ) {
