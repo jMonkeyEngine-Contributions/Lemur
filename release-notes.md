@@ -1,3 +1,7 @@
+Version 1.16.1 (unreleased)
+---------------
+
+
 Version 1.16.0 (latest)
 ---------------
 * Added QuadBackgroundComponent.set/getAlphaDiscard().
