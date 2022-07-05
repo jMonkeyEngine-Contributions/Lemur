@@ -6,6 +6,9 @@ Lemur-Proto 1.14.0 (unreleased)
     This may be a breaking change in some rare cases.  Prior to this fix, the 
     selector widget could sort behind the GridPanel and its buttons.  Now
     the selector widget should always be on top.
+* Fixed a Selector bug where calling setSelectedItem() was not being reflected
+    in getSelectedItem() if the model values had also changed during the same
+    frame but the selected index did not change.    
 
 
 Lemur-Proto 1.13.0 (latest)

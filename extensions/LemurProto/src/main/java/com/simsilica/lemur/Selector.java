@@ -276,7 +276,11 @@ public class Selector<T> extends Panel {
     }
 
     protected void updateSelection() {
-        if( selectionRef.update() ) {
+        // Even if our selection index hasn't moved the model may have
+        // changed and invalidated our actual selection value.  This 
+        // is extra work we need to do because of the keeping of codependent
+        // state and this may not be the last of it.
+        if( selectionRef.update() || modelRef.needsUpdate() ) {        
             Integer i = selectionRef.get();
             if( i == null ) {
                 selectedItem.setObject(null);
