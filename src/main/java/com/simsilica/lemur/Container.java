@@ -101,6 +101,11 @@ public class Container extends Panel {
         if( layout != null ) {
             setLayout(layout);
         }
+        
+        if( applyStyles && getLayout() == null ) {
+            // Force some layout to be set
+            setLayout(new SpringGridLayout());
+        }
     }
 
     @StyleDefaults(ELEMENT_ID)

@@ -1,5 +1,9 @@
 Version 1.16.1 (unreleased)
 ---------------
+* Modified Container to set a layout if none is set and we are applying
+    styles.  This means Containers will no longer throw exceptions if
+    the style does not define a layout.  (Container subclasses will have
+    to do their own check.)
 
 
 Version 1.16.0 (latest)
