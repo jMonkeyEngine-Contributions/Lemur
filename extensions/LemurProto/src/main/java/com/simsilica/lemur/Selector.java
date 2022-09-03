@@ -117,6 +117,10 @@ public class Selector<T> extends Panel {
         this(true, model, null, new SelectionModel(), new ElementId(ELEMENT_ID), style);
     }
 
+    public Selector( VersionedList<T> model, ElementId elementId ) {
+        this(true, model, null, new SelectionModel(), elementId, null);
+    }
+
     public Selector( VersionedList<T> model, ElementId elementId, String style ) {
         this(true, model, null, new SelectionModel(), elementId, style);
     }

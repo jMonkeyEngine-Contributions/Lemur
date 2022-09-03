@@ -8,7 +8,8 @@ Lemur-Proto 1.14.0 (unreleased)
     the selector widget should always be on top.
 * Fixed a Selector bug where calling setSelectedItem() was not being reflected
     in getSelectedItem() if the model values had also changed during the same
-    frame but the selected index did not change.    
+    frame but the selected index did not change.
+* Added a (model, elementId) constructor to Selector.
 
 
 Lemur-Proto 1.13.0 (latest)
