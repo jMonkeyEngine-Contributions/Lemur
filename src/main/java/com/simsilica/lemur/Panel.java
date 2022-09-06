@@ -105,6 +105,10 @@ public class Panel extends Node {
         this(true, new ElementId(ELEMENT_ID), style);
     }
 
+    public Panel( ElementId elementId ) {
+        this(elementId, null);
+    }
+
     public Panel( ElementId elementId, String style ) {
         this(true, elementId, style);
     }

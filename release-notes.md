@@ -4,6 +4,7 @@ Version 1.16.1 (unreleased)
     styles.  This means Containers will no longer throw exceptions if
     the style does not define a layout.  (Container subclasses will have
     to do their own check.)
+* Added a Panel(ElementId) constructor.    
 
 
 Version 1.16.0 (latest)
