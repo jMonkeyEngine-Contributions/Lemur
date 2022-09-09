@@ -462,7 +462,7 @@ public class PopupState extends BaseAppState {
             this.blocker = createBlocker(zBase, this.backgroundColor);
             MouseEventControl.addListenersToSpatial(blocker, new BlockerListener(this));
         }
-        
+ 
         public boolean isVisible() {
             if( popup.getParent() == null ) {
                 return false;
@@ -475,10 +475,17 @@ public class PopupState extends BaseAppState {
                             
             getGuiNode().attachChild(blocker);                        
             getGuiNode().attachChild(popup);
+ 
+            float zPopup = zBase + 1;
+            if( zOffset < 0 ) {
+                // Move it out more for the negative zOffset.
+                // If there is a positive zOffset then we let it stay
+                zPopup = zPopup - zOffset;
+            }
             
             // Make sure the popup spatial is above the blocker
-            popup.move(0, 0, zBase - zOffset + 1);
-            
+            popup.move(0, 0, zPopup);
+
             if( popup instanceof Panel ) {
                 // Play any open effects that it has
                 ((Panel)popup).runEffect(Panel.EFFECT_OPEN);  
@@ -509,7 +516,7 @@ public class PopupState extends BaseAppState {
                        
             // And clear the focus if the popup is still in the focus chain
             GuiGlobals.getInstance().releaseFocus(popup);
-        }
+        }        
     }
     
     private class BlockerListener implements MouseListener {

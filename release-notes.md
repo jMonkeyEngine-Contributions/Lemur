@@ -4,8 +4,10 @@ Version 1.16.1 (unreleased)
     styles.  This means Containers will no longer throw exceptions if
     the style does not define a layout.  (Container subclasses will have
     to do their own check.)
-* Added a Panel(ElementId) constructor.    
-
+* Added a Panel(ElementId) constructor.
+* Slight change to popup layer placement to only move out and never in
+    even if the calculated popup z-offset is positive.
+    
 
 Version 1.16.0 (latest)
 ---------------
