@@ -39,6 +39,7 @@ import com.jme3.font.BitmapFont.Align;
 import com.jme3.font.BitmapFont.VAlign;
 import com.jme3.font.Rectangle;
 import com.jme3.math.*;
+
 import com.simsilica.lemur.core.GuiControl;
 import com.simsilica.lemur.HAlignment;
 import com.simsilica.lemur.LayerComparator;
@@ -53,6 +54,7 @@ import com.simsilica.lemur.VAlignment;
  */
 public class TextComponent extends AbstractGuiComponent
                            implements ColoredComponent {
+
     private BitmapText bitmapText;
     private Rectangle textBox;
     private HAlignment hAlign = HAlignment.Left;
@@ -293,7 +295,8 @@ public class TextComponent extends AbstractGuiComponent
         resetAlignment();
     }
 
-    public void calculatePreferredSize( Vector3f size ) {    
+    public void calculatePreferredSize( Vector3f size ) {
+        
         // Make sure that the bitmapText reports a reliable
         // preferred size
         bitmapText.setBox(null);

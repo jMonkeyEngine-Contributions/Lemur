@@ -42,6 +42,7 @@ import com.jme3.scene.*;
 import com.jme3.scene.Spatial.CullHint;
 import com.jme3.scene.shape.Quad;
 import com.jme3.texture.Texture;
+
 import com.simsilica.lemur.core.GuiControl;
 import com.simsilica.lemur.GuiGlobals;
 import com.simsilica.lemur.core.GuiMaterial;
@@ -60,6 +61,7 @@ import com.simsilica.lemur.VAlignment;
  */
 public class IconComponent extends AbstractGuiComponent
                            implements Cloneable, ColoredComponent {
+
     private Geometry icon;
     private GuiMaterial material;
     private String imagePath; // really just for debugging
