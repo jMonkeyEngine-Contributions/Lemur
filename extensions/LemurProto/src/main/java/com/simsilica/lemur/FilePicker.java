@@ -120,7 +120,7 @@ public class FilePicker extends Panel{
     private final VersionedHolder<Integer> fileCharacterWidthModel = new VersionedHolder<>(15);
 
     /**
-     * The file that has been selected (if any)
+     * How many characters (approximately) should be displayable in the file content area before being clipped
      */
     private final VersionedReference<Integer> fileCharacterWidthRef = fileCharacterWidthModel.createReference();
 
@@ -129,6 +129,7 @@ public class FilePicker extends Panel{
 
     private final VersionedHolder<Predicate<Path>> fileAndFolderFilter = new VersionedHolder<>(IS_A_DIRECTORY.or(IS_A_FILE));
     private final VersionedReference<Predicate<Path>> fileAndFolderFilterRef = fileAndFolderFilter.createReference();
+
     /**
      * A boolean just to keep track of the very first time the item lays itself out
      */
