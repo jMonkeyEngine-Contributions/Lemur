@@ -253,7 +253,7 @@ public class FilePicker extends Panel{
             //the C:/ bit doesn't report as a "Filename", so special case that
             String text = pathPart.getFileName() == null ? pathPart.toString() : pathPart.getFileName().toString();
 
-            Button buttonToJumpToLevel = new Button( text, getElementId().child( PATH_ITEM_ID ) );
+            Button buttonToJumpToLevel = new Button( text, getElementId().child( PATH_ITEM_ID ), getStyle() );
             folderButtons.add(buttonToJumpToLevel);
             Path pathPart_final = pathPart;
             buttonToJumpToLevel.addClickCommands(source -> setCurrentPath(pathPart_final));
@@ -262,7 +262,7 @@ public class FilePicker extends Panel{
         //reverse the buttons so they are in the natural order. Starting at high level folder and getting more specific
         Collections.reverse(folderButtons);
 
-        Button clippedPathIndicator = new Button( "...", getElementId().child( PATH_ITEM_ID ) );
+        Button clippedPathIndicator = new Button( "...", getElementId().child( PATH_ITEM_ID ), getStyle() );
         float dividerWidth = new Label(FOLDER_LOCATION_SEPARATOR).getPreferredSize().x;
 
         int pathIndex = folderButtons.size()-1;
@@ -353,7 +353,7 @@ public class FilePicker extends Panel{
             columnIndex = 0;
         }
 
-        folderContentsContainer = new GridPanel(folderContentsModel);
+        folderContentsContainer = new GridPanel(folderContentsModel, getStyle());
         layout.addChild(BorderLayout.Position.Center, folderContentsContainer );
         folderContentsContainer.setVisibleSize(noOfRowsToDisplayModelReference.get(), noOfColumnsReference.get());
 
@@ -380,7 +380,7 @@ public class FilePicker extends Panel{
      * (Note if an outrageously small width is requested it will give up)
      */
     private Button fitButtonToWidth( String text, ElementId elementId, Vector3f buttonStandardSize){
-        Button button = new Button( text,elementId );
+        Button button = new Button( text,elementId, getStyle() );
         Styles styles = GuiGlobals.getInstance().getStyles();
         styles.applyStyles( button, getElementId(), getStyle());
         while( text.length()>3 && button.getPreferredSize().x>buttonStandardSize.x){
@@ -393,7 +393,7 @@ public class FilePicker extends Panel{
 
     private Vector3f buildAndMeasureStandardButtonSize(){
         //M is one of the widest characters, use that to measure a theoretical max sized button
-        Button buttonToJumpToLevel = new Button( "M".repeat(fileCharacterWidthRef.get()), getElementId().child( PATH_ITEM_ID ) );
+        Button buttonToJumpToLevel = new Button( "M".repeat(fileCharacterWidthRef.get()), getElementId().child( PATH_ITEM_ID ), getStyle() );
         Styles styles = GuiGlobals.getInstance().getStyles();
         styles.applyStyles( buttonToJumpToLevel, getElementId(), getStyle());
         return buttonToJumpToLevel.getPreferredSize();
