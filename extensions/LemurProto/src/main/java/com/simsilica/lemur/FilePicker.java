@@ -108,9 +108,6 @@ public class FilePicker extends Panel{
      */
     private final VersionedHolder<Path> currentPathModel = new VersionedHolder<>(null);
 
-    /**
-     * The file that has been selected (if any)
-     */
     private final VersionedReference<Path> currentPathRef = currentPathModel.createReference();
 
     /**
