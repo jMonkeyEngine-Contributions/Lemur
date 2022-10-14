@@ -48,9 +48,10 @@ import com.simsilica.lemur.Panel;
 public class PanelTweens {
 
     /**
-     *  Returns a tween object that will interpolate the alpha value of a panel
-     *  between to supplied values.  If either alpha value is null then they will 
-     *  be substituted with the Panel's current alpha value AT THE TIME OF THIS CALL. 
+     *  Returns a Tween object that will interpolate the alpha value of a panel
+     *  between the supplied values.  If either alpha value is null then they will 
+     *  be substituted with the Panel's current alpha value AT THE TIME OF THIS CALL.
+     *  length is the length of the fading animation in seconds.
      */
     public static Tween fade( Panel target, Float fromAlpha, Float toAlpha, double length ) {
         if( fromAlpha == null ) {
