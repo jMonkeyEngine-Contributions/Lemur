@@ -7,7 +7,7 @@ Version 1.16.1 (unreleased)
 * Added a Panel(ElementId) constructor.
 * Slight change to popup layer placement to only move out and never in
     even if the calculated popup z-offset is positive.
-* Properly cleanup alpha discard param in QuadBackgroundComponent and
+* Properly clear alpha discard param in QuadBackgroundComponent and
     IconComponent when alpha discard is disabled (is set to 0).
     
 
