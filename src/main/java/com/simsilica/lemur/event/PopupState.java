@@ -415,6 +415,25 @@ public class PopupState extends BaseAppState {
         }
         return guiNode;
     }
+ 
+    /**
+     *  Converts a screen coordinate into a properly scaled GUI coordinate.
+     */   
+    public Vector3f screenToGui( Vector3f screen ) {
+        if( log.isTraceEnabled() ) {
+            log.trace("screenToGui(" + screen + ") node scale:" + getGuiNode().getLocalScale());
+        }    
+        Vector3f result = screen.clone();
+        // If the screen size is 1024 and our scale is 0.5 then that means
+        // the virtual screen size is twice that.  x = 512 in screen space would
+        // have to be x = 1024 in 0.5 space.
+        result.x /= getGuiNode().getLocalScale().x;
+        result.y /= getGuiNode().getLocalScale().y;
+        if( log.isTraceEnabled() ) {
+            log.trace("screenToGui() -> result:" + result);
+        }        
+        return result;
+    }
 
     @Override
     protected void initialize( Application app ) {
