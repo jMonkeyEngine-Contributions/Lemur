@@ -388,7 +388,8 @@ public class Selector<T> extends Panel {
         return size;
     }
 
-    protected Vector3f calculatePopupLocation( Vector3f loc ) {
+    protected Vector3f calculatePopupLocation( Vector3f screen ) {
+        Vector3f loc = GuiGlobals.getInstance().getPopupState().screenToGui(screen); 
         Vector3f pref = popup.getPreferredSize();
         Vector2f guiSize = GuiGlobals.getInstance().getPopupState().getGuiSize();
         loc.x = Math.min(loc.x, guiSize.x - pref.x);
@@ -448,7 +449,11 @@ public class Selector<T> extends Panel {
             // Note: reshape() is about the layout within the container
             // and not its position on screen... so moving the popup isn't
             // really a recursive operation.
-            Vector3f world = popup.getLocalTranslation();
+            //Vector3f world = popup.getLocalTranslation();
+            // I'm pretty sure the above is a bug because we even called it 'world'
+            // but there are times when the world and local translations will be
+            // different, even for a popup directly in the GUI node.
+            Vector3f world = popup.getWorldTranslation();
             Vector3f loc = calculatePopupLocation(world);
             popup.setLocalTranslation(loc);
         }
