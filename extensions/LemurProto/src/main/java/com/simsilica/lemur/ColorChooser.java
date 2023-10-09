@@ -111,6 +111,10 @@ public class ColorChooser extends Panel {
         this(true, null, elementId, style);
     }
 
+    public ColorChooser( ElementId elementId ) {
+        this(true, null, elementId, null);
+    }
+
     protected ColorChooser( boolean applyStyles, VersionedObject<ColorRGBA> model,
                             ElementId elementId, String style ) {
         super(false, elementId.child(CONTAINER_ID), style);
