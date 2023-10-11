@@ -10,6 +10,10 @@ Lemur-Proto 1.14.0 (unreleased)
     in getSelectedItem() if the model values had also changed during the same
     frame but the selected index did not change.
 * Added a (model, elementId) constructor to Selector.
+* Fixed a bug where the Selector popup was showing in the wrong place when
+    the popup UI was scaled.
+* Added a ColorChooser(ElementId) constructor.
+* Added a small crosshair to the ColorChooser to indicate selected color.    
 
 
 Lemur-Proto 1.13.0 (latest)
