@@ -7,6 +7,8 @@ Version 1.16.1 (unreleased)
 * Added a Panel(ElementId) constructor.
 * Slight change to popup layer placement to only move out and never in
     even if the calculated popup z-offset is positive.
+* Added a method to PopupState to allow querying the "GUI space" position
+    for a given absolute screen position.
     
 
 Version 1.16.0 (latest)
