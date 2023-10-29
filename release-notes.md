@@ -9,6 +9,7 @@ Version 1.16.1 (unreleased)
     even if the calculated popup z-offset is positive.
 * Added a method to PopupState to allow querying the "GUI space" position
     for a given absolute screen position.
+* Added some additional trace logging to BasePickState.
     
 
 Version 1.16.0 (latest)
