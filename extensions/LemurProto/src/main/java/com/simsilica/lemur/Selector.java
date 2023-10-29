@@ -80,9 +80,11 @@ public class Selector<T> extends Panel {
     private ClickListener clickListener = new ClickListener();
     private SelectListener selectListener = new SelectListener();
     private ReshapeListener reshapeListener = new ReshapeListener();
+    private AutoCloseListener autoCloseListener = new AutoCloseListener(); 
 
     private boolean expanded;
     private int maximumVisibleItems;
+    private long expandedFrames;
 
     private VersionedReference<Integer> selectionRef;
     private VersionedHolder<T> selectedItem = new VersionedHolder<>();
@@ -169,6 +171,7 @@ public class Selector<T> extends Panel {
 
         this.popup = new Container(new BorderLayout(), elementId.child("popup"), style);
         popup.addChild(listBox, BorderLayout.Position.Center);
+        popup.getControl(GuiControl.class).addUpdateListener(autoCloseListener);
 
         this.expander = new Button(null, true, elementId.child(EXPANDER_ID), style);
         expander.addClickCommands(clickListener);
@@ -300,6 +303,9 @@ public class Selector<T> extends Panel {
 
     @Override
     public void updateLogicalState( float tpf ) {
+        if( expanded ) {
+            expandedFrames++;
+        }
         super.updateLogicalState(tpf);
         if( modelRef.update() ) {
             boundSelection();
@@ -412,6 +418,9 @@ public class Selector<T> extends Panel {
                         }
                     });
 
+        expandedFrames = 0;
+        autoCloseListener.updatedFrames = 0;
+
         this.expanded = true;
     }
 
@@ -456,6 +465,26 @@ public class Selector<T> extends Panel {
             Vector3f world = popup.getWorldTranslation();
             Vector3f loc = calculatePopupLocation(world);
             popup.setLocalTranslation(loc);
+        }
+    }
+ 
+    /**
+     *  Listens to the update of the popup so we can count frames.  If
+     *  the popup frames become greater than the selector frames then we
+     *  guess that the selector has been removed from the scene and we
+     *  are still popped up. 
+     */   
+    private class AutoCloseListener implements GuiUpdateListener {
+        private long updatedFrames = 0;
+            
+        public void guiUpdate( GuiControl source, float tpf ) {
+            updatedFrames++;
+            if( updatedFrames > expandedFrames ) {
+                log.warn("Auto-closing left-open selector.");
+                // The selector was removed from the scene without anything
+                // being selected in the popup... so we'll close.
+                collapse();
+            }
         }
     }
 }
