@@ -516,6 +516,11 @@ public class InputMapper {
         }
     }
 
+    /** @deprecated  Only use this method if you know what you're doing */
+    public void notifyExtStateChanged(FunctionId functionId, InputState value) {
+        ((FunctionListeners)this.listenerMap.get(functionId)).notifyStateChanged(functionId, value);
+    }
+
     protected void notifyStateChanged( FunctionId function, InputState value ) {
         FunctionListeners listeners = getFunctionListeners(function, false);
         if( listeners == null )
