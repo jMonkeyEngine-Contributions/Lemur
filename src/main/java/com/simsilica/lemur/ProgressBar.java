@@ -39,6 +39,7 @@ import com.jme3.math.Vector3f;
 import com.simsilica.lemur.component.BorderLayout;
 import com.simsilica.lemur.component.QuadBackgroundComponent;
 import com.simsilica.lemur.core.GuiControl;
+import com.simsilica.lemur.core.AbstractGuiControlListener;
 import com.simsilica.lemur.core.VersionedReference;
 import com.simsilica.lemur.style.Attributes;
 import com.simsilica.lemur.style.ElementId;
@@ -111,6 +112,9 @@ public class ProgressBar extends Panel {
         
         value = new Panel(elementId.child(VALUE_ID), style);
         attachChild(value);
+
+        // We need to know about changes to our size from layout adjustments
+        getControl(GuiControl.class).addListener(new ResizeListener());
 
         if( applyStyles ) {
             styles.applyStyles(this, getElementId(), style);
@@ -223,7 +227,7 @@ public class ProgressBar extends Panel {
             resetStateView();
         }
     }
-            
+
     protected void resetStateView() {
         if( state == null ) {
             state = model.createReference();
@@ -236,5 +240,15 @@ public class ProgressBar extends Panel {
         
         // The way we order these layers is both fragile and inflexible.
         value.setLocalTranslation(labelPos.x, labelPos.y, labelPos.z * 0.5f);
+    }
+    
+    protected class ResizeListener extends AbstractGuiControlListener {
+        @Override
+        public void reshape( GuiControl source, Vector3f pos, Vector3f size ) {
+            // If we don't reset the progress bar size then we can end up with cases
+            // where the label resizes and leaves the progress bar in an invalid state,
+            // potentially even hanging off the edge of the outer panel.
+            resetStateView();
+        }
     }
 }

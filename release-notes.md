@@ -10,6 +10,8 @@ Version 1.16.1 (unreleased)
 * Added a method to PopupState to allow querying the "GUI space" position
     for a given absolute screen position.
 * Added some additional trace logging to BasePickState.
+* Fixed a bug where the progress indicator would be left in a too-big state
+    after the progress bar itself was shrunk due to layout changes.
     
 
 Version 1.16.0 (latest)
