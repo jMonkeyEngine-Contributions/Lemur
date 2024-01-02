@@ -763,6 +763,8 @@ public class TextEntryComponent extends AbstractGuiComponent
                     model.insert(evt.getKeyChar());
                     evt.setConsumed();
                     //resetText(); ...should be automatic now
+                } else if (evt.getKeyChar() == '\0') {
+                    evt.setConsumed();
                 }
             }
         }
