@@ -48,7 +48,7 @@ import java.util.List;
 public class CheckboxGroup {
     
     /**
-     * The list of checkboxes participating in this group.p.
+     * The list of checkboxes participating in this group.
      */
     protected List<Checkbox> checkboxs = new ArrayList<>();
     
