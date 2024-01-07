@@ -151,7 +151,12 @@ public class Checkbox extends Button {
     }
 
     public void setChecked( boolean b ) {
-        getModel().setChecked(b);
+        CheckboxGroup group = getModel().getGroup();
+        if (group != null) {
+            group.setSelected(this, b);
+        } else {
+            getModel().setChecked(b);
+        }
     }
 
     public boolean isChecked() {
