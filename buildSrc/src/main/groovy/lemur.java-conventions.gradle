@@ -23,13 +23,13 @@ compileJava { // compile-time options:
     options.compilerArgs << '-Xlint:unchecked'
     options.deprecation = true
     if( JavaVersion.current().isCompatibleWith(JavaVersion.VERSION_1_10) ) {
-        options.release = 7
+        options.release = 8
     }
 }
 
 java {
-    sourceCompatibility = 1.7
-    targetCompatibility = 1.7
+    sourceCompatibility = 1.8
+    targetCompatibility = 1.8
     withJavadocJar()
     withSourcesJar()
 }

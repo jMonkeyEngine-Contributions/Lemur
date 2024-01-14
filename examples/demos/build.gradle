@@ -7,7 +7,7 @@ plugins {
 
 mainClassName='demo.DemoLauncher'
 
-ext.jmeVersion = "3.1.0-stable"
+ext.jmeVersion = "3.5.0-stable"
 
 
 repositories {
