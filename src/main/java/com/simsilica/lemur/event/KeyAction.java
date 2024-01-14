@@ -49,7 +49,6 @@ public class KeyAction {
      */
     @Deprecated
     public static final int CONTROL_DOWN = KeyModifiers.CONTROL_DOWN;
-    private static final KeyNames names = new KeyNames();
 
     private int keyCode;
     private int modifiers;
@@ -96,7 +95,7 @@ public class KeyAction {
 
     @Override
     public String toString() {
-        String name = names.getName(keyCode);
+        String name = KeyNames.getName(keyCode);
         StringBuilder sb = new StringBuilder("KeyAction[");
         if( hasModifier(KeyModifiers.CONTROL_DOWN) ) {
             sb.append( "Control " );
