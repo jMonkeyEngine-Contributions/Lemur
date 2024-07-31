@@ -12,7 +12,9 @@ Version 1.16.1 (unreleased)
 * Added some additional trace logging to BasePickState.
 * Fixed a bug where the progress indicator would be left in a too-big state
     after the progress bar itself was shrunk due to layout changes.
-    
+* Added PopupState.ClickMode.Ignore so that popups can be created that do
+    not autoclose but also don't consume mouse events outside of the popup.
+
 
 Version 1.16.0 (latest)
 ---------------
