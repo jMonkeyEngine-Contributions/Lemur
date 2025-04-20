@@ -17,6 +17,7 @@ Version 1.17.0 (unreleased)
 * Added a Text2d interface and modified TextComponent to implement it.
 * Refactored Label to defer text component creation to GuiGlobals.createText2d()
     which now also has a pluggable Text2d factory.
+* Refactored IconComponent to allow overriding the icon geometry.
 
 
 Version 1.16.0 (latest)
