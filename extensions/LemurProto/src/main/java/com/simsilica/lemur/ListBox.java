@@ -305,10 +305,21 @@ public class ListBox<T> extends Panel {
         if( i == null ) {
             return null;
         }
-        if( i < 0 || i > getModel().size() ) {
+        if( i < 0 || i >= getModel().size() ) {
             return null;
         }
         return getModel().get(i);     
+    }
+ 
+    /**
+     *  Convenience method for setting the currently selected item.
+     */   
+    public void setSelectedItem( T item ) {
+        int index = getModel().indexOf(item);
+        if( index < 0 ) {
+            return;
+        }
+        selection.setSelection(index);
     }    
 
     @SuppressWarnings("unchecked") // because Java doesn't like var-arg generics 

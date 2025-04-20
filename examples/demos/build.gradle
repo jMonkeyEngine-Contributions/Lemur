@@ -22,7 +22,7 @@ dependencies {
     implementation "org.jmonkeyengine:jme3-desktop:$jmeVersion"
     implementation "org.jmonkeyengine:jme3-lwjgl:$jmeVersion"
 
-    implementation "com.simsilica:lemur:1.15.0"
+    implementation "com.simsilica:lemur:1.17.0-SNAPSHOT"
     implementation "com.simsilica:lemur-proto:1.12.0"
 
     // needed for the style language

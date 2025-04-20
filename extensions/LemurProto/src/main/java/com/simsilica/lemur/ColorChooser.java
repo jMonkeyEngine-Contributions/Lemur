@@ -38,12 +38,14 @@ package com.simsilica.lemur;
 
 import com.jme3.math.ColorRGBA;
 import com.jme3.math.Vector3f;
+import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
 import com.jme3.texture.Image;
 import com.jme3.texture.Texture2D;
 import com.jme3.texture.image.ImageRaster;
 import com.jme3.util.BufferUtils;
 import com.simsilica.lemur.component.BorderLayout;
+import com.simsilica.lemur.component.IconComponent;
 import com.simsilica.lemur.component.QuadBackgroundComponent;
 import com.simsilica.lemur.component.SpringGridLayout;
 import com.simsilica.lemur.core.GuiControl;
@@ -70,6 +72,9 @@ public class ColorChooser extends Panel {
     public static final String COLORS_ID = "colors";
     public static final String BRIGHTNESS_ID = "brightness.slider";
     public static final String VALUE_ID = "value";
+    public static final String CROSSHAIR_ID = "crosshair";
+    
+    public static final String DEFAULT_CROSSHAIR = "com/simsilica/lemur/icons/tiny-crosshair.png";
 
     public static final Texture2D defaultTexture = new Texture2D(256, 256, Image.Format.RGBA8);
     static {
@@ -90,6 +95,8 @@ public class ColorChooser extends Panel {
     private Panel value;
     private Container colorPanel;
     private Panel colors;
+    private Panel crosshair;
+    private Vector3f crosshairOffset;    
     private QuadBackgroundComponent valueColor = new QuadBackgroundComponent();
     private QuadBackgroundComponent swatchComponent;
     private Slider brightness;
@@ -109,6 +116,10 @@ public class ColorChooser extends Panel {
 
     public ColorChooser( ElementId elementId, String style ) {
         this(true, null, elementId, style);
+    }
+
+    public ColorChooser( ElementId elementId ) {
+        this(true, null, elementId, null);
     }
 
     protected ColorChooser( boolean applyStyles, VersionedObject<ColorRGBA> model,
@@ -139,6 +150,20 @@ public class ColorChooser extends Panel {
         value.setBackground(valueColor);
         layout.addChild(value, 0);
 
+        crosshair = new Panel(elementId.child(CROSSHAIR_ID));
+        if( crosshair.getBackground() == null ) {
+            IconComponent icon = new IconComponent(DEFAULT_CROSSHAIR);            
+            crosshair.setBackground(icon);
+        }       
+        Vector3f pref = crosshair.getPreferredSize();
+        crosshairOffset = new Vector3f(pref.x * 0.5f, pref.y * 0.5f, pref.z);
+        
+        // Insert a node between the color chooser and the crosshair so that
+        // the layout will ignore it
+        Node standoff = new Node("crosshair-standoff");
+        standoff.attachChild(crosshair);
+        colors.attachChild(standoff);
+    
         if( applyStyles ) {
             Styles styles = GuiGlobals.getInstance().getStyles();
             styles.applyStyles(this, getElementId(), style);
@@ -233,6 +258,9 @@ public class ColorChooser extends Panel {
 
         // Now we need to get the B of the HSB to set that one
         brightness.getModel().setValue(v * 100);
+ 
+        Vector3f range = colors.getSize();       
+        crosshair.setLocalTranslation(h * range.x - crosshairOffset.x, s * range.y - range.y + crosshairOffset.y, crosshairOffset.z);
     }
 
     private class SwatchListener extends DefaultCursorListener {

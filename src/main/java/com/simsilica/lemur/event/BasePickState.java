@@ -91,6 +91,9 @@ public abstract class BasePickState extends BaseAppState
      */
     @Override
     public void requestEnabled( Object owner ) {
+        if( log.isTraceEnabled() ) {
+            log.trace("requestEnabled(" + owner + ")");
+        }
         Integer existing = owners.get(owner);
         if( existing == null ) {
             owners.put(owner, 1);            
@@ -111,6 +114,9 @@ public abstract class BasePickState extends BaseAppState
      */
     @Override
     public boolean releaseEnabled( Object owner ) {
+        if( log.isTraceEnabled() ) {
+            log.trace("releaseEnabled(" + owner + ")");
+        }
         Integer existing = owners.get(owner);
         if( existing == null || existing == 0 ) {
             throw new IllegalArgumentException("Invalid owner, no requests pending");
@@ -123,6 +129,9 @@ public abstract class BasePickState extends BaseAppState
         totalRequests--;
         if( log.isTraceEnabled() ) {
             log.trace("release: Total enabled requests:" + totalRequests);
+        }
+        if( totalRequests < 0 ) {
+            log.error("Received more releases than requests, totalRequests:" + totalRequests + " at release of owner:" + owner);
         }
         setEnabled(totalRequests > 0);
         return isEnabled();

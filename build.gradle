@@ -6,7 +6,7 @@ plugins {
     id 'lemur.published-library'
 }
 
-version='1.16.1-SNAPSHOT'
+version='1.17.0-SNAPSHOT'
 
 ext.jmeVersion='3.5.0-stable'
 ext.slf4jVersion = '1.7.32'

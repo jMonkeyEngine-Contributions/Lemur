@@ -55,19 +55,19 @@ import com.simsilica.lemur.focus.FocusTraversal;
  */
 public class GuiControl extends AbstractNodeControl<GuiControl>
                         implements FocusTarget, FocusTraversal {
- 
+
     static Logger log = LoggerFactory.getLogger(GuiControl.class);
-                        
-    private ComponentStack componentStack;                        
+
+    private ComponentStack componentStack;
     private GuiLayout layout;
     private FocusTraversal focusTraversal;
-    
+
     private SafeArrayList<GuiControlListener> listeners;
     private SafeArrayList<FocusChangeListener> focusListeners;
     private SafeArrayList<GuiUpdateListener> updateListeners;
-    
+
     private volatile boolean invalid = false;
-        
+
     private Vector3f preferredSizeOverride = null;
     private Vector3f lastSize = new Vector3f();
     private boolean focused = false;
@@ -91,11 +91,11 @@ public class GuiControl extends AbstractNodeControl<GuiControl>
 
     public void addListener( GuiControlListener l ) {
         if( listeners == null ) {
-            listeners = new SafeArrayList<>(GuiControlListener.class); 
+            listeners = new SafeArrayList<>(GuiControlListener.class);
         }
         listeners.add(l);
     }
-    
+
     public void removeListener( GuiControlListener l ) {
         if( listeners == null ) {
             return;
@@ -123,7 +123,7 @@ public class GuiControl extends AbstractNodeControl<GuiControl>
         }
         updateListeners.add(l);
     }
-    
+
     public void removeUpdateListener( GuiUpdateListener l ) {
         if( updateListeners == null ) {
             return;
@@ -153,7 +153,7 @@ public class GuiControl extends AbstractNodeControl<GuiControl>
     public boolean isFocusable() {
         if( focusable ) {
             return true;
-        }    
+        }
         if( layout instanceof FocusTarget ) {
             if( ((FocusTarget)layout).isFocusable() ) {
                 return true;
@@ -183,7 +183,7 @@ public class GuiControl extends AbstractNodeControl<GuiControl>
             if( c instanceof FocusTarget ) {
                 ((FocusTarget)c).focusGained();
             }
-        }        
+        }
         if( layout instanceof FocusTarget ) {
             ((FocusTarget)layout).focusGained();
         }
@@ -191,7 +191,7 @@ public class GuiControl extends AbstractNodeControl<GuiControl>
             for( GuiControlListener l : listeners.getArray() ) {
                 l.focusGained(this);
             }
-        }        
+        }
         if( focusListeners != null ) {
             // Now notify any listeners
             FocusChangeEvent fce = new FocusChangeEvent(this);
@@ -223,7 +223,7 @@ public class GuiControl extends AbstractNodeControl<GuiControl>
                 l.focusLost(this);
             }
         }
-        if( focusListeners != null ) {       
+        if( focusListeners != null ) {
             // Now notify any listeners
             FocusChangeEvent fce = new FocusChangeEvent(this);
             for( FocusChangeListener l : focusListeners.getArray() ) {
@@ -241,7 +241,7 @@ public class GuiControl extends AbstractNodeControl<GuiControl>
     public Spatial getRelativeFocus( Spatial from, TraversalDirection direction ) {
         return focusTraversal == null ? null : focusTraversal.getRelativeFocus(from, direction);
     }
-    
+
     @Override
     public boolean isFocusRoot() {
         return focusTraversal == null ? false : focusTraversal.isFocusRoot();
@@ -281,7 +281,7 @@ public class GuiControl extends AbstractNodeControl<GuiControl>
     public void setPreferredSize( Vector3f pref ) {
         if( pref != null && (pref.x < 0 || pref.y < 0 || pref.z < 0) ) {
             throw new IllegalArgumentException("Preferred size cannot be negative:" + pref);
-        }    
+        }
         this.preferredSizeOverride = pref;
         invalidate();
     }
@@ -299,9 +299,9 @@ public class GuiControl extends AbstractNodeControl<GuiControl>
         for( int i = componentStack.size() - 1; i >= 0; i-- ) {
             componentStack.get(i).calculatePreferredSize(size);
             if( size.x < lastSize.x || size.y < lastSize.y || size.z < lastSize.z ) {
-                throw new RuntimeException("Component:" + componentStack.get(i) 
-                                + " shrunk the preferred size. Before:" + lastSize 
-                                + " after:" + size); 
+                throw new RuntimeException("Component:" + componentStack.get(i)
+                                + " shrunk the preferred size. Before:" + lastSize
+                                + " after:" + size);
             }
         }
         return size;
@@ -309,15 +309,15 @@ public class GuiControl extends AbstractNodeControl<GuiControl>
 
     public void setSize( Vector3f size ) {
         if( size.x < 0 || size.y < 0 || size.z < 0 ) {
-            throw new IllegalArgumentException("Size cannot be negative:" + size);
-        }            
+            throw new IllegalArgumentException("Size cannot be negative:" + size + " for:" + getNode());
+        }
         lastSize.set(size);
-        
+
         // The components will take their parts out of size.
         // The caller may not be expecting their size to change... especially
         // since it might have been the getPreferredSize() of some other GUI element
         Vector3f stackSize = size.clone();
-        
+
         Vector3f offset = new Vector3f();
         for( GuiComponent c : componentStack.getArray() ) {
             c.reshape(offset, stackSize);
@@ -328,7 +328,7 @@ public class GuiControl extends AbstractNodeControl<GuiControl>
         if( layout != null ) {
             layout.reshape(offset, stackSize);
         }
-        
+
         if( listeners != null ) {
             // Call the listeners with the original size befoe
             // the components took a whack at it.
@@ -346,15 +346,15 @@ public class GuiControl extends AbstractNodeControl<GuiControl>
         return componentStack;
     }
 
-    public <T extends GuiComponent> T addComponent( T c ) { 
-        return componentStack.addComponent(c);   
+    public <T extends GuiComponent> T addComponent( T c ) {
+        return componentStack.addComponent(c);
     }
 
     public int getComponentIndex( GuiComponent c ) {
         return componentStack.indexOf(c);
     }
 
-    /** 
+    /**
      *  Sets a new component to the specified layer and returns THAT component,
      *  not the previous value.  This is so that it works like addComponent()
      *  in that you can set it and grab it at the same time.
@@ -368,11 +368,11 @@ public class GuiControl extends AbstractNodeControl<GuiControl>
     }
 
     public <T extends GuiComponent> T removeComponent( String key ) {
-        return componentStack.removeComponent(key);   
+        return componentStack.removeComponent(key);
     }
 
     public boolean removeComponent( GuiComponent c ) {
-        return componentStack.removeComponent(c);   
+        return componentStack.removeComponent(c);
     }
 
     @Override
@@ -386,13 +386,13 @@ public class GuiControl extends AbstractNodeControl<GuiControl>
 
     @Override
     protected void controlUpdate( float tpf ) {
-        
+
         if( updateListeners != null ) {
             for( GuiUpdateListener l : updateListeners.getArray() ) {
                 l.guiUpdate(this, tpf);
             }
         }
-    
+
         if( invalid ) {
             revalidate();
         }
