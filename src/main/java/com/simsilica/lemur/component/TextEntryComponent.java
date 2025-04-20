@@ -95,6 +95,7 @@ public class TextEntryComponent extends AbstractGuiComponent
     public static final KeyActionListener BACKSPACE = new Backspace();
     public static final KeyActionListener NEW_LINE = new NewLine();
     public static final KeyActionListener DELETE = new Delete();
+    public static final KeyActionListener RELEASE_FOCUS = new ReleaseFocus();
 
     public static final KeyActionListener FOCUS_NEXT = new FocusChange(TraversalDirection.Next);
     public static final KeyActionListener FOCUS_PREVIOUS = new FocusChange(TraversalDirection.Previous);
@@ -117,6 +118,7 @@ public class TextEntryComponent extends AbstractGuiComponent
         standardActions.put(new KeyAction(KeyInput.KEY_RETURN), NEW_LINE);
         standardActions.put(new KeyAction(KeyInput.KEY_NUMPADENTER), NEW_LINE);
         standardActions.put(new KeyAction(KeyInput.KEY_DELETE), DELETE);
+        standardActions.put(new KeyAction(KeyInput.KEY_ESCAPE), RELEASE_FOCUS);
     }
 
     private BitmapFont font;
@@ -773,6 +775,19 @@ public class TextEntryComponent extends AbstractGuiComponent
         } 
     }
 
+    private static class ReleaseFocus implements KeyActionListener {
+        @Override
+        public void keyAction( TextEntryComponent source, KeyAction key ) {
+            Spatial current = GuiGlobals.getInstance().getCurrentFocus();
+            if( current == null ) {
+                // Focus was already lost somewhere... uncommon in normal cases
+                // but it can technically happen.
+                return;
+            }
+
+            GuiGlobals.getInstance().releaseFocus(current);
+        }
+    }
 
     private class KeyHandler implements KeyListener {
         private boolean shift = false;
