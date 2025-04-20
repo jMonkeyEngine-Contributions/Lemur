@@ -18,6 +18,8 @@ Version 1.17.0 (unreleased)
 * Refactored Label to defer text component creation to GuiGlobals.createText2d()
     which now also has a pluggable Text2d factory.
 * Refactored IconComponent to allow overriding the icon geometry.
+* Modified a sizing exception thrown by GuiControl to include the node that is
+    causing the issue.
 
 
 Version 1.16.0 (latest)
