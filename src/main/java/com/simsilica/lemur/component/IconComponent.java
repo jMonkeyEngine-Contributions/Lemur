@@ -322,7 +322,11 @@ public class IconComponent extends AbstractGuiComponent
         }
         this.alphaDiscard = alphaDiscard;
         if( material != null ) {
-            material.getMaterial().setFloat("AlphaDiscardThreshold", alphaDiscard);
+            if( alphaDiscard == 0 ) {
+                material.getMaterial().clearParam("AlphaDiscardThreshold");
+            } else {
+                material.getMaterial().setFloat("AlphaDiscardThreshold", alphaDiscard);
+            }
         }
     }
 
@@ -452,7 +456,9 @@ public class IconComponent extends AbstractGuiComponent
             material.setTexture(image);
 
             material.getMaterial().getAdditionalRenderState().setBlendMode(BlendMode.Alpha);
-            material.getMaterial().setFloat("AlphaDiscardThreshold", alphaDiscard);
+            if( alphaDiscard > 0 ) {
+                material.getMaterial().setFloat("AlphaDiscardThreshold", alphaDiscard);
+            }
         }
 
         geom.setMaterial(material.getMaterial());

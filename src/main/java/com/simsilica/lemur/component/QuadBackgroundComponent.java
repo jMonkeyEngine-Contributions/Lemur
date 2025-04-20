@@ -237,7 +237,11 @@ public class QuadBackgroundComponent extends AbstractGuiComponent
         }
         this.alphaDiscard = alphaDiscard;
         if( material != null ) {
-            material.getMaterial().setFloat("AlphaDiscardThreshold", alphaDiscard);
+            if( alphaDiscard == 0 ) {
+                material.getMaterial().clearParam("AlphaDiscardThreshold");
+            } else {
+                material.getMaterial().setFloat("AlphaDiscardThreshold", alphaDiscard);
+            }
         }
     }
 
@@ -274,7 +278,9 @@ public class QuadBackgroundComponent extends AbstractGuiComponent
             material.setTexture(texture);
         }
         material.getMaterial().getAdditionalRenderState().setBlendMode(BlendMode.Alpha);
-        material.getMaterial().setFloat("AlphaDiscardThreshold", alphaDiscard);
+        if( alphaDiscard > 0 ) {
+            material.getMaterial().setFloat("AlphaDiscardThreshold", alphaDiscard);
+        }
     }
 
     protected void refreshBackground( Vector3f size ) {

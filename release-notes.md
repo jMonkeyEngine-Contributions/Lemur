@@ -24,7 +24,8 @@ Version 1.17.0 (unreleased)
     causing the issue.
 * Fixed TextEntryComponent to work with right-to-left text (Thanks Ali-RS)
 * Modified TextEntryComponent to unfocus when the escape key is pressed. (Thanks Ali-RS)
-
+* Properly clear alpha discard param in QuadBackgroundComponent and
+    IconComponent when alpha discard is disabled (is set to 0).
 
 Version 1.16.0 (latest)
 ---------------
