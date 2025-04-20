@@ -34,18 +34,23 @@
 
 package com.simsilica.lemur;
 
-import com.simsilica.lemur.style.StyleDefaults;
-import com.simsilica.lemur.style.Attributes;
-import com.simsilica.lemur.style.ElementId;
-import com.simsilica.lemur.style.StyleAttribute;
-import com.simsilica.lemur.style.Styles;
+import java.util.Objects;
+
+import org.slf4j.*;
+
 import com.jme3.font.BitmapFont;
 import com.jme3.math.ColorRGBA;
 import com.jme3.math.Vector3f;
 
 import com.simsilica.lemur.core.GuiControl;
+import com.simsilica.lemur.component.Text2d;
 import com.simsilica.lemur.component.TextComponent;
 import com.simsilica.lemur.core.GuiComponent;
+import com.simsilica.lemur.style.StyleDefaults;
+import com.simsilica.lemur.style.Attributes;
+import com.simsilica.lemur.style.ElementId;
+import com.simsilica.lemur.style.StyleAttribute;
+import com.simsilica.lemur.style.Styles;
 
 
 /**
@@ -55,6 +60,7 @@ import com.simsilica.lemur.core.GuiComponent;
  *  @author    Paul Speed
  */
 public class Label extends Panel {
+    private static final Logger log = LoggerFactory.getLogger(Label.class);
 
     public static final String ELEMENT_ID = "label";
 
@@ -62,9 +68,16 @@ public class Label extends Panel {
     public static final String LAYER_TEXT = "text";
     public static final String LAYER_SHADOW_TEXT = "shadowText";
 
-    private TextComponent text;
-    private TextComponent shadow;
+    private String fontName;
+    private Text2d text;
+    private Text2d shadow;
     private Vector3f shadowOffset = new Vector3f(1,-1,-1);
+
+    // Work around so that the regular applyStyles() won't override any font setting
+    // since a) that was already determined correctly before applyStyles() was called
+    // and b) might look different as 'fontName' versus 'font' and if 'font' has been
+    // overridden then we'd prefer to defer to that for backwards compatibility.
+    private boolean ignoreFontChanges = false;
 
     public Label( String s ) {
         this( s, true, new ElementId(ELEMENT_ID), null );
@@ -77,7 +90,7 @@ public class Label extends Panel {
     public Label( String s, ElementId elementId ) {
         this( s, true, elementId, null );
     }
-    
+
     public Label( String s, ElementId elementId, String style ) {
         this( s, true, elementId, style );
     }
@@ -86,32 +99,71 @@ public class Label extends Panel {
         super(false, elementId, style);
 
         // Set our layers
-        getControl(GuiControl.class).setLayerOrder(LAYER_INSETS, 
-                                                   LAYER_BORDER, 
+        getControl(GuiControl.class).setLayerOrder(LAYER_INSETS,
+                                                   LAYER_BORDER,
                                                    LAYER_BACKGROUND,
                                                    LAYER_ICON,
                                                    LAYER_SHADOW_TEXT,
                                                    LAYER_TEXT);
 
-        // Retrieve the font before creation so that if the font is
-        // customized by the style then we don't end up creating a
-        // BitmapText object just to throw it away when a new font
-        // is set right after.  It's a limitation of BitmapText that
-        // can't have it's font changed post-creation.
-        Styles styles = GuiGlobals.getInstance().getStyles();
-        BitmapFont font = styles.getAttributes(elementId.getId(), style).get("font", BitmapFont.class);
-        this.text = new TextComponent(s, font);
+        this.text = createText2d(elementId, style);
+        text.setText(s);
         text.setLayer(3);
 
         getControl(GuiControl.class).setComponent(LAYER_TEXT, text);
 
         if( applyStyles ) {
-            styles.applyStyles(this, elementId, style);
+            Styles styles = GuiGlobals.getInstance().getStyles();
+            // Ignore font setting during style application because it has already been
+            // setup correctly.
+            ignoreFontChanges = true;
+            try {
+                styles.applyStyles(this, elementId, style);
+            } finally {
+                ignoreFontChanges = false;
+            }
         }
     }
 
     @StyleDefaults(ELEMENT_ID)
     public static void initializeDefaultStyles( Attributes attrs ) {
+    }
+
+    /**
+     *  Utility method to encapsulate the font shell game that we play for backwards
+     *  compatibility.  If a Label has overridden the default fontName somewhere in its
+     *  style hierarchy then that will always be used here.  Otherwise, the bitmap "font"
+     *  styling is checked.  If that is different than the default 'font' style then it
+     *  is used.  If the local 'font' style is the same as the default 'font' style
+     *  then the font name is used, regardless of if it was overridden or not.  In this
+     *  way, any existing style hierarchies should continue to work with actual BitmapFonts
+     *  will also seemlessly supporting 'fontName' styles.
+     *  'fontName' is preferred going forward because it better supports overriding Text2d
+     *  implementations.
+     */
+    protected Text2d createText2d( ElementId elementId, String style ) {
+        Styles styles = GuiGlobals.getInstance().getStyles();
+        String fontName = styles.getAttributes(elementId.getId(), style).get("fontName", String.class);
+        String defaultFontName = styles.getAttributes(Styles.DEFAULT_ELEMENT, style).get("fontName", String.class);
+
+        // For backwards compatibility, we will compare the font name against the default font name.
+        // If they are the same then that might legitimately be the font name but we'll check to see
+        // of the old-style direct BitmapFont has been overridden.
+        if( Objects.equals(fontName, defaultFontName) ) {
+            log.debug("Checking for bitmap font override...");
+            BitmapFont font = styles.getAttributes(elementId.getId(), style).get("font", BitmapFont.class);
+            BitmapFont defaultFont = styles.getAttributes(Styles.DEFAULT_ELEMENT, style).get("font", BitmapFont.class);
+            if( font != defaultFont ) {
+                log.debug("Bitmap font has been overridden.");
+                // Need to somehow infer the font name... JME does not make this easy as the
+                // BitmapFont cannot tell us its asset key or anything.
+                return new TextComponent("", font);
+            }
+        }
+
+        // Else let GuiGlobals create it for us because the fontName is the real indicator
+        this.fontName = fontName;
+        return GuiGlobals.getInstance().createText2d(fontName);
     }
 
     @StyleAttribute(value="text", lookupDefault=false)
@@ -163,20 +215,51 @@ public class Label extends Panel {
             shadow.setMaxWidth(f);
         }
     }
-    
+
     public float getMaxWidth() {
         return text.getMaxWidth();
     }
 
     public void setFont( BitmapFont font ) {
-        text.setFont(font);
-        if( shadow != null ) {
-            shadow.setFont(font);
+        if( ignoreFontChanges ) {
+            return;
+        }
+        if( shadow instanceof TextComponent ) {
+            ((TextComponent)shadow).setFont(font);
+        }
+        if( text instanceof TextComponent ) {
+            ((TextComponent)text).setFont(font);
+        } else {
+            throw new UnsupportedOperationException("This label is using a non-BitmapFont Text2d component.");
         }
     }
 
     public BitmapFont getFont() {
-        return text.getFont();
+        if( text instanceof TextComponent ) {
+            return ((TextComponent)text).getFont();
+        }
+        throw new UnsupportedOperationException("This label is using a non-BitmapFont Text2d component.");
+    }
+
+    @StyleAttribute("fontName")
+    public void setFontName( String fontName ) {
+        if( ignoreFontChanges ) {
+            return;
+        }
+        if( Objects.equals(this.fontName, fontName) ) {
+            return;
+        }
+        this.fontName = fontName;
+        if( text != null ) {
+            text.setFontName(fontName);
+        }
+        if( shadow != null ) {
+            shadow.setFontName(fontName);
+        }
+    }
+
+    public String getFontName() {
+        return fontName;
     }
 
     @StyleAttribute("color")
@@ -219,7 +302,13 @@ public class Label extends Panel {
                 return;
 
             // Else we need to create the shadow
-            this.shadow = new TextComponent(getText(), getFont());
+            if( text instanceof TextComponent ) {
+                // For backwards compatibility
+                this.shadow = new TextComponent(getText(), getFont());
+            } else {
+                this.shadow = GuiGlobals.getInstance().createText2d(getFontName());
+            }
+            shadow.setText(getText());
             shadow.setLayer(2);
             shadow.setOffset(shadowOffset.x, shadowOffset.y, shadowOffset.z);
             shadow.setFontSize(getFontSize());
@@ -244,14 +333,14 @@ public class Label extends Panel {
     }
 
     @StyleAttribute(value="icon", lookupDefault=false)
-    public void setIcon( GuiComponent icon ) {        
+    public void setIcon( GuiComponent icon ) {
         getControl(GuiControl.class).setComponent(LAYER_ICON, icon);
     }
 
     public GuiComponent getIcon() {
         return getControl(GuiControl.class).getComponent(LAYER_ICON);
     }
-    
+
     @Override
     public String toString() {
         return getClass().getName() + "[text=" + getText() + ", color=" + getColor() + ", elementId=" + getElementId() + "]";

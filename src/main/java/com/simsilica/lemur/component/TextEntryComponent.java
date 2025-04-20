@@ -95,6 +95,7 @@ public class TextEntryComponent extends AbstractGuiComponent
     public static final KeyActionListener BACKSPACE = new Backspace();
     public static final KeyActionListener NEW_LINE = new NewLine();
     public static final KeyActionListener DELETE = new Delete();
+    public static final KeyActionListener RELEASE_FOCUS = new ReleaseFocus();
 
     public static final KeyActionListener FOCUS_NEXT = new FocusChange(TraversalDirection.Next);
     public static final KeyActionListener FOCUS_PREVIOUS = new FocusChange(TraversalDirection.Previous);
@@ -117,6 +118,7 @@ public class TextEntryComponent extends AbstractGuiComponent
         standardActions.put(new KeyAction(KeyInput.KEY_RETURN), NEW_LINE);
         standardActions.put(new KeyAction(KeyInput.KEY_NUMPADENTER), NEW_LINE);
         standardActions.put(new KeyAction(KeyInput.KEY_DELETE), DELETE);
+        standardActions.put(new KeyAction(KeyInput.KEY_ESCAPE), RELEASE_FOCUS);
     }
 
     private BitmapFont font;
@@ -464,17 +466,43 @@ public class TextEntryComponent extends AbstractGuiComponent
         String row = model.getLine(line);
         row = row.substring(textOffset,column);
 
-        // We add an extra space to properly advance (since often
-        // the space character only has a width of 1 but will advance
-        // far) then we subtract that space width back.
-        float x = font.getLineWidth(row + " ");
-        x -= font.getLineWidth(" ");
+        float x;
+        if (font.isRightToLeft()) {
+            // Note, not adding an extra space as we do not want the extra advance of
+            // the last letter.
+            x = font.getLineWidth(row);
+        } else {
+            // We add an extra space to properly advance (since often
+            // the space character only has a width of 1 but will advance
+            // far) then we subtract that space width back.
+            x = font.getLineWidth(row + " ");
+            x -= font.getLineWidth(" ");
+        }
 
         // And pad it out just a bit...
         //x += 1;
 
         float scale = bitmapText.getSize() / font.getPreferredSize();
         x *= scale;
+
+        if (font.isRightToLeft()) {
+            // Align from right
+            float maxWidth;
+            if (preferredWidth == 0) {
+                // Note, we can not use textBox.width or bitmapText.getLineWidth if
+                // this is called from resetText(), because at this point textBox is
+                // still referring to the old width . It will be updated later inside
+                // reshape() method. So we either need to delay this until reshape()
+                // gets called or get the width from BitmapFont.
+                // Delaying may introduce a visual side effect so I am opting for the
+                // second option.  -Ali-RS:2021-11-24
+                maxWidth = font.getLineWidth(model.getText()) * scale;
+            } else {
+                maxWidth = preferredWidth;
+            }
+
+            x = maxWidth - x;
+        }
 
         float y = -line * bitmapText.getLineHeight();
         y -= bitmapText.getLineHeight();
@@ -673,7 +701,11 @@ public class TextEntryComponent extends AbstractGuiComponent
     private static class CaratLeft implements KeyActionListener {
         @Override
         public void keyAction( TextEntryComponent source, KeyAction key ) {
-            source.model.left();
+            if (source.font.isRightToLeft()) {
+                source.model.right();
+            } else {
+                source.model.left();
+            }
             //source.resetCursorPosition(); should be automatic now
         }
     }
@@ -681,7 +713,11 @@ public class TextEntryComponent extends AbstractGuiComponent
     private static class CaratRight implements KeyActionListener {
         @Override
         public void keyAction( TextEntryComponent source, KeyAction key ) {
-            source.model.right();
+            if (source.font.isRightToLeft()) {
+                source.model.left();
+            } else {
+                source.model.right();
+            }
             //source.resetCursorPosition(); should be automatic now
         }
     }
@@ -739,6 +775,19 @@ public class TextEntryComponent extends AbstractGuiComponent
         } 
     }
 
+    private static class ReleaseFocus implements KeyActionListener {
+        @Override
+        public void keyAction( TextEntryComponent source, KeyAction key ) {
+            Spatial current = GuiGlobals.getInstance().getCurrentFocus();
+            if( current == null ) {
+                // Focus was already lost somewhere... uncommon in normal cases
+                // but it can technically happen.
+                return;
+            }
+
+            GuiGlobals.getInstance().releaseFocus(current);
+        }
+    }
 
     private class KeyHandler implements KeyListener {
         private boolean shift = false;

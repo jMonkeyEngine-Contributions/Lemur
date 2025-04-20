@@ -1,36 +1,36 @@
 /*
  * $Id$
- * 
+ *
  * Copyright (c) 2016, Simsilica, LLC
  * All rights reserved.
- * 
+ *
  * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions 
+ * modification, are permitted provided that the following conditions
  * are met:
- * 
- * 1. Redistributions of source code must retain the above copyright 
+ *
+ * 1. Redistributions of source code must retain the above copyright
  *    notice, this list of conditions and the following disclaimer.
- * 
- * 2. Redistributions in binary form must reproduce the above copyright 
- *    notice, this list of conditions and the following disclaimer in 
- *    the documentation and/or other materials provided with the 
+ *
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in
+ *    the documentation and/or other materials provided with the
  *    distribution.
- * 
- * 3. Neither the name of the copyright holder nor the names of its 
- *    contributors may be used to endorse or promote products derived 
+ *
+ * 3. Neither the name of the copyright holder nor the names of its
+ *    contributors may be used to endorse or promote products derived
  *    from this software without specific prior written permission.
- * 
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS 
- * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT 
- * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS 
- * FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE 
- * COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, 
- * INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES 
- * (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR 
- * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) 
- * HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, 
- * STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) 
- * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED 
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+ * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+ * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS
+ * FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
+ * COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
+ * INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+ * (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+ * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+ * HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
+ * STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
  * OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
@@ -86,17 +86,17 @@ public class PopupState extends BaseAppState {
          *  the popup in another way (for example error or warning popups).
          */
         Consume,
- 
+
         /**
          *  A click outside of the current popup will close the current popup and
          *  the event will otherwise propagate to whatever was below.  This is
          *  useful for things like popup menus or popup selectors where a click
          *  outside should simply pass through to the real UI.  In this case
          *  the 'modal' behavior is only to catch the outside click so that the
-         *  popup can be closed. 
-         */       
+         *  popup can be closed.
+         */
         Close,
-                    
+
         /**
          *  A click outside of the current popup will be consumed but
          *  will also close the popup.  This could be used for certain types
@@ -105,22 +105,29 @@ public class PopupState extends BaseAppState {
          *  Especially if the 'blocker' geometry has been tinted in some
          *  way indicating that the underlying UI is unclickable.
          */
-        ConsumeAndClose
-    }; 
+        ConsumeAndClose,
+
+        /**
+         *  Mouse events outside of the popup are ignored, the popup is not closed,
+         *  and the events are not consumed.  Use this when several popups will be
+         *  active at the same time.
+         */
+        Ignore
+    };
 
     private Node guiNode;
-    
+
     private ColorRGBA defaultBackgroundColor = new ColorRGBA(0, 0, 0, 0);
     private List<PopupEntry> stack = new ArrayList<>();
     private PopupEntry current;
-    
+
     public PopupState() {
     }
-    
+
     public PopupState( Node guiNode ) {
         this.guiNode = guiNode;
     }
-    
+
     public boolean hasActivePopups() {
         return isEnabled() && !stack.isEmpty();
     }
@@ -158,7 +165,7 @@ public class PopupState extends BaseAppState {
     public void showModalPopup( Spatial popup, Command<? super PopupState> closeCommand ) {
         showPopup(popup, ClickMode.Consume, closeCommand, null);
     }
-    
+
     /**
      *  Shows the specified spatial on the GUI node with a background blocker
      *  geometry that will consume all mouse events until the popup has been
@@ -177,7 +184,7 @@ public class PopupState extends BaseAppState {
                                 ColorRGBA backgroundColor ) {
         showPopup(popup, ClickMode.Consume, closeCommand, backgroundColor);
     }
-    
+
     /**
      *  Shows the specified popup on the GUI node with the specified click mode
      *  determining how background mouse events will be handled.  An optional
@@ -186,20 +193,20 @@ public class PopupState extends BaseAppState {
      */
     public void showPopup( Spatial popup, ClickMode clickMode, Command<? super PopupState> closeCommand,
                            ColorRGBA backgroundColor ) {
-                           
+
         PopupEntry entry = new PopupEntry(popup, clickMode, closeCommand, backgroundColor);
         stack.add(entry);
-        current = entry;       
+        current = entry;
         current.show();
     }
-    
+
     /**
      *  Returns true if the specified Spatial is still an active popup.
      */
     public boolean isPopup( Spatial s ) {
         return getEntry(s) != null;
     }
-    
+
     /**
      *  Closes a previously opened popup.  Throws IllegalArgumentException if the
      *  specified popup is not open.
@@ -207,17 +214,17 @@ public class PopupState extends BaseAppState {
     public void closePopup( Spatial popup ) {
         PopupEntry entry = getEntry(popup);
         if( entry == null ) {
-            throw new IllegalArgumentException("Popup entry not found for:" + popup); 
+            throw new IllegalArgumentException("Popup entry not found for:" + popup);
         }
-        close(entry); 
+        close(entry);
     }
 
     protected void close( PopupEntry entry ) {
         if( !stack.remove(entry) ) {
             return;
-        }        
+        }
         entry.release();
-        
+
         if( !stack.isEmpty() ) {
             current = stack.get(stack.size()-1);
         } else {
@@ -233,16 +240,16 @@ public class PopupState extends BaseAppState {
         }
         return null;
     }
- 
+
     /**
      *  Calcules that maximum Z value given the current contents of
      *  the GUI node.
-     */       
+     */
     protected float getMaxGuiZ() {
         BoundingVolume bv = getGuiNode().getWorldBound();
         return getMaxZ(bv);
     }
-    
+
     protected float getMaxZ( BoundingVolume bv ) {
         if( bv instanceof BoundingBox ) {
             BoundingBox bb = (BoundingBox)bv;
@@ -254,9 +261,9 @@ public class PopupState extends BaseAppState {
             // Apparently this can happen for empty nodes...
             return 0;
         }
-        Vector3f offset = bv.getCenter().add(0, 0, 1000); 
+        Vector3f offset = bv.getCenter().add(0, 0, 1000);
         return offset.z - bv.distanceTo(offset);
-    } 
+    }
 
     protected float getMinZ( BoundingVolume bv ) {
         if( bv instanceof BoundingBox ) {
@@ -266,25 +273,25 @@ public class PopupState extends BaseAppState {
             BoundingSphere bs = (BoundingSphere)bv;
             return bs.getCenter().z - bs.getRadius();
         }
-        Vector3f offset = bv.getCenter().add(0, 0, -1000); 
+        Vector3f offset = bv.getCenter().add(0, 0, -1000);
         return offset.z + bv.distanceTo(offset);  // untested
-    } 
+    }
 
     protected GuiMaterial createBlockerMaterial( ColorRGBA color ) {
         GuiMaterial result = GuiGlobals.getInstance().createMaterial(color, false);
         Material mat = result.getMaterial();
         mat.getAdditionalRenderState().setBlendMode(BlendMode.Alpha);
-        return result; 
+        return result;
     }
-    
+
     protected Geometry createBlocker( float z, ColorRGBA backgroundColor ) {
         Camera cam = getApplication().getCamera();
- 
+
         // Get the inverse scale of whatever the current guiNode is so that
         // we can find a proper screen size
         float width = cam.getWidth() / guiNode.getLocalScale().x;
         float height = cam.getHeight() / guiNode.getLocalScale().y;
-        
+
         Quad quad = new Quad(width, height);
         Geometry result = new Geometry("blocker", quad);
         GuiMaterial guiMat = createBlockerMaterial(backgroundColor);
@@ -293,20 +300,20 @@ public class PopupState extends BaseAppState {
         result.setLocalTranslation(0, 0, z);
         return result;
     }
- 
+
     /**
      *  Returns the size of the screen based on the app's main camera size
      *  and the current scale of the guiNode.
-     */   
+     */
     public Vector2f getGuiSize() {
         Camera cam = getApplication().getCamera();
         float width = cam.getWidth() / getGuiNode().getLocalScale().x;
         float height = cam.getHeight() / getGuiNode().getLocalScale().y;
-        return new Vector2f(width, height);        
+        return new Vector2f(width, height);
     }
- 
+
     /**
-     *  Positions the specified spatial so that it is in the center of 
+     *  Positions the specified spatial so that it is in the center of
      *  the GUI.
      */
     public void centerInGui( Spatial s ) {
@@ -315,7 +322,7 @@ public class PopupState extends BaseAppState {
             // We could support this but I don't have the time today
             throw new UnsupportedOperationException("Only spatials with GuiControls are supported");
         }
-        
+
         Vector2f guiSize = getGuiSize();
         Vector3f size = control.getSize();
         if( size.length() == 0 ) {
@@ -326,14 +333,14 @@ public class PopupState extends BaseAppState {
         size = size.mult(s.getLocalScale());
         Vector3f pos = s.getWorldTranslation();
         Vector3f target = new Vector3f();
- 
-        target.x = guiSize.x * 0.5f - size.x * 0.5f;       
+
+        target.x = guiSize.x * 0.5f - size.x * 0.5f;
         target.y = guiSize.y * 0.5f + size.y * 0.5f;
         target.z = pos.z;
-        
-        s.move(target.subtract(pos));               
+
+        s.move(target.subtract(pos));
     }
- 
+
     /**
      *  Moves the specified GUI element so that it is the most on the
      *  screen that it can be based on the current GUI size.  Returns true
@@ -346,7 +353,7 @@ public class PopupState extends BaseAppState {
             // We could support this but I don't have the time today
             throw new UnsupportedOperationException("Only spatials with GuiControls are supported");
         }
-        
+
         Vector2f guiSize = getGuiSize();
         Vector3f size = control.getSize();
         if( size.length() == 0 ) {
@@ -356,7 +363,7 @@ public class PopupState extends BaseAppState {
         }
         Vector3f pos = s.getWorldTranslation();
         Vector3f delta = new Vector3f();
-        
+
         // Calculate a delta as necessary
         if( size.x > guiSize.x ) {
             // Center it
@@ -369,8 +376,8 @@ public class PopupState extends BaseAppState {
             // Slide it left
             float x = guiSize.x - size.x;
             delta.x = x - pos.x;
-        }           
- 
+        }
+
         // Y grows down so it's slightly different
         if( size.y > guiSize.y ) {
             float y = guiSize.y * 0.5f - size.y * 0.5f;
@@ -383,16 +390,16 @@ public class PopupState extends BaseAppState {
             float y = size.y;
             delta.y = y - pos.y;
         }
- 
+
         // We move based on a delta in case this is a child of some
         // other thing.  We calculate where we want it to be in world
         // space and the delta necessary to get us there and then move it.
-        // All of that works fine as long as nothing is scaled.           
-        s.move(delta);            
-        
-        return delta.length() != 0;    
+        // All of that works fine as long as nothing is scaled.
+        s.move(delta);
+
+        return delta.length() != 0;
     }
- 
+
     /**
      *  Sets the GUI node that will be used to display the option
      *  panel.  By default, this is SimpleApplication.getGuiNode().
@@ -400,10 +407,10 @@ public class PopupState extends BaseAppState {
     public void setGuiNode( Node guiNode ) {
         this.guiNode = guiNode;
     }
-    
+
     /**
      *  Returns the GUI node that will be used to display the option
-     *  panel.  By default, this is SimpleApplication.getGuiNode().  
+     *  panel.  By default, this is SimpleApplication.getGuiNode().
      */
     public Node getGuiNode() {
         if( guiNode != null ) {
@@ -414,6 +421,25 @@ public class PopupState extends BaseAppState {
             this.guiNode = ((SimpleApplication)app).getGuiNode();
         }
         return guiNode;
+    }
+
+    /**
+     *  Converts a screen coordinate into a properly scaled GUI coordinate.
+     */
+    public Vector3f screenToGui( Vector3f screen ) {
+        if( log.isTraceEnabled() ) {
+            log.trace("screenToGui(" + screen + ") node scale:" + getGuiNode().getLocalScale());
+        }
+        Vector3f result = screen.clone();
+        // If the screen size is 1024 and our scale is 0.5 then that means
+        // the virtual screen size is twice that.  x = 512 in screen space would
+        // have to be x = 1024 in 0.5 space.
+        result.x /= getGuiNode().getLocalScale().x;
+        result.y /= getGuiNode().getLocalScale().y;
+        if( log.isTraceEnabled() ) {
+            log.trace("screenToGui() -> result:" + result);
+        }
+        return result;
     }
 
     @Override
@@ -430,7 +456,7 @@ public class PopupState extends BaseAppState {
 
     @Override
     public void update( float tpf ) {
-        
+
         if( current != null ) {
             if( !current.isVisible() ) {
                 close(current);
@@ -441,7 +467,7 @@ public class PopupState extends BaseAppState {
     @Override
     protected void onDisable() {
     }
- 
+
     private class PopupEntry {
         private Spatial popup;
         private ClickMode clickMode;
@@ -451,7 +477,7 @@ public class PopupState extends BaseAppState {
         private Geometry blocker;
         private GuiMaterial blockerMaterial;
         private BlockerListener blockerListener;
-        
+
         public PopupEntry( Spatial popup, ClickMode clickMode, Command<? super PopupState> closeCommand,
                            ColorRGBA backgroundColor ) {
             this.popup = popup;
@@ -460,48 +486,51 @@ public class PopupState extends BaseAppState {
             this.backgroundColor = backgroundColor != null ? backgroundColor : defaultBackgroundColor;
             this.zBase = getMaxGuiZ() + 1;
             this.blocker = createBlocker(zBase, this.backgroundColor);
-            MouseEventControl.addListenersToSpatial(blocker, new BlockerListener(this));
+            if( clickMode != ClickMode.Ignore ) {
+                // Only intercept events if we aren't ignore them
+                MouseEventControl.addListenersToSpatial(blocker, new BlockerListener(this));
+            }
         }
- 
+
         public boolean isVisible() {
             if( popup.getParent() == null ) {
                 return false;
             }
             return true;
         }
-        
+
         public void show() {
             float zOffset = getMinZ(popup.getWorldBound());
-                            
-            getGuiNode().attachChild(blocker);                        
+
+            getGuiNode().attachChild(blocker);
             getGuiNode().attachChild(popup);
- 
+
             float zPopup = zBase + 1;
             if( zOffset < 0 ) {
                 // Move it out more for the negative zOffset.
                 // If there is a positive zOffset then we let it stay
                 zPopup = zPopup - zOffset;
             }
-            
+
             // Make sure the popup spatial is above the blocker
             popup.move(0, 0, zPopup);
 
             if( popup instanceof Panel ) {
                 // Play any open effects that it has
-                ((Panel)popup).runEffect(Panel.EFFECT_OPEN);  
+                ((Panel)popup).runEffect(Panel.EFFECT_OPEN);
             }
-            
+
             // Request access to the cursor
             GuiGlobals.getInstance().requestCursorEnabled(this);
             GuiGlobals.getInstance().requestFocus(popup);
         }
-        
+
         public void release() {
             // Up to the effect to remove the popup... we'll do it if the
-            // popup doesn't exist. 
+            // popup doesn't exist.
             if( popup instanceof Panel && ((Panel)popup).hasEffect(Panel.EFFECT_CLOSE) ) {
                 ((Panel)popup).runEffect(Panel.EFFECT_CLOSE);
-                // Would be nice if there was a way to run something at the end 
+                // Would be nice if there was a way to run something at the end
                 // of an effect just to be sure.
             } else {
                 popup.removeFromParent();
@@ -510,38 +539,38 @@ public class PopupState extends BaseAppState {
             if( closeCommand != null ) {
                 closeCommand.execute(PopupState.this);
             }
-            
+
             // Release our cursor request
             GuiGlobals.getInstance().releaseCursorEnabled(this);
-                       
+
             // And clear the focus if the popup is still in the focus chain
             GuiGlobals.getInstance().releaseFocus(popup);
-        }        
+        }
     }
-    
+
     private class BlockerListener implements MouseListener {
 
         private PopupEntry entry;
-        
+
         public BlockerListener( PopupEntry entry ) {
             this.entry = entry;
         }
-        
+
         public boolean isPassive() {
             switch(  entry.clickMode ) {
                 case ConsumeAndClose:
                 case Consume:
                     return false;
             }
-            return true;      
-        } 
+            return true;
+        }
 
         protected void handle( InputEvent event, boolean closeableEvent ) {
             switch( entry.clickMode ) {
                 case Close:
                     if( closeableEvent ) {
                         close(entry);
-                    }            
+                    }
                     break;
                 case ConsumeAndClose:
                     if( closeableEvent ) {
@@ -552,24 +581,24 @@ public class PopupState extends BaseAppState {
                 case Consume:
                     event.setConsumed();
                     break;
-            }           
+            }
         }
 
         public void mouseButtonEvent(MouseButtonEvent event, Spatial target, Spatial capture) {
             handle(event, true);
         }
-    
+
         public void mouseEntered(MouseMotionEvent event, Spatial target, Spatial capture) {
             handle(event, false);
         }
-    
+
         public void mouseExited(MouseMotionEvent event, Spatial target, Spatial capture) {
             handle(event, false);
         }
-    
+
         public void mouseMoved(MouseMotionEvent event, Spatial target, Spatial capture) {
             handle(event, false);
         }
     }
-    
+
 }

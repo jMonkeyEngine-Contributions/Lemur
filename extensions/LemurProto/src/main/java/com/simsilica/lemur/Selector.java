@@ -80,9 +80,11 @@ public class Selector<T> extends Panel {
     private ClickListener clickListener = new ClickListener();
     private SelectListener selectListener = new SelectListener();
     private ReshapeListener reshapeListener = new ReshapeListener();
+    private AutoCloseListener autoCloseListener = new AutoCloseListener(); 
 
     private boolean expanded;
     private int maximumVisibleItems;
+    private long expandedFrames;
 
     private VersionedReference<Integer> selectionRef;
     private VersionedHolder<T> selectedItem = new VersionedHolder<>();
@@ -169,6 +171,7 @@ public class Selector<T> extends Panel {
 
         this.popup = new Container(new BorderLayout(), elementId.child("popup"), style);
         popup.addChild(listBox, BorderLayout.Position.Center);
+        popup.getControl(GuiControl.class).addUpdateListener(autoCloseListener);
 
         this.expander = new Button(null, true, elementId.child(EXPANDER_ID), style);
         expander.addClickCommands(clickListener);
@@ -300,6 +303,9 @@ public class Selector<T> extends Panel {
 
     @Override
     public void updateLogicalState( float tpf ) {
+        if( expanded ) {
+            expandedFrames++;
+        }
         super.updateLogicalState(tpf);
         if( modelRef.update() ) {
             boundSelection();
@@ -388,7 +394,8 @@ public class Selector<T> extends Panel {
         return size;
     }
 
-    protected Vector3f calculatePopupLocation( Vector3f loc ) {
+    protected Vector3f calculatePopupLocation( Vector3f screen ) {
+        Vector3f loc = GuiGlobals.getInstance().getPopupState().screenToGui(screen); 
         Vector3f pref = popup.getPreferredSize();
         Vector2f guiSize = GuiGlobals.getInstance().getPopupState().getGuiSize();
         loc.x = Math.min(loc.x, guiSize.x - pref.x);
@@ -410,6 +417,9 @@ public class Selector<T> extends Panel {
                             collapse();
                         }
                     });
+
+        expandedFrames = 0;
+        autoCloseListener.updatedFrames = 0;
 
         this.expanded = true;
     }
@@ -448,9 +458,33 @@ public class Selector<T> extends Panel {
             // Note: reshape() is about the layout within the container
             // and not its position on screen... so moving the popup isn't
             // really a recursive operation.
-            Vector3f world = popup.getLocalTranslation();
+            //Vector3f world = popup.getLocalTranslation();
+            // I'm pretty sure the above is a bug because we even called it 'world'
+            // but there are times when the world and local translations will be
+            // different, even for a popup directly in the GUI node.
+            Vector3f world = popup.getWorldTranslation();
             Vector3f loc = calculatePopupLocation(world);
             popup.setLocalTranslation(loc);
+        }
+    }
+ 
+    /**
+     *  Listens to the update of the popup so we can count frames.  If
+     *  the popup frames become greater than the selector frames then we
+     *  guess that the selector has been removed from the scene and we
+     *  are still popped up. 
+     */   
+    private class AutoCloseListener implements GuiUpdateListener {
+        private long updatedFrames = 0;
+            
+        public void guiUpdate( GuiControl source, float tpf ) {
+            updatedFrames++;
+            if( updatedFrames > expandedFrames ) {
+                log.warn("Auto-closing left-open selector.");
+                // The selector was removed from the scene without anything
+                // being selected in the popup... so we'll close.
+                collapse();
+            }
         }
     }
 }

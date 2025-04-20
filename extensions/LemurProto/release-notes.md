@@ -3,13 +3,20 @@ Lemur-Proto 1.14.0 (unreleased)
 * Added ListBox.getSelector() for retrieving the list item selector element
     for direct styling, etc..
 * Modified ListBox to be explicit with its GridPanel and Selector layers.
-    This may be a breaking change in some rare cases.  Prior to this fix, the 
+    This may be a breaking change in some rare cases.  Prior to this fix, the
     selector widget could sort behind the GridPanel and its buttons.  Now
     the selector widget should always be on top.
 * Fixed a Selector bug where calling setSelectedItem() was not being reflected
     in getSelectedItem() if the model values had also changed during the same
     frame but the selected index did not change.
 * Added a (model, elementId) constructor to Selector.
+* Fixed a bug where the Selector popup was showing in the wrong place when
+    the popup UI was scaled.
+* Added a ColorChooser(ElementId) constructor.
+* Added a small crosshair to the ColorChooser to indicate selected color.
+* Fixed the selector popup to automatically close if the selector is removed
+    from the scene.
+* Added ListBox.setSelectedItem and fixed an overflow bug in getSelectedItem()
 
 
 Lemur-Proto 1.13.0 (latest)

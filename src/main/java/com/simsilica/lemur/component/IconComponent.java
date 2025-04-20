@@ -113,7 +113,7 @@ public class IconComponent extends AbstractGuiComponent
         this.yMargin = yMargin;
         this.zOffset = zOffset;
         this.lit = lit;
-        createIcon();
+        this.icon = createIcon();
     }
 
     @Override
@@ -121,7 +121,7 @@ public class IconComponent extends AbstractGuiComponent
         IconComponent result = (IconComponent)super.clone();
         result.icon = null;
         result.material = material.clone();
-        result.createIcon();
+        result.icon = result.createIcon();
         return result;
     }
 
@@ -205,7 +205,7 @@ public class IconComponent extends AbstractGuiComponent
         this.iconScale.set(scale);
 
         // Not very efficient
-        createIcon();
+        this.icon = createIcon();
 
         invalidate();
     }
@@ -228,7 +228,7 @@ public class IconComponent extends AbstractGuiComponent
         this.iconSize = iconSize;
 
         // Not very efficient
-        createIcon();
+        this.icon = createIcon();
 
         invalidate();
     }
@@ -440,12 +440,16 @@ public class IconComponent extends AbstractGuiComponent
         invalidate();
     }
 
-    protected void createIcon() {
+    protected Geometry getIcon() {
+        return icon;
+    }
+
+    protected Geometry createIcon() {
         Vector2f imageSize = getEffectiveIconSize();
         float width = iconScale.x * imageSize.x;
         float height = iconScale.y * imageSize.y;
         Quad q = new Quad(width, height);
-        icon = new Geometry("icon:" + imagePath, q);
+        Geometry geom = new Geometry("icon:" + imagePath, q);
         if( material == null ) {
             material = GuiGlobals.getInstance().createMaterial(lit);
             material.setColor(color);
@@ -457,17 +461,19 @@ public class IconComponent extends AbstractGuiComponent
             }
         }
 
-        icon.setMaterial(material.getMaterial());
+        geom.setMaterial(material.getMaterial());
 
         // Leave it invisible until the first time we are reshaped.
         // Without this, there is a noticeable one-frame jump from
         // 0,0,0 to it's proper position.
-        icon.setCullHint(CullHint.Always);
+        geom.setCullHint(CullHint.Always);
 
         // Just in case but it should never happen
         if( isAttached() ) {
-            getNode().attachChild(icon);
+            getNode().attachChild(geom);
         }
+
+        return geom;
     }
 
     protected Vector2f getEffectiveIconSize() {

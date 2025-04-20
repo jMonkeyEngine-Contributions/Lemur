@@ -34,6 +34,8 @@
 
 package com.simsilica.lemur;
 
+import java.util.function.Function;
+
 import com.google.common.base.Charsets;
 import com.google.common.io.Resources;
 
@@ -56,6 +58,8 @@ import com.jme3.system.JmeContext.Type;
 import com.jme3.texture.Texture;
 
 import com.simsilica.lemur.anim.AnimationState;
+import com.simsilica.lemur.component.Text2d;
+import com.simsilica.lemur.component.TextComponent;
 import com.simsilica.lemur.core.GuiMaterial;
 import com.simsilica.lemur.core.UnshadedMaterialAdapter;
 import com.simsilica.lemur.core.LightingMaterialAdapter;
@@ -68,6 +72,7 @@ import com.simsilica.lemur.event.TouchAppState;
 import com.simsilica.lemur.focus.FocusManagerState;
 import com.simsilica.lemur.focus.FocusNavigationState;
 import com.simsilica.lemur.input.InputMapper;
+import com.simsilica.lemur.style.ElementId;
 import com.simsilica.lemur.style.Styles;
 
 
@@ -117,6 +122,8 @@ public class GuiGlobals {
     private PopupState popupState;
     private String iconBase;
 
+    private Function<String, Text2d> textFactory = new DefaultTextFactory();
+
     private Styles styles;
 
     private boolean gammaEnabled;
@@ -136,13 +143,13 @@ public class GuiGlobals {
     }
 
     protected boolean isHeadless( Application app ) {
-        Type type = app.getContext().getType(); 
+        Type type = app.getContext().getType();
         return type == Type.Headless; // || type == Type.OffscreenSurface;
     }
 
     protected GuiGlobals( Application app ) {
         this.assets = app.getAssetManager();
-        
+
         if( isHeadless(app) ) {
             // Do only minimal initialization... and nothing requiring
             // input, a screen, etc.
@@ -150,14 +157,14 @@ public class GuiGlobals {
             setDefaultStyles();
 
             iconBase = getClass().getPackage().getName().replace( '.', '/' ) + "/icons";
-            
+
             return;
         }
-         
+
         this.keyInterceptor = new KeyInterceptState(app);
-        
+
         // For now, pick either mouse or touch based on the
-        // availability of touch.  It's an either/or at the 
+        // availability of touch.  It's an either/or at the
         // moment but the rest of the code is setup to support
         // both at once should we ever want to support touch
         // devices that also may have a mouse connected.
@@ -166,7 +173,7 @@ public class GuiGlobals {
         } else {
             this.touchState = new TouchAppState(app);
         }
-        
+
         this.inputMapper = new InputMapper(app.getInputManager());
         this.focusState = new FocusManagerState();
         this.focusNavState = new FocusNavigationState(inputMapper, focusState);
@@ -180,16 +187,16 @@ public class GuiGlobals {
         // c) so that we might disable them properly even at runtime
         //    if the user kills or replaces the nav state
         focusState.setFocusNavigationState(focusNavState);
-        
+
         app.getStateManager().attach(keyInterceptor);
-        
+
         if( mouseState != null ) {
             app.getStateManager().attach(mouseState);
         }
         if( touchState != null ) {
             app.getStateManager().attach(touchState);
         }
-        
+
         app.getStateManager().attach(focusState);
         app.getStateManager().attach(focusNavState);
         app.getStateManager().attach(animationState);
@@ -202,18 +209,18 @@ public class GuiGlobals {
 
         ViewPort main = app.getViewPort();
         setupGuiComparators(main);
-        
+
         // By default all of our app picking states are enabled so we should
         // make a 'formal' request.
         setCursorEventsEnabled(true);
-        
+
         gammaEnabled = app.getContext().getSettings().isGammaCorrection();
     }
 
     protected AssetManager getAssetManager() {
         return assets;
     }
- 
+
     protected String getIconBase() {
         return iconBase;
     }
@@ -247,6 +254,7 @@ public class GuiGlobals {
 
         // Setup some default styles for the "DEFAULT" Style
         styles.getSelector(null).set("color", ColorRGBA.White);
+        styles.getSelector(null).set("fontName", "Interface/Fonts/Default.fnt");
     }
 
     public Styles getStyles() {
@@ -260,11 +268,11 @@ public class GuiGlobals {
     public AnimationState getAnimationState() {
         return animationState;
     }
-    
+
     public PopupState getPopupState() {
         return popupState;
     }
-    
+
     public FocusManagerState getFocusManagerState() {
         return focusState;
     }
@@ -311,6 +319,21 @@ public class GuiGlobals {
         BitmapFont result = assets.loadFont(path);
         fixFont(result);
         return result;
+    }
+
+    public Text2d createText2d( String fontName ) {
+        if( textFactory == null ) {
+            throw new UnsupportedOperationException("No text2D factory is configured.");
+        }
+        return textFactory.apply(fontName);
+    }
+
+    public void setTextFactory( Function<String, Text2d> textFactory ) {
+        this.textFactory = textFactory;
+    }
+
+    public Function<String, Text2d> getTextFactory() {
+        return textFactory;
     }
 
     public GuiMaterial createMaterial( boolean lit ) {
@@ -364,16 +387,16 @@ public class GuiGlobals {
      *  depending on whether gamma correction is enabled or disabled.  If there is no
      *  gamma correction then the RGBA values are interpretted literally.  If gamma
      *  correction is enabled then the values are converted to linear space before
-     *  returning.  
-     */     
+     *  returning.
+     */
     public ColorRGBA srgbaColor( float r, float g, float b, float a ) {
         if( gammaEnabled ) {
             // Note: unlike JME's seAsSrgb() method, when converting from SRGB
             //   space this method will also convert the alpha as it seems to matter in color
             //   matching.
-            // ...except it didn't always work.  
+            // ...except it didn't always work.
             //return new ColorRGBA().setAsSrgb(r, g, b, (float)Math.pow(a, GAMMA));
-            return new ColorRGBA().setAsSrgb(r, g, b, a); 
+            return new ColorRGBA().setAsSrgb(r, g, b, a);
         } else {
             return new ColorRGBA(r, g, b, a);
         }
@@ -384,10 +407,10 @@ public class GuiGlobals {
      *  depending on whether gamma correction is enabled or disabled.  If there is no
      *  gamma correction then the RGBA values are interpretted literally.  If gamma
      *  correction is enabled then the values are converted to linear space before
-     *  returning. 
+     *  returning.
      */
     public ColorRGBA srgbaColor( ColorRGBA srgbColor ) {
-        return srgbaColor(srgbColor.r, srgbColor.g, srgbColor.b, srgbColor.a);  
+        return srgbaColor(srgbColor.r, srgbColor.g, srgbColor.b, srgbColor.a);
     }
 
     public void requestFocus( Spatial s ) {
@@ -417,7 +440,7 @@ public class GuiGlobals {
         }
         if( touchState != null ) {
             return touchState.findViewPort(s);
-        } 
+        }
         return null;
     }
 
@@ -438,16 +461,16 @@ public class GuiGlobals {
         if( touchState != null ) {
             touchState.requestEnabled(owner);
         }
-        if( focusNavState != null ) {            
-            focusNavState.setEnabled(isCursorEventsEnabled());       
+        if( focusNavState != null ) {
+            focusNavState.setEnabled(isCursorEventsEnabled());
         }
     }
- 
+
     /**
      *  Releases a previous cursor request for the specified
      *  sowner.  Returns true if the cursor is still enabled
      *  after this call.
-     */    
+     */
     public boolean releaseCursorEnabled( Object owner ) {
         boolean result = false;
         if( mouseState != null ) {
@@ -460,12 +483,12 @@ public class GuiGlobals {
                 result = true;
             }
         }
-        if( focusNavState != null ) {            
-            focusNavState.setEnabled(result);       
+        if( focusNavState != null ) {
+            focusNavState.setEnabled(result);
         }
         return result;
     }
-    
+
     /**
      *  Returns true if the specified owner has an active cursor
      *  enabled request pending.
@@ -479,7 +502,7 @@ public class GuiGlobals {
         }
         return false;
     }
- 
+
     /**
      *  @deprecated Use setCursorEventsEnabled() instead.
      */
@@ -487,11 +510,11 @@ public class GuiGlobals {
     public void setMouseEventsEnabled( boolean f ) {
         setCursorEventsEnabled(f);
     }
-    
+
     public void setCursorEventsEnabled( boolean f ) {
         setCursorEventsEnabled(f, false);
     }
-    
+
     /**
      *  The same as setCursorEventsEnabled(f) except that this will force
      *  the cursor enabled state even if there are pending requests otherwise.
@@ -517,7 +540,7 @@ public class GuiGlobals {
             // a request with GuiGlobals as the owner.
             if( f ) {
                 requestCursorEnabled(this);
-            } else if( hasRequestedCursorEnabled(this) ) {        
+            } else if( hasRequestedCursorEnabled(this) ) {
                 releaseCursorEnabled(this);
             }
         }
@@ -528,9 +551,9 @@ public class GuiGlobals {
      */
     @Deprecated
     public boolean isMouseEventsEnabled() {
-        return isCursorEventsEnabled(); 
+        return isCursorEventsEnabled();
     }
-    
+
     public boolean isCursorEventsEnabled() {
         if( mouseState != null ) {
             return mouseState.isEnabled();
@@ -538,7 +561,7 @@ public class GuiGlobals {
             return touchState.isEnabled();
         } else {
             return false;
-        }        
+        }
     }
 
     @Deprecated
@@ -557,5 +580,15 @@ public class GuiGlobals {
         }
 
         return cam.getScreenCoordinates(pos);
+    }
+
+    private static class DefaultTextFactory implements Function<String, Text2d> {
+        public Text2d apply( String fontName ) {
+            if( log.isDebugEnabled() ) {
+                log.debug("createText2d(" + fontName + ")");
+            }
+            BitmapFont font = getInstance().loadFont(fontName);
+            return new TextComponent("", font);
+        }
     }
 }
