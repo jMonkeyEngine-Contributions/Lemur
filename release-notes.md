@@ -1,5 +1,7 @@
 Version 1.17.0 (unreleased)
 ---------------
+* Increased base Java version from 1.7 to 1.8
+* Increased base JME version from 3.1.0-stable to 3.5.0-stable
 * Modified Container to set a layout if none is set and we are applying
     styles.  This means Containers will no longer throw exceptions if
     the style does not define a layout.  (Container subclasses will have
@@ -20,6 +22,7 @@ Version 1.17.0 (unreleased)
 * Refactored IconComponent to allow overriding the icon geometry.
 * Modified a sizing exception thrown by GuiControl to include the node that is
     causing the issue.
+* Fixed TextEntryComponent to work with right-to-left text (Thanks Ali-RS)  
 
 
 Version 1.16.0 (latest)
