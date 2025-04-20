@@ -1,4 +1,4 @@
-Version 1.16.1 (unreleased)
+Version 1.17.0 (unreleased)
 ---------------
 * Modified Container to set a layout if none is set and we are applying
     styles.  This means Containers will no longer throw exceptions if
@@ -14,6 +14,9 @@ Version 1.16.1 (unreleased)
     after the progress bar itself was shrunk due to layout changes.
 * Added PopupState.ClickMode.Ignore so that popups can be created that do
     not autoclose but also don't consume mouse events outside of the popup.
+* Added a Text2d interface and modified TextComponent to implement it.
+* Refactored Label to defer text component creation to GuiGlobals.createText2d()
+    which now also has a pluggable Text2d factory.
 
 
 Version 1.16.0 (latest)

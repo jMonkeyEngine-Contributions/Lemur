@@ -6,9 +6,10 @@ plugins {
     id 'lemur.published-library'
 }
 
-version='1.16.1-SNAPSHOT'
+version='1.17.0-SNAPSHOT'
 
 ext.jmeVersion='3.1.0-stable'
+//ext.jmeVersion='3.6.0-SNAPSHOT'
 ext.slf4jVersion = '1.7.32'
 
 // Set this module's maven pom description

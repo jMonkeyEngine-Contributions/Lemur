@@ -34,16 +34,19 @@
 
 package com.simsilica.lemur.component;
 
+import java.util.Objects;
+
 import com.jme3.font.*;
 import com.jme3.font.BitmapFont.Align;
 import com.jme3.font.BitmapFont.VAlign;
 import com.jme3.font.Rectangle;
 import com.jme3.math.*;
 
-import com.simsilica.lemur.core.GuiControl;
+import com.simsilica.lemur.GuiGlobals;
 import com.simsilica.lemur.HAlignment;
 import com.simsilica.lemur.LayerComparator;
 import com.simsilica.lemur.VAlignment;
+import com.simsilica.lemur.core.GuiControl;
 
 
 /**
@@ -53,9 +56,10 @@ import com.simsilica.lemur.VAlignment;
  *  @author    Paul Speed
  */
 public class TextComponent extends AbstractGuiComponent
-                           implements ColoredComponent {
+                           implements ColoredComponent, Text2d {
 
     private BitmapText bitmapText;
+    private String fontName;
     private Rectangle textBox;
     private HAlignment hAlign = HAlignment.Left;
     private VAlignment vAlign = VAlignment.Top;
@@ -88,6 +92,7 @@ public class TextComponent extends AbstractGuiComponent
         super.detach(parent);
     }
 
+    @Override
     public void setText( String text ) {
         if( text != null && text.equals(bitmapText.getText()) )
             return;
@@ -96,22 +101,26 @@ public class TextComponent extends AbstractGuiComponent
         invalidate();
     }
 
+    @Override
     public String getText() {
         return bitmapText.getText();
     }
 
+    @Override
     public void setLayer( int layer ) {
         if( this.layer == layer ) {
             return;
         }
         this.layer = layer;
-        resetLayer();        
+        resetLayer();
     }
-    
+
+    @Override
     public int getLayer() {
         return layer;
     }
 
+    @Override
     public void setHAlignment( HAlignment a ) {
         if( hAlign == a )
             return;
@@ -119,10 +128,12 @@ public class TextComponent extends AbstractGuiComponent
         resetAlignment();
     }
 
+    @Override
     public HAlignment getHAlignment() {
         return hAlign;
     }
 
+    @Override
     public void setVAlignment( VAlignment a ) {
         if( vAlign == a )
             return;
@@ -130,6 +141,7 @@ public class TextComponent extends AbstractGuiComponent
         resetAlignment();
     }
 
+    @Override
     public VAlignment getVAlignment() {
         return vAlign;
     }
@@ -139,18 +151,21 @@ public class TextComponent extends AbstractGuiComponent
      *  width of the text box.  Wrapping text will cause the text box
      *  to grow vertically.
      */
+    @Override
     public void setMaxWidth( float f ) {
         this.maxWidth = f;
     }
-    
+
+    @Override
     public float getMaxWidth() {
         return maxWidth;
     }
 
     public void setFont( BitmapFont font ) {
-        if( font == bitmapText.getFont() )
+        if( font == bitmapText.getFont() ) {
             return;
-            
+        }
+
         if( isAttached() ) {
             bitmapText.removeFromParent();
         }
@@ -162,7 +177,7 @@ public class TextComponent extends AbstractGuiComponent
         newText.setColor(getColor());
         newText.setLocalTranslation(bitmapText.getLocalTranslation());
         float currentSize = getFontSize();
-        if( currentSize != bitmapText.getSize() ) {
+        if( currentSize != bitmapText.getFont().getPreferredSize() ) {
             // The caller has overridden the default font size so we'll keep it.
             newText.setSize(getFontSize());
         }
@@ -182,6 +197,19 @@ public class TextComponent extends AbstractGuiComponent
         return bitmapText.getFont();
     }
 
+    public void setFontName( String fontName ) {
+        if( Objects.equals(fontName, this.fontName) ) {
+            return;
+        }
+        this.fontName = fontName;
+        setFont(GuiGlobals.getInstance().loadFont(fontName));
+    }
+
+    public String getFontName() {
+        return fontName;
+    }
+
+    @Override
     public void setFontSize( float size ) {
         if( bitmapText.getSize() == size )
             return;
@@ -189,10 +217,12 @@ public class TextComponent extends AbstractGuiComponent
         invalidate();
     }
 
+    @Override
     public float getFontSize() {
         return bitmapText.getSize();
     }
 
+    @Override
     public void setColor( ColorRGBA color ) {
         float alpha = bitmapText.getAlpha();
         bitmapText.setColor(color);
@@ -201,14 +231,17 @@ public class TextComponent extends AbstractGuiComponent
         }
     }
 
+    @Override
     public ColorRGBA getColor() {
         return bitmapText.getColor();
     }
 
+    @Override
     public void setAlpha( float f ) {
         bitmapText.setAlpha(f);
     }
-    
+
+    @Override
     public float getAlpha() {
         return bitmapText.getAlpha();
     }
@@ -223,6 +256,7 @@ public class TextComponent extends AbstractGuiComponent
         return this;
     }
 
+    @Override
     public void setOffset( float x, float y, float z ) {
         if( offset == null ) {
             offset = new Vector3f(x,y,z);
@@ -232,11 +266,13 @@ public class TextComponent extends AbstractGuiComponent
         invalidate();
     }
 
+    @Override
     public void setOffset( Vector3f offset ) {
         this.offset = offset.clone();
         invalidate();
     }
 
+    @Override
     public Vector3f getOffset() {
         return offset;
     }
@@ -250,6 +286,7 @@ public class TextComponent extends AbstractGuiComponent
         return bitmapText.getSize();
     }
 
+    @Override
     public void reshape( Vector3f pos, Vector3f size ) {
 
         if( offset != null ) {
@@ -277,16 +314,16 @@ public class TextComponent extends AbstractGuiComponent
             // -1 behind the regular text because the regular text will get pushed
             // out by 1.
             // So a negative z offset results in z=0 for this text but pos.z += abs(z).
-            // A positive Z pushes us out and also moves pos.z+= z. 
+            // A positive Z pushes us out and also moves pos.z+= z.
             // Because we use offset z for size, this is really the only way it
-            // makes sense.  offset.z will control the thickness and positive or 
+            // makes sense.  offset.z will control the thickness and positive or
             // negative indicates where in the "box" it falls (back or front)
-            float effectiveZ = Math.max(0, offset.z);           
+            float effectiveZ = Math.max(0, offset.z);
             bitmapText.setLocalTranslation(pos.x + offset.x, pos.y + offset.y, pos.z + effectiveZ);
             size.x -= Math.abs(offset.x);
             size.y -= Math.abs(offset.y);
             size.z -= Math.abs(offset.z);
-            pos.z += Math.abs(offset.z);            
+            pos.z += Math.abs(offset.z);
         } else {
             bitmapText.setLocalTranslation(pos.x, pos.y, pos.z);
         }
@@ -295,8 +332,9 @@ public class TextComponent extends AbstractGuiComponent
         resetAlignment();
     }
 
+    @Override
     public void calculatePreferredSize( Vector3f size ) {
-        
+
         // Make sure that the bitmapText reports a reliable
         // preferred size
         bitmapText.setBox(null);
@@ -348,8 +386,8 @@ public class TextComponent extends AbstractGuiComponent
                 break;
         }
     }
-    
+
     protected void resetLayer() {
-        LayerComparator.resetLayer(bitmapText, layer);    
+        LayerComparator.resetLayer(bitmapText, layer);
     }
 }

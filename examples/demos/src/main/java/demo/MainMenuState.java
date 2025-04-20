@@ -72,6 +72,7 @@ public class MainMenuState extends BaseAppState {
         ListBoxDemoState.class,
         IconDemoState.class,
         TextAlignmentDemoState.class,
+        TextStyleDemoState.class,
         TabbedPanelDemoState.class,
         DragDemoState.class,
         ViewPortDemoState.class,
