@@ -25,7 +25,9 @@ Version 1.17.0 (unreleased)
 * Fixed TextEntryComponent to work with right-to-left text (Thanks Ali-RS)
 * Modified TextEntryComponent to unfocus when the escape key is pressed. (Thanks Ali-RS)
 * Properly clear alpha discard param in QuadBackgroundComponent and
-    IconComponent when alpha discard is disabled (is set to 0).
+    IconComponent when alpha discard is disabled (is set to 0).  (Thanks Ali-RS)
+* Modified TextEntryComponent to block the lwjgl3 redundant key events while the
+    text entry is focused. (Thanks Ali-RS)
 
 Version 1.16.0 (latest)
 ---------------
