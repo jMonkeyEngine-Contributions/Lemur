@@ -22,7 +22,8 @@ Version 1.17.0 (unreleased)
 * Refactored IconComponent to allow overriding the icon geometry.
 * Modified a sizing exception thrown by GuiControl to include the node that is
     causing the issue.
-* Fixed TextEntryComponent to work with right-to-left text (Thanks Ali-RS)  
+* Fixed TextEntryComponent to work with right-to-left text (Thanks Ali-RS)
+* Modified TextEntryComponent to unfocus when the escape key is pressed. (Thanks Ali-RS)
 
 
 Version 1.16.0 (latest)
