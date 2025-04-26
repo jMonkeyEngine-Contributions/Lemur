@@ -1,7 +1,7 @@
 /*
  * $Id$
  *
- * Copyright (c) 2012-2012 jMonkeyEngine
+ * Copyright (c) 2012-2025 jMonkeyEngine
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -50,7 +50,7 @@ public class CheckboxGroup {
     /**
      * The list of checkboxes participating in this group.
      */
-    protected List<Checkbox> checkboxs = new ArrayList<>();
+    protected final List<Checkbox> checkboxs = new ArrayList<>();
     
     /**
      * The current selection.
@@ -82,7 +82,7 @@ public class CheckboxGroup {
             }
         }
         
-        c.getModel().setGroup(this);
+        c.setGroup(this);
         return bool;
     }
     
@@ -99,7 +99,7 @@ public class CheckboxGroup {
         if (c == selection) {
             selection = null;
         }
-        c.getModel().setGroup(null);
+        c.setGroup(null);
         return bool;
     }
     

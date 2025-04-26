@@ -61,6 +61,7 @@ public class Checkbox extends Button {
     public static final Command<Button> TOGGLE_COMMAND = new ToggleCommand();
 
     private CheckboxModel model;
+    private CheckboxGroup group;
     private VersionedReference<Boolean> state;
     private GuiComponent onView;
     private GuiComponent offView;
@@ -122,6 +123,14 @@ public class Checkbox extends Button {
         attrs.set("textVAlignment", VAlignment.Center, false);
     }
 
+    public CheckboxGroup getGroup() {
+        return group;
+    }
+
+    protected void setGroup(CheckboxGroup group) {
+        this.group = group;
+    }
+
     public void setModel( CheckboxModel model ) {
         if( this.model == model )
             return;
@@ -151,7 +160,6 @@ public class Checkbox extends Button {
     }
 
     public void setChecked( boolean b ) {
-        CheckboxGroup group = getModel().getGroup();
         if (group != null) {
             group.setSelected(this, b);
         } else {

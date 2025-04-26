@@ -45,8 +45,5 @@ import com.simsilica.lemur.core.VersionedObject;
 public interface CheckboxModel extends VersionedObject<Boolean> {
     public void setChecked( boolean state );
     public boolean isChecked();
-    
-    public void setGroup(CheckboxGroup group);
-    public CheckboxGroup getGroup();
 }
 

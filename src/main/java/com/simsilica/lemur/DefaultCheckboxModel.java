@@ -48,8 +48,6 @@ public class DefaultCheckboxModel implements CheckboxModel {
 
     private long version;
     private boolean state;
-    
-    private CheckboxGroup group;
 
     public DefaultCheckboxModel() {
         this(false);
@@ -85,15 +83,5 @@ public class DefaultCheckboxModel implements CheckboxModel {
     @Override
     public String toString() {
         return getClass().getName() + "[checked=" + isChecked() + "]";
-    }
-
-    @Override
-    public void setGroup(CheckboxGroup group) {
-        this.group = group;
-    }
-
-    @Override
-    public CheckboxGroup getGroup() {
-        return group;
     }
 }
