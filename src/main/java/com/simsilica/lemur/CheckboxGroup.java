@@ -69,7 +69,7 @@ public class CheckboxGroup {
      * @return boolean
      */
     public boolean add(Checkbox c) {
-        if (c == null) {
+        if (c == null || checkboxs.contains(c)) {
             return false;
         }
         
