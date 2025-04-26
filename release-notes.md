@@ -28,6 +28,9 @@ Version 1.17.0 (unreleased)
     IconComponent when alpha discard is disabled (is set to 0).  (Thanks Ali-RS)
 * Modified TextEntryComponent to block the lwjgl3 redundant key events while the
     text entry is focused. (Thanks Ali-RS)
+* Added an InputProvider interface and InputMapper integration to allow altenate
+    input-event providing systems to still work with InputMapper.
+
 
 Version 1.16.0 (latest)
 ---------------
