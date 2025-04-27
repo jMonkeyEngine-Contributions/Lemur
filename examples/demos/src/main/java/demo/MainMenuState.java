@@ -77,7 +77,8 @@ public class MainMenuState extends BaseAppState {
         DragDemoState.class,
         ViewPortDemoState.class,
         DynamicInsetsState.class,
-        PanelAlphaDemoState.class
+        PanelAlphaDemoState.class,
+        CheckboxAndRollupDemoState.class
     };
 
     private Container mainWindow;
@@ -100,8 +101,10 @@ public class MainMenuState extends BaseAppState {
     }
 
     public float getStandardScale() {
-        int height = getApplication().getCamera().getHeight();
-        return height / 720f;
+        //int height = getApplication().getCamera().getHeight();
+        //return height / 720f;
+        // The other state popups don't use this so it looks weird at different resolutions.
+        return 1;
     }
 
     protected void showError( String title, String error ) {

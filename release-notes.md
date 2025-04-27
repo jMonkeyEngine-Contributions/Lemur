@@ -30,6 +30,8 @@ Version 1.17.0 (unreleased)
     text entry is focused. (Thanks Ali-RS)
 * Added an InputProvider interface and InputMapper integration to allow altenate
     input-event providing systems to still work with InputMapper.
+* Added CheckboxModelGroup for linking a set of CheckboxModels together so that only
+    one can be 'true' at a time.
 
 
 Version 1.16.0 (latest)
