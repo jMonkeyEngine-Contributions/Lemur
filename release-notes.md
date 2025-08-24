@@ -33,6 +33,7 @@ Version 1.17.0 (unreleased)
 * Added CheckboxModelGroup for linking a set of CheckboxModels together so that only
     one can be 'true' at a time.
 * Additional joystick button constants added.
+* Modified PanelTweens.Fade to fail early if passed a null target.
 
 
 Version 1.16.0 (latest)
