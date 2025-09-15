@@ -34,6 +34,7 @@ Version 1.17.0 (unreleased)
     one can be 'true' at a time.
 * Additional joystick button constants added.
 * Modified PanelTweens.Fade to fail early if passed a null target.
+* Added another IconComponent(imagePage, scale) constructor.
 
 
 Version 1.16.0 (latest)

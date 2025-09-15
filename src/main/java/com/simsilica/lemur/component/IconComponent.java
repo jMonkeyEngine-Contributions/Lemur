@@ -84,6 +84,10 @@ public class IconComponent extends AbstractGuiComponent
         this(imagePath, 1f, 0, 0, 0.01f, false);
     }
 
+    public IconComponent( String imagePath, float iconScale ) {
+        this(imagePath, iconScale, 0, 0, 0.01f, false);
+    }
+
     public IconComponent( String imagePath, float iconScale,
                           float xMargin, float yMargin, float zOffset,
                           boolean lit ) {
