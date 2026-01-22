@@ -31,152 +31,153 @@
  * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-
 package com.simsilica.lemur;
 
+import com.jme3.math.ColorRGBA;
+import com.simsilica.lemur.component.BorderLayout;
+import com.simsilica.lemur.component.SpringGridLayout;
+import com.simsilica.lemur.component.VBoxLayout;
+import com.simsilica.lemur.core.GuiControl;
+import com.simsilica.lemur.core.VersionedHolder;
+import com.simsilica.lemur.core.VersionedObject;
+import com.simsilica.lemur.core.VersionedReference;
+import com.simsilica.lemur.style.ElementId;
+import com.simsilica.lemur.style.StyleAttribute;
+import com.simsilica.lemur.style.Styles;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import com.jme3.math.ColorRGBA;
-
-import com.simsilica.lemur.core.VersionedHolder;
-import com.simsilica.lemur.core.VersionedObject;
-import com.simsilica.lemur.core.VersionedReference;
-import com.simsilica.lemur.component.BorderLayout;
-import com.simsilica.lemur.component.SpringGridLayout;
-import com.simsilica.lemur.core.GuiControl;
-import com.simsilica.lemur.style.ElementId;
-import com.simsilica.lemur.style.StyleAttribute;
-import com.simsilica.lemur.style.Styles;
-
-
 /**
- *  A very simple tabbed panel element that presents a set
- *  of button "tabs" at the top that can select different child
- *  content.
+ * A very simple tabbed panel element that presents a set of button "tabs" at
+ * the top that can select different child content.
  *
- *  @author    Paul Speed
- */ 
+ * @author Paul Speed
+ */
 public class TabbedPanel extends Panel {
- 
+
     public static final ElementId ELEMENT_ID = new ElementId("tabbedPanel");
-    
-    private BorderLayout layout;
+
+    private VBoxLayout layout;
     private Container tabButtons;
     private Container container;
     private List<Tab> tabs = new ArrayList<Tab>();
-    
+
     private VersionedHolder<Tab> selectionModel = new VersionedHolder<>();
-    private VersionedReference<Tab> selectionRef = selectionModel.createReference();  
+    private VersionedReference<Tab> selectionRef = selectionModel.createReference();
     private Tab displayedTab;
-    
-    private ColorRGBA activationColor = ColorRGBA.Cyan;    
-    
+
+    private ColorRGBA activationColor = ColorRGBA.Cyan;
+
     public TabbedPanel() {
-        this(true, ELEMENT_ID, null);
+        this(true, ELEMENT_ID, null, VBoxLayout.HAlign.Left);
     }
 
-    public TabbedPanel( String style ) {
-        this(true, ELEMENT_ID, style);
+    public TabbedPanel(VBoxLayout.HAlign TabBtnAlignment) {
+        this(true, ELEMENT_ID, null, TabBtnAlignment);
     }
-    
-    public TabbedPanel( ElementId elementId, String style ) {
-        this(true, elementId, style);
-    }  
- 
-    protected TabbedPanel( boolean applyStyles, ElementId elementId, String style )
-    {
+
+    public TabbedPanel(String style) {
+        this(true, ELEMENT_ID, style, VBoxLayout.HAlign.Left);
+    }
+
+    public TabbedPanel(ElementId elementId, String style) {
+        this(true, elementId, style, VBoxLayout.HAlign.Left);
+    }
+
+    public TabbedPanel(ElementId elementId, String style, VBoxLayout.HAlign TabBtnAlignment) {
+        this(true, elementId, style, TabBtnAlignment);
+    }
+
+    protected TabbedPanel(boolean applyStyles, ElementId elementId, String style, VBoxLayout.HAlign TabBtnAlignment) {
         super(false, elementId, style);
 
-        this.layout = new BorderLayout();
+        this.layout = new VBoxLayout(0, FillMode.Last);
         getControl(GuiControl.class).setLayout(layout);
- 
+
         this.tabButtons = new Container(new SpringGridLayout(Axis.X, Axis.Y, FillMode.None, FillMode.Even),
-                                        elementId.child("tabButtons"), style);
-        layout.addChild(tabButtons, BorderLayout.Position.North);
- 
+                elementId.child("tabButtons"), style);
+        layout.addChild(tabButtons, TabBtnAlignment, false);
+
         this.container = new Container(new BorderLayout(), elementId.child("container"), style);
-        layout.addChild(container, BorderLayout.Position.Center);
- 
-        if( applyStyles ) {
+        layout.addChild(container, VBoxLayout.HAlign.Center, true);
+
+        if (applyStyles) {
             Styles styles = GuiGlobals.getInstance().getStyles();
             styles.applyStyles(this, elementId, style);
         }
     }
- 
+
     /**
-     *  Adds the specified contents as a new tab using the specified
-     *  title.
+     * Adds the specified contents as a new tab using the specified title.
      */
-    public <T extends Panel> T addTab( String title, T contents ) {
+    public <T extends Panel> T addTab(String title, T contents) {
         Tab tab = new Tab(title, contents);
         tabs.add(tab);
         refreshTabs();
-        if( selectionModel.getObject() == null ) {
+        if (selectionModel.getObject() == null) {
             setSelectedTab(tab);
         }
         return contents;
     }
 
     /**
-     *  Inserts the specified contents as a new tab using the specified
-     *  title inserted at the specified index.
+     * Inserts the specified contents as a new tab using the specified title
+     * inserted at the specified index.
      */
-    public <T extends Panel> T insertTab( int index, String title, T contents ) {
+    public <T extends Panel> T insertTab(int index, String title, T contents) {
         Tab tab = new Tab(title, contents);
         tabs.add(index, tab);
         refreshTabs();
-        if( selectionModel.getObject() == null ) {
+        if (selectionModel.getObject() == null) {
             setSelectedTab(tab);
         }
         return contents;
     }
- 
+
     /**
-     *  Removes the specified tab from this tabbed panel.  Returns
-     *  the tab that was removed or null if the tab is not a member
-     *  of this tabbed panel.
-     *  Note: if the specified tab is the currently selected tab
-     *  then the selection will be reset to the next available tab.
+     * Removes the specified tab from this tabbed panel. Returns the tab that
+     * was removed or null if the tab is not a member of this tabbed panel.
+     * Note: if the specified tab is the currently selected tab then the
+     * selection will be reset to the next available tab.
      */
-    public Tab removeTab( Tab tab ) {    
+    public Tab removeTab(Tab tab) {
         int index = tabs.indexOf(tab);
-        if( index < 0 ) {
+        if (index < 0) {
             return null;
         }
-        if( selectionModel.getObject() == tab ) {
+        if (selectionModel.getObject() == tab) {
             // Clear the current selection
             selectionModel.setObject(null);
         }
-        
+
         tabs.remove(tab);
         refreshTabs();
- 
+
         // See if we need to set the selection again
-        if( selectionModel.getObject() == null && !tabs.isEmpty() ) {
+        if (selectionModel.getObject() == null && !tabs.isEmpty()) {
             // Do the best we can
-            setSelectedTab(tabs.get(Math.min(index, tabs.size()-1)));
+            setSelectedTab(tabs.get(Math.min(index, tabs.size() - 1)));
         }
-        
+
         return tab;
     }
- 
+
     /**
-     *  Returns a read-only list of the Tabs contained in this tabbed panel.
+     * Returns a read-only list of the Tabs contained in this tabbed panel.
      */
     public List<Tab> getTabs() {
         return Collections.unmodifiableList(tabs);
     }
- 
-    /** 
-     *  Returns a versioned view of the currently selected tab.
-     *  Callers can create VersionedReferences to watch for changes.
+
+    /**
+     * Returns a versioned view of the currently selected tab. Callers can
+     * create VersionedReferences to watch for changes.
      */
     public VersionedObject<Tab> getSelectionModel() {
         return selectionModel;
     }
- 
+
     /*
     No reconfigurable selection model... at least for now.  There is no
     real 'model' class and VersionedObject has no setters (for good reason).
@@ -184,141 +185,139 @@ public class TabbedPanel extends Panel {
         this.selectionModel = selectionModel;
         setSelectedTab(displayedTab);
     }*/
-    
- 
     /**
-     *  Sets the text color that will be used for activated tabs. 
+     * Sets the text color that will be used for activated tabs.
      */
-    @StyleAttribute(value="activationColor", lookupDefault=false)
-    public void setActivationColor( ColorRGBA color ) {
+    @StyleAttribute(value = "activationColor", lookupDefault = false)
+    public void setActivationColor(ColorRGBA color) {
         this.activationColor = color;
-        if( displayedTab != null ) {
+        if (displayedTab != null) {
             displayedTab.title.setColor(color);
-        }                
+        }
     }
- 
+
     /**
-     *  Returns the text color used for activated tabs.
-     */   
+     * Returns the text color used for activated tabs.
+     */
     public ColorRGBA getActivationColor() {
         return activationColor;
     }
-        
+
     protected void refreshTabs() {
         // Clean out any existing buttons
         tabButtons.getLayout().clearChildren();
-        
-        for( Tab tab : tabs ) {
+
+        for (Tab tab : tabs) {
             tabButtons.addChild(tab.title);
-        }       
+        }
     }
- 
+
     /**
-     *  Sets the currently selected tab to the tab specified.
+     * Sets the currently selected tab to the tab specified.
      */
-    public void setSelectedTab( Tab tab ) {
+    public void setSelectedTab(Tab tab) {
         // This should take care of ignoring nulls also
-        if( !tabs.contains(tab) ) {
+        if (!tabs.contains(tab)) {
             return;
         }
-        
+
         selectionModel.updateObject(tab);
-        
-        // Short-circuit just to make sure we change right away... no 
+
+        // Short-circuit just to make sure we change right away... no
         // reason to wait until the next frame in this case.
         setDisplayedTab(selectionModel.getObject());
     }
- 
+
     /**
-     *  Returns the currently selected tab.
-     */   
+     * Returns the currently selected tab.
+     */
     public Tab getSelectedTab() {
         return selectionModel.getObject();
     }
-    
-    protected void setDisplayedTab( Tab tab ) {
-        if( displayedTab == tab ) {
+
+    protected void setDisplayedTab(Tab tab) {
+        if (displayedTab == tab) {
             // Already displaying it
             return;
         }
-        if( displayedTab != null ) {
+        if (displayedTab != null) {
             displayedTab.removeContents();
         }
         displayedTab = tab;
-        if( displayedTab != null ) {
+        if (displayedTab != null) {
             displayedTab.addContents();
         }
-        for( Tab t : tabs ) {
+        for (Tab t : tabs) {
             t.title.setChecked(t == tab);
-        }        
+        }
     }
- 
+
     @Override
-    public void updateLogicalState( float tpf ) {
+    public void updateLogicalState(float tpf) {
         super.updateLogicalState(tpf);
 
-        if( selectionRef != null && selectionRef.update() ) {
+        if (selectionRef != null && selectionRef.update()) {
             setDisplayedTab(selectionRef.get());
         }
     }
- 
+
     /**
-     *  Represents a Tab in the TabbedPanel.
-     */   
+     * Represents a Tab in the TabbedPanel.
+     */
     public class Tab {
         private Checkbox title;
         private Panel contents;
         private ColorRGBA originalColor;
 
-        @SuppressWarnings("unchecked") // because Java doesn't like var-arg generics        
-        public Tab( String title, Panel contents ) {
+        @SuppressWarnings("unchecked") // because Java doesn't like var-arg generics
+        public Tab(String title, Panel contents) {
             this.title = new Checkbox(title, getElementId().child("tab.button"), getStyle());
             this.title.addClickCommands(new SwitchToTab(this));
             this.contents = contents;
         }
-        
+
         public String getTitle() {
             return title.getText();
         }
-        
+
         public Checkbox getTitleButton() {
             return title;
         }
-        
+
         public Panel getContents() {
             return contents;
         }
-        
+
         protected void removeContents() {
-            if( contents == null ) {
+            if (contents == null) {
                 return;
             }
-            if( contents.getParent() != null ) {
+            if (contents.getParent() != null) {
                 container.removeChild(contents);
                 title.setColor(originalColor);
             }
         }
-        
+
         protected void addContents() {
-            if( contents == null ) {
+            if (contents == null) {
                 return;
             }
-            if( contents.getParent() == null ) {
+            if (contents.getParent() == null) {
                 container.addChild(contents, BorderLayout.Position.Center);
                 originalColor = title.getColor();
                 title.setColor(activationColor);
-            }            
+            }
         }
     }
-    
+
     protected class SwitchToTab implements Command<Button> {
         private Tab tab;
-        
-        public SwitchToTab( Tab tab ) {
+
+        public SwitchToTab(Tab tab) {
             this.tab = tab;
         }
 
-        public void execute( Button source ) {
+        public void execute(Button source) {
             setSelectedTab(tab);
         }
     }
